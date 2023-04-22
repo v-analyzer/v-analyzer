@@ -6,21 +6,49 @@ import vex.router
 import flag
 import os
 import time
+import net.http
 
-// struct Analyzer {
-// }
+struct Analyzer {
+	id          int
+	port        int
+	daemon_port int
+}
+
+fn (a &Analyzer) want_die() {
+	url := 'http://localhost:${a.daemon_port}/want_to_die?id=${a.id}'
+	println(url)
+	res := http.get(url) or {
+		println('failed to send die request to daemon, err: ${err}')
+		exit(0)
+		return
+	}
+
+	if res.status_code != 200 {
+		println('failed to send die request to daemon')
+		exit(0)
+		return
+	}
+	exit(0)
+}
 
 fn main() {
 	mut fp := flag.new_flag_parser(os.args)
+	id := fp.int('id', 0, 6790, 'id of analyzer')
 	port := fp.int('port', `p`, 6790, 'port to listen on')
-	// daemon_port := fp.int('daemon-port', `p`, 0, 'daemon port')
+	daemon_port := fp.int('daemon-port', 0, 0, 'daemon port')
 
-	spawn fn () {
+	analyzer := Analyzer{
+		id: id
+		port: port
+		daemon_port: daemon_port
+	}
+
+	spawn fn [analyzer] () {
 		for i := 0; i < 5; i++ {
 			println('sleeping')
 			time.sleep(1 * time.second)
 		}
-		panic('just die')
+		analyzer.want_die()
 	}()
 
 	mut app := router.new()

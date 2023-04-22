@@ -8,6 +8,7 @@ import strconv
 import net.http
 import time
 import log
+import flag
 
 const spavn_root = os.home_dir() + '/.spavn'
 
@@ -22,10 +23,10 @@ mut:
 // DaemonState описывает состояние демона
 struct DaemonState {
 mut:
-	instances_counter  int  = 0 // счетчик запущенных экземпляров анализатора
-	added_new_instance bool = false // флаг, который показывает был ли добавлен новый экземпляр анализатора
-	latest_port        int  = 6790 // порт на котором запущен последний экземпляр анализатора
-	instances          map[int]RunInstance // список запущенных экземпляров анализатора
+	instances_counter int  // счетчик запущенных экземпляров анализатора
+	pause_checks      bool // флаг, который показывает нужно ли приостановить проверку экземпляров анализатора
+	latest_port       int = 6790 // порт на котором запущен последний экземпляр анализатора
+	instances         map[int]RunInstance // список запущенных экземпляров анализатора
 }
 
 struct Daemon {
@@ -35,6 +36,9 @@ mut:
 }
 
 fn main() {
+	mut fp := flag.new_flag_parser(os.args)
+	create_new := fp.bool('new', `n`, false, 'create new instance')
+
 	mut daemon := Daemon{
 		log: log.Log{}
 		state: &DaemonState{
@@ -42,10 +46,6 @@ fn main() {
 		}
 	}
 
-	os.write_file('spavn-daemon.log', '') or {
-		println('cannot create log file')
-		return
-	}
 	daemon.log.set_output_label('spavn-daemon.log')
 	daemon.log.set_output_path('.')
 	daemon.log.log_to_console_too()
@@ -55,7 +55,25 @@ fn main() {
 	if check_if_another_instance_is_running() {
 		// Если уже запущен другой демон, то мы должны переадресовать ему запрос и завершить работу.
 
-		println('another instance is running')
+		daemon.log.info('another daemon is running, redirecting request to it')
+
+		if create_new {
+			// Если мы хотим создать новый экземпляр анализатора, то мы должны переадресовать запрос на создание экземпляра
+			port := read_port() or {
+				daemon.log.error('cannot get port of another instance')
+				return
+			}
+
+			res := http.get('http://localhost:${port}/new') or {
+				daemon.log.error('cannot get port of another instance')
+				return
+			}
+
+			if res.status_code != 200 {
+				daemon.log.error('cannot redirect request to another instance')
+				return
+			}
+		}
 		return
 	}
 
@@ -69,6 +87,22 @@ fn main() {
 	app.route(.get, '/new', fn [mut daemon] (_ &ctx.Req, mut res ctx.Resp) {
 		port := daemon.run_analyzer()
 		res.send_html(port.str(), 200)
+	})
+
+	app.route(.get, '/want_to_die', fn [mut daemon] (req &ctx.Req, mut res ctx.Resp) {
+		daemon.state.pause_checks = true
+		params := req.parse_query() or {
+			map[string]string{}
+		}
+		id := params['id'] or {
+			res.send_status(400)
+			return
+		}
+
+		daemon.log.info('instance ${id} wants to die')
+		daemon.state.instances.delete(id.int())
+		daemon.log.info('instance ${id} is dead')
+		res.send_status(200)
 	})
 
 	app.route(.get, '/alive', fn (_ &ctx.Req, mut res ctx.Resp) {
@@ -86,8 +120,9 @@ fn main() {
 fn (mut d Daemon) run_analyzer() int {
 	port := d.state.latest_port
 
+	id := d.state.instances_counter
 	mut cmd := os.Command{
-		path: 'v run cmd/spavn-analyzer --port ${port}'
+		path: 'v run cmd/spavn-analyzer --port ${port} --daemon-port 6789 --id ${id}'
 		redirect_stdout: false
 	}
 
@@ -115,16 +150,17 @@ fn (mut d Daemon) register_instance(port int, cmd os.Command) {
 	}
 
 	d.state.instances_counter++
-	d.state.added_new_instance = true
+	d.state.pause_checks = true
 }
 
 fn (mut d Daemon) check_instances() {
 	for {
 		d.log.flush()
 
-		if d.state.added_new_instance {
-			d.state.added_new_instance = false
-			time.sleep(2 * time.second) // ждем пока анализатор запустится
+		if d.state.pause_checks {
+			d.state.pause_checks = false
+			time.sleep(2 * time.second)
+			continue
 		}
 
 		mut instances_to_remove := []int{}
