@@ -15,7 +15,7 @@ pub struct IndexVersionMismatchError {
 // Index инкапсулирует логику хранения индекса.
 pub struct Index {
 pub:
-	version string = '2'
+	version string = '3'
 pub mut:
 	data PerFileCache
 }

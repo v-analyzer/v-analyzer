@@ -129,7 +129,7 @@ pub fn (mut ls LanguageServer) handle_jsonrpc(request &jsonrpc.Request, mut rw j
 				params := json.decode(lsp.CompletionParams, request.params) or {
 					return w.wrap_error(err)
 				}
-				// w.write(ls.completion(params, mut rw) or { return w.wrap_error(err) })
+				w.write(ls.completion(params, mut rw) or { return w.wrap_error(err) })
 			}
 			'textDocument/hover' {
 				params := json.decode(lsp.HoverParams, request.params) or {

@@ -21,7 +21,7 @@ pub fn (mut ls LanguageServer) initialize(params lsp.InitializeParams, mut wr Re
 		ls.analyzer_instance.index('file:///Users/petrmakhnev/v/vlib')
 	}
 
-	ls.analyzer_instance.index(ls.root_uri)
+	// ls.analyzer_instance.index(ls.root_uri)
 
 	wr.show_message('Hello, World!', .info)
 
@@ -30,6 +30,10 @@ pub fn (mut ls LanguageServer) initialize(params lsp.InitializeParams, mut wr Re
 			text_document_sync: .incremental
 			hover_provider: true
 			definition_provider: true
+			completion_provider: lsp.CompletionOptions{
+				resolve_provider: false
+				trigger_characters: ['=', '.', ':', '{', ',', '(', ' ']
+			}
 		}
 	}
 }

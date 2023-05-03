@@ -26,22 +26,27 @@ pub enum Visibility {
 // кешируется в памяти.
 pub interface CachedNamedSymbol {
 	filepath string // путь к файлу, в котором находится символ
+	module_fqn string // полное имя модуля, в котором находится символ
 	name string // полное имя символа включая модуль
 	pos Pos // позиция символа в файле
 	visibility Visibility // видимость символа
 }
 
+[heap]
 pub struct FunctionCache {
 pub:
 	filepath   string
+	module_fqn string
 	name       string
 	pos        Pos
 	visibility Visibility
 }
 
+[heap]
 pub struct StructCache {
 pub:
 	filepath   string
+	module_fqn string
 	name       string
 	pos        Pos
 	visibility Visibility

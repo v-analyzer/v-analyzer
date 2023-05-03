@@ -16,29 +16,23 @@ pub fn (mut ls LanguageServer) definition(params lsp.TextDocumentPositionParams,
 	element := ir.find_element_at(res, lines_offset)
 
 	if element is ir.Identifier {
-		data := ls.analyzer_instance.find_function(element.value)
-		if data != none {
-			dat := data or { return [] }
+		data := ls.analyzer_instance.find_function(element.value) or {
+			struct_data := ls.analyzer_instance.find_struct(element.value) or { return [] }
 			return [
 				lsp.LocationLink{
-					target_uri: 'file://' + dat.filepath
-					target_range: pos_to_range(dat.pos)
-					target_selection_range: pos_to_range(dat.pos)
+					target_uri: 'file://' + struct_data.filepath
+					target_range: pos_to_range(struct_data.pos)
+					target_selection_range: pos_to_range(struct_data.pos)
 				},
 			]
 		}
-
-		struct_data := ls.analyzer_instance.find_struct(element.value)
-		if struct_data != none {
-			dat := struct_data or { return [] }
-			return [
-				lsp.LocationLink{
-					target_uri: 'file://' + dat.filepath
-					target_range: pos_to_range(dat.pos)
-					target_selection_range: pos_to_range(dat.pos)
-				},
-			]
-		}
+		return [
+			lsp.LocationLink{
+				target_uri: 'file://' + data.filepath
+				target_range: pos_to_range(data.pos)
+				target_selection_range: pos_to_range(data.pos)
+			},
+		]
 	}
 
 	return []

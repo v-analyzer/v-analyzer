@@ -55,7 +55,7 @@ pub mut:
 	// TODO: comment the unnecessary fields for now to avoid any errors
 	detail string
 	// documentation string | MarkupContent
-	// documentation MarkupContent
+	documentation string
 	// deprecated    bool
 	// preselect bool
 	// sort_text string [json:sortText]

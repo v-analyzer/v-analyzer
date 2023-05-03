@@ -21,15 +21,25 @@ fn (mut i IndexingVisitor) visit(node ir.Node) bool {
 			i.cache.module_fqn = node.name.value.trim(' ') // TODO: рассчитывать имя для вложенных модулей
 		}
 		ir.FunctionDeclaration {
+			if node.name.value == '' {
+				return true
+			}
+
 			i.cache.functions << FunctionCache{
 				filepath: i.filepath
+				module_fqn: i.cache.module_fqn
 				name: i.fqn(node.name.value)
 				pos: i.pos(node)
 			}
 		}
 		ir.StructDeclaration {
+			if node.name.value == '' {
+				return true
+			}
+
 			i.cache.structs << StructCache{
 				filepath: i.filepath
+				module_fqn: i.cache.module_fqn
 				name: i.fqn(node.name.value)
 				pos: i.pos(node)
 			}
