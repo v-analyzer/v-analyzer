@@ -35,7 +35,7 @@ fn convert_module_clause(parent &Node, node TSNode, text tree_sitter.SourceText)
 	return ModuleClause{
 		id: counter++
 		node: node
-		name: convert_identifier(parent, field_id(node, 0), text)
+		name: convert_identifier(parent, field_id(node, 2), text)
 		parent: parent
 	}
 }

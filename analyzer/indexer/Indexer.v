@@ -11,13 +11,25 @@ import runtime
 // и предоставляет интерфейс для работы с индексом.
 pub struct Indexer {
 pub mut:
-	index &PerFileCache
+	index Index
 }
 
 pub fn new() Indexer {
 	return Indexer{
-		index: &PerFileCache{}
+		index: Index{
+			data: &PerFileCache{}
+		}
 	}
+}
+
+pub fn (mut i Indexer) need_index(path string) bool {
+	if path.ends_with('/net/http/mime/db.v') {
+		return false
+	}
+
+	return path.ends_with('.v') && !path.ends_with('_test.v') && !path.contains('/tests/')
+		&& !path.contains('/slow_tests/') && !path.contains('/linux_bare/old/')
+		&& !path.ends_with('.js.v')
 }
 
 pub fn (mut i Indexer) index(root lsp.DocumentUri) {
@@ -30,13 +42,7 @@ pub fn (mut i Indexer) index(root lsp.DocumentUri) {
 	spawn fn [root, mut i, file_chan] () {
 		path := root.path()
 		os.walk(path, fn [mut i, file_chan] (path string) {
-			if path == '/Users/petrmakhnev/v/vlib/net/http/mime/db.v' {
-				return
-			}
-
-			if path.ends_with('.v') && !path.ends_with('_test.v') && !path.contains('/tests/')
-				&& !path.contains('/slow_tests/') && !path.contains('/linux_bare/old/')
-				&& !path.ends_with('.js.v') {
+			if i.need_index(path) {
 				file_chan <- path
 			}
 		})
@@ -72,7 +78,7 @@ pub fn (mut i Indexer) index(root lsp.DocumentUri) {
 	}
 
 	for cache in caches {
-		i.index.data[cache.filepath] = cache
+		i.index.data.data[cache.filepath] = cache
 	}
 
 	println('Indexing finished')
@@ -80,7 +86,6 @@ pub fn (mut i Indexer) index(root lsp.DocumentUri) {
 }
 
 pub fn (mut i Indexer) index_file(path string) !Cache {
-	// println('Indexing ${path}')
 	content := os.read_file(path)!
 	res := parser.parse_code(content)
 	cache := Cache{
@@ -88,6 +93,7 @@ pub fn (mut i Indexer) index_file(path string) !Cache {
 	}
 	mut visitor := &IndexingVisitor{
 		filepath: path
+		file: res
 		cache: &cache
 	}
 	res.accept(mut visitor)

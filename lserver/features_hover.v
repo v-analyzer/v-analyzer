@@ -16,8 +16,15 @@ pub fn (mut ls LanguageServer) hover(params lsp.HoverParams, mut wr ResponseWrit
 
 	if element is ir.Identifier {
 		data := ls.analyzer_instance.find_function(element.value) or {
+			struct_data := ls.analyzer_instance.find_struct(element.value) or {
+				return lsp.Hover{
+					contents: lsp.hover_markdown_string('struct or function ${element.value} not found')
+					range: lsp.Range{}
+				}
+			}
 			return lsp.Hover{
-				contents: lsp.hover_markdown_string('function ${element.value} not found')
+				contents: lsp.hover_markdown_string(struct_data.name + ' from file ' +
+					struct_data.filepath)
 				range: lsp.Range{}
 			}
 		}

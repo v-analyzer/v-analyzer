@@ -27,6 +27,7 @@ pub fn (mut ls LanguageServer) initialize(params lsp.InitializeParams, mut wr Re
 		capabilities: lsp.ServerCapabilities{
 			text_document_sync: .incremental
 			hover_provider: true
+			definition_provider: true
 		}
 	}
 }
