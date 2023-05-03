@@ -1,0 +1,18 @@
+# Avoid including irrelevant files
+node_modules/
+*.log
+build/
+.vscode
+package-lock.json
+.DS_Store
+
+# Ignore local files used for testing and development
+hello.v
+hello.vv
+hello2.v
+src/binding.v
+wasm/
+grammar (old).js
+
+target/
+Cargo.lock

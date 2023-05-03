@@ -4,7 +4,7 @@ Bring IDE features for V programming languages in VS Code, Vim, and other editor
 
 ## Authors
 
-- `jsonrpc`, `lsp` modules written by [nedpals](https://github.com/nedpals)
+- `jsonrpc`, `lsp`, `tree_sitter_v` modules written by [nedpals](https://github.com/nedpals)
 
 ## License
 

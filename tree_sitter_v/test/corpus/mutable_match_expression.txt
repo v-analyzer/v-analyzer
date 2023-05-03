@@ -1,0 +1,63 @@
+===
+Match Expression with Mutable Identifier
+===
+
+fn main() {
+  match mut a {
+    'test', '123' {
+      a := 'test pass'
+    }
+    'xd' {}
+    else {}
+  }
+}
+
+---
+
+(source_file
+  (function_declaration
+    (identifier)
+    (parameter_list)
+    (block
+      (match_expression
+        (mutable_expression 
+          (identifier))
+        (expression_case
+          (case_list
+            (interpreted_string_literal)
+            (interpreted_string_literal))
+          (block
+            (var_declaration
+              (expression_list
+                (identifier))
+              (expression_list
+                (interpreted_string_literal)))))
+        (expression_case
+          (case_list
+            (interpreted_string_literal))
+          (block))
+        (default_case (block))))))
+
+===
+Match expression with mutable struct field
+===
+
+match mut ts.info {
+	Statement {}
+	else {}
+}
+
+---
+
+(source_file
+  (match_expression
+    (mutable_expression
+      (selector_expression
+        (identifier)
+        (identifier)))
+    (expression_case
+      (case_list
+        (type_identifier))
+      (block))
+    (default_case
+      (block))))

@@ -9,6 +9,7 @@ import net.http
 import lserver
 import jsonrpc
 import lsp.log
+import analyzer
 
 struct Analyzer {
 	id          int
@@ -41,9 +42,11 @@ fn main() {
 
 	spawn run_server(id, port, daemon_port)
 
+	analyzer_instance := analyzer.new()
+
 	// mut stream := new_stdio_stream()!
 	mut stream := new_socket_stream_server(5007, true)!
-	mut ls := lserver.new()
+	mut ls := lserver.new(analyzer_instance)
 	mut jrpc_server := &jsonrpc.Server{
 		stream: stream
 		interceptors: [

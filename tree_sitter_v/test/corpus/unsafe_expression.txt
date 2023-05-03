@@ -1,0 +1,79 @@
+===
+Unsafe Statement
+===
+
+fn main() {
+  unsafe {
+    something.free()
+  }
+
+  test := unsafe { 1 }
+  test2 := Foo{
+    field: unsafe { a }
+    field_two: unsafe { 1 }
+  }
+}
+
+---
+
+(source_file
+  (function_declaration
+    (identifier)
+    (parameter_list)
+    (block
+      (unsafe_expression
+        (block
+          (call_expression 
+            (selector_expression (identifier) (identifier)) 
+            (argument_list))))
+      (var_declaration
+        (expression_list (identifier))
+        (expression_list
+          (unsafe_expression
+            (block (int_literal))))) 
+      (var_declaration
+        (expression_list (identifier)) 
+        (expression_list 
+          (type_initializer 
+            (type_identifier) 
+            (literal_value 
+              (keyed_element 
+                (field_identifier) 
+                (unsafe_expression 
+                  (block (identifier)))) 
+              (keyed_element 
+                (field_identifier) 
+                (unsafe_expression 
+                  (block (int_literal)))))))))))
+
+===
+Unsafe Expression with Pointer assignment
+===
+
+{
+  unsafe {
+		x := &ui.ctx_ptr
+		*x = ctx
+		_ = x
+	}
+}
+
+---
+
+(source_file 
+  (block 
+    (unsafe_expression 
+      (block 
+        (var_declaration
+          (expression_list (identifier)) 
+          (expression_list 
+            (unary_expression 
+              (selector_expression 
+                (identifier) (identifier))))) 
+        (assignment_statement 
+          (expression_list 
+            (unary_expression (identifier))) 
+          (expression_list (identifier))) 
+        (assignment_statement 
+          (expression_list (identifier)) 
+          (expression_list (identifier)))))))

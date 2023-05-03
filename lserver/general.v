@@ -13,6 +13,8 @@ pub fn (mut ls LanguageServer) initialize(params lsp.InitializeParams, mut wr Re
 
 	ls.print_info(params.process_id, params.client_info, mut wr)
 
+	ls.analyzer_instance.index(ls.root_uri)
+
 	wr.show_message('Hello, World!', .info)
 
 	return lsp.InitializeResult{

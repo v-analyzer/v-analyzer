@@ -5,6 +5,7 @@ import jsonrpc
 import lsp
 import time
 import utils
+import analyzer
 
 pub type ResponseWriter = jsonrpc.ResponseWriter
 
@@ -21,10 +22,14 @@ mut:
 	capabilities lsp.ServerCapabilities
 	client_pid   int
 	writer       &ResponseWriter = &ResponseWriter(unsafe { nil })
+
+	analyzer_instance analyzer.Analyzer
 }
 
-pub fn new() &LanguageServer {
-	return &LanguageServer{}
+pub fn new(analyzer_instance analyzer.Analyzer) &LanguageServer {
+	return &LanguageServer{
+		analyzer_instance: analyzer_instance
+	}
 }
 
 fn (mut wr ResponseWriter) wrap_error(err IError) IError {
