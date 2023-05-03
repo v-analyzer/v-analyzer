@@ -20,4 +20,3 @@ bin/
 
 # vweb and database
 *.db
-*.js

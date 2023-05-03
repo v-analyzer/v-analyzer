@@ -12,7 +12,9 @@ pub fn convert_file(tree &tree_sitter.Tree[v.NodeType], node TSNode, text tree_s
 		node: node
 	}
 
-	stmts_node := field(node, 'stmts')
+	stmts_node := field_or_none(node, 'stmts') or {
+		return file_node // TODO
+	}
 
 	mut stmts := []Node{}
 	mut sibling := stmts_node
@@ -136,14 +138,23 @@ fn convert_struct_fields(parent &Node, node TSNode, text tree_sitter.SourceText)
 	mut sibling := node
 	for {
 		if sibling.is_named() {
-			fields << convert_field_declaration(parent, sibling, text)
+			fields << convert_field_declaration(parent, sibling, text) or {
+				sibling = sibling.next_sibling() or { break }
+				continue
+			}
 		}
 		sibling = sibling.next_sibling() or { break }
 	}
 	return fields
 }
 
-fn convert_field_declaration(parent &Node, node TSNode, text tree_sitter.SourceText) FieldDeclaration {
+fn convert_field_declaration(parent &Node, node TSNode, text tree_sitter.SourceText) ?FieldDeclaration {
+	if node.type_name == .struct_field_scope {
+		return none // TODO
+	}
+
+	_ := node.child_by_field_name('name') or { return none } // TODO
+
 	return FieldDeclaration{
 		id: counter++
 		node: node
@@ -253,6 +264,10 @@ pub fn convert_node(parent &Node, node TSNode, text tree_sitter.SourceText) Node
 			return null_node
 		}
 	}
+}
+
+fn field_or_none(node TSNode, name string) ?TSNode {
+	return node.child_by_field_name(name) or { return none }
 }
 
 fn field(node TSNode, name string) TSNode {
@@ -577,7 +592,13 @@ fn convert_type(parent &Node, node TSNode, text tree_sitter.SourceText) Type {
 			return convert_builtin_type(parent, node, text)
 		}
 		else {
-			panic("can't convert type ${node.type_name}")
+			return SimpleType{
+				id: counter++
+				node: node
+				name: Identifier{} // TODO
+				parent: parent
+			}
+			// panic("can't convert type ${node.type_name}")
 		}
 	}
 }

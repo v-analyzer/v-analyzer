@@ -64,8 +64,8 @@ pub mut:
 	id            ID
 	node          TSNode
 	parent        ?&Node
-	module_clause Node
-	imports       ImportList
+	module_clause ?Node
+	imports       ?ImportList
 	stmts         []Node
 }
 
@@ -74,12 +74,16 @@ pub fn (f File) accept(mut visitor Visitor) bool {
 		return false
 	}
 
-	if !f.module_clause.accept(mut visitor) {
-		return false
+	if f.module_clause != none {
+		if !f.module_clause?.accept(mut visitor) {
+			return false
+		}
 	}
 
-	if !f.imports.accept(mut visitor) {
-		return false
+	if f.imports != none {
+		if !f.imports?.accept(mut visitor) {
+			return false
+		}
 	}
 
 	for stmt in f.stmts {

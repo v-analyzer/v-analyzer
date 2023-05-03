@@ -15,6 +15,8 @@ pub fn (mut ls LanguageServer) initialize(params lsp.InitializeParams, mut wr Re
 
 	ls.analyzer_instance.index(ls.root_uri)
 
+	ls.analyzer_instance.index('file:///Users/petrmakhnev/v/vlib')
+
 	wr.show_message('Hello, World!', .info)
 
 	return lsp.InitializeResult{

@@ -1,22 +1,31 @@
 module analyzer
 
-import analyzer.parser
 import analyzer.indexer
 import lsp
 
 pub struct Analyzer {
+mut:
 	index indexer.Indexer
 }
 
 pub fn new() &Analyzer {
-	return &Analyzer{}
+	return &Analyzer{
+		index: indexer.new()
+	}
 }
 
-pub fn (a &Analyzer) index(root lsp.DocumentUri) {
+pub fn (mut a Analyzer) index(root lsp.DocumentUri) {
 	a.index.index(root)
 }
 
-pub fn (a &Analyzer) parse(s string) {
-	res := parser.parse_code(s)
-	println(res)
+pub fn (mut a Analyzer) find_function(name string) ?indexer.FunctionCache {
+	index := a.index.index
+	for _, datum in index.data {
+		for func in datum.functions {
+			if func.name == name {
+				return func
+			}
+		}
+	}
+	return none
 }
