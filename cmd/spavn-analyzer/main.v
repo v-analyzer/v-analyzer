@@ -1,12 +1,14 @@
 module main
 
-import vex.server
+import vex.server as vserver
 import vex.ctx
 import vex.router
 import flag
 import os
-import time
 import net.http
+import lserver
+import jsonrpc
+import lsp.log
 
 struct Analyzer {
 	id          int
@@ -37,20 +39,28 @@ fn main() {
 	port := fp.int('port', `p`, 6790, 'port to listen on')
 	daemon_port := fp.int('daemon-port', 0, 0, 'daemon port')
 
-	analyzer := Analyzer{
-		id: id
-		port: port
-		daemon_port: daemon_port
+	spawn run_server(id, port, daemon_port)
+
+	// mut stream := new_stdio_stream()!
+	mut stream := new_socket_stream_server(5007, true)!
+	mut ls := lserver.new()
+	mut jrpc_server := &jsonrpc.Server{
+		stream: stream
+		interceptors: [
+			&log.LogRecorder{
+				enabled: true
+			},
+		]
+		handler: ls
 	}
 
-	spawn fn [analyzer] () {
-		for i := 0; i < 5; i++ {
-			println('sleeping')
-			time.sleep(1 * time.second)
-		}
-		analyzer.want_die()
-	}()
+	mut rw := unsafe { &lserver.ResponseWriter(jrpc_server.writer(own_buffer: true)) }
 
+	spawn lserver.monitor_changes(mut ls, mut rw)
+	jrpc_server.start()
+}
+
+fn run_server(id int, port int, daemon_port int) {
 	mut app := router.new()
 
 	app.route(.get, '/', fn (_ &ctx.Req, mut res ctx.Resp) {
@@ -61,5 +71,5 @@ fn main() {
 		res.send_status(200)
 	})
 
-	server.serve(app, port)
+	vserver.serve(app, port)
 }
