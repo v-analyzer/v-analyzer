@@ -1,7 +1,6 @@
-# LSP.V
+# Description
 
-Type declaration module of the Language Server Protocol 3.15 spec. For use on
-the [V Language Server](https://github.com/vlang/vls).
+Module `lsp` describes the types for the Language Server Protocol 3.15 spec.
 
 ## Roadmap
 
@@ -79,4 +78,6 @@ the [V Language Server](https://github.com/vlang/vls).
 - [x] `prepareRename`
 - [x] `foldingRange`
 
-#### 2020-2021 Ned Palacios
+## Author
+
+2020-2021 Ned Palacios
