@@ -3,6 +3,9 @@ module indexer
 import lsp
 import os
 import analyzer.parser
+import time
+import sync
+import runtime
 
 // Indexer инкапсулирует в себе логику индексации проекта
 // и предоставляет интерфейс для работы с индексом.
@@ -18,28 +21,75 @@ pub fn new() Indexer {
 }
 
 pub fn (mut i Indexer) index(root lsp.DocumentUri) {
+	now := time.now()
 	println('Indexing root ${root}')
 
-	path := root.path()
-	os.walk(path, fn [mut i] (path string) {
-		if path.ends_with('.v') && !path.ends_with('_test.v') && !path.ends_with('.js.v') {
-			i.index_file(path) or { println('Error indexing ${path}: ${err}') }
+	file_chan := chan string{cap: 1000}
+	cache_chan := chan Cache{cap: 1000}
+
+	spawn fn [root, mut i, file_chan] () {
+		path := root.path()
+		os.walk(path, fn [mut i, file_chan] (path string) {
+			if path == '/Users/petrmakhnev/v/vlib/net/http/mime/db.v' {
+				return
+			}
+
+			if path.ends_with('.v') && !path.ends_with('_test.v') && !path.contains('/tests/')
+				&& !path.contains('/slow_tests/') && !path.contains('/linux_bare/old/')
+				&& !path.ends_with('.js.v') {
+				file_chan <- path
+			}
+		})
+
+		file_chan.close()
+	}()
+
+	spawn fn [cache_chan, file_chan, mut i] () {
+		mut wg := sync.new_waitgroup()
+		workers := runtime.nr_cpus() - 4
+		wg.add(workers)
+		for j := 0; j < workers; j++ {
+			spawn fn [file_chan, mut wg, mut i, cache_chan] () {
+				for {
+					file := <-file_chan or { break }
+					cache_chan <- i.index_file(file) or {
+						println('Error indexing ${file}: ${err}')
+					}
+				}
+
+				wg.done()
+			}()
 		}
-	})
+
+		wg.wait()
+		cache_chan.close()
+	}()
+
+	mut caches := []Cache{cap: 100}
+	for {
+		cache := <-cache_chan or { break }
+		caches << cache
+	}
+
+	for cache in caches {
+		i.index.data[cache.filepath] = cache
+	}
 
 	println('Indexing finished')
-	println(i.index.data)
+	println('Indexing took ${time.since(now)} seconds')
 }
 
-pub fn (mut i Indexer) index_file(path string) ! {
-	println('Indexing ${path}')
+pub fn (mut i Indexer) index_file(path string) !Cache {
+	// println('Indexing ${path}')
 	content := os.read_file(path)!
 	res := parser.parse_code(content)
-	cache := i.index.data[path]
+	cache := Cache{
+		filepath: path
+	}
 	mut visitor := &IndexingVisitor{
 		filepath: path
 		cache: &cache
 	}
 	res.accept(mut visitor)
-	i.index.data[path] = cache
+	return cache
 }

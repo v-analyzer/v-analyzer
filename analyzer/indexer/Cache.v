@@ -8,5 +8,6 @@ pub:
 
 struct Cache {
 pub mut:
+	filepath  string
 	functions []FunctionCache
 }
