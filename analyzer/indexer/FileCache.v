@@ -12,6 +12,15 @@ pub:
 	end_column int
 }
 
+// Visibility описывает видимость символа.
+
+[json_as_number]
+pub enum Visibility {
+	public // доступен из любого места
+	private // доступен только внутри модуля
+	global // доступен из любого места, только для глобальных переменных
+}
+
 // CachedNamedSymbol описывает закэшированный символ.
 // Информация о символе сохраняется в общий индекс, который
 // кешируется в памяти.
@@ -19,20 +28,23 @@ pub interface CachedNamedSymbol {
 	filepath string // путь к файлу, в котором находится символ
 	name string // полное имя символа включая модуль
 	pos Pos // позиция символа в файле
+	visibility Visibility // видимость символа
 }
 
 pub struct FunctionCache {
 pub:
-	filepath string
-	name     string
-	pos      Pos
+	filepath   string
+	name       string
+	pos        Pos
+	visibility Visibility
 }
 
 pub struct StructCache {
 pub:
-	filepath string
-	name     string
-	pos      Pos
+	filepath   string
+	name       string
+	pos        Pos
+	visibility Visibility
 }
 
 // FileCache описывает кеш одного файла.
