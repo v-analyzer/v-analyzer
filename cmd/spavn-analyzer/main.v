@@ -40,7 +40,7 @@ fn main() {
 	port := fp.int('port', `p`, 6790, 'port to listen on')
 	daemon_port := fp.int('daemon-port', 0, 0, 'daemon port')
 
-	spawn run_server(id, port, daemon_port)
+	// spawn run_server(id, port, daemon_port)
 
 	analyzer_instance := analyzer.new()
 

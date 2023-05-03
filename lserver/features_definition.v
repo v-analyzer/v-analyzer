@@ -51,8 +51,8 @@ fn pos_to_range(pos indexer.Pos) lsp.Range {
 			character: pos.column
 		}
 		end: lsp.Position{
-			line: pos.line
-			character: pos.column
+			line: pos.end_line
+			character: pos.end_column
 		}
 	}
 }

@@ -23,15 +23,19 @@ pub fn (mut a Analyzer) index(root lsp.DocumentUri) {
 	os.write_file('index.json', data) or { println('Failed to write index.json') }
 }
 
-pub fn (mut a Analyzer) load_index(path string) {
+pub fn (mut a Analyzer) load_index(path string) ! {
 	now := time.now()
 	data := os.read_file(path) or {
 		println('Failed to read ${path}')
 		return
 	}
 	a.index.index.decode(data) or {
-		println('Failed to decode ${path}')
-		return
+		if err is indexer.IndexVersionMismatchError {
+			println('Index version mismatch')
+		} else {
+			println('Error load index ${path}: ${err}')
+		}
+		return indexer.NeedReindexedError{}
 	}
 	println('Loaded index in ${time.since(now)}')
 }

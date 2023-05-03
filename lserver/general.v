@@ -14,7 +14,9 @@ pub fn (mut ls LanguageServer) initialize(params lsp.InitializeParams, mut wr Re
 	ls.print_info(params.process_id, params.client_info, mut wr)
 
 	if os.exists('./index.json') {
-		ls.analyzer_instance.load_index('./index.json')
+		ls.analyzer_instance.load_index('./index.json') or {
+			ls.analyzer_instance.index('file:///Users/petrmakhnev/v/vlib')
+		}
 	} else {
 		ls.analyzer_instance.index('file:///Users/petrmakhnev/v/vlib')
 	}
