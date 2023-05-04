@@ -1,6 +1,12 @@
 module indexer
 
 import json
+import time
+
+// IndexNotFoundError возвращается, если индекс не найден.
+pub struct IndexNotFoundError {
+	Error
+}
 
 // NeedReindexedError возвращается, если индекс необходимо перестроить.
 pub struct NeedReindexedError {
@@ -15,9 +21,10 @@ pub struct IndexVersionMismatchError {
 // Index инкапсулирует логику хранения индекса.
 pub struct Index {
 pub:
-	version string = '3'
+	version string = '4'
 pub mut:
-	data PerFileCache
+	updated_at time.Time // время последнего обновления индекса
+	data       PerFileCache
 }
 
 // decode инкапсулирует логику декодирования индекса.

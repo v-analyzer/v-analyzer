@@ -23,11 +23,12 @@ pub fn (r &Resolver) resolve(file OpenedFile, el ir.ReferenceExpression) ?indexe
 }
 
 pub fn (r &Resolver) find_function(name string) ?indexer.FunctionCache {
-	index := r.index.index.data
-	for _, datum in index.data {
-		for func in datum.functions {
-			if func.name == name {
-				return func
+	for indexing_root in r.index.roots {
+		for _, datum in indexing_root.index.data.data {
+			for func in datum.functions {
+				if func.name == name {
+					return func
+				}
 			}
 		}
 	}
@@ -35,11 +36,12 @@ pub fn (r &Resolver) find_function(name string) ?indexer.FunctionCache {
 }
 
 pub fn (r &Resolver) find_struct(name string) ?indexer.StructCache {
-	index := r.index.index.data
-	for _, datum in index.data {
-		for struct_ in datum.structs {
-			if struct_.name == name {
-				return struct_
+	for indexing_root in r.index.roots {
+		for _, datum in indexing_root.index.data.data {
+			for struct_ in datum.structs {
+				if struct_.name == name {
+					return struct_
+				}
 			}
 		}
 	}

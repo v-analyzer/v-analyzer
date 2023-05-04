@@ -4,6 +4,7 @@ import lsp
 import os
 import analyzer.parser
 import analyzer.indexer
+import arrays
 
 pub fn (mut ls LanguageServer) completion(params lsp.CompletionParams, mut wr ResponseWriter) ![]lsp.CompletionItem {
 	content := os.read_file(params.text_document.uri.path())!
@@ -12,7 +13,9 @@ pub fn (mut ls LanguageServer) completion(params lsp.CompletionParams, mut wr Re
 	// lines := content.split_into_lines()
 	// lines_offset := lines[..params.position.line].join('\n').len + params.position.character
 
-	symbols := ls.analyzer_instance.index.index.data.get_all_functions()
+	symbols := arrays.flatten(ls.analyzer_instance.index.roots.map(fn (it indexer.IndexingRoot) []indexer.FunctionCache {
+		return it.index.data.get_all_functions()
+	}))
 
 	// symbols := ls.analyzer_instance.index.index.data.get_all_symbols()
 

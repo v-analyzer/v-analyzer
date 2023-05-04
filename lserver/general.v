@@ -13,15 +13,17 @@ pub fn (mut ls LanguageServer) initialize(params lsp.InitializeParams, mut wr Re
 
 	ls.print_info(params.process_id, params.client_info, mut wr)
 
-	if os.exists('./index.json') {
-		ls.analyzer_instance.load_index('./index.json') or {
-			ls.analyzer_instance.index('file:///Users/petrmakhnev/v/vlib')
-		}
-	} else {
-		ls.analyzer_instance.index('file:///Users/petrmakhnev/v/vlib')
+	ls.analyzer_instance.index.add_indexing_root('file:///Users/petrmakhnev/v/vlib')
+	ls.analyzer_instance.index.add_indexing_root(ls.root_uri)
+
+	status := ls.analyzer_instance.index.index()
+	if status == .needs_ensure_indexed {
+		ls.analyzer_instance.index.ensure_indexed()
 	}
 
-	// ls.analyzer_instance.index(ls.root_uri)
+	ls.analyzer_instance.index.save_indexes() or {
+		wr.log_message('Failed to save index: ${err}', .error)
+	}
 
 	wr.show_message('Hello, World!', .info)
 
