@@ -7,12 +7,17 @@ import time
 
 pub struct Analyzer {
 pub mut:
-	index indexer.Indexer
+	index    &indexer.Indexer
+	resolver Resolver
 }
 
 pub fn new() &Analyzer {
+	index := indexer.new()
 	return &Analyzer{
-		index: indexer.new()
+		index: index
+		resolver: Resolver{
+			index: index
+		}
 	}
 }
 
@@ -38,28 +43,4 @@ pub fn (mut a Analyzer) load_index(path string) ! {
 		return indexer.NeedReindexedError{}
 	}
 	println('Loaded index in ${time.since(now)}')
-}
-
-pub fn (mut a Analyzer) find_function(name string) ?indexer.FunctionCache {
-	index := a.index.index.data
-	for _, datum in index.data {
-		for func in datum.functions {
-			if func.name == name {
-				return func
-			}
-		}
-	}
-	return none
-}
-
-pub fn (mut a Analyzer) find_struct(name string) ?indexer.StructCache {
-	index := a.index.index.data
-	for _, datum in index.data {
-		for struct_ in datum.structs {
-			if struct_.name == name {
-				return struct_
-			}
-		}
-	}
-	return none
 }

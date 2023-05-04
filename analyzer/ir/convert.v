@@ -539,13 +539,13 @@ fn convert_simple_statement(parent &Node, node TSNode, text tree_sitter.SourceTe
 }
 
 fn convert_call_expression(parent &Node, node TSNode, text tree_sitter.SourceText) CallExpr {
-	name := convert_identifier(parent, field(node, 'name'), text)
+	name := convert_node(parent, field(node, 'name'), text)
 	args := convert_argument_list(parent, field(node, 'arguments'), text)
 
 	return CallExpr{
 		id: counter++
 		node: node
-		name: name
+		called: name
 		args: args
 		parent: parent
 	}

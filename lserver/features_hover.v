@@ -5,29 +5,24 @@ import os
 import analyzer.parser
 import analyzer.ir
 
-pub fn (mut ls LanguageServer) hover(params lsp.HoverParams, mut wr ResponseWriter) !lsp.Hover {
-	content := os.read_file(params.text_document.uri.path())!
-	res := parser.parse_code(content)
+pub fn (mut ls LanguageServer) hover(params lsp.HoverParams, mut wr ResponseWriter) ?lsp.Hover {
+	uri := params.text_document.uri.normalize()
+	file := ls.get_file(uri) or { return none }
 
-	lines := content.split_into_lines()
-	lines_offset := lines[..params.position.line].join('\n').len + params.position.character
+	println('hovering at ' + params.position.str() + ' in file ' + file.uri)
 
-	element := ir.find_element_at(res, lines_offset)
+	offset := file.find_offset(params.position)
+	element := ir.find_reference_at(file.root, offset) or {
+		println('cannot find reference at ' + offset.str())
+		return none
+	}
 
-	if element is ir.Identifier {
-		data := ls.analyzer_instance.find_function(element.value) or {
-			struct_data := ls.analyzer_instance.find_struct(element.value) or {
-				return lsp.Hover{
-					contents: lsp.hover_markdown_string('struct or function ${element.value} not found')
-					range: lsp.Range{}
-				}
-			}
-			return lsp.Hover{
-				contents: lsp.hover_markdown_string(struct_data.name + ' from file ' +
-					struct_data.filepath)
-				range: lsp.Range{}
-			}
+	if element is ir.ReferenceExpression {
+		data := ls.analyzer_instance.resolver.resolve(file, element) or {
+			println('cannot resolve reference ' + element.str())
+			return none
 		}
+
 		return lsp.Hover{
 			contents: lsp.hover_markdown_string(data.name + ' from file ' + data.filepath)
 			range: lsp.Range{}

@@ -14,8 +14,8 @@ pub mut:
 	index Index
 }
 
-pub fn new() Indexer {
-	return Indexer{
+pub fn new() &Indexer {
+	return &Indexer{
 		index: Index{
 			data: &PerFileCache{}
 		}

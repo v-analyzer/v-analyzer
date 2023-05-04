@@ -884,7 +884,7 @@
             "named": true
           },
           {
-            "type": "identifier",
+            "type": "reference_expression",
             "named": true
           },
           {

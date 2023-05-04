@@ -853,8 +853,8 @@ pub:
 	id   ID
 	node TSNode
 
-	name Identifier
-	args ArgumentList
+	called Node
+	args   ArgumentList
 }
 
 fn (c CallExpr) accept(mut visitor Visitor) bool {
@@ -862,7 +862,7 @@ fn (c CallExpr) accept(mut visitor Visitor) bool {
 		return false
 	}
 
-	if !c.name.accept(mut visitor) {
+	if !c.called.accept(mut visitor) {
 		return false
 	}
 

@@ -7,8 +7,6 @@ import time
 import utils
 import analyzer
 
-pub type ResponseWriter = jsonrpc.ResponseWriter
-
 pub enum ServerStatus {
 	off
 	initialized
@@ -22,6 +20,14 @@ mut:
 	capabilities lsp.ServerCapabilities
 	client_pid   int
 	writer       &ResponseWriter = &ResponseWriter(unsafe { nil })
+	// opened_files описывает все открытые файлы в редакторе.
+	//
+	// Когда файл открывается вызывается метод `did_open`, который добавляет
+	// файл в `opened_files`.
+	//
+	// Когда файл закрывается вызывается метод `did_close`, который удаляет
+	// файл из `opened_files`.
+	opened_files map[lsp.DocumentUri]analyzer.OpenedFile
 
 	analyzer_instance analyzer.Analyzer
 }
@@ -32,13 +38,11 @@ pub fn new(analyzer_instance analyzer.Analyzer) &LanguageServer {
 	}
 }
 
-fn (mut wr ResponseWriter) wrap_error(err IError) IError {
-	if err is none {
-		wr.write(jsonrpc.null)
-		return err
+pub fn (mut ls LanguageServer) get_file(uri lsp.DocumentUri) ?analyzer.OpenedFile {
+	return ls.opened_files[uri] or {
+		println('file not found: ${uri}')
+		return none
 	}
-	wr.log_message(err.msg(), .error)
-	return none
 }
 
 pub fn (mut ls LanguageServer) handle_jsonrpc(request &jsonrpc.Request, mut rw jsonrpc.ResponseWriter) ! {
@@ -75,7 +79,7 @@ pub fn (mut ls LanguageServer) handle_jsonrpc(request &jsonrpc.Request, mut rw j
 				params := json.decode(lsp.DidOpenTextDocumentParams, request.params) or {
 					return err
 				}
-				// ls.did_open(params, mut rw)
+				ls.did_open(params, mut rw)
 			}
 			'textDocument/didSave' {
 				params := json.decode(lsp.DidSaveTextDocumentParams, request.params) or {
@@ -93,7 +97,7 @@ pub fn (mut ls LanguageServer) handle_jsonrpc(request &jsonrpc.Request, mut rw j
 				params := json.decode(lsp.DidCloseTextDocumentParams, request.params) or {
 					return err
 				}
-				// ls.did_close(params, mut rw)
+				ls.did_close(params, mut rw)
 			}
 			'textDocument/willSave' {
 				params := json.decode(lsp.WillSaveTextDocumentParams, request.params) or {
@@ -178,6 +182,10 @@ pub fn (mut ls LanguageServer) handle_jsonrpc(request &jsonrpc.Request, mut rw j
 				// w.write(ls.document_link(lsp.DocumentLinkParams{}, mut rw) or {
 				// 	return w.wrap_error(err)
 				// })
+			}
+			'$/cancelRequest' {
+				println('cancelRequest')
+				return jsonrpc.response_error(error: jsonrpc.method_not_found, data: request.method).err()
 			}
 			else {
 				return jsonrpc.response_error(error: jsonrpc.method_not_found, data: request.method).err()

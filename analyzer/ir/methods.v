@@ -26,6 +26,21 @@ pub fn find_element_at(node Node, pos int) Node {
 	return finder.found.last()
 }
 
+pub fn find_reference_at(node Node, pos int) ?Node {
+	mut finder := Finder{
+		pos: pos
+	}
+	node.accept(mut finder)
+
+	for found in finder.found.reverse() {
+		if found is ReferenceExpression {
+			return found
+		}
+	}
+
+	return none
+}
+
 pub fn node_pos(n Node) Pos {
 	start := n.node.start_point()
 	end := n.node.end_point()

@@ -2,7 +2,7 @@ module lsp
 
 import os
 
-type DocumentUri = string
+pub type DocumentUri = string
 
 pub fn (du DocumentUri) dir() string {
 	return os.dir(du)

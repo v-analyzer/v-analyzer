@@ -8,12 +8,12 @@
     "url": "https://github.com/nedpals/tree-sitter-v.git"
   },
   "scripts": {
-    "test": "node_modules/.bin/tree-sitter test",
+    "test": "tree-sitter test",
     "generate-scanner": "v -shared -skip-unused -o src/scanner.c scanner/",
     "generate-types": "v run generate_types.vsh",
-    "generate": "node_modules/.bin/tree-sitter generate",
-    "parse": "node_modules/.bin/tree-sitter parse",
-    "parseg": "node_modules/.bin/tree-sitter parse --debug-graph"
+    "generate": "tree-sitter generate",
+    "parse": "tree-sitter parse",
+    "parseg": "tree-sitter parse --debug-graph"
   },
   "homepage": "https://github.com/nedpals/tree-sitter-v#readme",
   "dependencies": {

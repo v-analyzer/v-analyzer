@@ -364,7 +364,7 @@ module.exports = grammar({
           field(
             "name",
             choice(
-              $.identifier,
+              $.reference_expression,
               $.binded_identifier,
               $.comptime_identifier,
               $.selector_expression,
@@ -1372,7 +1372,7 @@ module.exports = grammar({
             optional(terminator)
           ),
           field(
-            "embedded_type",
+            "type",
             seq(
               choice($.type_identifier, $.qualified_type),
               optional(terminator)
