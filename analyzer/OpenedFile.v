@@ -1,32 +1,26 @@
 module analyzer
 
 import lsp
-import analyzer.ir
+import analyzer.psi
 
 pub struct OpenedFile {
 pub mut:
-	uri     lsp.DocumentUri
-	version int
-	text    string
-	root    &ir.File
+	uri      lsp.DocumentUri
+	version  int
+	text     string
+	psi_file psi.PsiFileImpl
 }
 
-pub fn (f OpenedFile) find_offset(pos lsp.Position) int {
+pub fn (f OpenedFile) find_offset(pos lsp.Position) u32 {
 	lines := f.text.split_into_lines()
 	if pos.line >= lines.len {
-		return f.text.len
+		return u32(f.text.len)
 	}
-	return lines[..pos.line].join('\n').len + pos.character
+	return u32(lines[..pos.line].join('\n').len + pos.character)
 }
 
 pub fn (f OpenedFile) fqn(name string) string {
-	module_clause := f.root.module_clause or { return name }
-
-	module_name := if module_clause is ir.ModuleClause {
-		module_clause.name.value
-	} else {
-		''
-	}
+	module_name := f.psi_file.module_name() or { return name }
 
 	if module_name == '' || module_name == 'builtin' || module_name == 'main' {
 		return name

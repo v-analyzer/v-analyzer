@@ -35,10 +35,10 @@ fn (a &Analyzer) want_die() {
 }
 
 fn main() {
-	mut fp := flag.new_flag_parser(os.args)
-	id := fp.int('id', 0, 6790, 'id of analyzer')
-	port := fp.int('port', `p`, 6790, 'port to listen on')
-	daemon_port := fp.int('daemon-port', 0, 0, 'daemon port')
+	// mut fp := flag.new_flag_parser(os.args)
+	// id := fp.int('id', 0, 6790, 'id of analyzer')
+	// port := fp.int('port', `p`, 6790, 'port to listen on')
+	// daemon_port := fp.int('daemon-port', 0, 0, 'daemon port')
 
 	// spawn run_server(id, port, daemon_port)
 

@@ -1,6 +1,6 @@
 module indexer
 
-import analyzer.ir
+import analyzer.psi
 
 // IndexingVisitor инкапсулирует логику построения индекса для файла.
 //
@@ -8,45 +8,43 @@ import analyzer.ir
 // сохранить ее в кэш.
 struct IndexingVisitor {
 	filepath string
-	file     &ir.File
+	file     psi.PsiFileImpl
 mut:
 	cache &FileCache
 }
 
-// visit посещает каждый узел в дереве и собирает информацию о символах.
-fn (mut i IndexingVisitor) visit(node ir.Node) bool {
-	match node {
-		ir.ModuleClause {
-			i.cache.module_name = node.name.value.trim(' ')
-			i.cache.module_fqn = node.name.value.trim(' ') // TODO: рассчитывать имя для вложенных модулей
-		}
-		ir.FunctionDeclaration {
-			if node.name.value == '' {
-				return true
-			}
+fn (mut i IndexingVisitor) process() {
+	children := i.file.root().children()
+	for child in children {
+		i.process_child(child)
+	}
+}
 
+[inline]
+fn (mut i IndexingVisitor) process_child(node psi.PsiElement) {
+	match node {
+		psi.ModuleClause {
+			i.cache.module_name = node.name().trim(' ')
+			i.cache.module_fqn = node.name().trim(' ') // TODO: рассчитывать имя для вложенных модулей
+		}
+		psi.FunctionDeclaration {
 			i.cache.functions << FunctionCache{
 				filepath: i.filepath
 				module_fqn: i.cache.module_fqn
-				name: i.fqn(node.name.value)
+				name: i.fqn(node.name())
 				pos: i.pos(node)
 			}
 		}
-		ir.StructDeclaration {
-			if node.name.value == '' {
-				return true
-			}
-
+		psi.StructDeclaration {
 			i.cache.structs << StructCache{
 				filepath: i.filepath
 				module_fqn: i.cache.module_fqn
-				name: i.fqn(node.name.value)
+				name: i.fqn(node.name())
 				pos: i.pos(node)
 			}
 		}
 		else {}
 	}
-	return true
 }
 
 // fqn возвращает полное имя сущности, например, для функции
@@ -64,7 +62,7 @@ fn (mut i IndexingVisitor) fqn(name string) string {
 }
 
 // pos возвращает позицию в исходном коде для узла.
-fn (mut _ IndexingVisitor) pos(node ir.Node) Pos {
+fn (mut _ IndexingVisitor) pos(node psi.PsiElement) Pos {
 	sp := node.node.raw_node.start_point()
 	end_sp := node.node.raw_node.end_point()
 	return Pos{

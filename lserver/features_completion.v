@@ -7,8 +7,8 @@ import analyzer.indexer
 import arrays
 
 pub fn (mut ls LanguageServer) completion(params lsp.CompletionParams, mut wr ResponseWriter) ![]lsp.CompletionItem {
-	content := os.read_file(params.text_document.uri.path())!
-	res := parser.parse_code(content)
+	// content := os.read_file(params.text_document.uri.path())!
+	// res := parser.parse_code(content)
 
 	// lines := content.split_into_lines()
 	// lines_offset := lines[..params.position.line].join('\n').len + params.position.character

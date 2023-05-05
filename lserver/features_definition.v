@@ -1,8 +1,8 @@
 module lserver
 
 import lsp
-import analyzer.ir
 import analyzer.indexer
+import analyzer.psi
 
 pub fn (mut ls LanguageServer) definition(params lsp.TextDocumentPositionParams, mut wr ResponseWriter) ?[]lsp.LocationLink {
 	uri := params.text_document.uri.normalize()
@@ -10,12 +10,12 @@ pub fn (mut ls LanguageServer) definition(params lsp.TextDocumentPositionParams,
 	file := ls.get_file(uri) or { return none }
 
 	offset := file.find_offset(params.position)
-	element := ir.find_reference_at(file.root, offset) or {
+	element := file.psi_file.find_reference_at(offset) or {
 		println('cannot find reference at ' + offset.str())
 		return none
 	}
 
-	if element is ir.ReferenceExpression {
+	if element is psi.ReferenceExpression {
 		data := ls.analyzer_instance.resolver.resolve(file, element) or {
 			println('cannot resolve ' + element.str())
 			return none

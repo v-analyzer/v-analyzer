@@ -1,9 +1,7 @@
 module lserver
 
 import lsp
-import os
-import analyzer.parser
-import analyzer.ir
+import analyzer.psi
 
 pub fn (mut ls LanguageServer) hover(params lsp.HoverParams, mut wr ResponseWriter) ?lsp.Hover {
 	uri := params.text_document.uri.normalize()
@@ -12,12 +10,12 @@ pub fn (mut ls LanguageServer) hover(params lsp.HoverParams, mut wr ResponseWrit
 	println('hovering at ' + params.position.str() + ' in file ' + file.uri)
 
 	offset := file.find_offset(params.position)
-	element := ir.find_reference_at(file.root, offset) or {
+	element := file.psi_file.find_reference_at(offset) or {
 		println('cannot find reference at ' + offset.str())
 		return none
 	}
 
-	if element is ir.ReferenceExpression {
+	if element is psi.ReferenceExpression {
 		data := ls.analyzer_instance.resolver.resolve(file, element) or {
 			println('cannot resolve reference ' + element.str())
 			return none

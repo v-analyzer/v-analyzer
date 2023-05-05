@@ -6,6 +6,7 @@ import analyzer.parser
 import sync
 import runtime
 import crypto.md5
+import analyzer.psi
 
 // BuiltIndexStatus описывает статус построенного индекса.
 pub enum BuiltIndexStatus {
@@ -128,7 +129,7 @@ pub fn (mut i IndexingRoot) index() BuiltIndexStatus {
 pub fn (mut _ IndexingRoot) index_file(path string) !FileCache {
 	last_modified := os.file_last_mod_unix(path)
 	content := os.read_file(path)!
-	res := parser.parse_code(content)
+	res := psi.parse_code(content)
 	cache := FileCache{
 		filepath: path
 		file_last_modified: last_modified
@@ -138,7 +139,7 @@ pub fn (mut _ IndexingRoot) index_file(path string) !FileCache {
 		file: res
 		cache: &cache
 	}
-	res.accept(mut visitor)
+	visitor.process()
 	return cache
 }
 

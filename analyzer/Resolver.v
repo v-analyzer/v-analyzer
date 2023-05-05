@@ -2,13 +2,15 @@ module analyzer
 
 import analyzer.ir
 import analyzer.indexer
+import analyzer.psi
 
 pub struct Resolver {
 	index &indexer.Indexer
 }
 
-pub fn (r &Resolver) resolve(file OpenedFile, el ir.ReferenceExpression) ?indexer.CachedNamedSymbol {
-	name := el.identifier.value
+pub fn (r &Resolver) resolve(file OpenedFile, el psi.ReferenceExpression) ?indexer.CachedNamedSymbol {
+	identifier := el.identifier()?
+	name := identifier.get_text()
 	fqn := file.fqn(name)
 
 	if data := r.find_function(fqn) {
