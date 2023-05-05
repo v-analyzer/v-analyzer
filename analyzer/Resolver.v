@@ -1,6 +1,5 @@
 module analyzer
 
-import analyzer.ir
 import analyzer.indexer
 import analyzer.psi
 

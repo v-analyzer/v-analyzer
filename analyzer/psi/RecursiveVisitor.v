@@ -1,10 +1,12 @@
 module psi
 
-pub struct RecursiveVisitor {
+pub struct RecursiveVisitorBase {
 }
 
-fn (r &RecursiveVisitor) visit_element(element PsiElement) {
-	r.visit_element_impl(element)
+fn (r &RecursiveVisitorBase) visit_element(element PsiElement) {
+	if !r.visit_element_impl(element) {
+		return
+	}
 	mut child := element.first_child() or { return }
 	for {
 		child.accept(r)
@@ -12,6 +14,7 @@ fn (r &RecursiveVisitor) visit_element(element PsiElement) {
 	}
 }
 
-fn (r &RecursiveVisitor) visit_element_impl(element PsiElement) {
+fn (r &RecursiveVisitorBase) visit_element_impl(element PsiElement) bool {
 	println('visit ${element.node.type_name}')
+	return true
 }

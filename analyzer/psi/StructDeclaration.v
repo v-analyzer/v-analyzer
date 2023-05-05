@@ -13,9 +13,6 @@ pub fn (s StructDeclaration) identifier() ?PsiElement {
 }
 
 pub fn (s StructDeclaration) name() string {
-	identifier := s.identifier() or {
-		println('StructDeclaration.name: no identifier')
-		return ''
-	}
+	identifier := s.identifier() or { return '' }
 	return identifier.get_text()
 }

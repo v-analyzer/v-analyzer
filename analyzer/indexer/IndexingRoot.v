@@ -129,14 +129,15 @@ pub fn (mut i IndexingRoot) index() BuiltIndexStatus {
 pub fn (mut _ IndexingRoot) index_file(path string) !FileCache {
 	last_modified := os.file_last_mod_unix(path)
 	content := os.read_file(path)!
-	res := psi.parse_code(content)
+	res := parser.parse_code(content)
+	psi_file := psi.new_psi_file(psi.AstNode(res.tree.root_node()), res.rope)
 	cache := FileCache{
 		filepath: path
 		file_last_modified: last_modified
 	}
 	mut visitor := &IndexingVisitor{
 		filepath: path
-		file: res
+		file: psi_file
 		cache: &cache
 	}
 	visitor.process()
