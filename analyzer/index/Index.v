@@ -1,4 +1,4 @@
-module indexer
+module index
 
 import json
 import time

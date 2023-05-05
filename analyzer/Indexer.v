@@ -1,7 +1,8 @@
-module indexer
+module analyzer
 
 import lsp
 import time
+import analyzer.index
 
 // IndexingRootsStatus описывает статус индексации всех рутов.
 pub enum IndexingRootsStatus {
@@ -13,16 +14,16 @@ pub enum IndexingRootsStatus {
 // и предоставляет интерфейс для работы с индексом.
 pub struct Indexer {
 pub mut:
-	roots []IndexingRoot
+	roots []index.IndexingRoot
 }
 
-pub fn new() &Indexer {
+pub fn new_indexer() &Indexer {
 	return &Indexer{}
 }
 
 pub fn (mut i Indexer) add_indexing_root(root lsp.DocumentUri) {
 	println('Adding indexing root ${root}')
-	i.roots << new_indexing_root(root.path())
+	i.roots << index.new_indexing_root(root.path())
 }
 
 pub fn (mut i Indexer) index() IndexingRootsStatus {

@@ -1,7 +1,7 @@
 module lserver
 
 import lsp
-import analyzer.indexer
+import analyzer.index
 import analyzer.psi
 
 pub fn (mut ls LanguageServer) definition(params lsp.TextDocumentPositionParams, mut wr ResponseWriter) ?[]lsp.LocationLink {
@@ -33,7 +33,7 @@ pub fn (mut ls LanguageServer) definition(params lsp.TextDocumentPositionParams,
 	return []
 }
 
-fn pos_to_range(pos indexer.Pos) lsp.Range {
+fn pos_to_range(pos index.Pos) lsp.Range {
 	return lsp.Range{
 		start: lsp.Position{
 			line: pos.line

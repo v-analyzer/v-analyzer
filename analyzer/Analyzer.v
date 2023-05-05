@@ -1,22 +1,17 @@
 module analyzer
 
-import analyzer.indexer
-import lsp
-import os
-import time
-
 pub struct Analyzer {
 pub mut:
-	index    &indexer.Indexer
+	index    &Indexer
 	resolver Resolver
 }
 
 pub fn new() &Analyzer {
-	index := indexer.new()
+	indexer := new_indexer()
 	return &Analyzer{
-		index: index
+		index: indexer
 		resolver: Resolver{
-			index: index
+			indexer: indexer
 		}
 	}
 }

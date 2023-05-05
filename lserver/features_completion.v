@@ -1,10 +1,8 @@
 module lserver
 
 import lsp
-import os
-import analyzer.parser
-import analyzer.indexer
 import arrays
+import analyzer.index
 
 pub fn (mut ls LanguageServer) completion(params lsp.CompletionParams, mut wr ResponseWriter) ![]lsp.CompletionItem {
 	// content := os.read_file(params.text_document.uri.path())!
@@ -13,7 +11,7 @@ pub fn (mut ls LanguageServer) completion(params lsp.CompletionParams, mut wr Re
 	// lines := content.split_into_lines()
 	// lines_offset := lines[..params.position.line].join('\n').len + params.position.character
 
-	symbols := arrays.flatten(ls.analyzer_instance.index.roots.map(fn (it indexer.IndexingRoot) []indexer.FunctionCache {
+	symbols := arrays.flatten(ls.analyzer_instance.index.roots.map(fn (it index.IndexingRoot) []index.FunctionCache {
 		return it.index.data.get_all_functions()
 	}))
 
@@ -22,7 +20,7 @@ pub fn (mut ls LanguageServer) completion(params lsp.CompletionParams, mut wr Re
 	return symbols
 		.filter(it.module_fqn == '')
 		.filter(it.name != '')
-		.map(fn (it indexer.FunctionCache) lsp.CompletionItem {
+		.map(fn (it index.FunctionCache) lsp.CompletionItem {
 			return lsp.CompletionItem{
 				label: it.name
 				kind: .function

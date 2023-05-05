@@ -1,4 +1,4 @@
-module indexer
+module index
 
 // Pos описывает позицию символа в файле.
 //

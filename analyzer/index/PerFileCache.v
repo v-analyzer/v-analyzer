@@ -1,4 +1,4 @@
-module indexer
+module index
 
 // PerFileCache описывает кэш группы файлов в индексе.
 pub struct PerFileCache {

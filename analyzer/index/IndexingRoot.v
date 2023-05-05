@@ -1,4 +1,4 @@
-module indexer
+module index
 
 import time
 import os
@@ -30,7 +30,7 @@ pub mut:
 }
 
 // new_indexing_root создает новый IndexingRoot для переданного пути.
-fn new_indexing_root(root string) &IndexingRoot {
+pub fn new_indexing_root(root string) &IndexingRoot {
 	cache_file := 'spavn_index_${md5.hexhash(root)}.json'
 	return &IndexingRoot{
 		root: root
