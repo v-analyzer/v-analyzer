@@ -7,20 +7,96 @@ pub struct Resolver {
 	indexer &Indexer
 }
 
-pub fn (r &Resolver) resolve(file OpenedFile, el psi.ReferenceExpression) ?index.CachedNamedSymbol {
-	identifier := el.identifier()?
-	name := identifier.get_text()
-	fqn := file.fqn(name)
-
-	if data := r.find_function(fqn) {
-		return data
+pub fn (r &Resolver) resolve(file OpenedFile, element psi.ReferenceExpression) ?ResolveResult {
+	sub := SubResolver{
+		indexer: r.indexer
+		containing_file: file.psi_file
+		element: element
 	}
+	mut processor := ResolveProcessor{
+		containing_file: file.psi_file
+		ref: element
+	}
+	sub.process_resolve_variants(mut processor)
 
-	if struct_data := r.find_struct(fqn) {
-		return struct_data
+	println(processor.result)
+
+	if processor.result.len > 0 {
+		return processor.result.first()
 	}
 
 	return none
+}
+
+struct ResolveResult {
+pub:
+	filepath string
+	name     string
+	pos      index.Pos
+}
+
+fn new_resolve_result(containing_file psi.PsiFileImpl, element psi.PsiElement) ResolveResult {
+	return ResolveResult{
+		filepath: containing_file.path()
+		name: if element is psi.PsiNamedElement { element.name() } else { '' }
+		pos: index.Pos{
+			line: int(element.node.start_point().row)
+			column: int(element.node.start_point().column)
+			end_line: int(element.node.end_point().row)
+			end_column: int(element.node.end_point().column)
+		}
+	}
+}
+
+struct SubResolver {
+	indexer         &Indexer
+	containing_file psi.PsiFileImpl
+	element         psi.ReferenceExpression
+}
+
+pub fn (r &SubResolver) process_resolve_variants(mut processor ResolveProcessor) bool {
+	return if qualifier := r.element.qualifier() {
+		r.process_qualifier_expression(qualifier, mut processor)
+	} else {
+		r.process_unqualified_resolve(mut processor)
+	}
+}
+
+pub fn (r &SubResolver) process_qualifier_expression(qualifier psi.PsiElement, mut processor ResolveProcessor) bool {
+	return false
+}
+
+pub fn (r &SubResolver) process_unqualified_resolve(mut processor ResolveProcessor) bool {
+	if !r.process_file(mut processor) {
+		return false
+	}
+	return false
+}
+
+pub fn (r &SubResolver) process_file(mut processor ResolveProcessor) bool {
+	return r.containing_file.process_declarations(mut processor)
+}
+
+pub struct ResolveProcessor {
+	containing_file psi.PsiFileImpl
+	ref             psi.ReferenceExpression
+mut:
+	result []ResolveResult
+}
+
+fn (mut r ResolveProcessor) execute(element psi.PsiElement) bool {
+	if element.is_equal(r.ref) {
+		r.result << new_resolve_result(r.containing_file, element)
+		return false
+	}
+	if element is psi.PsiNamedElement {
+		name := element.name()
+		if name == r.ref.name() {
+			r.result << new_resolve_result(r.containing_file, element as psi.PsiElement)
+			return false
+		}
+	}
+	return true
 }
 
 pub fn (r &Resolver) find_function(name string) ?index.FunctionCache {

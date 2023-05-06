@@ -142,7 +142,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "identifier"
+          "name": "reference_expression"
         },
         {
           "type": "SYMBOL",
@@ -3054,7 +3054,7 @@
                 "members": [
                   {
                     "type": "PATTERN",
-                    "value": "[a-zα-ωµ]"
+                    "value": "[a-zA-Zα-ωΑ-Ωµ]"
                   },
                   {
                     "type": "STRING",
@@ -5909,7 +5909,7 @@
             "members": [
               {
                 "type": "SYMBOL",
-                "name": "type_identifier"
+                "name": "identifier"
               },
               {
                 "type": "SYMBOL",
@@ -6307,7 +6307,7 @@
               "members": [
                 {
                   "type": "SYMBOL",
-                  "name": "identifier"
+                  "name": "reference_expression"
                 },
                 {
                   "type": "SYMBOL",
@@ -6929,7 +6929,7 @@
               "members": [
                 {
                   "type": "SYMBOL",
-                  "name": "type_identifier"
+                  "name": "identifier"
                 },
                 {
                   "type": "SYMBOL",

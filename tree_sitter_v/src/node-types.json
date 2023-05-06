@@ -68,6 +68,10 @@
         "named": true
       },
       {
+        "type": "reference_expression",
+        "named": true
+      },
+      {
         "type": "selector_expression",
         "named": true
       },
@@ -2828,6 +2832,10 @@
             "named": true
           },
           {
+            "type": "reference_expression",
+            "named": true
+          },
+          {
             "type": "type_identifier",
             "named": true
           }
@@ -3226,7 +3234,7 @@
             "named": true
           },
           {
-            "type": "type_identifier",
+            "type": "identifier",
             "named": true
           }
         ]
@@ -3364,7 +3372,7 @@
             "named": true
           },
           {
-            "type": "type_identifier",
+            "type": "identifier",
             "named": true
           }
         ]

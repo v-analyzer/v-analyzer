@@ -12,11 +12,12 @@ pub mut:
 }
 
 pub fn (f OpenedFile) find_offset(pos lsp.Position) u32 {
-	lines := f.text.split_into_lines()
-	if pos.line >= lines.len {
-		return u32(f.text.len)
-	}
-	return u32(lines[..pos.line].join('\n').len + pos.character)
+	return u32(compute_offset(f.psi_file.text(), pos.line, pos.character))
+	// lines := f.text.split_into_lines()
+	// if pos.line >= lines.len {
+	// 	return u32(f.text.len)
+	// }
+	// return u32(lines[..pos.line].join('\n').len + pos.character)
 }
 
 pub fn (f OpenedFile) fqn(name string) string {

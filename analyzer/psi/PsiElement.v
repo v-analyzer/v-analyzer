@@ -11,6 +11,7 @@ pub interface PsiElement {
 	id ID // базовый узел из Tree Sitter
 	node AstNode // базовый узел из Tree Sitter
 	source_text &tree_sitter.SourceText // исходный код, из которого было получено дерево
+	is_equal(other PsiElement) bool
 	// find_element_at возвращает узел, находящийся в указанной позиции относительно начала узла.
 	// Если узел не найден, возвращается none.
 	find_element_at(offset u32) ?PsiElement
@@ -20,7 +21,11 @@ pub interface PsiElement {
 	// children возвращает все дочерние узлы.
 	children() []PsiElement
 	// first_child возвращает первый дочерний узел.
+	// Если узел не имеет дочерних узлов, возвращается none.
 	first_child() ?PsiElement
+	// last_child возвращает последний дочерний узел.
+	// Если узел не имеет дочерних узлов, возвращается none.
+	last_child() ?PsiElement
 	// next_sibling возвращает следующий узел, находящийся на том же уровне вложенности.
 	// Если узел является последним дочерним узлом, возвращается none.
 	next_sibling() ?PsiElement

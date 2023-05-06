@@ -18,6 +18,10 @@ fn new_psi_node(id ID, text &tree_sitter.SourceText, node AstNode) PsiElementImp
 	}
 }
 
+pub fn (n PsiElementImpl) is_equal(other PsiElement) bool {
+	return n.get_text() == other.get_text()
+}
+
 pub fn (n PsiElementImpl) accept(visitor PsiElementVisitor) {
 	visitor.visit_element(n)
 }
@@ -27,8 +31,25 @@ pub fn (n PsiElementImpl) accept_mut(mut visitor MutablePsiElementVisitor) {
 }
 
 pub fn (n PsiElementImpl) find_element_at(offset u32) ?PsiElement {
-	child := n.node.first_leaf_element_at(offset) or { return none }
-	return create_element(child, n.source_text)
+	mut child := &AstNode{}
+
+	abs_offset := n.node.start_byte() + offset
+
+	inspect(n, fn [abs_offset, mut child] (it PsiElement) bool {
+		if abs_offset > it.node.start_byte() && abs_offset < it.node.end_byte() && it.node.is_leaf() {
+			unsafe {
+				*child = it.node
+			}
+			return false
+		}
+		return true
+	})
+
+	if child.is_null() {
+		return none
+	}
+
+	return create_element(*child, n.source_text)
 }
 
 pub fn (n PsiElementImpl) parent() ?PsiElement {
@@ -48,6 +69,11 @@ pub fn (n PsiElementImpl) children() []PsiElement {
 
 pub fn (n PsiElementImpl) first_child() ?PsiElement {
 	child := n.node.first_child() or { return none }
+	return create_element(child, n.source_text)
+}
+
+pub fn (n PsiElementImpl) last_child() ?PsiElement {
+	child := n.node.last_child() or { return none }
 	return create_element(child, n.source_text)
 }
 
@@ -71,6 +97,11 @@ pub fn (n PsiElementImpl) find_children_by_type(typ v.NodeType) []PsiElement {
 		child = child.next_sibling() or { break }
 	}
 	return result
+}
+
+pub fn (n PsiElementImpl) find_last_child_by_type(typ v.NodeType) ?PsiElement {
+	ast_node := n.node.last_node_by_type(typ) or { return none }
+	return create_element(ast_node, n.source_text)
 }
 
 pub fn (n PsiElementImpl) get_text() string {

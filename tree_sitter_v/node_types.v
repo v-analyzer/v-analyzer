@@ -181,6 +181,7 @@ const supertype__expression_nodes = merge(supertype__expression_with_blocks_node
 	.map_,
 	.parenthesized_expression,
 	.pseudo_comptime_identifier,
+	.reference_expression,
 	.selector_expression,
 	.slice_expression,
 	.special_call_expression,

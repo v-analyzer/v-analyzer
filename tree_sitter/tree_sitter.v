@@ -329,13 +329,13 @@ pub fn (node C.TSNode) parent() !C.TSNode {
 	return parent
 }
 
-pub fn (node C.TSNode) child(pos u32) !C.TSNode {
+pub fn (node C.TSNode) child(index u32) !C.TSNode {
 	check_tsnode(node)!
-	child := C.ts_node_child(node, pos)
+	child := C.ts_node_child(node, index)
 	if child.is_null() {
 		return NodeError{
 			node: node
-			msg: 'child #${pos} not found'
+			msg: 'child #${index} not found'
 		}
 	}
 	return child
@@ -754,8 +754,7 @@ pub fn (node Node[T]) prev_named_sibling() ?Node[T] {
 
 pub fn (node Node[T]) first_leaf_element_at(offset u32) ?Node[T] {
 	if node.is_leaf() {
-		text_length := node.text_length()
-		if offset > text_length {
+		if offset > node.text_length() {
 			return none
 		}
 		return node

@@ -24,8 +24,18 @@ pub fn inspect(node PsiElement, cb fn (PsiElement) bool) {
 }
 
 struct Inspector {
-	RecursiveVisitorBase
 	cb fn (PsiElement) bool
+}
+
+fn (r &Inspector) visit_element(element PsiElement) {
+	if !r.visit_element_impl(element) {
+		return
+	}
+	mut child := element.first_child() or { return }
+	for {
+		child.accept(r)
+		child = child.next_sibling() or { break }
+	}
 }
 
 fn (i &Inspector) visit_element_impl(element PsiElement) bool {

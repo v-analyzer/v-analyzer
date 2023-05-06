@@ -289,7 +289,7 @@ module.exports = grammar({
         $.empty_literal_value,
         $._reserved_identifier,
         $.binded_identifier,
-        $.identifier,
+        $.reference_expression,
         $._single_line_expression,
         $.type_initializer,
         $.map,
@@ -679,7 +679,7 @@ module.exports = grammar({
       token(
         choice(
           seq(
-            choice(unicode_letter_lower, "_"),
+            choice(unicode_letter, "_"),
             repeat(choice(letter, unicode_digit))
           ),
           seq("@", choice(...all_keywords.map(k => token.immediate(k))))
@@ -1107,7 +1107,7 @@ module.exports = grammar({
       seq(
         optional(pub_keyword),
         type_keyword,
-        field("name", choice($.type_identifier, $.builtin_type)),
+        field("name", choice($.identifier, $.builtin_type)),
         field("type_parameters", optional($.type_parameters)),
         "=",
         field("types", alias($.sum_type_list, $.type_list))
@@ -1199,7 +1199,7 @@ module.exports = grammar({
           field(
             "field",
             choice(
-              $.identifier,
+              $.reference_expression,
               $.type_identifier,
               alias($.type_placeholder, $.type_identifier),
               $._reserved_identifier,
@@ -1325,7 +1325,7 @@ module.exports = grammar({
           prec.dynamic(
             PREC.composite_literal,
             choice(
-              $.type_identifier,
+              $.identifier,
               // in order to parse builtin
               $.builtin_type,
               $.generic_type

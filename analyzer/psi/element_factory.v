@@ -19,8 +19,20 @@ pub fn create_element(node AstNode, text &tree_sitter.SourceText) PsiElement {
 		}
 	}
 
+	if node.type_name == .selector_expression {
+		return SelectorExpression{
+			PsiElementImpl: base_node
+		}
+	}
+
 	if node.type_name == .reference_expression {
 		return ReferenceExpression{
+			PsiElementImpl: base_node
+		}
+	}
+
+	if node.type_name == .type_declaration {
+		return TypeAliasDeclaration{
 			PsiElementImpl: base_node
 		}
 	}
