@@ -1,7 +1,8 @@
 module types
 
-pub struct UnknownType {
-}
+pub const unknown_type = new_unknown_type()
+
+pub struct UnknownType {}
 
 pub fn new_unknown_type() &UnknownType {
 	return &UnknownType{}

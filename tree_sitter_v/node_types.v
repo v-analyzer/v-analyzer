@@ -73,6 +73,7 @@ pub enum NodeType {
 	go_statement
 	goto_statement
 	hash_statement
+	identifier
 	identifier_list
 	if_expression
 	import_alias
@@ -145,6 +146,7 @@ pub enum NodeType {
 	type_only_parameter_list
 	type_parameter_declaration
 	type_parameters
+	type_reference_expression
 	type_selector_expression
 	unary_expression
 	unsafe_expression
@@ -154,7 +156,6 @@ pub enum NodeType {
 	false_
 	field_identifier
 	float_literal
-	identifier
 	import_path
 	int_literal
 	label_name
@@ -162,7 +163,6 @@ pub enum NodeType {
 	nil_
 	rune_literal
 	true_
-	type_identifier
 	type_placeholder
 }
 
@@ -216,8 +216,8 @@ const supertype__simple_type_nodes = [
 	.qualified_type,
 	.shared_type,
 	.thread_type,
-	.type_identifier,
 	.type_placeholder,
+	.type_reference_expression,
 ]
 
 const supertype__statement_nodes = [
@@ -292,12 +292,11 @@ const declaration_node_types = [
 const identifier_node_types = [
 	NodeType.binded_identifier,
 	.comptime_identifier,
+	.identifier,
 	.mutable_identifier,
 	.pseudo_comptime_identifier,
 	.field_identifier,
-	.identifier,
 	.module_identifier,
-	.type_identifier,
 ]
 
 const literal_node_types = [
@@ -386,6 +385,7 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'go_statement' { NodeType.go_statement }
 		'goto_statement' { NodeType.goto_statement }
 		'hash_statement' { NodeType.hash_statement }
+		'identifier' { NodeType.identifier }
 		'identifier_list' { NodeType.identifier_list }
 		'if_expression' { NodeType.if_expression }
 		'import_alias' { NodeType.import_alias }
@@ -458,6 +458,7 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'type_only_parameter_list' { NodeType.type_only_parameter_list }
 		'type_parameter_declaration' { NodeType.type_parameter_declaration }
 		'type_parameters' { NodeType.type_parameters }
+		'type_reference_expression' { NodeType.type_reference_expression }
 		'type_selector_expression' { NodeType.type_selector_expression }
 		'unary_expression' { NodeType.unary_expression }
 		'unsafe_expression' { NodeType.unsafe_expression }
@@ -467,7 +468,6 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'false' { NodeType.false_ }
 		'field_identifier' { NodeType.field_identifier }
 		'float_literal' { NodeType.float_literal }
-		'identifier' { NodeType.identifier }
 		'import_path' { NodeType.import_path }
 		'int_literal' { NodeType.int_literal }
 		'label_name' { NodeType.label_name }
@@ -475,7 +475,6 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'nil' { NodeType.nil_ }
 		'rune_literal' { NodeType.rune_literal }
 		'true' { NodeType.true_ }
-		'type_identifier' { NodeType.type_identifier }
 		'type_placeholder' { NodeType.type_placeholder }
 		else { NodeType.unknown }
 	}

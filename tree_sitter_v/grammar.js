@@ -1,7 +1,8 @@
 // noinspection JSUnresolvedReference
 
 const PREC = {
-  attributes: 8,
+  attributes: 9,
+  type_initializer: 8,
   primary: 7,
   unary: 6,
   multiplicative: 5,
@@ -289,9 +290,9 @@ module.exports = grammar({
         $.empty_literal_value,
         $._reserved_identifier,
         $.binded_identifier,
+        $.type_initializer,
         $.reference_expression,
         $._single_line_expression,
-        $.type_initializer,
         $.map,
         $.array,
         $.fixed_array,
@@ -313,6 +314,7 @@ module.exports = grammar({
     parenthesized_expression: ($) => seq("(", $._expression, ")"),
 
     reference_expression: ($) => prec(PREC.unary, $.identifier),
+    type_reference_expression: ($) => prec(PREC.primary, $.identifier),
 
     unary_expression: ($) =>
       prec(
@@ -474,7 +476,7 @@ module.exports = grammar({
 
     type_initializer: ($) =>
       prec(
-        PREC.composite_literal,
+        PREC.type_initializer,
         seq(
           field(
             "type",
@@ -522,7 +524,7 @@ module.exports = grammar({
     _element_key: ($) =>
       choice(
         prec(1, $._field_identifier),
-        $.type_identifier,
+        $.type_reference_expression,
         $._string_literal,
         $.int_literal,
         $.call_expression,
@@ -835,8 +837,8 @@ module.exports = grammar({
 
     _simple_type: ($) =>
       choice(
+        $.type_reference_expression,
         $.builtin_type,
-        $.type_identifier,
         $.type_placeholder,
         $._binded_type,
         $.qualified_type,
@@ -868,22 +870,19 @@ module.exports = grammar({
     _binded_type: ($) => prec.right(alias($.binded_identifier, $.binded_type)),
 
     generic_type: ($) =>
-      seq(choice($.qualified_type, $.type_identifier), $.type_parameters),
+      seq(choice($.qualified_type, $.type_reference_expression), $.type_parameters),
 
     qualified_type: ($) =>
       seq(
         field("module", $._module_identifier),
         ".",
-        field("name", $.type_identifier)
+        field("name", $.type_reference_expression)
       ),
 
     type_placeholder: ($) => token(unicode_letter_upper),
 
     pseudo_comptime_identifier: ($) =>
       seq("@", alias(/[A-Z][A-Z0-9_]+/, $.identifier)),
-
-    type_identifier: ($) =>
-      token(seq(unicode_letter_upper, repeat1(choice(letter, unicode_digit)))),
 
     _module_identifier: ($) => alias($.identifier, $.module_identifier),
 
@@ -1212,8 +1211,8 @@ module.exports = grammar({
             "field",
             choice(
               $.reference_expression,
-              $.type_identifier,
-              alias($.type_placeholder, $.type_identifier),
+              $.type_reference_expression,
+              alias($.type_placeholder, $.type_reference_expression),
               $._reserved_identifier,
               $.comptime_identifier,
               $.comptime_selector_expression
@@ -1386,7 +1385,7 @@ module.exports = grammar({
           field(
             "type",
             seq(
-              choice($.type_identifier, $.qualified_type),
+              choice($.type_reference_expression, $.qualified_type),
               optional(terminator)
             )
           )
@@ -1439,7 +1438,7 @@ module.exports = grammar({
         optional($.attribute_list),
         optional(pub_keyword),
         enum_keyword,
-        field("name", $.type_identifier),
+        field("name", $.type_reference_expression),
         $.enum_member_declaration_list
       ),
 
@@ -1461,7 +1460,7 @@ module.exports = grammar({
         field(
           "type",
           optional(
-            choice($.type_placeholder, $.type_identifier)
+            choice($.type_placeholder, $.type_reference_expression)
           )
         ),
         ".",
@@ -1473,7 +1472,7 @@ module.exports = grammar({
         field("attributes", optional($.attribute_list)),
         optional(pub_keyword),
         interface_keyword,
-        field("name", choice($.type_identifier, $.generic_type)),
+        field("name", choice($.type_reference_expression, $.generic_type)),
         $.interface_spec_list
       ),
 
@@ -1547,7 +1546,7 @@ module.exports = grammar({
       seq(token.immediate("{"), $.import_symbols_list, "}"),
 
     import_symbols_list: ($) =>
-      comma_sep1(choice($.identifier, alias($.type_identifier, $.identifier))),
+      comma_sep1(choice($.identifier, alias($.type_reference_expression, $.identifier))),
 
     import_alias: ($) =>
       seq(

@@ -6,7 +6,8 @@ pub struct ReferenceExpression {
 	PsiElementImpl
 }
 
-fn (r &ReferenceExpression) expr() // marker method for Expression {}
+// marker method for Expression
+fn (r &ReferenceExpression) expr() {}
 
 pub fn (r ReferenceExpression) identifier() ?PsiElement {
 	return r.first_child()
@@ -32,14 +33,14 @@ pub fn (r ReferenceExpression) qualifier() ?PsiElement {
 	return none
 }
 
-pub fn (r ReferenceExpression) reference(psi_file PsiFileImpl) PsiReference {
-	return new_reference(psi_file, r)
+pub fn (r ReferenceExpression) reference() PsiReference {
+	return new_reference(r.containing_file, r, false)
 }
 
-pub fn (r ReferenceExpression) resolve_local(psi_file PsiFileImpl) ?PsiElement {
-	return r.reference(psi_file).resolve_local()
+pub fn (r ReferenceExpression) resolve_local() ?PsiElement {
+	return r.reference().resolve_local()
 }
 
-// pub fn (r ReferenceExpression) get_type() types.Type {
-//
-// }
+pub fn (r ReferenceExpression) get_type() types.Type {
+	return types.new_unknown_type()
+}

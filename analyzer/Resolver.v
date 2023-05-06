@@ -7,12 +7,12 @@ pub struct Resolver {
 	indexer &Indexer
 }
 
-pub fn (r &Resolver) resolve_local(file OpenedFile, element psi.ReferenceExpression) ?psi.PsiElement {
-	return element.resolve_local(file.psi_file)
+pub fn (r &Resolver) resolve_local(file OpenedFile, element psi.ReferenceExpressionBase) ?psi.PsiElement {
+	return element.resolve_local()
 }
 
-pub fn (r &Resolver) resolve(file OpenedFile, element psi.ReferenceExpression) ?ResolveResult {
-	res := element.resolve_local(file.psi_file) or { return none }
+pub fn (r &Resolver) resolve(file OpenedFile, element psi.ReferenceExpressionBase) ?ResolveResult {
+	res := element.resolve_local() or { return none }
 	return new_resolve_result(file.psi_file, res)
 }
 
@@ -23,7 +23,7 @@ pub:
 	pos      index.Pos
 }
 
-fn new_resolve_result(containing_file psi.PsiFileImpl, element psi.PsiElement) ResolveResult {
+pub fn new_resolve_result(containing_file psi.PsiFileImpl, element psi.PsiElement) ResolveResult {
 	return ResolveResult{
 		filepath: containing_file.path()
 		name: if element is psi.PsiNamedElement { element.name() } else { '' }

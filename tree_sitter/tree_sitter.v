@@ -207,7 +207,7 @@ pub fn (err NodeError) msg() string {
 [unsafe]
 pub fn unwrap_null_node[T](factory NodeTypeFactory[T], err IError) ?Node[T] {
 	if err is NodeError {
-		return new_node[T](factory, err.node)
+		return new_tsnode[T](factory, err.node)
 	}
 	return none
 }
@@ -240,7 +240,7 @@ pub fn (node C.TSNode) sexpr_str() string {
 	return unsafe { sexpr.vstring() }
 }
 
-pub fn (node C.TSNode) start_point() C.TSPoint {
+pub fn (node C.TSNode) start_point() TSPoint {
 	if node.is_null() {
 		return C.TSPoint{0, 0}
 	}
@@ -248,7 +248,7 @@ pub fn (node C.TSNode) start_point() C.TSPoint {
 	return C.ts_node_start_point(node)
 }
 
-pub fn (node C.TSNode) end_point() C.TSPoint {
+pub fn (node C.TSNode) end_point() TSPoint {
 	if node.is_null() {
 		return C.TSPoint{0, 0}
 	}
@@ -518,8 +518,16 @@ pub struct C.TSInputEdit {
 	new_end_point C.TSPoint
 }
 
+pub type TSPoint = C.TSPoint
+
+//
+// pub fn (left_point TSPoint) str() string {
+// 	return left_point.row.str() + ":" + left_point.column.str()
+// }
+
 [typedef]
 pub struct C.TSPoint {
+pub:
 	row    u32
 	column u32
 }
@@ -591,10 +599,10 @@ pub:
 }
 
 pub fn (tree Tree[T]) root_node() Node[T] {
-	return new_node[T](tree.type_factory, tree.raw_tree.root_node())
+	return new_tsnode[T](tree.type_factory, tree.raw_tree.root_node())
 }
 
-fn new_node[T](factory NodeTypeFactory[T], node C.TSNode) Node[T] {
+pub fn new_tsnode[T](factory NodeTypeFactory[T], node C.TSNode) Node[T] {
 	return Node[T]{
 		raw_node: node
 		type_factory: factory
@@ -625,12 +633,12 @@ pub fn (node Node[T]) str() string {
 }
 
 [inline]
-pub fn (node Node[T]) start_point() C.TSPoint {
+pub fn (node Node[T]) start_point() TSPoint {
 	return node.raw_node.start_point()
 }
 
 [inline]
-pub fn (node Node[T]) end_point() C.TSPoint {
+pub fn (node Node[T]) end_point() TSPoint {
 	return node.raw_node.end_point()
 }
 
@@ -686,7 +694,7 @@ pub fn (node Node[T]) is_error() bool {
 
 pub fn (node Node[T]) parent() !Node[T] {
 	parent := node.raw_node.parent()!
-	return new_node[T](node.type_factory, parent)
+	return new_tsnode[T](node.type_factory, parent)
 }
 
 pub fn (node Node[T]) parent_nth(depth int) !Node[T] {
@@ -694,12 +702,12 @@ pub fn (node Node[T]) parent_nth(depth int) !Node[T] {
 	for _ in 0 .. depth {
 		res = res.parent()!
 	}
-	return new_node[T](node.type_factory, res)
+	return new_tsnode[T](node.type_factory, res)
 }
 
 pub fn (node Node[T]) child(pos u32) !Node[T] {
 	child := node.raw_node.child(pos)!
-	return new_node[T](node.type_factory, child)
+	return new_tsnode[T](node.type_factory, child)
 }
 
 [inline]
@@ -709,7 +717,7 @@ pub fn (node Node[T]) child_count() u32 {
 
 pub fn (node Node[T]) named_child(pos u32) !Node[T] {
 	child := node.raw_node.named_child(pos)!
-	return new_node[T](node.type_factory, child)
+	return new_tsnode[T](node.type_factory, child)
 }
 
 [inline]
@@ -719,7 +727,7 @@ pub fn (node Node[T]) named_child_count() u32 {
 
 pub fn (node Node[T]) child_by_field_name(name string) !Node[T] {
 	child := node.raw_node.child_by_field_name(name)!
-	return new_node[T](node.type_factory, child)
+	return new_tsnode[T](node.type_factory, child)
 }
 
 pub fn (node Node[T]) first_child() ?Node[T] {
@@ -728,7 +736,7 @@ pub fn (node Node[T]) first_child() ?Node[T] {
 		return none
 	}
 	child := node.raw_node.child(0) or { return none }
-	return new_node[T](node.type_factory, child)
+	return new_tsnode[T](node.type_factory, child)
 }
 
 pub fn (node Node[T]) last_child() ?Node[T] {
@@ -737,27 +745,27 @@ pub fn (node Node[T]) last_child() ?Node[T] {
 		return none
 	}
 	child := node.raw_node.child(count_child - 1) or { return none }
-	return new_node[T](node.type_factory, child)
+	return new_tsnode[T](node.type_factory, child)
 }
 
 pub fn (node Node[T]) next_sibling() ?Node[T] {
 	sibling := node.raw_node.next_sibling() or { return none }
-	return new_node[T](node.type_factory, sibling)
+	return new_tsnode[T](node.type_factory, sibling)
 }
 
 pub fn (node Node[T]) prev_sibling() ?Node[T] {
 	sibling := node.raw_node.prev_sibling() or { return none }
-	return new_node[T](node.type_factory, sibling)
+	return new_tsnode[T](node.type_factory, sibling)
 }
 
 pub fn (node Node[T]) next_named_sibling() ?Node[T] {
 	sibling := node.raw_node.next_named_sibling() or { return none }
-	return new_node[T](node.type_factory, sibling)
+	return new_tsnode[T](node.type_factory, sibling)
 }
 
 pub fn (node Node[T]) prev_named_sibling() ?Node[T] {
 	sibling := node.raw_node.prev_named_sibling() or { return none }
-	return new_node[T](node.type_factory, sibling)
+	return new_tsnode[T](node.type_factory, sibling)
 }
 
 pub fn (node Node[T]) first_leaf_element_at(offset u32) ?Node[T] {
@@ -799,34 +807,34 @@ pub fn (node Node[T]) first_leaf_element_at(offset u32) ?Node[T] {
 
 pub fn (node Node[T]) first_child_for_byte(offset u32) ?Node[T] {
 	child := node.raw_node.first_child_for_byte(offset) or { return none }
-	return new_node[T](node.type_factory, child)
+	return new_tsnode[T](node.type_factory, child)
 }
 
 pub fn (node Node[T]) first_named_child_for_byte(offset u32) ?Node[T] {
 	child := node.raw_node.first_named_child_for_byte(offset) or { return none }
-	return new_node[T](node.type_factory, child)
+	return new_tsnode[T](node.type_factory, child)
 }
 
 pub fn (node Node[T]) descendant_for_byte_range(start_range u32, end_range u32) ?Node[T] {
 	desc := node.raw_node.descendant_for_byte_range(start_range, end_range) or { return none }
-	return new_node[T](node.type_factory, desc)
+	return new_tsnode[T](node.type_factory, desc)
 }
 
 pub fn (node Node[T]) descendant_for_point_range(start_point C.TSPoint, end_point C.TSPoint) ?Node[T] {
 	desc := node.raw_node.descendant_for_point_range(start_point, end_point) or { return none }
-	return new_node[T](node.type_factory, desc)
+	return new_tsnode[T](node.type_factory, desc)
 }
 
 pub fn (node Node[T]) named_descendant_for_byte_range(start_range u32, end_range u32) ?Node[T] {
 	desc := node.raw_node.named_descendant_for_byte_range(start_range, end_range) or { return none }
-	return new_node[T](node.type_factory, desc)
+	return new_tsnode[T](node.type_factory, desc)
 }
 
 pub fn (node Node[T]) named_descendant_for_point_range(start_point C.TSPoint, end_point C.TSPoint) ?Node[T] {
 	desc := node.raw_node.named_descendant_for_point_range(start_point, end_point) or {
 		return none
 	}
-	return new_node[T](node.type_factory, desc)
+	return new_tsnode[T](node.type_factory, desc)
 }
 
 pub fn (node Node[T]) first_node_by_type(type_name T) ?Node[T] {
@@ -880,7 +888,7 @@ pub fn (mut cursor TreeCursor[T]) reset(node Node[T]) {
 [inline]
 pub fn (cursor TreeCursor[T]) current_node() ?Node[T] {
 	got_node := cursor.raw_cursor.current_node()?
-	return new_node[T](cursor.type_factory, got_node)
+	return new_tsnode[T](cursor.type_factory, got_node)
 }
 
 [inline]

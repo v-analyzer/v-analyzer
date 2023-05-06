@@ -5,15 +5,17 @@ import tree_sitter
 pub struct PsiFileImpl {
 	path        string
 	source_text &tree_sitter.SourceText
-	root        PsiElement
+mut:
+	root PsiElement
 }
 
-pub fn new_psi_file(path string, root AstNode, source_text &tree_sitter.SourceText) PsiFileImpl {
-	return PsiFileImpl{
+pub fn new_psi_file(path string, root AstNode, source_text &tree_sitter.SourceText) &PsiFileImpl {
+	mut file := &PsiFileImpl{
 		path: path
-		root: create_element(root, source_text)
 		source_text: unsafe { source_text }
 	}
+	file.root = create_element(root, file)
+	return file
 }
 
 pub fn (p &PsiFileImpl) path() string {
@@ -34,13 +36,13 @@ pub fn (p &PsiFileImpl) find_element_at(offset u32) ?PsiElement {
 
 pub fn (p &PsiFileImpl) find_reference_at(offset u32) ?PsiElement {
 	element := p.find_element_at(offset)?
-	if element is ReferenceExpression {
-		return element
+	if element is ReferenceExpressionBase {
+		return element as PsiElement
 	}
 	if element is Identifier {
 		parent := element.parent()?
-		if parent is ReferenceExpression {
-			return parent
+		if parent is ReferenceExpressionBase {
+			return parent as PsiElement
 		}
 	}
 	return none

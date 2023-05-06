@@ -10,14 +10,21 @@ pub type AstNode = tree_sitter.Node[v.NodeType]
 pub interface PsiElement {
 	id ID // базовый узел из Tree Sitter
 	node AstNode // базовый узел из Tree Sitter
-	source_text &tree_sitter.SourceText // исходный код, из которого было получено дерево
+	containing_file &PsiFileImpl // файл, в котором находится узел
 	is_equal(other PsiElement) bool
 	// find_element_at возвращает узел, находящийся в указанной позиции относительно начала узла.
 	// Если узел не найден, возвращается none.
 	find_element_at(offset u32) ?PsiElement
+	find_reference_at(offset u32) ?PsiElement
 	// parent возвращает родительский узел.
 	// Если узел является корневым, возвращается none.
 	parent() ?PsiElement
+	// parent_nth возвращает родительский узел, находящийся на указанном уровне вложенности.
+	// Если такого узла не существует, возвращается none.
+	parent_nth(depth int) ?PsiElement
+	// parent_of_type возвращает родительский узел с указанным типом.
+	// Если такого узла не существует, возвращается none.
+	parent_of_type(typ v.NodeType) ?PsiElement
 	// children возвращает все дочерние узлы.
 	children() []PsiElement
 	// first_child возвращает первый дочерний узел.

@@ -1,19 +1,23 @@
 module psi
 
+import analyzer.psi.types
+
 pub struct ReferenceImpl {
-	element ReferenceExpression
-	file    PsiFileImpl
+	element   ReferenceExpressionBase
+	file      PsiFileImpl
+	for_types bool
 }
 
-pub fn new_reference(file PsiFileImpl, element ReferenceExpression) &ReferenceImpl {
+pub fn new_reference(file PsiFileImpl, element ReferenceExpressionBase, for_types bool) &ReferenceImpl {
 	return &ReferenceImpl{
 		element: element
 		file: file
+		for_types: for_types
 	}
 }
 
 fn (r &ReferenceImpl) element() PsiElement {
-	return r.element
+	return r.element as PsiElement
 }
 
 fn (r &ReferenceImpl) resolve() ?PsiElement {
@@ -39,7 +43,11 @@ fn (r &ReferenceImpl) resolve_local() ?PsiElement {
 
 struct SubResolver {
 	containing_file PsiFileImpl
-	element         ReferenceExpression
+	element         ReferenceExpressionBase
+}
+
+fn (r &SubResolver) element() PsiElement {
+	return r.element as PsiElement
 }
 
 pub fn (r &SubResolver) process_resolve_variants(mut processor ResolveProcessor) bool {
@@ -55,6 +63,12 @@ pub fn (r &SubResolver) process_qualifier_expression(qualifier PsiElement, mut p
 }
 
 pub fn (r &SubResolver) process_unqualified_resolve(mut processor ResolveProcessor) bool {
+	if parent := r.element().parent() {
+		if parent is FieldName {
+			return r.process_type_initializer_field(mut processor)
+		}
+	}
+
 	if !r.process_file(mut processor) {
 		return false
 	}
@@ -82,7 +96,7 @@ pub fn (r &SubResolver) process_block(mut processor ResolveProcessor) bool {
 	mut delegate := ResolveProcessor{
 		...processor
 	}
-	r.walk_up(r.element, mut delegate)
+	r.walk_up(r.element as PsiElement, mut delegate)
 
 	println(delegate.result)
 
@@ -97,21 +111,37 @@ pub fn (r &SubResolver) process_file(mut processor ResolveProcessor) bool {
 	return r.containing_file.process_declarations(mut processor)
 }
 
+pub fn (r &SubResolver) process_type_initializer_field(mut processor ResolveProcessor) bool {
+	init_expr := r.element().parent_of_type(.type_initializer) or { return true }
+	if init_expr is PsiTypedElement {
+		typ := init_expr.get_type()
+		if typ is types.StructType {
+			ref := create_type_reference_expression(typ.name())
+			println(ref.get_text())
+			struct_resolved := ref.resolve_local()
+			println(struct_resolved)
+		}
+	}
+
+	return true
+}
+
 pub struct ResolveProcessor {
 	containing_file PsiFileImpl
-	ref             ReferenceExpression
+	ref             ReferenceExpressionBase
 mut:
 	result []PsiElement
 }
 
 fn (mut r ResolveProcessor) execute(element PsiElement) bool {
-	if element.is_equal(r.ref) {
+	if element.is_equal(r.ref as PsiElement) {
 		r.result << element
 		return false
 	}
 	if element is PsiNamedElement {
 		name := element.name()
-		if name == r.ref.name() {
+		ref_name := r.ref.name()
+		if name == ref_name {
 			r.result << element as PsiElement
 			return false
 		}
