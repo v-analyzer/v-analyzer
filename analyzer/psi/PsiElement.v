@@ -25,6 +25,10 @@ pub interface PsiElement {
 	// parent_of_type возвращает родительский узел с указанным типом.
 	// Если такого узла не существует, возвращается none.
 	parent_of_type(typ v.NodeType) ?PsiElement
+	// parent_of_type_or_self возвращает родительский узел с указанным типом или сам узел,
+	// если его тип совпадает с указанным.
+	// Если такого узла не существует, возвращается none.
+	parent_of_type_or_self(typ v.NodeType) ?PsiElement
 	// children возвращает все дочерние узлы.
 	children() []PsiElement
 	// first_child возвращает первый дочерний узел.

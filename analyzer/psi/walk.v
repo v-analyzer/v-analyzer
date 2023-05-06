@@ -41,3 +41,27 @@ fn (r &Inspector) visit_element(element PsiElement) {
 fn (i &Inspector) visit_element_impl(element PsiElement) bool {
 	return i.cb(element)
 }
+
+struct FindAllElementsAtOffsetInspector {
+	offset u32
+mut:
+	result []PsiElement
+}
+
+fn (mut r FindAllElementsAtOffsetInspector) visit_element(element PsiElement) {
+	if !r.visit_element_impl(element) {
+		return
+	}
+	mut child := element.first_child() or { return }
+	for {
+		child.accept_mut(mut r)
+		child = child.next_sibling() or { break }
+	}
+}
+
+fn (mut i FindAllElementsAtOffsetInspector) visit_element_impl(element PsiElement) bool {
+	if i.offset > element.node.start_byte() && i.offset < element.node.end_byte() {
+		i.result << element
+	}
+	return true
+}

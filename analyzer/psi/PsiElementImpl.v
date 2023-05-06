@@ -95,6 +95,25 @@ pub fn (n PsiElementImpl) parent_of_type(typ v.NodeType) ?PsiElement {
 	return none
 }
 
+pub fn (n PsiElementImpl) parent_of_type_or_self(typ v.NodeType) ?PsiElement {
+	if n.node.type_name == typ {
+		return create_element(n.node, n.containing_file)
+	}
+	mut parent := n.parent() or { return none }
+	if parent.node.type_name == typ {
+		return parent
+	}
+
+	for {
+		parent = parent.parent() or { return none }
+		if parent.node.type_name == typ {
+			return parent
+		}
+	}
+
+	return none
+}
+
 pub fn (n PsiElementImpl) children() []PsiElement {
 	mut result := []PsiElement{}
 	mut child := n.node.first_child() or { return [] }

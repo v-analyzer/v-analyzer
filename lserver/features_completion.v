@@ -1,33 +1,71 @@
 module lserver
 
 import lsp
-import arrays
-import analyzer.index
+import analyzer.psi
+
+struct CompletionProcessor {
+mut:
+	result []lsp.CompletionItem
+}
+
+fn (mut c CompletionProcessor) execute(element psi.PsiElement) bool {
+	if element is psi.VarDefinition {
+		c.result << lsp.CompletionItem{
+			label: element.name()
+			kind: .variable
+			detail: 'Some detail'
+			documentation: ''
+			insert_text: element.name()
+			insert_text_format: .plain_text
+		}
+	}
+
+	if element is psi.FunctionDeclaration {
+		c.result << lsp.CompletionItem{
+			label: element.name()
+			kind: .function
+			detail: 'Some detail'
+			documentation: ''
+			insert_text: element.name() + '($1)$0'
+			insert_text_format: .snippet
+		}
+	}
+
+	if element is psi.StructDeclaration {
+		c.result << lsp.CompletionItem{
+			label: element.name()
+			kind: .class
+			detail: 'Some detail'
+			documentation: ''
+			insert_text: element.name() + '{$1}$0'
+			insert_text_format: .snippet
+		}
+	}
+
+	return true
+}
 
 pub fn (mut ls LanguageServer) completion(params lsp.CompletionParams, mut wr ResponseWriter) ![]lsp.CompletionItem {
-	// content := os.read_file(params.text_document.uri.path())!
-	// res := parser.parse_code(content)
+	uri := params.text_document.uri.normalize()
+	file := ls.get_file(uri) or {
+		println('cannot find file ' + uri.str())
+		return []
+	}
 
-	// lines := content.split_into_lines()
-	// lines_offset := lines[..params.position.line].join('\n').len + params.position.character
+	offset := file.find_offset(params.position)
+	element := file.psi_file.find_most_depth_element_at(offset - 1) or {
+		println('cannot find element at ' + offset.str())
+		return []
+	}
 
-	symbols := arrays.flatten(ls.analyzer_instance.indexer.roots.map(fn (it index.IndexingRoot) []index.FunctionCache {
-		return it.index.data.get_all_functions()
-	}))
+	mut processor := CompletionProcessor{}
 
-	// symbols := ls.analyzer_instance.index.index.data.get_all_symbols()
+	block := element.parent_of_type_or_self(.block) or { return [] }
+	if block is psi.Block {
+		block.process_declarations(mut processor)
+	}
 
-	return symbols
-		.filter(it.module_fqn == '')
-		.filter(it.name != '')
-		.map(fn (it index.FunctionCache) lsp.CompletionItem {
-			return lsp.CompletionItem{
-				label: it.name
-				kind: .function
-				detail: 'Some detail'
-				documentation: 'some documentation'
-				insert_text: it.name + '()'
-				insert_text_format: .plain_text
-			}
-		})
+	file.psi_file.process_declarations(mut processor)
+
+	return processor.result
 }
