@@ -18,7 +18,7 @@ fn main() {
 
 	path := './cmd/parser-checker/testdata/test.v'
 	res := parser.parse_file(path)!
-	psi_file := psi.new_psi_file(path, psi.AstNode(res.tree.root_node()), res.rope)
+	psi_file := psi.new_psi_file(path, res.tree, res.source_text)
 
 	mut visitor := psi.PrinterVisitor{}
 	psi_file.root().accept_mut(mut visitor)

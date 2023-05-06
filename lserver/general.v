@@ -13,15 +13,15 @@ pub fn (mut ls LanguageServer) initialize(params lsp.InitializeParams, mut wr Re
 
 	ls.print_info(params.process_id, params.client_info, mut wr)
 
-	ls.analyzer_instance.index.add_indexing_root('file:///Users/petrmakhnev/v/vlib')
-	ls.analyzer_instance.index.add_indexing_root(ls.root_uri)
+	ls.analyzer_instance.indexer.add_indexing_root('file:///Users/petrmakhnev/v/vlib')
+	ls.analyzer_instance.indexer.add_indexing_root(ls.root_uri)
 
-	status := ls.analyzer_instance.index.index()
+	status := ls.analyzer_instance.indexer.index()
 	if status == .needs_ensure_indexed {
-		ls.analyzer_instance.index.ensure_indexed()
+		ls.analyzer_instance.indexer.ensure_indexed()
 	}
 
-	ls.analyzer_instance.index.save_indexes() or {
+	ls.analyzer_instance.indexer.save_indexes() or {
 		wr.log_message('Failed to save index: ${err}', .error)
 	}
 
@@ -29,7 +29,7 @@ pub fn (mut ls LanguageServer) initialize(params lsp.InitializeParams, mut wr Re
 
 	return lsp.InitializeResult{
 		capabilities: lsp.ServerCapabilities{
-			text_document_sync: .incremental
+			text_document_sync: .full
 			hover_provider: true
 			definition_provider: true
 			completion_provider: lsp.CompletionOptions{

@@ -130,7 +130,7 @@ pub fn (mut _ IndexingRoot) index_file(path string) !FileCache {
 	last_modified := os.file_last_mod_unix(path)
 	content := os.read_file(path)!
 	res := parser.parse_code(content)
-	psi_file := psi.new_psi_file(path, psi.AstNode(res.tree.root_node()), res.rope)
+	psi_file := psi.new_psi_file(path, res.tree, res.source_text)
 	cache := FileCache{
 		filepath: path
 		file_last_modified: last_modified
@@ -201,4 +201,23 @@ pub fn (mut i IndexingRoot) ensure_indexed() {
 
 	println('Reindexing finished')
 	println('Reindexing took ${time.since(now)}')
+}
+
+pub fn (mut i IndexingRoot) mark_as_dirty(filepath string) {
+	if filepath !in i.index.data.data {
+		// файл не принадлежит этому индексу
+		return
+	}
+
+	println('Marking ${filepath} as dirty')
+	i.index.data.data.delete(filepath)
+	res := i.index_file(filepath) or {
+		println('Error indexing dirty ${filepath}: ${err}')
+		return
+	}
+	i.index.data.data[filepath] = res
+	i.index.updated_at = time.now()
+	i.save_index() or { println(err) }
+
+	println('Finished reindexing ${filepath}')
 }

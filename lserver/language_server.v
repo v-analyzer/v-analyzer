@@ -91,7 +91,7 @@ pub fn (mut ls LanguageServer) handle_jsonrpc(request &jsonrpc.Request, mut rw j
 				params := json.decode(lsp.DidChangeTextDocumentParams, request.params) or {
 					return err
 				}
-				// ls.did_change(params, mut rw)
+				ls.did_change(params, mut rw)
 			}
 			'textDocument/didClose' {
 				params := json.decode(lsp.DidCloseTextDocumentParams, request.params) or {

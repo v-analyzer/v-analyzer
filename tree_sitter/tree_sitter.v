@@ -27,8 +27,8 @@ struct C.TSParser {}
 // Parser
 fn C.ts_parser_new() &C.TSParser
 fn C.ts_parser_set_language(parser &C.TSParser, language &C.TSLanguage) bool
-fn C.ts_parser_parse_string(parser &C.TSParser, old_tree &C.TSTree, str &char, len u32) &C.TSTree
-fn C.ts_parser_parse(parser &C.TSParser, old_tree &C.TSTree, input C.TSInput) &C.TSTree
+fn C.ts_parser_parse_string(parser &C.TSParser, old_tree &TSTree, str &char, len u32) &TSTree
+fn C.ts_parser_parse(parser &C.TSParser, old_tree &TSTree, input C.TSInput) &TSTree
 fn C.ts_parser_delete(tree &C.TSParser)
 fn C.ts_parser_reset(parser &C.TSParser)
 
@@ -38,7 +38,7 @@ pub fn new_ts_parser() &C.TSParser {
 }
 
 [inline]
-pub fn (mut parser C.TSParser) parse(old_tree &C.TSTree, input C.TSInput) &C.TSTree {
+pub fn (mut parser C.TSParser) parse(old_tree &TSTree, input C.TSInput) &TSTree {
 	return C.ts_parser_parse(parser, old_tree, input)
 }
 
@@ -53,23 +53,23 @@ pub fn (mut parser C.TSParser) set_language(language &C.TSLanguage) bool {
 }
 
 [inline]
-pub fn (mut parser C.TSParser) parse_string(content string) &C.TSTree {
-	return parser.parse_string_with_old_tree(content, &C.TSTree(unsafe { nil }))
+pub fn (mut parser C.TSParser) parse_string(content string) &TSTree {
+	return parser.parse_string_with_old_tree(content, &TSTree(unsafe { nil }))
 }
 
 [inline]
-pub fn (mut parser C.TSParser) parse_string_with_old_tree(content string, old_tree &C.TSTree) &C.TSTree {
+pub fn (mut parser C.TSParser) parse_string_with_old_tree(content string, old_tree &TSTree) &TSTree {
 	return parser.parse_string_with_old_tree_and_len(content, old_tree, u32(content.len))
 }
 
 [inline]
-pub fn (mut parser C.TSParser) parse_string_with_old_tree_and_len(content string, old_tree &C.TSTree, len u32) &C.TSTree {
+pub fn (mut parser C.TSParser) parse_string_with_old_tree_and_len(content string, old_tree &TSTree, len u32) &TSTree {
 	return C.ts_parser_parse_string(parser, old_tree, &char(content.str), len)
 }
 
 [inline]
-pub fn (mut parser C.TSParser) parse_bytes(content []u8) &C.TSTree {
-	return parser.parse_bytes_with_old_tree(content, &C.TSTree(unsafe { nil }))
+pub fn (mut parser C.TSParser) parse_bytes(content []u8) &TSTree {
+	return parser.parse_bytes_with_old_tree(content, &TSTree(unsafe { nil }))
 }
 
 fn v_byte_array_input_read(pl voidptr, byte_index u32, position C.TSPoint, bytes_read &u32) &char {
@@ -87,7 +87,7 @@ fn v_byte_array_input_read(pl voidptr, byte_index u32, position C.TSPoint, bytes
 	}
 }
 
-pub fn (mut parser C.TSParser) parse_bytes_with_old_tree(content []u8, old_tree &C.TSTree) &C.TSTree {
+pub fn (mut parser C.TSParser) parse_bytes_with_old_tree(content []u8, old_tree &TSTree) &TSTree {
 	return parser.parse(old_tree,
 		payload: &content
 		read: v_byte_array_input_read
@@ -105,32 +105,35 @@ pub fn (parser &C.TSParser) free() {
 [typedef]
 pub struct C.TSLanguage {}
 
-[typedef]
-pub struct C.TSTree {}
+// [typedef]
+[export: 'TSTree']
+pub struct TSTree {
+	included_range_count u32
+}
 
 // Tree
-fn C.ts_tree_copy(tree &C.TSTree) &C.TSTree
-fn C.ts_tree_root_node(tree &C.TSTree) C.TSNode
-fn C.ts_tree_delete(tree &C.TSTree)
-fn C.ts_tree_edit(tree &C.TSTree, edit &C.TSInputEdit)
-fn C.ts_tree_get_changed_ranges(old_tree &C.TSTree, new_tree &C.TSTree, count &u32) &C.TSRange
+fn C.ts_tree_copy(tree &TSTree) &TSTree
+fn C.ts_tree_root_node(tree &TSTree) C.TSNode
+fn C.ts_tree_delete(tree &TSTree)
+fn C.ts_tree_edit(tree &TSTree, edit &C.TSInputEdit)
+fn C.ts_tree_get_changed_ranges(old_tree &TSTree, new_tree &TSTree, count &u32) &C.TSRange
 
 [inline]
-pub fn (tree &C.TSTree) copy() &C.TSTree {
+pub fn (tree &TSTree) copy() &TSTree {
 	return C.ts_tree_copy(tree)
 }
 
 [inline]
-pub fn (tree &C.TSTree) root_node() C.TSNode {
+pub fn (tree &TSTree) root_node() C.TSNode {
 	return C.ts_tree_root_node(tree)
 }
 
 [inline]
-pub fn (tree &C.TSTree) edit(input_edit &C.TSInputEdit) {
+pub fn (tree &TSTree) edit(input_edit &C.TSInputEdit) {
 	C.ts_tree_edit(tree, input_edit)
 }
 
-pub fn (old_tree &C.TSTree) get_changed_ranges(new_tree &C.TSTree) []C.TSRange {
+pub fn (old_tree &TSTree) get_changed_ranges(new_tree &TSTree) []C.TSRange {
 	mut len := u32(0)
 	buf := C.ts_tree_get_changed_ranges(old_tree, new_tree, &len)
 	e_size := int(sizeof(C.TSRange))
@@ -146,7 +149,7 @@ pub fn (old_tree &C.TSTree) get_changed_ranges(new_tree &C.TSTree) []C.TSRange {
 }
 
 [unsafe]
-pub fn (tree &C.TSTree) free() {
+pub fn (tree &TSTree) free() {
 	unsafe {
 		C.ts_tree_delete(tree)
 	}
@@ -154,7 +157,7 @@ pub fn (tree &C.TSTree) free() {
 
 [typedef]
 struct C.TSNode {
-	tree &C.TSTree
+	tree &TSTree
 }
 
 // Node
@@ -566,8 +569,8 @@ pub fn (mut p Parser[T]) reset() {
 
 [params]
 pub struct ParserParseConfig {
-	source string    [required]
-	tree   &C.TSTree = &C.TSTree(unsafe { nil })
+	source string  [required]
+	tree   &TSTree = &TSTree(unsafe { nil })
 }
 
 pub fn (mut p Parser[T]) parse_string(cfg ParserParseConfig) &Tree[T] {
@@ -595,7 +598,7 @@ pub interface NodeTypeFactory[T] {
 pub struct Tree[T] {
 	type_factory NodeTypeFactory[T] [required]
 pub:
-	raw_tree &C.TSTree [required]
+	raw_tree &TSTree [required]
 }
 
 pub fn (tree Tree[T]) root_node() Node[T] {

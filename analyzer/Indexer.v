@@ -70,3 +70,9 @@ pub fn (mut i Indexer) save_indexes() ! {
 		}
 	}
 }
+
+pub fn (mut i Indexer) mark_as_dirty(filepath string) {
+	for mut indexing_root in i.roots {
+		indexing_root.mark_as_dirty(filepath)
+	}
+}

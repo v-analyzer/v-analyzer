@@ -8,7 +8,7 @@ import analyzer.psi
 // сохранить ее в кэш.
 struct IndexingVisitor {
 	filepath string
-	file     psi.PsiFileImpl
+	file     &psi.PsiFileImpl
 mut:
 	cache &FileCache
 }

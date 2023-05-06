@@ -11,7 +11,7 @@ pub fn (mut ls LanguageServer) completion(params lsp.CompletionParams, mut wr Re
 	// lines := content.split_into_lines()
 	// lines_offset := lines[..params.position.line].join('\n').len + params.position.character
 
-	symbols := arrays.flatten(ls.analyzer_instance.index.roots.map(fn (it index.IndexingRoot) []index.FunctionCache {
+	symbols := arrays.flatten(ls.analyzer_instance.indexer.roots.map(fn (it index.IndexingRoot) []index.FunctionCache {
 		return it.index.data.get_all_functions()
 	}))
 

@@ -1,21 +1,38 @@
 module psi
 
 import tree_sitter
+import tree_sitter_v as v
+import analyzer.parser
+import time
 
+[heap]
 pub struct PsiFileImpl {
-	path        string
-	source_text &tree_sitter.SourceText
+	path string
 mut:
-	root PsiElement
+	tree        &tree_sitter.Tree[v.NodeType]
+	source_text &tree_sitter.SourceText
+	root        PsiElement
 }
 
-pub fn new_psi_file(path string, root AstNode, source_text &tree_sitter.SourceText) &PsiFileImpl {
+pub fn new_psi_file(path string, tree &tree_sitter.Tree[v.NodeType], source_text &tree_sitter.SourceText) &PsiFileImpl {
 	mut file := &PsiFileImpl{
 		path: path
+		tree: unsafe { tree }
 		source_text: unsafe { source_text }
 	}
-	file.root = create_element(root, file)
+	file.root = create_element(AstNode(tree.root_node()), file)
 	return file
+}
+
+pub fn (mut p PsiFileImpl) reparse(new_code string) {
+	now := time.now()
+	// TODO: по каким то причинам если передавать старое дерево затем попытка получить
+	// текст узла дает текст по неправильному смещению
+	res := parser.parse_code_with_tree(new_code, unsafe { nil })
+	p.tree = res.tree
+	p.source_text = res.source_text
+	p.root = create_element(AstNode(res.tree.root_node()), p)
+	println('reparse time: ${time.since(now)}')
 }
 
 pub fn (p &PsiFileImpl) path() string {

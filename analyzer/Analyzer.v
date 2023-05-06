@@ -2,14 +2,14 @@ module analyzer
 
 pub struct Analyzer {
 pub mut:
-	index    &Indexer
+	indexer  &Indexer
 	resolver Resolver
 }
 
 pub fn new() &Analyzer {
 	indexer := new_indexer()
 	return &Analyzer{
-		index: indexer
+		indexer: indexer
 		resolver: Resolver{
 			indexer: indexer
 		}

@@ -23,7 +23,7 @@ pub:
 	pos      index.Pos
 }
 
-pub fn new_resolve_result(containing_file psi.PsiFileImpl, element psi.PsiElement) ResolveResult {
+pub fn new_resolve_result(containing_file &psi.PsiFileImpl, element psi.PsiElement) ResolveResult {
 	return ResolveResult{
 		filepath: containing_file.path()
 		name: if element is psi.PsiNamedElement { element.name() } else { '' }

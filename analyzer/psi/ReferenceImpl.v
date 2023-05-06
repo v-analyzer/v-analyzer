@@ -4,11 +4,11 @@ import analyzer.psi.types
 
 pub struct ReferenceImpl {
 	element   ReferenceExpressionBase
-	file      PsiFileImpl
+	file      &PsiFileImpl
 	for_types bool
 }
 
-pub fn new_reference(file PsiFileImpl, element ReferenceExpressionBase, for_types bool) &ReferenceImpl {
+pub fn new_reference(file &PsiFileImpl, element ReferenceExpressionBase, for_types bool) &ReferenceImpl {
 	return &ReferenceImpl{
 		element: element
 		file: file
@@ -42,7 +42,7 @@ fn (r &ReferenceImpl) resolve_local() ?PsiElement {
 }
 
 struct SubResolver {
-	containing_file PsiFileImpl
+	containing_file &PsiFileImpl
 	element         ReferenceExpressionBase
 }
 
@@ -127,7 +127,7 @@ pub fn (r &SubResolver) process_type_initializer_field(mut processor ResolveProc
 }
 
 pub struct ResolveProcessor {
-	containing_file PsiFileImpl
+	containing_file &PsiFileImpl
 	ref             ReferenceExpressionBase
 mut:
 	result []PsiElement

@@ -8,8 +8,8 @@ import analyzer.structures.ropes
 // ParseResult represents the result of a parsing operation.
 pub struct ParseResult {
 pub:
-	tree &tree_sitter.Tree[v.NodeType] // Resulting tree or nil if the source could not be parsed.
-	rope &ropes.Rope // Rope corresponding to the source code.
+	tree        &tree_sitter.Tree[v.NodeType] // Resulting tree or nil if the source could not be parsed.
+	source_text &ropes.Rope // Rope corresponding to the source code.
 }
 
 // Source represent the possible types of V source code to parse.
@@ -101,6 +101,6 @@ pub fn parse_code_with_tree(code string, old_tree &tree_sitter.Tree[v.NodeType])
 	tree := parser.parse_string(source: code, tree: raw_tree)
 	return ParseResult{
 		tree: tree
-		rope: rope
+		source_text: rope
 	}
 }
