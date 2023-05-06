@@ -16,14 +16,18 @@ pub fn (mut ls LanguageServer) hover(params lsp.HoverParams, mut wr ResponseWrit
 	}
 
 	if element is psi.ReferenceExpression {
-		data := ls.analyzer_instance.resolver.resolve(file, element) or {
+		data := ls.analyzer_instance.resolver.resolve_local(file, element) or {
 			println('cannot resolve reference ' + element.str())
 			return none
 		}
 
-		return lsp.Hover{
-			contents: lsp.hover_markdown_string(data.name + ' from file ' + data.filepath)
-			range: lsp.Range{}
+		parent := data.parent()
+		println(parent)
+		if data is psi.PsiTypedElement {
+			return lsp.Hover{
+				contents: lsp.hover_markdown_string('type: ' + data.get_type().name())
+				range: lsp.Range{}
+			}
 		}
 	}
 

@@ -57,6 +57,11 @@ pub fn (n PsiElementImpl) parent() ?PsiElement {
 	return create_element(parent, n.source_text)
 }
 
+pub fn (n PsiElementImpl) parent_nth(depth int) ?PsiElement {
+	parent := n.node.parent_nth(depth) or { return none }
+	return create_element(parent, n.source_text)
+}
+
 pub fn (n PsiElementImpl) children() []PsiElement {
 	mut result := []PsiElement{}
 	mut child := n.node.first_child() or { return [] }

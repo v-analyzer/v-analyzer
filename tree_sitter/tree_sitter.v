@@ -689,6 +689,14 @@ pub fn (node Node[T]) parent() !Node[T] {
 	return new_node[T](node.type_factory, parent)
 }
 
+pub fn (node Node[T]) parent_nth(depth int) !Node[T] {
+	mut res := node.raw_node
+	for _ in 0 .. depth {
+		res = res.parent()!
+	}
+	return new_node[T](node.type_factory, res)
+}
+
 pub fn (node Node[T]) child(pos u32) !Node[T] {
 	child := node.raw_node.child(pos)!
 	return new_node[T](node.type_factory, child)
