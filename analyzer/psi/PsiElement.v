@@ -34,4 +34,8 @@ pub interface PsiElement {
 	get_text() string
 	// accept передает элемент в переданный visitor.
 	accept(visitor PsiElementVisitor)
+	// accept_mut передает элемент в переданный visitor.
+	// В отличии от accept, этот метод использует visitor который может
+	// мутировать свое состояние.
+	accept_mut(mut visitor MutablePsiElementVisitor)
 }

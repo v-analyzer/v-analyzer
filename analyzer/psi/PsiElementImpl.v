@@ -22,6 +22,10 @@ pub fn (n PsiElementImpl) accept(visitor PsiElementVisitor) {
 	visitor.visit_element(n)
 }
 
+pub fn (n PsiElementImpl) accept_mut(mut visitor MutablePsiElementVisitor) {
+	visitor.visit_element(n)
+}
+
 pub fn (n PsiElementImpl) find_element_at(offset u32) ?PsiElement {
 	child := n.node.first_leaf_element_at(offset) or { return none }
 	return create_element(child, n.source_text)
