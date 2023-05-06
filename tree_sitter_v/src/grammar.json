@@ -237,7 +237,7 @@
     },
     "reference_expression": {
       "type": "PREC",
-      "value": 7,
+      "value": 6,
       "content": {
         "type": "SYMBOL",
         "name": "identifier"
@@ -4751,6 +4751,10 @@
       "members": [
         {
           "type": "SYMBOL",
+          "name": "var_declaration"
+        },
+        {
+          "type": "SYMBOL",
           "name": "_expression"
         },
         {
@@ -4764,10 +4768,6 @@
         {
           "type": "SYMBOL",
           "name": "assignment_statement"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "var_declaration"
         }
       ]
     },
@@ -4850,6 +4850,68 @@
             "content": {
               "type": "SYMBOL",
               "name": "expression_list"
+            }
+          }
+        ]
+      }
+    },
+    "_var_definition_list": {
+      "type": "PREC",
+      "value": 7,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "var_definition"
+          },
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": ","
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "var_definition"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "var_definition": {
+      "type": "PREC",
+      "value": 7,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "FIELD",
+            "name": "modifiers",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "mut"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            }
+          },
+          {
+            "type": "FIELD",
+            "name": "name",
+            "content": {
+              "type": "SYMBOL",
+              "name": "identifier"
             }
           }
         ]

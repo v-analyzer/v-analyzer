@@ -1,1 +1,1 @@
-type Foo = string
+name, some, mut other := 100

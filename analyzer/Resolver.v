@@ -63,14 +63,46 @@ pub fn (r &SubResolver) process_resolve_variants(mut processor ResolveProcessor)
 }
 
 pub fn (r &SubResolver) process_qualifier_expression(qualifier psi.PsiElement, mut processor ResolveProcessor) bool {
-	return false
+	return true
 }
 
 pub fn (r &SubResolver) process_unqualified_resolve(mut processor ResolveProcessor) bool {
 	if !r.process_file(mut processor) {
 		return false
 	}
-	return false
+	if !r.process_block(mut processor) {
+		return false
+	}
+	return true
+}
+
+pub fn (r &SubResolver) walk_up(element psi.PsiElement, mut processor ResolveProcessor) bool {
+	mut run := element
+	for {
+		if mut run is psi.Block {
+			if !run.process_declarations(mut processor) {
+				return false
+			}
+		}
+
+		run = run.parent() or { break }
+	}
+	return true
+}
+
+pub fn (r &SubResolver) process_block(mut processor ResolveProcessor) bool {
+	mut delegate := ResolveProcessor{
+		...processor
+	}
+	r.walk_up(r.element, mut delegate)
+
+	println(delegate.result)
+
+	for result in delegate.result {
+		processor.result << result
+	}
+
+	return true
 }
 
 pub fn (r &SubResolver) process_file(mut processor ResolveProcessor) bool {

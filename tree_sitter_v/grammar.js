@@ -312,7 +312,7 @@ module.exports = grammar({
 
     parenthesized_expression: ($) => seq("(", $._expression, ")"),
 
-    reference_expression: ($) => prec(PREC.primary, $.identifier),
+    reference_expression: ($) => prec(PREC.unary, $.identifier),
 
     unary_expression: ($) =>
       prec(
@@ -917,11 +917,11 @@ module.exports = grammar({
 
     simple_statement: ($) =>
       choice(
+        $.var_declaration,
         $._expression,
         $.inc_statement,
         $.dec_statement,
         $.assignment_statement,
-        $.var_declaration
       ),
 
     inc_statement: ($) => seq($._expression, "++"),
@@ -940,12 +940,24 @@ module.exports = grammar({
 
     var_declaration: ($) =>
       prec.right(
-        seq(
-          field("var_list", $.expression_list),
-          ":=",
-          field("expression_list", $.expression_list)
-        )
+          seq(
+              field("var_list", $.expression_list),
+              ":=",
+              field("expression_list", $.expression_list)
+          )
       ),
+
+    _var_definition_list: ($) =>
+        prec(PREC.primary, comma_sep1($.var_definition)),
+
+    var_definition: ($) =>
+        prec(
+            PREC.primary,
+            seq(
+                field("modifiers", optional(mut_keyword)),
+                field("name", $.identifier),
+            )
+        ),
 
     assignment_statement: ($) =>
       seq(

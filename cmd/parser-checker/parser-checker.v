@@ -10,6 +10,10 @@ fn main() {
 	if gen_res.exit_code != 0 {
 		panic('tree-sitter generate failed: ${gen_res.output}')
 	}
+	types_res := os.execute('cd tree_sitter_v && v run generate_types.vsh')
+	if types_res.exit_code != 0 {
+		panic('generate_types.vsh failed: ${types_res.output}')
+	}
 	time.sleep(1 * time.second)
 
 	path := './cmd/parser-checker/testdata/test.v'

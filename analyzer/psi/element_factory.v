@@ -49,6 +49,24 @@ pub fn create_element(node AstNode, text &tree_sitter.SourceText) PsiElement {
 		}
 	}
 
+	if node.type_name == .var_declaration {
+		return VarDeclaration{
+			PsiElementImpl: base_node
+		}
+	}
+
+	if node.type_name == .block {
+		return Block{
+			PsiElementImpl: base_node
+		}
+	}
+
+	if node.type_name == .mutable_expression {
+		return MutExpression{
+			PsiElementImpl: base_node
+		}
+	}
+
 	if node.type_name == .signature {
 		return Signature{
 			PsiElementImpl: base_node

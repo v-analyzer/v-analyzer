@@ -149,6 +149,7 @@ pub enum NodeType {
 	unary_expression
 	unsafe_expression
 	var_declaration
+	var_definition
 	escape_sequence
 	false_
 	field_identifier
@@ -461,6 +462,7 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'unary_expression' { NodeType.unary_expression }
 		'unsafe_expression' { NodeType.unsafe_expression }
 		'var_declaration' { NodeType.var_declaration }
+		'var_definition' { NodeType.var_definition }
 		'escape_sequence' { NodeType.escape_sequence }
 		'false' { NodeType.false_ }
 		'field_identifier' { NodeType.field_identifier }
