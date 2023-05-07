@@ -21,11 +21,12 @@ fn (mut c CompletionProcessor) execute(element psi.PsiElement) bool {
 	}
 
 	if element is psi.FunctionDeclaration {
+		signature := element.signature() or { return true }
 		c.result << lsp.CompletionItem{
 			label: element.name()
 			kind: .function
-			detail: 'Some detail'
-			documentation: ''
+			detail: 'fn ${element.name()}${signature.get_text()}'
+			documentation: element.doc_comment()
 			insert_text: element.name() + '($1)$0'
 			insert_text_format: .snippet
 		}

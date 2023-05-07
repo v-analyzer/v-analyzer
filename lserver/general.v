@@ -36,6 +36,10 @@ pub fn (mut ls LanguageServer) initialize(params lsp.InitializeParams, mut wr Re
 				resolve_provider: false
 				trigger_characters: ['=', '.', ':', '{', ',', '(', ' ']
 			}
+			signature_help_provider: lsp.SignatureHelpOptions{
+				trigger_characters: ['(', ',']
+				retrigger_characters: [',', ' ']
+			}
 		}
 	}
 }

@@ -42,5 +42,5 @@ pub fn (r TypeReferenceExpression) resolve_local() ?PsiElement {
 }
 
 pub fn (r TypeReferenceExpression) get_type() types.Type {
-	return types.new_unknown_type()
+	return types.unknown_type
 }

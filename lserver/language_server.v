@@ -127,7 +127,7 @@ pub fn (mut ls LanguageServer) handle_jsonrpc(request &jsonrpc.Request, mut rw j
 				params := json.decode(lsp.SignatureHelpParams, request.params) or {
 					return w.wrap_error(err)
 				}
-				// w.write(ls.signature_help(params, mut rw) or { return w.wrap_error(err) })
+				w.write(ls.signature_help(params, mut rw) or { return w.wrap_error(err) })
 			}
 			'textDocument/completion' {
 				params := json.decode(lsp.CompletionParams, request.params) or {

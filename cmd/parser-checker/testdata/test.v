@@ -1,6 +1,4 @@
-fn main() {
-	foo := Foo{
-		name: string
-	}
-	println(foo)
+fn some(a1 string, b2 int) string {
 }
+
+some('sss', 100)

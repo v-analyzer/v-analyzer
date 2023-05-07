@@ -10,5 +10,5 @@ pub fn (t &TypeInferer) infer_type(expr Expression) types.Type {
 		return expr.get_type()
 	}
 
-	return types.new_unknown_type()
+	return types.unknown_type
 }

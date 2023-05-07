@@ -98,8 +98,6 @@ pub fn (r &SubResolver) process_block(mut processor ResolveProcessor) bool {
 	}
 	r.walk_up(r.element as PsiElement, mut delegate)
 
-	println(delegate.result)
-
 	for result in delegate.result {
 		processor.result << result
 	}

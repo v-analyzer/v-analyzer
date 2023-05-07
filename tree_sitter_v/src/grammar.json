@@ -186,10 +186,6 @@
         },
         {
           "type": "SYMBOL",
-          "name": "type_cast_expression"
-        },
-        {
-          "type": "SYMBOL",
           "name": "as_type_cast_expression"
         },
         {
@@ -4058,25 +4054,8 @@
               "type": "SEQ",
               "members": [
                 {
-                  "type": "CHOICE",
-                  "members": [
-                    {
-                      "type": "SYMBOL",
-                      "name": "_expression"
-                    },
-                    {
-                      "type": "SYMBOL",
-                      "name": "mutable_expression"
-                    },
-                    {
-                      "type": "SYMBOL",
-                      "name": "keyed_element"
-                    },
-                    {
-                      "type": "SYMBOL",
-                      "name": "spread_operator"
-                    }
-                  ]
+                  "type": "SYMBOL",
+                  "name": "argument"
                 },
                 {
                   "type": "REPEAT",
@@ -4097,25 +4076,8 @@
                         ]
                       },
                       {
-                        "type": "CHOICE",
-                        "members": [
-                          {
-                            "type": "SYMBOL",
-                            "name": "_expression"
-                          },
-                          {
-                            "type": "SYMBOL",
-                            "name": "mutable_expression"
-                          },
-                          {
-                            "type": "SYMBOL",
-                            "name": "keyed_element"
-                          },
-                          {
-                            "type": "SYMBOL",
-                            "name": "spread_operator"
-                          }
-                        ]
+                        "type": "SYMBOL",
+                        "name": "argument"
                       }
                     ]
                   }
@@ -4142,6 +4104,27 @@
         {
           "type": "STRING",
           "value": ")"
+        }
+      ]
+    },
+    "argument": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_expression"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "mutable_expression"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "keyed_element"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "spread_operator"
         }
       ]
     },

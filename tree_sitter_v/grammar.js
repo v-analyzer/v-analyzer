@@ -301,7 +301,7 @@ module.exports = grammar({
         $.is_expression,
         $.index_expression,
         $.slice_expression,
-        $.type_cast_expression,
+        // $.type_cast_expression,
         $.as_type_cast_expression,
         $.call_expression,
         $.special_call_expression,
@@ -793,24 +793,14 @@ module.exports = grammar({
         "(",
         optional(
           seq(
-            choice(
-              $._expression,
-              $.mutable_expression,
-              $.keyed_element,
-              $.spread_operator
-            ),
+            $.argument,
             // TODO: accept terminator as argument separator for now
             // to avoid complexities in the grammar.
             // Finalize the syntax with keyed elements (aka struct init fields)
             repeat(
               seq(
                 choice(",", $._automatic_separator),
-                choice(
-                  $._expression,
-                  $.mutable_expression,
-                  $.keyed_element,
-                  $.spread_operator
-                )
+                $.argument,
               )
             ),
             optional($._automatic_separator)
@@ -818,6 +808,14 @@ module.exports = grammar({
         ),
         ")"
       ),
+
+    argument: ($) =>
+        choice(
+            $._expression,
+            $.mutable_expression,
+            $.keyed_element,
+            $.spread_operator
+        ),
 
     _type: ($) => choice($._simple_type, $.option_type, $.result_type, $.multi_return_type),
 

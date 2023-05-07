@@ -17,7 +17,7 @@ pub fn (mut ls LanguageServer) definition(params lsp.TextDocumentPositionParams,
 	}
 
 	if element is psi.ReferenceExpressionBase {
-		resolved := ls.analyzer_instance.resolver.resolve_local(file, element) or {
+		resolved := element.resolve_local() or {
 			println('cannot resolve ' + element.name())
 			return none
 		}

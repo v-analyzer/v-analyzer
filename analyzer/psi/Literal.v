@@ -9,7 +9,7 @@ pub struct Literal {
 fn (n &Literal) expr() {}
 
 fn (n &Literal) get_type() types.Type {
-	child := n.first_child() or { return types.new_unknown_type() }
+	child := n.first_child() or { return types.unknown_type }
 	if child.node.type_name == .interpreted_string_literal {
 		return types.new_primitive_type('string')
 	}

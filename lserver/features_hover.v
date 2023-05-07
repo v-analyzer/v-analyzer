@@ -15,10 +15,47 @@ pub fn (mut ls LanguageServer) hover(params lsp.HoverParams, mut wr ResponseWrit
 		return none
 	}
 
-	if element is psi.ReferenceExpression {
+	if element is psi.ReferenceExpressionBase {
 		resolved := ls.analyzer_instance.resolver.resolve_local(file, element) or {
-			println('cannot resolve reference ' + element.str())
+			println('cannot resolve reference ' + element.name())
 			return none
+		}
+
+		if resolved is psi.FunctionDeclaration {
+			signature := resolved.signature()?
+			doc_comment := resolved.doc_comment()
+			return lsp.Hover{
+				contents: lsp.hover_markdown_string('
+```v
+fn ${resolved.name()}${signature.get_text()}
+```
+
+${doc_comment}
+')
+				range: lsp.Range{}
+			}
+		}
+
+		if resolved is psi.StructDeclaration {
+			return lsp.Hover{
+				contents: lsp.hover_markdown_string('
+```v
+struct ${resolved.name()}
+```
+')
+				range: lsp.Range{}
+			}
+		}
+
+		if resolved is psi.VarDefinition {
+			return lsp.Hover{
+				contents: lsp.hover_markdown_string('
+```v
+var ${resolved.name()} ${resolved.get_type().readable_name()}
+```
+')
+				range: lsp.Range{}
+			}
 		}
 
 		if resolved is psi.PsiTypedElement {

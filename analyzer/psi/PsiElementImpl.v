@@ -43,7 +43,8 @@ pub fn (n PsiElementImpl) find_element_at(offset u32) ?PsiElement {
 	abs_offset := n.node.start_byte() + offset
 
 	inspect(n, fn [abs_offset, mut child] (it PsiElement) bool {
-		if abs_offset > it.node.start_byte() && abs_offset < it.node.end_byte() && it.node.is_leaf() {
+		if abs_offset >= it.node.start_byte() && abs_offset <= it.node.end_byte()
+			&& it.node.is_leaf() {
 			unsafe {
 				*child = it.node
 			}
@@ -136,6 +137,11 @@ pub fn (n PsiElementImpl) last_child() ?PsiElement {
 
 pub fn (n PsiElementImpl) next_sibling() ?PsiElement {
 	sibling := n.node.next_sibling() or { return none }
+	return create_element(sibling, n.containing_file)
+}
+
+pub fn (n PsiElementImpl) prev_sibling() ?PsiElement {
+	sibling := n.node.prev_sibling() or { return none }
 	return create_element(sibling, n.containing_file)
 }
 

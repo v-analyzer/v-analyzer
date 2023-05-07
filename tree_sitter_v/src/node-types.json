@@ -84,10 +84,6 @@
         "named": true
       },
       {
-        "type": "type_cast_expression",
-        "named": true
-      },
-      {
         "type": "type_initializer",
         "named": true
       },
@@ -347,12 +343,12 @@
     }
   },
   {
-    "type": "argument_list",
+    "type": "argument",
     "named": true,
     "fields": {},
     "children": {
-      "multiple": true,
-      "required": false,
+      "multiple": false,
+      "required": true,
       "types": [
         {
           "type": "_expression",
@@ -368,6 +364,21 @@
         },
         {
           "type": "spread_operator",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "argument_list",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "argument",
           "named": true
         }
       ]
@@ -3346,32 +3357,6 @@
           "named": true
         }
       ]
-    }
-  },
-  {
-    "type": "type_cast_expression",
-    "named": true,
-    "fields": {
-      "operand": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "_expression",
-            "named": true
-          }
-        ]
-      },
-      "type": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "_simple_type",
-            "named": true
-          }
-        ]
-      }
     }
   },
   {

@@ -23,6 +23,18 @@ pub fn create_element(node AstNode, containing_file &PsiFileImpl) PsiElement {
 		}
 	}
 
+	if node.type_name == .call_expression {
+		return CallExpression{
+			PsiElementImpl: base_node
+		}
+	}
+
+	if node.type_name == .argument {
+		return Argument{
+			PsiElementImpl: base_node
+		}
+	}
+
 	if node.type_name == .reference_expression {
 		if parent := node.parent_nth(2) {
 			if parent.type_name == .var_declaration {
@@ -96,8 +108,20 @@ pub fn create_element(node AstNode, containing_file &PsiFileImpl) PsiElement {
 		}
 	}
 
+	if node.type_name == .parameter_declaration {
+		return ParameterDeclaration{
+			PsiElementImpl: base_node
+		}
+	}
+
 	if node.type_name == .literal {
 		return Literal{
+			PsiElementImpl: base_node
+		}
+	}
+
+	if node.type_name == .comment {
+		return Comment{
 			PsiElementImpl: base_node
 		}
 	}

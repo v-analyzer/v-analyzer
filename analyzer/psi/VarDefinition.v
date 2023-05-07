@@ -29,5 +29,5 @@ pub fn (n &VarDefinition) get_type() types.Type {
 		}
 	}
 
-	return types.new_unknown_type()
+	return types.unknown_type
 }

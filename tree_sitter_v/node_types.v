@@ -16,6 +16,7 @@ pub enum SuperType {
 pub enum NodeType {
 	unknown
 	error
+	argument
 	argument_list
 	array
 	array_type
@@ -139,7 +140,6 @@ pub enum NodeType {
 	struct_field_declaration
 	struct_field_scope
 	thread_type
-	type_cast_expression
 	type_declaration
 	type_initializer
 	type_list
@@ -186,7 +186,6 @@ const supertype__expression_nodes = merge(supertype__expression_with_blocks_node
 	.selector_expression,
 	.slice_expression,
 	.special_call_expression,
-	.type_cast_expression,
 	.type_initializer,
 	.type_selector_expression,
 	.unary_expression,
@@ -328,6 +327,7 @@ pub struct VNodeTypeFactory {}
 pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 	return match type_name {
 		'ERROR' { NodeType.error }
+		'argument' { NodeType.argument }
 		'argument_list' { NodeType.argument_list }
 		'array' { NodeType.array }
 		'array_type' { NodeType.array_type }
@@ -451,7 +451,6 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'struct_field_declaration' { NodeType.struct_field_declaration }
 		'struct_field_scope' { NodeType.struct_field_scope }
 		'thread_type' { NodeType.thread_type }
-		'type_cast_expression' { NodeType.type_cast_expression }
 		'type_declaration' { NodeType.type_declaration }
 		'type_initializer' { NodeType.type_initializer }
 		'type_list' { NodeType.type_list }
