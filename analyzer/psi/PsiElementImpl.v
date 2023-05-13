@@ -13,7 +13,7 @@ fn new_psi_node(id ID, containing_file &PsiFileImpl, node AstNode) PsiElementImp
 	return PsiElementImpl{
 		id: id
 		node: node
-		containing_file: unsafe { containing_file }
+		containing_file: containing_file
 	}
 }
 
@@ -21,7 +21,11 @@ fn new_psi_node(id ID, containing_file &PsiFileImpl, node AstNode) PsiElementImp
 // 	return "ast node ${n.node.type_name} at ${n.node.start_point()}"
 // }
 
-pub fn (n PsiElementImpl) containing_file(other PsiElement) &PsiFileImpl {
+pub fn (n PsiElementImpl) node() AstNode {
+	return n.node
+}
+
+pub fn (n PsiElementImpl) containing_file() &PsiFileImpl {
 	return n.containing_file
 }
 
@@ -169,4 +173,13 @@ pub fn (n PsiElementImpl) find_last_child_by_type(typ v.NodeType) ?PsiElement {
 
 pub fn (n PsiElementImpl) get_text() string {
 	return n.node.text(n.containing_file.source_text)
+}
+
+pub fn (n PsiElementImpl) text_range() TextRange {
+	return TextRange{
+		line: int(n.node.start_point().row)
+		column: int(n.node.start_point().column)
+		end_line: int(n.node.end_point().row)
+		end_column: int(n.node.end_point().column)
+	}
 }

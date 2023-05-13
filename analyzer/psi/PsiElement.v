@@ -11,6 +11,8 @@ pub interface PsiElement {
 	id ID // базовый узел из Tree Sitter
 	node AstNode // базовый узел из Tree Sitter
 	containing_file &PsiFileImpl // файл, в котором находится узел
+	node() AstNode // базовый узел из Tree Sitter
+	containing_file() &PsiFileImpl // файл, в котором находится узел
 	is_equal(other PsiElement) bool
 	// find_element_at возвращает узел, находящийся в указанной позиции относительно начала узла.
 	// Если узел не найден, возвращается none.
@@ -55,4 +57,5 @@ pub interface PsiElement {
 	// В отличии от accept, этот метод использует visitor который может
 	// мутировать свое состояние.
 	accept_mut(mut visitor MutablePsiElementVisitor)
+	text_range() TextRange
 }

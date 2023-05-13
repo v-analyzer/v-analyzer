@@ -32,6 +32,7 @@ pub fn (mut ls LanguageServer) initialize(params lsp.InitializeParams, mut wr Re
 			text_document_sync: .full
 			hover_provider: true
 			definition_provider: true
+			references_provider: true
 			completion_provider: lsp.CompletionOptions{
 				resolve_provider: false
 				trigger_characters: ['=', '.', ':', '{', ',', '(', ' ']

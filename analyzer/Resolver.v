@@ -11,11 +11,6 @@ pub fn (r &Resolver) resolve_local(file OpenedFile, element psi.ReferenceExpress
 	return element.resolve_local()
 }
 
-pub fn (r &Resolver) resolve(file OpenedFile, element psi.ReferenceExpressionBase) ?ResolveResult {
-	res := element.resolve_local() or { return none }
-	return new_resolve_result(file.psi_file, res)
-}
-
 struct ResolveResult {
 pub:
 	filepath string
@@ -23,17 +18,22 @@ pub:
 	pos      index.Pos
 }
 
-pub fn new_resolve_result(containing_file &psi.PsiFileImpl, element psi.PsiElement) ResolveResult {
-	return ResolveResult{
-		filepath: containing_file.path()
-		name: if element is psi.PsiNamedElement { element.name() } else { '' }
-		pos: index.Pos{
-			line: int(element.node.start_point().row)
-			column: int(element.node.start_point().column)
-			end_line: int(element.node.end_point().row)
-			end_column: int(element.node.end_point().column)
+pub fn new_resolve_result(containing_file &psi.PsiFileImpl, element psi.PsiElement) ?ResolveResult {
+	if element is psi.PsiNamedElement {
+		identifier := element.identifier() or { return none }
+		return ResolveResult{
+			pos: index.Pos{
+				line: int(identifier.node().start_point().row)
+				column: int(identifier.node().start_point().column)
+				end_line: int(identifier.node().end_point().row)
+				end_column: int(identifier.node().end_point().column)
+			}
+			filepath: containing_file.path()
+			name: element.name()
 		}
 	}
+
+	return none
 }
 
 pub fn (r &Resolver) find_function(name string) ?index.FunctionCache {

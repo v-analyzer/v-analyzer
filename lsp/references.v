@@ -3,8 +3,10 @@ module lsp
 // method: ‘textDocument/references’
 // response: []Location | none
 pub struct ReferenceParams {
-	// extend: TextDocumentPositionParams
-	context ReferenceContext
+pub:
+	text_document TextDocumentIdentifier [json: textDocument]
+	position      Position
+	context       ReferenceContext
 }
 
 pub struct ReferenceContext {

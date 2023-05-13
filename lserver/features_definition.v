@@ -22,7 +22,7 @@ pub fn (mut ls LanguageServer) definition(params lsp.TextDocumentPositionParams,
 			return none
 		}
 
-		data := analyzer.new_resolve_result(resolved.containing_file, resolved)
+		data := analyzer.new_resolve_result(resolved.containing_file(), resolved) or { return [] }
 
 		return [
 			lsp.LocationLink{
