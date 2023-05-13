@@ -16,3 +16,7 @@ pub fn (s StructDeclaration) name() string {
 	identifier := s.identifier() or { return '' }
 	return identifier.get_text()
 }
+
+pub fn (s StructDeclaration) doc_comment() string {
+	return extract_doc_comment(s)
+}

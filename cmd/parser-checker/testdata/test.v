@@ -1,4 +1,4 @@
-fn some(a1 string, b2 int) string {
+fn some(a1 string, b2 Foo) string {
 }
 
 some('sss', 100)

@@ -7,7 +7,7 @@ pub struct Resolver {
 	indexer &Indexer
 }
 
-pub fn (r &Resolver) resolve_local(file OpenedFile, element psi.ReferenceExpressionBase) ?psi.PsiElement {
+pub fn (r &Resolver) resolve_local(element psi.ReferenceExpressionBase) ?psi.PsiElement {
 	return element.resolve_local()
 }
 
