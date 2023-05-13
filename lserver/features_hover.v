@@ -39,7 +39,7 @@ fn (mut ls LanguageServer) find_documentation_element(element psi.PsiElement) ?p
 		if parent is psi.ReferenceExpressionBase {
 			return ls.analyzer_instance.resolver.resolve_local(parent) or {
 				println('cannot resolve reference ' + parent.name())
-				return none
+				return element
 			}
 		}
 

@@ -9,6 +9,11 @@ mut:
 }
 
 pub fn (mut p Provider) documentation(element psi.PsiElement) ?string {
+	if element is psi.ModuleClause {
+		p.module_documentation(element)?
+		return p.sb.str()
+	}
+
 	if element is psi.FunctionDeclaration {
 		p.function_documentation(element)?
 		return p.sb.str()
@@ -29,7 +34,20 @@ pub fn (mut p Provider) documentation(element psi.PsiElement) ?string {
 		return p.sb.str()
 	}
 
+	if element is psi.FieldDeclaration {
+		p.field_documentation(element)?
+		return p.sb.str()
+	}
+
 	return none
+}
+
+fn (mut p Provider) module_documentation(element psi.ModuleClause) ? {
+	p.sb.write_string('```v\n')
+	p.sb.write_string('module ')
+	p.sb.write_string(element.name())
+	p.sb.write_string('\n')
+	p.sb.write_string('```')
 }
 
 fn (mut p Provider) function_documentation(element psi.FunctionDeclaration) ? {
@@ -65,6 +83,23 @@ fn (mut p Provider) variable_documentation(element psi.VarDefinition) ? {
 
 fn (mut p Provider) parameter_documentation(element psi.ParameterDeclaration) ? {
 	p.sb.write_string('```v\n')
+	p.sb.write_string(element.name())
+	p.sb.write_string(' ')
+	p.sb.write_string(element.get_type().readable_name())
+	p.sb.write_string('\n')
+	p.sb.write_string('```')
+}
+
+fn (mut p Provider) field_documentation(element psi.FieldDeclaration) ? {
+	p.sb.write_string('```v\n')
+
+	if owner := element.owner() {
+		if owner is psi.PsiNamedElement {
+			p.sb.write_string(owner.name())
+			p.sb.write_string('.')
+		}
+	}
+
 	p.sb.write_string(element.name())
 	p.sb.write_string(' ')
 	p.sb.write_string(element.get_type().readable_name())

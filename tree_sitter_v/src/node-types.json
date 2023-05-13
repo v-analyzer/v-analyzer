@@ -2086,7 +2086,7 @@
         "required": true,
         "types": [
           {
-            "type": "field_identifier",
+            "type": "identifier",
             "named": true
           }
         ]
@@ -2451,7 +2451,7 @@
       "required": true,
       "types": [
         {
-          "type": "module_identifier",
+          "type": "identifier",
           "named": true
         }
       ]
@@ -3307,6 +3307,10 @@
         "types": [
           {
             "type": "field_identifier",
+            "named": true
+          },
+          {
+            "type": "identifier",
             "named": true
           }
         ]

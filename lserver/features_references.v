@@ -21,23 +21,38 @@ fn (mut f FindReferencesVisitor) visit_element(element psi.PsiElement) {
 }
 
 fn (mut f FindReferencesVisitor) visit_element_impl(element psi.PsiElement) bool {
+	resolved := f.try_resolve(element) or { return true }
+
+	if resolved is psi.PsiNamedElement {
+		if f.element.name() == resolved.name() {
+			f.result << element
+			return false
+		}
+	}
+
+	return true
+}
+
+fn (mut f FindReferencesVisitor) try_resolve(element psi.PsiElement) ?psi.PsiElement {
 	if element.node.type_name == .reference_expression {
 		if element is psi.PsiElementImpl {
 			el := psi.ReferenceExpression{
 				PsiElementImpl: element
 			}
-			resolved := el.resolve_local() or { return true }
-
-			if resolved is psi.PsiNamedElement {
-				if f.element.name() == resolved.name() {
-					f.result << el
-					return false
-				}
-			}
+			return el.resolve_local()
 		}
 	}
 
-	return true
+	if element.node.type_name == .type_reference_expression {
+		if element is psi.PsiElementImpl {
+			el := psi.TypeReferenceExpression{
+				PsiElementImpl: element
+			}
+			return el.resolve_local()
+		}
+	}
+
+	return none
 }
 
 pub fn (mut ls LanguageServer) references(params lsp.ReferenceParams, mut wr ResponseWriter) []lsp.Location {

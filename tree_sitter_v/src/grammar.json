@@ -1214,7 +1214,7 @@
           "value": 1,
           "content": {
             "type": "SYMBOL",
-            "name": "_field_identifier"
+            "name": "field_definition"
           }
         },
         {
@@ -4598,14 +4598,9 @@
       "named": true,
       "value": "module_identifier"
     },
-    "_field_identifier": {
-      "type": "ALIAS",
-      "content": {
-        "type": "SYMBOL",
-        "name": "identifier"
-      },
-      "named": true,
-      "value": "field_identifier"
+    "field_definition": {
+      "type": "SYMBOL",
+      "name": "identifier"
     },
     "_statement_list": {
       "type": "REPEAT1",
@@ -7084,7 +7079,7 @@
                 "name": "name",
                 "content": {
                   "type": "SYMBOL",
-                  "name": "_field_identifier"
+                  "name": "field_definition"
                 }
               },
               {
@@ -7367,7 +7362,7 @@
               "members": [
                 {
                   "type": "SYMBOL",
-                  "name": "_field_identifier"
+                  "name": "field_definition"
                 },
                 {
                   "type": "ALIAS",
@@ -7820,7 +7815,7 @@
             "name": "name",
             "content": {
               "type": "SYMBOL",
-              "name": "_field_identifier"
+              "name": "field_definition"
             }
           },
           {
@@ -7923,13 +7918,8 @@
           "value": " "
         },
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "immediate_identifier"
-          },
-          "named": true,
-          "value": "module_identifier"
+          "type": "SYMBOL",
+          "name": "identifier"
         }
       ]
     },
@@ -8531,7 +8521,7 @@
   "inline": [
     "_type",
     "_string_literal",
-    "_field_identifier",
+    "field_definition",
     "_module_identifier",
     "_top_level_declaration",
     "_non_empty_array"

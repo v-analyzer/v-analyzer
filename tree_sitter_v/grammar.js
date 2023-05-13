@@ -232,7 +232,7 @@ module.exports = grammar({
   inline: ($) => [
     $._type,
     $._string_literal,
-    $._field_identifier,
+    $.field_definition,
     $._module_identifier,
     $._top_level_declaration,
     $._non_empty_array,
@@ -523,7 +523,7 @@ module.exports = grammar({
 
     _element_key: ($) =>
       choice(
-        prec(1, $._field_identifier),
+        prec(1, $.field_definition),
         $.type_reference_expression,
         $._string_literal,
         $.int_literal,
@@ -884,7 +884,7 @@ module.exports = grammar({
 
     _module_identifier: ($) => alias($.identifier, $.module_identifier),
 
-    _field_identifier: ($) => alias($.identifier, $.field_identifier),
+    field_definition: ($) => $.identifier,
 
     _statement_list: ($) =>
       repeat1(seq(
@@ -1374,7 +1374,7 @@ module.exports = grammar({
       prec.right(
         choice(
           seq(
-            field("name", $._field_identifier),
+            field("name", $.field_definition),
             field("type", choice($._simple_type, $.option_type)),
             field("attributes", optional($.attribute_declaration)),
             optional(seq("=", field("default_value", $._expression))),
@@ -1421,7 +1421,7 @@ module.exports = grammar({
       prec.right(
         seq(
           field("name", choice(
-            $._field_identifier,
+            $.field_definition,
             alias($._old_identifier, $.field_identifier)
           )),
           field("type", choice($._simple_type, $.option_type)),
@@ -1498,7 +1498,7 @@ module.exports = grammar({
     interface_spec: ($) =>
       prec.right(
         seq(
-          field("name", $._field_identifier),
+          field("name", $.field_definition),
           field("parameters", choice($.parameter_list, $.type_only_parameter_list)),
           field("result", optional($._type))
         )
@@ -1511,7 +1511,7 @@ module.exports = grammar({
         field("attributes", optional($.attribute_list)),
         "module",
         " ",
-        alias($.immediate_identifier, $.module_identifier)
+        $.identifier,
       ),
 
     import_declaration: ($) =>
