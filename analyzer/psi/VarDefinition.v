@@ -20,14 +20,39 @@ pub fn (n &VarDefinition) name() string {
 	return ''
 }
 
-pub fn (n &VarDefinition) get_type() types.Type {
+pub fn (n &VarDefinition) declaration() ?&VarDeclaration {
 	if parent := n.parent_nth(2) {
 		if parent is VarDeclaration {
-			if init := parent.initializer_of(n) {
-				return init.get_type()
+			return parent
+		}
+	}
+	if parent := n.parent_nth(3) {
+		if parent is VarDeclaration {
+			return parent
+		}
+	}
+	return none
+}
+
+pub fn (n &VarDefinition) get_type() types.Type {
+	decl := n.declaration() or { return types.unknown_type }
+
+	if init := decl.initializer_of(n) {
+		return init.get_type()
+	}
+
+	return types.unknown_type
+}
+
+pub fn (n &VarDefinition) mutability_modifiers() ?&MutabilityModifiers {
+	if mut_expr := n.parent() {
+		if mut_expr.node.type_name == .mutable_expression {
+			modifiers := mut_expr.find_child_by_type(.mutability_modifiers)?
+			if modifiers is MutabilityModifiers {
+				return modifiers
 			}
 		}
 	}
 
-	return types.unknown_type
+	return none
 }

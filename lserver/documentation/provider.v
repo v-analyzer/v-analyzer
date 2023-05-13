@@ -59,6 +59,12 @@ fn (mut p Provider) function_documentation(element psi.FunctionOrMethodDeclarati
 	signature := element.signature()?
 	p.sb.write_string('```v\n')
 	p.sb.write_string('fn ')
+
+	if receiver := element.receiver() {
+		p.sb.write_string(receiver.get_text())
+		p.sb.write_string(' ')
+	}
+
 	p.sb.write_string(element.name())
 	p.write_signature(signature)
 	p.sb.write_string('\n')
@@ -79,6 +85,10 @@ fn (mut p Provider) struct_documentation(element psi.StructDeclaration) ? {
 
 fn (mut p Provider) variable_documentation(element psi.VarDefinition) ? {
 	p.sb.write_string('```v\n')
+	if modifiers := element.mutability_modifiers() {
+		p.write_mutability_modifiers(modifiers)
+		p.sb.write_string(' ')
+	}
 	p.sb.write_string(element.name())
 	p.sb.write_string(' ')
 	p.sb.write_string(element.get_type().readable_name())
@@ -88,6 +98,10 @@ fn (mut p Provider) variable_documentation(element psi.VarDefinition) ? {
 
 fn (mut p Provider) parameter_documentation(element psi.ParameterDeclaration) ? {
 	p.sb.write_string('```v\n')
+	if modifiers := element.mutability_modifiers() {
+		p.write_mutability_modifiers(modifiers)
+		p.sb.write_string(' ')
+	}
 	p.sb.write_string(element.name())
 	p.sb.write_string(' ')
 	p.sb.write_string(element.get_type().readable_name())
@@ -114,6 +128,10 @@ fn (mut p Provider) field_documentation(element psi.FieldDeclaration) ? {
 
 fn (mut p Provider) receiver_documentation(element psi.Receiver) ? {
 	p.sb.write_string('```v\n')
+	if modifiers := element.mutability_modifiers() {
+		p.write_mutability_modifiers(modifiers)
+		p.sb.write_string(' ')
+	}
 	p.sb.write_string('receiver ')
 	p.sb.write_string(element.name())
 	p.sb.write_string(' ')
@@ -128,4 +146,8 @@ fn (mut p Provider) write_separator() {
 
 fn (mut p Provider) write_signature(signature psi.Signature) {
 	p.sb.write_string(signature.get_text())
+}
+
+fn (mut p Provider) write_mutability_modifiers(modifiers psi.MutabilityModifiers) {
+	p.sb.write_string(modifiers.get_text())
 }

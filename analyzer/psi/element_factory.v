@@ -43,6 +43,13 @@ pub fn create_element(node AstNode, containing_file &PsiFileImpl) PsiElement {
 				}
 			}
 		}
+		if parent := node.parent_nth(3) {
+			if parent.type_name == .var_declaration {
+				return VarDefinition{
+					PsiElementImpl: base_node
+				}
+			}
+		}
 		return ReferenceExpression{
 			PsiElementImpl: base_node
 		}
@@ -134,6 +141,12 @@ pub fn create_element(node AstNode, containing_file &PsiFileImpl) PsiElement {
 
 	if node.type_name == .comment {
 		return Comment{
+			PsiElementImpl: base_node
+		}
+	}
+
+	if node.type_name == .mutability_modifiers {
+		return MutabilityModifiers{
 			PsiElementImpl: base_node
 		}
 	}

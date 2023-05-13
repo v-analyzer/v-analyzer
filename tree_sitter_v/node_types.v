@@ -100,6 +100,7 @@ pub enum NodeType {
 	match_expression
 	module_clause
 	multi_return_type
+	mutability_modifiers
 	mutable_expression
 	mutable_identifier
 	none_
@@ -412,6 +413,7 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'match_expression' { NodeType.match_expression }
 		'module_clause' { NodeType.module_clause }
 		'multi_return_type' { NodeType.multi_return_type }
+		'mutability_modifiers' { NodeType.mutability_modifiers }
 		'mutable_expression' { NodeType.mutable_expression }
 		'mutable_identifier' { NodeType.mutable_identifier }
 		'none' { NodeType.none_ }

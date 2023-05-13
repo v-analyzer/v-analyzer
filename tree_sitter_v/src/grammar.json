@@ -3615,7 +3615,7 @@
         ]
       }
     },
-    "_mutable_prefix": {
+    "mutability_modifiers": {
       "type": "PREC_LEFT",
       "value": 0,
       "content": {
@@ -3657,7 +3657,7 @@
         "members": [
           {
             "type": "SYMBOL",
-            "name": "_mutable_prefix"
+            "name": "mutability_modifiers"
           },
           {
             "type": "CHOICE",
@@ -3683,7 +3683,7 @@
         "members": [
           {
             "type": "SYMBOL",
-            "name": "_mutable_prefix"
+            "name": "mutability_modifiers"
           },
           {
             "type": "CHOICE",
@@ -3709,7 +3709,7 @@
         "members": [
           {
             "type": "SYMBOL",
-            "name": "_mutable_prefix"
+            "name": "mutability_modifiers"
           },
           {
             "type": "SYMBOL",
@@ -3919,13 +3919,13 @@
       "members": [
         {
           "type": "FIELD",
-          "name": "visibility",
+          "name": "mutability",
           "content": {
             "type": "CHOICE",
             "members": [
               {
                 "type": "SYMBOL",
-                "name": "_mutable_prefix"
+                "name": "mutability_modifiers"
               },
               {
                 "type": "BLANK"

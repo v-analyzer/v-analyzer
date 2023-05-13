@@ -1,2 +1,1 @@
-fn (mut a App) some() string {
-}
+mut name := 100

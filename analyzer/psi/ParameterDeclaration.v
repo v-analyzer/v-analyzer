@@ -28,3 +28,11 @@ pub fn (n &ParameterDeclaration) name() string {
 
 	return ''
 }
+
+pub fn (n &ParameterDeclaration) mutability_modifiers() ?&MutabilityModifiers {
+	modifiers := n.find_child_by_type(.mutability_modifiers)?
+	if modifiers is MutabilityModifiers {
+		return modifiers
+	}
+	return none
+}

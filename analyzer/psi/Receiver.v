@@ -33,3 +33,11 @@ pub fn (r &Receiver) get_type() types.Type {
 
 	return types.unknown_type
 }
+
+pub fn (r &Receiver) mutability_modifiers() ?&MutabilityModifiers {
+	decl := r.find_child_by_type(.parameter_declaration)?
+	if decl is ParameterDeclaration {
+		return decl.mutability_modifiers()
+	}
+	return none
+}

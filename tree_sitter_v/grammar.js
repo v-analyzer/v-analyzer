@@ -702,7 +702,7 @@ module.exports = grammar({
     _old_identifier: ($) =>
       token(seq(letter, repeat(choice(letter, unicode_digit)))),
 
-    _mutable_prefix: ($) =>
+    mutability_modifiers: ($) =>
       prec.left(
         choice(
           seq(mut_keyword, optional(static_keyword)),
@@ -714,7 +714,7 @@ module.exports = grammar({
       prec(
         PREC.resolve,
         seq(
-          $._mutable_prefix,
+          $.mutability_modifiers,
           choice(
             $.identifier,
             $._reserved_identifier
@@ -726,7 +726,7 @@ module.exports = grammar({
       prec(
         PREC.resolve,
         seq(
-          $._mutable_prefix,
+          $.mutability_modifiers,
           choice(
             $.selector_expression,
             $.index_expression
@@ -738,7 +738,7 @@ module.exports = grammar({
       prec(
         PREC.resolve,
         seq(
-          $._mutable_prefix,
+          $.mutability_modifiers,
           $._expression
         )
       ),
@@ -778,7 +778,7 @@ module.exports = grammar({
 
     parameter_declaration: ($) =>
       seq(
-        field('visibility', optional($._mutable_prefix)),
+        field('mutability', optional($.mutability_modifiers)),
         field("name", choice($.identifier, $._reserved_identifier)),
         optional(field("variadic", "...")),
         field("type", choice($._simple_type, $.option_type))
