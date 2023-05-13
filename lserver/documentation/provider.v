@@ -14,7 +14,7 @@ pub fn (mut p Provider) documentation(element psi.PsiElement) ?string {
 		return p.sb.str()
 	}
 
-	if element is psi.FunctionDeclaration {
+	if element is psi.FunctionOrMethodDeclaration {
 		p.function_documentation(element)?
 		return p.sb.str()
 	}
@@ -34,6 +34,11 @@ pub fn (mut p Provider) documentation(element psi.PsiElement) ?string {
 		return p.sb.str()
 	}
 
+	if element is psi.Receiver {
+		p.receiver_documentation(element)?
+		return p.sb.str()
+	}
+
 	if element is psi.FieldDeclaration {
 		p.field_documentation(element)?
 		return p.sb.str()
@@ -50,7 +55,7 @@ fn (mut p Provider) module_documentation(element psi.ModuleClause) ? {
 	p.sb.write_string('```')
 }
 
-fn (mut p Provider) function_documentation(element psi.FunctionDeclaration) ? {
+fn (mut p Provider) function_documentation(element psi.FunctionOrMethodDeclaration) ? {
 	signature := element.signature()?
 	p.sb.write_string('```v\n')
 	p.sb.write_string('fn ')
@@ -100,6 +105,16 @@ fn (mut p Provider) field_documentation(element psi.FieldDeclaration) ? {
 		}
 	}
 
+	p.sb.write_string(element.name())
+	p.sb.write_string(' ')
+	p.sb.write_string(element.get_type().readable_name())
+	p.sb.write_string('\n')
+	p.sb.write_string('```')
+}
+
+fn (mut p Provider) receiver_documentation(element psi.Receiver) ? {
+	p.sb.write_string('```v\n')
+	p.sb.write_string('receiver ')
 	p.sb.write_string(element.name())
 	p.sb.write_string(' ')
 	p.sb.write_string(element.get_type().readable_name())

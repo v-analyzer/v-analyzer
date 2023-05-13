@@ -20,7 +20,7 @@ fn (mut c CompletionProcessor) execute(element psi.PsiElement) bool {
 		}
 	}
 
-	if element is psi.FunctionDeclaration {
+	if element is psi.FunctionOrMethodDeclaration {
 		signature := element.signature() or { return true }
 		c.result << lsp.CompletionItem{
 			label: element.name()

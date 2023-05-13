@@ -73,7 +73,13 @@ pub fn create_element(node AstNode, containing_file &PsiFileImpl) PsiElement {
 	}
 
 	if node.type_name == .function_declaration {
-		return FunctionDeclaration{
+		return FunctionOrMethodDeclaration{
+			PsiElementImpl: base_node
+		}
+	}
+
+	if node.type_name == .receiver {
+		return Receiver{
 			PsiElementImpl: base_node
 		}
 	}

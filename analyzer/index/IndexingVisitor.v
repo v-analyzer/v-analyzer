@@ -27,7 +27,7 @@ fn (mut i IndexingVisitor) process_child(node psi.PsiElement) {
 			i.cache.module_name = node.name().trim(' ')
 			i.cache.module_fqn = node.name().trim(' ') // TODO: рассчитывать имя для вложенных модулей
 		}
-		psi.FunctionDeclaration {
+		psi.FunctionOrMethodDeclaration {
 			i.cache.functions << FunctionCache{
 				filepath: i.filepath
 				module_fqn: i.cache.module_fqn

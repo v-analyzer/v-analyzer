@@ -1,4 +1,2 @@
-fn some(a1 string, b2 Foo) string {
+fn (mut a App) some() string {
 }
-
-some('sss', 100)

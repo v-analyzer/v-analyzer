@@ -778,7 +778,8 @@ module.exports = grammar({
 
     parameter_declaration: ($) =>
       seq(
-        field("name", choice($.mutable_identifier, $.identifier, $._reserved_identifier)),
+        field('visibility', optional($._mutable_prefix)),
+        field("name", choice($.identifier, $._reserved_identifier)),
         optional(field("variadic", "...")),
         field("type", choice($._simple_type, $.option_type))
       ),
@@ -997,7 +998,7 @@ module.exports = grammar({
           field("attributes", optional($.attribute_list)),
           optional(pub_keyword),
           fn_keyword,
-          field("receiver", optional($.parameter_list)),
+          field("receiver", optional($.receiver)),
           field("exposed_variables", optional($.exposed_variables_list)),
           field(
             "name",
@@ -1011,6 +1012,8 @@ module.exports = grammar({
           field("body", optional($.block))
         )
       ),
+
+    receiver: ($) => prec(PREC.primary, seq("(", $.parameter_declaration, ")")),
 
     signature: ($) => prec.right(seq(
         field(

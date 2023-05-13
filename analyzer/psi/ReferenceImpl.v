@@ -89,6 +89,10 @@ pub fn (r &SubResolver) walk_up(element PsiElement, mut processor ResolveProcess
 			if !r.process_parameters(run, mut processor) {
 				return false
 			}
+
+			if !r.process_receiver(run, mut processor) {
+				return false
+			}
 		}
 
 		run = run.parent() or { break }
@@ -107,6 +111,19 @@ pub fn (r &SubResolver) process_parameters(b Block, mut processor PsiScopeProces
 			if !processor.execute(param) {
 				return false
 			}
+		}
+	}
+
+	return true
+}
+
+pub fn (r &SubResolver) process_receiver(b Block, mut processor PsiScopeProcessor) bool {
+	parent := b.parent() or { return true }
+
+	if parent is FunctionOrMethodDeclaration {
+		receiver := parent.receiver() or { return true }
+		if !processor.execute(receiver) {
+			return false
 		}
 	}
 

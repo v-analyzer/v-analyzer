@@ -116,6 +116,7 @@ pub enum NodeType {
 	qualified_type
 	range
 	raw_string_literal
+	receiver
 	reference_expression
 	result_type
 	return_statement
@@ -427,6 +428,7 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'qualified_type' { NodeType.qualified_type }
 		'range' { NodeType.range }
 		'raw_string_literal' { NodeType.raw_string_literal }
+		'receiver' { NodeType.receiver }
 		'reference_expression' { NodeType.reference_expression }
 		'result_type' { NodeType.result_type }
 		'return_statement' { NodeType.return_statement }
