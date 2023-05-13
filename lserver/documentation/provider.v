@@ -24,6 +24,11 @@ pub fn (mut p Provider) documentation(element psi.PsiElement) ?string {
 		return p.sb.str()
 	}
 
+	if element is psi.ConstantDefinition {
+		p.const_documentation(element)?
+		return p.sb.str()
+	}
+
 	if element is psi.VarDefinition {
 		p.variable_documentation(element)?
 		return p.sb.str()
@@ -58,13 +63,15 @@ fn (mut p Provider) module_documentation(element psi.ModuleClause) ? {
 fn (mut p Provider) function_documentation(element psi.FunctionOrMethodDeclaration) ? {
 	signature := element.signature()?
 	p.sb.write_string('```v\n')
+	if modifiers := element.visibility_modifiers() {
+		p.write_visibility_modifiers(modifiers)
+		p.sb.write_string(' ')
+	}
 	p.sb.write_string('fn ')
-
 	if receiver := element.receiver() {
 		p.sb.write_string(receiver.get_text())
 		p.sb.write_string(' ')
 	}
-
 	p.sb.write_string(element.name())
 	p.write_signature(signature)
 	p.sb.write_string('\n')
@@ -75,8 +82,30 @@ fn (mut p Provider) function_documentation(element psi.FunctionOrMethodDeclarati
 
 fn (mut p Provider) struct_documentation(element psi.StructDeclaration) ? {
 	p.sb.write_string('```v\n')
+	if modifiers := element.visibility_modifiers() {
+		p.write_visibility_modifiers(modifiers)
+		p.sb.write_string(' ')
+	}
 	p.sb.write_string('struct ')
 	p.sb.write_string(element.name())
+	p.sb.write_string('\n')
+	p.sb.write_string('```')
+	p.write_separator()
+	p.sb.write_string(element.doc_comment())
+}
+
+fn (mut p Provider) const_documentation(element psi.ConstantDefinition) ? {
+	p.sb.write_string('```v\n')
+	if modifiers := element.visibility_modifiers() {
+		p.write_visibility_modifiers(modifiers)
+		p.sb.write_string(' ')
+	}
+	p.sb.write_string('const ')
+	p.sb.write_string(element.name())
+	p.sb.write_string(' = ')
+	if value := element.expression() {
+		p.sb.write_string(value.get_text())
+	}
 	p.sb.write_string('\n')
 	p.sb.write_string('```')
 	p.write_separator()
@@ -149,5 +178,9 @@ fn (mut p Provider) write_signature(signature psi.Signature) {
 }
 
 fn (mut p Provider) write_mutability_modifiers(modifiers psi.MutabilityModifiers) {
+	p.sb.write_string(modifiers.get_text())
+}
+
+fn (mut p Provider) write_visibility_modifiers(modifiers psi.VisibilityModifiers) {
 	p.sb.write_string(modifiers.get_text())
 }

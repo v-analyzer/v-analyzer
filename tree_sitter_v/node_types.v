@@ -43,7 +43,7 @@ pub enum NodeType {
 	comptime_if_expression
 	comptime_selector_expression
 	const_declaration
-	const_spec
+	const_definition
 	continue_statement
 	cstyle_for_clause
 	dec_statement
@@ -154,6 +154,7 @@ pub enum NodeType {
 	unsafe_expression
 	var_declaration
 	var_definition
+	visibility_modifiers
 	escape_sequence
 	false_
 	field_identifier
@@ -356,7 +357,7 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'comptime_if_expression' { NodeType.comptime_if_expression }
 		'comptime_selector_expression' { NodeType.comptime_selector_expression }
 		'const_declaration' { NodeType.const_declaration }
-		'const_spec' { NodeType.const_spec }
+		'const_definition' { NodeType.const_definition }
 		'continue_statement' { NodeType.continue_statement }
 		'cstyle_for_clause' { NodeType.cstyle_for_clause }
 		'dec_statement' { NodeType.dec_statement }
@@ -467,6 +468,7 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'unsafe_expression' { NodeType.unsafe_expression }
 		'var_declaration' { NodeType.var_declaration }
 		'var_definition' { NodeType.var_definition }
+		'visibility_modifiers' { NodeType.visibility_modifiers }
 		'escape_sequence' { NodeType.escape_sequence }
 		'false' { NodeType.false_ }
 		'field_identifier' { NodeType.field_identifier }

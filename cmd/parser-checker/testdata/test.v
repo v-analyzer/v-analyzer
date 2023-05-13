@@ -1,1 +1,2 @@
-mut name := 100
+// some comment
+const some_constant = 100

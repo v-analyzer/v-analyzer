@@ -1083,14 +1083,18 @@
       "required": true,
       "types": [
         {
-          "type": "const_spec",
+          "type": "const_definition",
+          "named": true
+        },
+        {
+          "type": "visibility_modifiers",
           "named": true
         }
       ]
     }
   },
   {
-    "type": "const_spec",
+    "type": "const_definition",
     "named": true,
     "fields": {
       "name": {
@@ -1276,6 +1280,10 @@
         },
         {
           "type": "enum_member_declaration_list",
+          "named": true
+        },
+        {
+          "type": "visibility_modifiers",
           "named": true
         }
       ]
@@ -1653,6 +1661,16 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "visibility_modifiers",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -2062,11 +2080,15 @@
       }
     },
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": true,
       "types": [
         {
           "type": "interface_spec_list",
+          "named": true
+        },
+        {
+          "type": "visibility_modifiers",
           "named": true
         }
       ]
@@ -3301,11 +3323,15 @@
       }
     },
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": false,
       "types": [
         {
           "type": "_struct_field_declaration_list",
+          "named": true
+        },
+        {
+          "type": "visibility_modifiers",
           "named": true
         }
       ]
@@ -3435,6 +3461,16 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "visibility_modifiers",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -3703,6 +3739,11 @@
         ]
       }
     }
+  },
+  {
+    "type": "visibility_modifiers",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "\n",
@@ -4038,11 +4079,11 @@
   },
   {
     "type": "float_literal",
-    "named": false
+    "named": true
   },
   {
     "type": "float_literal",
-    "named": true
+    "named": false
   },
   {
     "type": "fn",
@@ -4098,11 +4139,11 @@
   },
   {
     "type": "int_literal",
-    "named": true
+    "named": false
   },
   {
     "type": "int_literal",
-    "named": false
+    "named": true
   },
   {
     "type": "interface",

@@ -95,6 +95,15 @@ pub fn (p &PsiFileImpl) process_declarations(mut processor PsiScopeProcessor) bo
 				return false
 			}
 		}
+		if child is ConstantDeclaration {
+			for constant in child.constants() {
+				if constant is PsiNamedElement {
+					if !processor.execute(constant as PsiElement) {
+						return false
+					}
+				}
+			}
+		}
 	}
 
 	return true

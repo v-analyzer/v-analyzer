@@ -3615,6 +3615,23 @@
         ]
       }
     },
+    "visibility_modifiers": {
+      "type": "PREC_LEFT",
+      "value": 0,
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "pub"
+          },
+          {
+            "type": "STRING",
+            "value": "__global"
+          }
+        ]
+      }
+    },
     "mutability_modifiers": {
       "type": "PREC_LEFT",
       "value": 0,
@@ -5204,8 +5221,8 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "STRING",
-                "value": "pub"
+                "type": "SYMBOL",
+                "name": "visibility_modifiers"
               },
               {
                 "type": "BLANK"
@@ -5630,7 +5647,7 @@
       "type": "ALIAS",
       "content": {
         "type": "SYMBOL",
-        "name": "const_spec"
+        "name": "const_definition"
       },
       "named": true,
       "value": "global_var_spec"
@@ -5663,8 +5680,8 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "STRING",
-              "value": "pub"
+              "type": "SYMBOL",
+              "name": "visibility_modifiers"
             },
             {
               "type": "BLANK"
@@ -5680,7 +5697,7 @@
           "members": [
             {
               "type": "SYMBOL",
-              "name": "const_spec"
+              "name": "const_definition"
             },
             {
               "type": "SEQ",
@@ -5696,7 +5713,7 @@
                     "members": [
                       {
                         "type": "SYMBOL",
-                        "name": "const_spec"
+                        "name": "const_definition"
                       },
                       {
                         "type": "CHOICE",
@@ -5728,7 +5745,7 @@
         }
       ]
     },
-    "const_spec": {
+    "const_definition": {
       "type": "SEQ",
       "members": [
         {
@@ -5933,8 +5950,8 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "STRING",
-              "value": "pub"
+              "type": "SYMBOL",
+              "name": "visibility_modifiers"
             },
             {
               "type": "BLANK"
@@ -6941,8 +6958,8 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "STRING",
-              "value": "pub"
+              "type": "SYMBOL",
+              "name": "visibility_modifiers"
             },
             {
               "type": "BLANK"
@@ -7273,8 +7290,8 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "STRING",
-              "value": "pub"
+              "type": "SYMBOL",
+              "name": "visibility_modifiers"
             },
             {
               "type": "BLANK"
@@ -7514,8 +7531,8 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "STRING",
-              "value": "pub"
+              "type": "SYMBOL",
+              "name": "visibility_modifiers"
             },
             {
               "type": "BLANK"
@@ -7715,8 +7732,8 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "STRING",
-              "value": "pub"
+              "type": "SYMBOL",
+              "name": "visibility_modifiers"
             },
             {
               "type": "BLANK"

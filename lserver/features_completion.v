@@ -37,8 +37,19 @@ fn (mut c CompletionProcessor) execute(element psi.PsiElement) bool {
 			label: element.name()
 			kind: .class
 			detail: 'Some detail'
-			documentation: ''
+			documentation: element.doc_comment()
 			insert_text: element.name() + '{$1}$0'
+			insert_text_format: .snippet
+		}
+	}
+
+	if element is psi.ConstantDefinition {
+		c.result << lsp.CompletionItem{
+			label: element.name()
+			kind: .constant
+			detail: 'Some detail'
+			documentation: element.doc_comment()
+			insert_text: element.name()
 			insert_text_format: .snippet
 		}
 	}

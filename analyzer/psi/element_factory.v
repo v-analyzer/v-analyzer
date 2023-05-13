@@ -103,6 +103,18 @@ pub fn create_element(node AstNode, containing_file &PsiFileImpl) PsiElement {
 		}
 	}
 
+	if node.type_name == .const_declaration {
+		return ConstantDeclaration{
+			PsiElementImpl: base_node
+		}
+	}
+
+	if node.type_name == .const_definition {
+		return ConstantDefinition{
+			PsiElementImpl: base_node
+		}
+	}
+
 	if node.type_name == .var_declaration {
 		return VarDeclaration{
 			PsiElementImpl: base_node
@@ -147,6 +159,12 @@ pub fn create_element(node AstNode, containing_file &PsiFileImpl) PsiElement {
 
 	if node.type_name == .mutability_modifiers {
 		return MutabilityModifiers{
+			PsiElementImpl: base_node
+		}
+	}
+
+	if node.type_name == .visibility_modifiers {
+		return VisibilityModifiers{
 			PsiElementImpl: base_node
 		}
 	}

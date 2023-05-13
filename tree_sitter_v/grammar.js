@@ -702,6 +702,14 @@ module.exports = grammar({
     _old_identifier: ($) =>
       token(seq(letter, repeat(choice(letter, unicode_digit)))),
 
+    visibility_modifiers: ($) =>
+        prec.left(
+            choice(
+                pub_keyword,
+                global_keyword,
+            )
+        ),
+
     mutability_modifiers: ($) =>
       prec.left(
         choice(
@@ -996,7 +1004,7 @@ module.exports = grammar({
       prec.right(
         seq(
           field("attributes", optional($.attribute_list)),
-          optional(pub_keyword),
+          optional($.visibility_modifiers),
           fn_keyword,
           field("receiver", optional($.receiver)),
           field("exposed_variables", optional($.exposed_variables_list)),
@@ -1074,22 +1082,22 @@ module.exports = grammar({
         )
       ),
 
-    _global_var_spec: ($) => alias($.const_spec, $.global_var_spec),
+    _global_var_spec: ($) => alias($.const_definition, $.global_var_spec),
 
     global_var_type_initializer: ($) =>
       seq(field("name", $.identifier), field("type", $._type)),
 
     const_declaration: ($) =>
       seq(
-        optional(pub_keyword),
+        optional($.visibility_modifiers),
         const_keyword,
         choice(
-          $.const_spec,
-          seq("(", repeat1(seq($.const_spec, terminator)), ")")
+          $.const_definition,
+          seq("(", repeat1(seq($.const_definition, terminator)), ")")
         )
       ),
 
-    const_spec: ($) =>
+    const_definition: ($) =>
       seq(
         field("name", choice($.identifier, alias($._old_identifier, $.identifier))),
         "=",
@@ -1117,7 +1125,7 @@ module.exports = grammar({
 
     type_declaration: ($) =>
       seq(
-        optional(pub_keyword),
+        optional($.visibility_modifiers),
         type_keyword,
         field("name", choice($.identifier, $.builtin_type)),
         field("type_parameters", optional($.type_parameters)),
@@ -1330,7 +1338,7 @@ module.exports = grammar({
     struct_declaration: ($) =>
       seq(
         field("attributes", optional($.attribute_list)),
-        optional(pub_keyword),
+        optional($.visibility_modifiers),
         choice(struct_keyword, union_keyword),
         field(
           "name",
@@ -1396,7 +1404,7 @@ module.exports = grammar({
     _binded_struct_declaration: ($) =>
       seq(
         field("attributes", optional($.attribute_list)),
-        optional(pub_keyword),
+        optional($.visibility_modifiers),
         choice(struct_keyword, union_keyword),
         field("name", prec.dynamic(PREC.composite_literal, $._binded_type)),
         alias($._binded__struct_field_declaration_list, $._struct_field_declaration_list)
@@ -1437,7 +1445,7 @@ module.exports = grammar({
     enum_declaration: ($) =>
       seq(
         optional($.attribute_list),
-        optional(pub_keyword),
+        optional($.visibility_modifiers),
         enum_keyword,
         field("name", $.type_reference_expression),
         $.enum_member_declaration_list
@@ -1471,7 +1479,7 @@ module.exports = grammar({
     interface_declaration: ($) =>
       seq(
         field("attributes", optional($.attribute_list)),
-        optional(pub_keyword),
+        optional($.visibility_modifiers),
         interface_keyword,
         field("name", choice($.type_reference_expression, $.generic_type)),
         $.interface_spec_list
