@@ -85,10 +85,31 @@ pub fn (r &SubResolver) walk_up(element PsiElement, mut processor ResolveProcess
 			if !run.process_declarations(mut processor) {
 				return false
 			}
+
+			if !r.process_parameters(run, mut processor) {
+				return false
+			}
 		}
 
 		run = run.parent() or { break }
 	}
+	return true
+}
+
+pub fn (r &SubResolver) process_parameters(b Block, mut processor PsiScopeProcessor) bool {
+	parent := b.parent() or { return true }
+
+	if parent is SignatureOwner {
+		signature := parent.signature() or { return true }
+
+		params := signature.parameters()
+		for param in params {
+			if !processor.execute(param) {
+				return false
+			}
+		}
+	}
+
 	return true
 }
 
@@ -98,11 +119,15 @@ pub fn (r &SubResolver) process_block(mut processor ResolveProcessor) bool {
 	}
 	r.walk_up(r.element as PsiElement, mut delegate)
 
+	if delegate.result.len == 0 {
+		return true
+	}
+
 	for result in delegate.result {
 		processor.result << result
 	}
 
-	return true
+	return false
 }
 
 pub fn (r &SubResolver) process_file(mut processor ResolveProcessor) bool {
