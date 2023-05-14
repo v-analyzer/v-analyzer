@@ -3,6 +3,7 @@ module psi
 pub interface StubElement {
 	id() StubId
 	name() string
+	text() string
 	stub_type() StubType
 	parent_stub() ?&StubElement
 	children_stubs() []StubElement

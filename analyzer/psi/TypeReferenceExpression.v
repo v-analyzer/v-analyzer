@@ -26,7 +26,7 @@ pub fn (r TypeReferenceExpression) name() string {
 pub fn (r TypeReferenceExpression) qualifier() ?PsiElement {
 	parent := r.parent() or { return none }
 
-	if parent is SelectorExpression {
+	if parent is TypeSelectorExpression {
 		left := parent.left()
 		if left.is_equal(r) {
 			return none
@@ -47,5 +47,11 @@ pub fn (r TypeReferenceExpression) resolve() ?PsiElement {
 }
 
 pub fn (r TypeReferenceExpression) get_type() types.Type {
+	element := r.resolve() or { return types.unknown_type }
+
+	if element is PsiTypedElement {
+		return element.get_type()
+	}
+
 	return types.unknown_type
 }

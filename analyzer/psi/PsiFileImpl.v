@@ -56,18 +56,6 @@ pub fn (p &PsiFileImpl) root() PsiElement {
 	return p.root
 }
 
-pub fn (p &PsiFileImpl) find_most_depth_element_at(offset u32) ?PsiElement {
-	abs_offset := p.root.node.start_byte() + offset
-	mut inspector := FindAllElementsAtOffsetInspector{
-		offset: abs_offset
-	}
-	p.root.accept_mut(mut inspector)
-	if inspector.result.len == 0 {
-		return none
-	}
-	return inspector.result.last()
-}
-
 pub fn (p &PsiFileImpl) find_element_at(offset u32) ?PsiElement {
 	return p.root.find_element_at(offset)
 }

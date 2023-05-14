@@ -253,6 +253,8 @@ module.exports = grammar({
     [$.fixed_array_type, $._expression],
     [$._binded_type, $._expression],
     [$.none, $.none_type],
+    [$.reference_expression, $.type_reference_expression],
+    [$.reference_expression, $.type_reference_expression, $.qualified_type],
   ],
 
   rules: {
@@ -313,7 +315,7 @@ module.exports = grammar({
 
     parenthesized_expression: ($) => seq("(", $._expression, ")"),
 
-    reference_expression: ($) => prec(PREC.unary, $.identifier),
+    reference_expression: ($) => prec(PREC.primary, $.identifier),
     type_reference_expression: ($) => prec(PREC.primary, $.identifier),
 
     unary_expression: ($) =>
@@ -1473,7 +1475,7 @@ module.exports = grammar({
           )
         ),
         ".",
-        field("field_name", choice($._reserved_identifier, $.identifier))
+        field("field_name", choice($._reserved_identifier, $.type_reference_expression))
       ),
 
     interface_declaration: ($) =>

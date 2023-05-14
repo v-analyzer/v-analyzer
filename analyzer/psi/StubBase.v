@@ -10,6 +10,7 @@ pub enum StubType as u8 {
 	struct_declaration
 	field_declaration
 	constant_declaration
+	builtin_type
 }
 
 [heap]
@@ -67,6 +68,10 @@ pub fn (s StubBase) stub_type() StubType {
 
 pub fn (s StubBase) name() string {
 	return s.name
+}
+
+pub fn (s StubBase) text() string {
+	return s.text
 }
 
 fn (s StubBase) get_psi() ?PsiElement {

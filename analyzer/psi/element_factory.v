@@ -17,8 +17,20 @@ pub fn create_element(node AstNode, containing_file &PsiFileImpl) PsiElement {
 		}
 	}
 
+	if node.type_name == .builtin_type {
+		return BuiltinType{
+			PsiElementImpl: base_node
+		}
+	}
+
 	if node.type_name == .selector_expression {
 		return SelectorExpression{
+			PsiElementImpl: base_node
+		}
+	}
+
+	if node.type_name == .type_selector_expression {
+		return TypeSelectorExpression{
 			PsiElementImpl: base_node
 		}
 	}

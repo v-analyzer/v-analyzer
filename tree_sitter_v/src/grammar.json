@@ -233,7 +233,7 @@
     },
     "reference_expression": {
       "type": "PREC",
-      "value": 6,
+      "value": 7,
       "content": {
         "type": "SYMBOL",
         "name": "identifier"
@@ -7702,7 +7702,7 @@
               },
               {
                 "type": "SYMBOL",
-                "name": "identifier"
+                "name": "type_reference_expression"
               }
             ]
           }
@@ -8523,6 +8523,15 @@
     [
       "none",
       "none_type"
+    ],
+    [
+      "reference_expression",
+      "type_reference_expression"
+    ],
+    [
+      "reference_expression",
+      "type_reference_expression",
+      "qualified_type"
     ]
   ],
   "precedences": [],

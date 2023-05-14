@@ -54,7 +54,27 @@ pub fn (r &SubResolver) process_resolve_variants(mut processor ResolveProcessor)
 	}
 }
 
-pub fn (_ &SubResolver) process_qualifier_expression(qualifier PsiElement, mut processor ResolveProcessor) bool {
+pub fn (r &SubResolver) process_qualifier_expression(qualifier PsiElement, mut processor ResolveProcessor) bool {
+	if qualifier is PsiTypedElement {
+		typ := qualifier.get_type()
+		if typ !is types.UnknownType {
+			r.process_type(typ, mut processor)
+		}
+	}
+
+	return true
+}
+
+pub fn (r &SubResolver) process_type(typ types.Type, mut processor ResolveProcessor) bool {
+	if typ is types.StructType {
+		if struct_ := r.find_struct(stubs_index, typ.name()) {
+			for field in struct_.fields() {
+				if !processor.execute(field) {
+					return false
+				}
+			}
+		}
+	}
 	return true
 }
 
@@ -63,6 +83,13 @@ pub fn (r &SubResolver) process_unqualified_resolve(mut processor ResolveProcess
 		if parent is FieldName {
 			return r.process_type_initializer_field(mut processor)
 		}
+	}
+
+	if !r.process_block(mut processor) {
+		return false
+	}
+	if !r.process_file(mut processor) {
+		return false
 	}
 
 	element := r.element()
@@ -86,12 +113,6 @@ pub fn (r &SubResolver) process_unqualified_resolve(mut processor ResolveProcess
 		}
 	}
 
-	if !r.process_block(mut processor) {
-		return false
-	}
-	if !r.process_file(mut processor) {
-		return false
-	}
 	return true
 }
 

@@ -48,6 +48,11 @@ pub fn (s &StubbedElementType) create_psi(stub &StubBase) ?PsiElement {
 			PsiElementImpl: new_psi_node_from_stub(stub.id, stub.stub_list)
 		}
 	}
+	if stub_type == .builtin_type {
+		return BuiltinType{
+			PsiElementImpl: new_psi_node_from_stub(stub.id, stub.stub_list)
+		}
+	}
 	return new_psi_node_from_stub(stub.id, stub.stub_list)
 }
 
@@ -92,6 +97,10 @@ pub fn (s &StubbedElementType) create_stub(psi PsiElement, parent_stub &StubElem
 			text_range)
 	}
 
+	if psi is BuiltinType {
+		return new_stub_base(parent_stub, .builtin_type, '', psi.get_text(), psi.text_range())
+	}
+
 	return none
 }
 
@@ -116,6 +125,11 @@ pub fn (s &StubbedElementType) serialize(stub StubElement, mut stream StubOutput
 		stream.write_u8(u8(stub_type))
 		stream.write_name(stub.name())
 	}
+
+	if stub_type == .builtin_type {
+		stream.write_u8(u8(stub_type))
+		stream.write_name(stub.name())
+	}
 }
 
 pub fn (s &StubbedElementType) deserialize(stream StubInputStream, parent_stub &StubElement) ?&StubElement {
@@ -137,6 +151,10 @@ pub fn (s &StubbedElementType) deserialize(stream StubInputStream, parent_stub &
 		.field_declaration {
 			return new_stub_base(parent_stub, .field_declaration, stream.read_name(),
 				stream.read_name(), TextRange{})
+		}
+		.builtin_type {
+			return new_stub_base(parent_stub, .builtin_type, stream.read_name(), stream.read_name(),
+				TextRange{})
 		}
 	}
 

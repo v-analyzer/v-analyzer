@@ -33,6 +33,17 @@ pub fn (f &FieldDeclaration) name() string {
 }
 
 pub fn (f &FieldDeclaration) get_type() types.Type {
+	if f.stub_id != non_stubbed_element {
+		if stub := f.stubs_list.get_stub(f.stub_id) {
+			builtin_type_stubs := stub.get_children_by_type(.builtin_type)
+			if builtin_type_stubs.len > 0 {
+				return types.new_primitive_type(builtin_type_stubs[0].text())
+			}
+
+			return types.unknown_type
+		}
+	}
+
 	if builtin_typ := f.find_child_by_type(.builtin_type) {
 		return types.new_primitive_type(builtin_typ.get_text())
 	}

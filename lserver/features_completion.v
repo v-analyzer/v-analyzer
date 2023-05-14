@@ -54,6 +54,17 @@ fn (mut c CompletionProcessor) execute(element psi.PsiElement) bool {
 		}
 	}
 
+	if element is psi.FieldDeclaration {
+		c.result << lsp.CompletionItem{
+			label: element.name()
+			kind: .field
+			detail: element.get_type().readable_name()
+			documentation: ''
+			insert_text: element.name()
+			insert_text_format: .snippet
+		}
+	}
+
 	return true
 }
 
@@ -65,7 +76,7 @@ pub fn (mut ls LanguageServer) completion(params lsp.CompletionParams, mut wr Re
 	}
 
 	offset := file.find_offset(params.position)
-	element := file.psi_file.find_most_depth_element_at(offset - 1) or {
+	element := file.psi_file.root().find_element_at(offset - 1) or {
 		println('cannot find element at ' + offset.str())
 		return []
 	}

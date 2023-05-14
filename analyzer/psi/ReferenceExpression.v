@@ -47,5 +47,11 @@ pub fn (r ReferenceExpression) resolve() ?PsiElement {
 }
 
 pub fn (r ReferenceExpression) get_type() types.Type {
+	element := r.resolve() or { return types.unknown_type }
+
+	if element is PsiTypedElement {
+		return element.get_type()
+	}
+
 	return types.unknown_type
 }

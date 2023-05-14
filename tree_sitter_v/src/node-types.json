@@ -3600,6 +3600,10 @@
           {
             "type": "identifier",
             "named": true
+          },
+          {
+            "type": "type_reference_expression",
+            "named": true
           }
         ]
       },
