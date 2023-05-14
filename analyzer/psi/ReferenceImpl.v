@@ -69,10 +69,10 @@ pub fn (r &SubResolver) process_unqualified_resolve(mut processor ResolveProcess
 		}
 	}
 
-	if !r.process_file(mut processor) {
+	if !r.process_block(mut processor) {
 		return false
 	}
-	if !r.process_block(mut processor) {
+	if !r.process_file(mut processor) {
 		return false
 	}
 	return true

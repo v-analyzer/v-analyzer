@@ -12,9 +12,9 @@ pub fn (mut ls LanguageServer) did_open(params lsp.DidOpenTextDocumentParams, mu
 	res := parser.parse_code(src)
 	psi_file := psi.new_psi_file(uri.path(), res.tree, res.source_text)
 
-	mut visitor := psi.PrinterVisitor{}
-	psi_file.root().accept_mut(mut visitor)
-	visitor.print()
+	// mut visitor := psi.PrinterVisitor{}
+	// psi_file.root().accept_mut(mut visitor)
+	// visitor.print()
 
 	ls.opened_files[uri] = analyzer.OpenedFile{
 		uri: uri

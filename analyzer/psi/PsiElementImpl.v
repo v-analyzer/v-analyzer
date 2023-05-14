@@ -42,26 +42,9 @@ pub fn (n PsiElementImpl) accept_mut(mut visitor MutablePsiElementVisitor) {
 }
 
 pub fn (n PsiElementImpl) find_element_at(offset u32) ?PsiElement {
-	mut child := &AstNode{}
-
 	abs_offset := n.node.start_byte() + offset
-
-	inspect(n, fn [abs_offset, mut child] (it PsiElement) bool {
-		if abs_offset >= it.node.start_byte() && abs_offset <= it.node.end_byte()
-			&& it.node.is_leaf() {
-			unsafe {
-				*child = it.node
-			}
-			return false
-		}
-		return true
-	})
-
-	if child.is_null() {
-		return none
-	}
-
-	return create_element(*child, n.containing_file)
+	el := n.node.descendant_for_byte_range(abs_offset, abs_offset)
+	return create_element(el, n.containing_file)
 }
 
 pub fn (n PsiElementImpl) find_reference_at(offset u32) ?PsiElement {
