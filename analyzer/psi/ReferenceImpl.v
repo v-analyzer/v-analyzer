@@ -21,10 +21,6 @@ fn (r &ReferenceImpl) element() PsiElement {
 }
 
 fn (r &ReferenceImpl) resolve() ?PsiElement {
-	return none
-}
-
-fn (r &ReferenceImpl) resolve_local() ?PsiElement {
 	sub := SubResolver{
 		containing_file: r.file
 		element: r.element
@@ -58,7 +54,7 @@ pub fn (r &SubResolver) process_resolve_variants(mut processor ResolveProcessor)
 	}
 }
 
-pub fn (r &SubResolver) process_qualifier_expression(qualifier PsiElement, mut processor ResolveProcessor) bool {
+pub fn (_ &SubResolver) process_qualifier_expression(qualifier PsiElement, mut processor ResolveProcessor) bool {
 	return true
 }
 
@@ -66,6 +62,27 @@ pub fn (r &SubResolver) process_unqualified_resolve(mut processor ResolveProcess
 	if parent := r.element().parent() {
 		if parent is FieldName {
 			return r.process_type_initializer_field(mut processor)
+		}
+	}
+
+	element := r.element()
+	if element is PsiNamedElement {
+		if func := r.find_function(stubs_index, element.name()) {
+			if !processor.execute(func) {
+				return false
+			}
+		}
+
+		if struct_ := r.find_struct(stubs_index, element.name()) {
+			if !processor.execute(struct_) {
+				return false
+			}
+		}
+
+		if constant := r.find_constant(stubs_index, element.name()) {
+			if !processor.execute(constant) {
+				return false
+			}
 		}
 	}
 
@@ -100,7 +117,7 @@ pub fn (r &SubResolver) walk_up(element PsiElement, mut processor ResolveProcess
 	return true
 }
 
-pub fn (r &SubResolver) process_parameters(b Block, mut processor PsiScopeProcessor) bool {
+pub fn (_ &SubResolver) process_parameters(b Block, mut processor PsiScopeProcessor) bool {
 	parent := b.parent() or { return true }
 
 	if parent is SignatureOwner {
@@ -117,7 +134,7 @@ pub fn (r &SubResolver) process_parameters(b Block, mut processor PsiScopeProces
 	return true
 }
 
-pub fn (r &SubResolver) process_receiver(b Block, mut processor PsiScopeProcessor) bool {
+pub fn (_ &SubResolver) process_receiver(b Block, mut processor PsiScopeProcessor) bool {
 	parent := b.parent() or { return true }
 
 	if parent is FunctionOrMethodDeclaration {
@@ -156,14 +173,51 @@ pub fn (r &SubResolver) process_type_initializer_field(mut processor ResolveProc
 	if init_expr is PsiTypedElement {
 		typ := init_expr.get_type()
 		if typ is types.StructType {
-			ref := create_type_reference_expression(typ.name())
-			println(ref.get_text())
-			struct_resolved := ref.resolve_local()
-			println(struct_resolved)
+			if struct_ := r.find_struct(stubs_index, typ.name()) {
+				fields := struct_.fields()
+				for field in fields {
+					if !processor.execute(field) {
+						return false
+					}
+				}
+			}
 		}
 	}
 
 	return true
+}
+
+pub fn (_ &SubResolver) find_function(stubs_index StubIndex, name string) ?&FunctionOrMethodDeclaration {
+	found := stubs_index.get_elements(.functions, name)
+	if found.len != 0 {
+		first := found.first()
+		if first is FunctionOrMethodDeclaration {
+			return first
+		}
+	}
+	return none
+}
+
+pub fn (_ &SubResolver) find_struct(stubs_index StubIndex, name string) ?&StructDeclaration {
+	found := stubs_index.get_elements(.structs, name)
+	if found.len != 0 {
+		first := found.first()
+		if first is StructDeclaration {
+			return first
+		}
+	}
+	return none
+}
+
+pub fn (_ &SubResolver) find_constant(stubs_index StubIndex, name string) ?&ConstantDefinition {
+	found := stubs_index.get_elements(.constants, name)
+	if found.len != 0 {
+		first := found.first()
+		if first is ConstantDefinition {
+			return first
+		}
+	}
+	return none
 }
 
 pub struct ResolveProcessor {

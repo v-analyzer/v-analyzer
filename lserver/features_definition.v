@@ -1,9 +1,7 @@
 module lserver
 
 import lsp
-import analyzer.index
 import analyzer.psi
-import analyzer
 
 pub fn (mut ls LanguageServer) definition(params lsp.TextDocumentPositionParams, mut wr ResponseWriter) ?[]lsp.LocationLink {
 	uri := params.text_document.uri.normalize()
@@ -17,34 +15,46 @@ pub fn (mut ls LanguageServer) definition(params lsp.TextDocumentPositionParams,
 	}
 
 	if element is psi.ReferenceExpressionBase {
-		resolved := element.resolve_local() or {
+		resolved := element.resolve() or {
 			println('cannot resolve ' + element.name())
 			return none
 		}
 
-		data := analyzer.new_resolve_result(resolved.containing_file(), resolved) or { return [] }
+		data := new_resolve_result(resolved.containing_file(), resolved) or { return [] }
 
 		return [
-			lsp.LocationLink{
-				target_uri: 'file://' + data.filepath
-				target_range: pos_to_range(data.pos)
-				target_selection_range: pos_to_range(data.pos)
-			},
+			data.to_location_link(),
 		]
 	}
 
 	return []
 }
 
-fn pos_to_range(pos index.Pos) lsp.Range {
-	return lsp.Range{
-		start: lsp.Position{
-			line: pos.line
-			character: pos.column
+struct ResolveResult {
+pub:
+	filepath string
+	name     string
+	range    psi.TextRange
+}
+
+pub fn new_resolve_result(containing_file &psi.PsiFileImpl, element psi.PsiElement) ?ResolveResult {
+	if element is psi.PsiNamedElement {
+		text_range := element.identifier_text_range()
+		return ResolveResult{
+			range: text_range
+			filepath: containing_file.path()
+			name: element.name()
 		}
-		end: lsp.Position{
-			line: pos.end_line
-			character: pos.end_column
-		}
+	}
+
+	return none
+}
+
+fn (r &ResolveResult) to_location_link() lsp.LocationLink {
+	range := text_range_to_lsp_range(r.range)
+	return lsp.LocationLink{
+		target_uri: 'file://' + r.filepath
+		target_range: range
+		target_selection_range: range
 	}
 }

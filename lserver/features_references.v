@@ -39,7 +39,7 @@ fn (mut f FindReferencesVisitor) try_resolve(element psi.PsiElement) ?psi.PsiEle
 			el := psi.ReferenceExpression{
 				PsiElementImpl: element
 			}
-			return el.resolve_local()
+			return el.resolve()
 		}
 	}
 
@@ -48,7 +48,7 @@ fn (mut f FindReferencesVisitor) try_resolve(element psi.PsiElement) ?psi.PsiEle
 			el := psi.TypeReferenceExpression{
 				PsiElementImpl: element
 			}
-			return el.resolve_local()
+			return el.resolve()
 		}
 	}
 

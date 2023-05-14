@@ -11,6 +11,7 @@ pub interface PsiElement {
 	id ID // базовый узел из Tree Sitter
 	node AstNode // базовый узел из Tree Sitter
 	containing_file &PsiFileImpl // файл, в котором находится узел
+	stub_id StubId
 	node() AstNode // базовый узел из Tree Sitter
 	containing_file() &PsiFileImpl // файл, в котором находится узел
 	is_equal(other PsiElement) bool

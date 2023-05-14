@@ -5,5 +5,5 @@ pub interface ReferenceExpressionBase {
 	name() string
 	qualifier() ?PsiElement
 	reference() PsiReference
-	resolve_local() ?PsiElement
+	resolve() ?PsiElement
 }

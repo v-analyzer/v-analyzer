@@ -14,7 +14,7 @@ fn (n &TypeInitializer) get_type() types.Type {
 	}
 
 	if type_element is TypeReferenceExpression {
-		resolved := type_element.resolve_local() or { return types.unknown_type }
+		resolved := type_element.resolve() or { return types.unknown_type }
 		if resolved is StructDeclaration {
 			return types.new_struct_type(resolved.name())
 		}

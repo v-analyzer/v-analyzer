@@ -13,7 +13,12 @@ pub fn (r ReferenceExpression) identifier() ?PsiElement {
 	return r.first_child()
 }
 
-pub fn (r ReferenceExpression) name() string {
+pub fn (r &ReferenceExpression) identifier_text_range() TextRange {
+	identifier := r.identifier() or { return TextRange{} }
+	return identifier.text_range()
+}
+
+pub fn (r &ReferenceExpression) name() string {
 	identifier := r.identifier() or { return '' }
 	return identifier.get_text()
 }
@@ -37,8 +42,8 @@ pub fn (r ReferenceExpression) reference() PsiReference {
 	return new_reference(r.containing_file, r, false)
 }
 
-pub fn (r ReferenceExpression) resolve_local() ?PsiElement {
-	return r.reference().resolve_local()
+pub fn (r ReferenceExpression) resolve() ?PsiElement {
+	return r.reference().resolve()
 }
 
 pub fn (r ReferenceExpression) get_type() types.Type {

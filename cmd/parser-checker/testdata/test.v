@@ -1,2 +1,5 @@
-// some comment
-const some_constant = 100
+struct Foo {
+	name string
+mut:
+	age int
+}

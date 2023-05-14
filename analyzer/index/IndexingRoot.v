@@ -94,7 +94,7 @@ pub fn (mut i IndexingRoot) index() BuiltIndexStatus {
 	}
 
 	file_chan := chan string{cap: 1000}
-	cache_chan := chan FileCache{cap: 1000}
+	cache_chan := chan FileIndex{cap: 1000}
 
 	spawn fn [mut i, file_chan] () {
 		path := i.root
@@ -109,14 +109,14 @@ pub fn (mut i IndexingRoot) index() BuiltIndexStatus {
 
 	spawn i.spawn_indexing_workers(cache_chan, file_chan)
 
-	mut caches := []FileCache{cap: 100}
+	mut caches := []FileIndex{cap: 100}
 	for {
 		cache := <-cache_chan or { break }
 		caches << cache
 	}
 
 	for cache in caches {
-		i.index.data.data[cache.filepath] = cache
+		i.index.per_file.data[cache.filepath] = cache
 	}
 
 	i.updated_at = time.now()
@@ -126,25 +126,31 @@ pub fn (mut i IndexingRoot) index() BuiltIndexStatus {
 	return .from_scratch
 }
 
-pub fn (mut _ IndexingRoot) index_file(path string) !FileCache {
+pub fn (mut _ IndexingRoot) index_file(path string) !FileIndex {
 	last_modified := os.file_last_mod_unix(path)
 	content := os.read_file(path)!
 	res := parser.parse_code(content)
 	psi_file := psi.new_psi_file(path, res.tree, res.source_text)
-	cache := FileCache{
+	mut cache := FileIndex{
 		filepath: path
 		file_last_modified: last_modified
+		sink: &psi.StubIndexSink{}
 	}
-	mut visitor := &IndexingVisitor{
-		filepath: path
-		file: psi_file
-		cache: &cache
+	stub_tree := build_stub_tree(psi_file)
+
+	stub_type := psi.StubbedElementType{}
+	stubs := stub_tree.root.stub_list.index_map.values()
+	for stub in stubs {
+		cache.sink.stub_id = stub.id
+		cache.sink.stub_list = stub.stub_list
+		stub_type.index_stub(stub, mut cache.sink)
 	}
-	visitor.process()
+
+	res.tree.raw_tree.free()
 	return cache
 }
 
-pub fn (mut i IndexingRoot) spawn_indexing_workers(cache_chan chan FileCache, file_chan chan string) {
+pub fn (mut i IndexingRoot) spawn_indexing_workers(cache_chan chan FileIndex, file_chan chan string) {
 	mut wg := sync.new_waitgroup()
 	workers := runtime.nr_cpus() - 4
 	wg.add(workers)
@@ -170,14 +176,14 @@ pub fn (mut i IndexingRoot) ensure_indexed() {
 	println('Ensuring indexed root ${i.root}')
 
 	reindex_files_chan := chan string{cap: 1000}
-	cache_chan := chan FileCache{cap: 1000}
+	cache_chan := chan FileIndex{cap: 1000}
 
 	spawn fn [reindex_files_chan, mut i] () {
-		for filepath, datum in i.index.data.data {
+		for filepath, datum in i.index.per_file.data {
 			last_modified := os.file_last_mod_unix(filepath)
 			if last_modified > datum.file_last_modified {
 				println('File ${filepath} was modified, reindexing')
-				i.index.data.data.delete(filepath)
+				i.index.per_file.data.delete(filepath)
 				reindex_files_chan <- filepath
 			}
 		}
@@ -187,14 +193,14 @@ pub fn (mut i IndexingRoot) ensure_indexed() {
 
 	spawn i.spawn_indexing_workers(cache_chan, reindex_files_chan)
 
-	mut caches := []FileCache{cap: 100}
+	mut caches := []FileIndex{cap: 100}
 	for {
 		cache := <-cache_chan or { break }
 		caches << cache
 	}
 
 	for cache in caches {
-		i.index.data.data[cache.filepath] = cache
+		i.index.per_file.data[cache.filepath] = cache
 	}
 
 	i.index.updated_at = time.now()
@@ -204,18 +210,18 @@ pub fn (mut i IndexingRoot) ensure_indexed() {
 }
 
 pub fn (mut i IndexingRoot) mark_as_dirty(filepath string) {
-	if filepath !in i.index.data.data {
+	if filepath !in i.index.per_file.data {
 		// файл не принадлежит этому индексу
 		return
 	}
 
 	println('Marking ${filepath} as dirty')
-	i.index.data.data.delete(filepath)
+	i.index.per_file.data.delete(filepath)
 	res := i.index_file(filepath) or {
 		println('Error indexing dirty ${filepath}: ${err}')
 		return
 	}
-	i.index.data.data[filepath] = res
+	i.index.per_file.data[filepath] = res
 	i.index.updated_at = time.now()
 	i.save_index() or { println(err) }
 

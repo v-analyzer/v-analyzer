@@ -24,7 +24,7 @@ pub:
 	version string = '4'
 pub mut:
 	updated_at time.Time // время последнего обновления индекса
-	data       PerFileCache
+	per_file   PerFileIndex
 }
 
 // decode инкапсулирует логику декодирования индекса.
@@ -35,7 +35,7 @@ pub fn (mut i Index) decode(data string) ! {
 	if res.version != i.version {
 		return IndexVersionMismatchError{}
 	}
-	i.data = res.data
+	i.per_file = res.per_file
 }
 
 // encode инкапсулирует логику кодирования индекса.

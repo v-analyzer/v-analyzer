@@ -12,6 +12,11 @@ pub fn (n &VarDefinition) identifier() ?PsiElement {
 	return n.find_child_by_type(.identifier)
 }
 
+pub fn (n &VarDefinition) identifier_text_range() TextRange {
+	identifier := n.identifier() or { return TextRange{} }
+	return identifier.text_range()
+}
+
 pub fn (n &VarDefinition) name() string {
 	if id := n.identifier() {
 		return id.get_text()

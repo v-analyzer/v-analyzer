@@ -7,10 +7,11 @@ import time
 
 [heap]
 pub struct PsiFileImpl {
+pub:
 	path string
-mut:
-	tree        &tree_sitter.Tree[v.NodeType]
-	source_text &tree_sitter.SourceText
+pub mut:
+	tree        &tree_sitter.Tree[v.NodeType] = unsafe { nil }
+	source_text &tree_sitter.SourceText       = unsafe { nil }
 	root        PsiElement
 }
 
@@ -22,6 +23,14 @@ pub fn new_psi_file(path string, tree &tree_sitter.Tree[v.NodeType], source_text
 	}
 	file.root = create_element(AstNode(tree.root_node()), file)
 	return file
+}
+
+pub fn new_stub_psi_file(path string) &PsiFileImpl {
+	return &PsiFileImpl{
+		path: path
+		tree: unsafe { nil }
+		source_text: unsafe { nil }
+	}
 }
 
 pub fn (mut p PsiFileImpl) reparse(new_code string) {

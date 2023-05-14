@@ -7,6 +7,9 @@ pub:
 	id              ID
 	node            AstNode // базовый узел из Tree Sitter
 	containing_file &PsiFileImpl
+	// stubs related
+	stub_id    StubId = non_stubbed_element
+	stubs_list &StubList
 }
 
 fn new_psi_node(id ID, containing_file &PsiFileImpl, node AstNode) PsiElementImpl {
@@ -14,6 +17,15 @@ fn new_psi_node(id ID, containing_file &PsiFileImpl, node AstNode) PsiElementImp
 		id: id
 		node: node
 		containing_file: containing_file
+	}
+}
+
+fn new_psi_node_from_stub(id StubId, stubs_list &StubList) PsiElementImpl {
+	return PsiElementImpl{
+		node: AstNode{}
+		containing_file: unsafe { nil }
+		stub_id: id
+		stubs_list: stubs_list
 	}
 }
 
@@ -26,6 +38,11 @@ pub fn (n PsiElementImpl) node() AstNode {
 }
 
 pub fn (n PsiElementImpl) containing_file() &PsiFileImpl {
+	if n.stub_id != non_stubbed_element {
+		path := n.stubs_list.path
+		return new_stub_psi_file(path)
+	}
+
 	return n.containing_file
 }
 
@@ -62,6 +79,16 @@ pub fn (n PsiElementImpl) find_reference_at(offset u32) ?PsiElement {
 }
 
 pub fn (n PsiElementImpl) parent() ?PsiElement {
+	if n.stub_id != non_stubbed_element {
+		if stub := n.stubs_list.get_stub(n.stub_id) {
+			parent := stub.parent_stub() or { return none }
+			if parent.is_valid() {
+				return parent.get_psi()
+			}
+			return none
+		}
+	}
+
 	parent := n.node.parent() or { return none }
 	return create_element(parent, n.containing_file)
 }
@@ -103,6 +130,17 @@ pub fn (n PsiElementImpl) parent_of_type_or_self(typ v.NodeType) ?PsiElement {
 }
 
 pub fn (n PsiElementImpl) children() []PsiElement {
+	if n.stub_id != non_stubbed_element {
+		if stub := n.stubs_list.get_stub(n.stub_id) {
+			children := stub.children_stubs()
+			mut result := []PsiElement{cap: children.len}
+			for child in children {
+				result << child.get_psi() or { continue }
+			}
+			return result
+		}
+	}
+
 	mut result := []PsiElement{}
 	mut child := n.node.first_child() or { return [] }
 	for {
@@ -155,6 +193,12 @@ pub fn (n PsiElementImpl) find_last_child_by_type(typ v.NodeType) ?PsiElement {
 }
 
 pub fn (n PsiElementImpl) get_text() string {
+	if n.stub_id != non_stubbed_element {
+		if stub := n.stubs_list.get_stub(n.stub_id) {
+			return stub.text
+		}
+	}
+
 	return n.node.text(n.containing_file.source_text)
 }
 
