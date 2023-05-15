@@ -2,9 +2,11 @@ module lserver
 
 import lsp
 import analyzer.psi
+import tree_sitter_v as v
 
 struct FindReferencesVisitor {
-	element psi.PsiNamedElement
+	element      psi.PsiNamedElement
+	element_type v.NodeType
 mut:
 	result []psi.PsiElement
 }
@@ -22,9 +24,10 @@ fn (mut f FindReferencesVisitor) visit_element(element psi.PsiElement) {
 
 fn (mut f FindReferencesVisitor) visit_element_impl(element psi.PsiElement) bool {
 	resolved := f.try_resolve(element) or { return true }
+	typ := resolved.element_type()
 
 	if resolved is psi.PsiNamedElement {
-		if f.element.name() == resolved.name() {
+		if f.element_type == typ && f.element.name() == resolved.name() {
 			f.result << element
 			return false
 		}
@@ -68,12 +71,13 @@ pub fn (mut ls LanguageServer) references(params lsp.ReferenceParams, mut wr Res
 	named_element := element.parent() or { return [] }
 
 	if named_element is psi.PsiNamedElement {
-		mut v := FindReferencesVisitor{
+		mut visit := FindReferencesVisitor{
 			element: named_element
+			element_type: (named_element as psi.PsiElement).element_type()
 		}
-		file.psi_file.root().accept_mut(mut v)
+		file.psi_file.root().accept_mut(mut visit)
 
-		return v.result.map(fn (it psi.PsiElement) lsp.Location {
+		return visit.result.map(fn (it psi.PsiElement) lsp.Location {
 			return lsp.Location{
 				uri: 'file://' + it.containing_file.path()
 				range: text_range_to_lsp_range(it.text_range())

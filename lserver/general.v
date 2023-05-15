@@ -14,6 +14,7 @@ pub fn (mut ls LanguageServer) initialize(params lsp.InitializeParams, mut wr Re
 	ls.print_info(params.process_id, params.client_info, mut wr)
 
 	ls.analyzer_instance.indexer.add_indexing_root('file:///Users/petrmakhnev/v/vlib')
+	ls.analyzer_instance.indexer.add_indexing_root('file:///Users/petrmakhnev/intellij-v/src/main/resources/stubs/')
 	ls.analyzer_instance.indexer.add_indexing_root(ls.root_uri)
 
 	status := ls.analyzer_instance.indexer.index()

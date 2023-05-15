@@ -33,6 +33,11 @@ pub fn (s &StubbedElementType) create_psi(stub &StubBase) ?PsiElement {
 			PsiElementImpl: new_psi_node_from_stub(stub.id, stub.stub_list)
 		}
 	}
+	if stub_type == .signature {
+		return Signature{
+			PsiElementImpl: new_psi_node_from_stub(stub.id, stub.stub_list)
+		}
+	}
 	if stub_type == .struct_declaration {
 		return StructDeclaration{
 			PsiElementImpl: new_psi_node_from_stub(stub.id, stub.stub_list)
@@ -65,6 +70,10 @@ pub fn (s &StubbedElementType) create_stub(psi PsiElement, parent_stub &StubElem
 		}
 		return new_stub_base(parent_stub, .function_declaration, psi.name(), psi.get_text(),
 			text_range)
+	}
+
+	if psi is Signature {
+		return new_stub_base(parent_stub, .signature, '', psi.get_text(), psi.text_range())
 	}
 
 	if psi is StructDeclaration {
@@ -156,6 +165,7 @@ pub fn (s &StubbedElementType) deserialize(stream StubInputStream, parent_stub &
 			return new_stub_base(parent_stub, .builtin_type, stream.read_name(), stream.read_name(),
 				TextRange{})
 		}
+		.signature {}
 	}
 
 	return none

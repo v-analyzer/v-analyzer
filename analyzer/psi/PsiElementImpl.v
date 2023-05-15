@@ -37,6 +37,18 @@ pub fn (n PsiElementImpl) node() AstNode {
 	return n.node
 }
 
+pub fn (n PsiElementImpl) element_type() v.NodeType {
+	if n.stub_id != non_stubbed_element {
+		if stub := n.stubs_list.get_stub(n.stub_id) {
+			return stub.element_type()
+		}
+	}
+	if isnil(n.node) {
+		return .unknown
+	}
+	return n.node.type_name
+}
+
 pub fn (n PsiElementImpl) containing_file() &PsiFileImpl {
 	if n.stub_id != non_stubbed_element {
 		path := n.stubs_list.path

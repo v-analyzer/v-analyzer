@@ -1,3 +1,2 @@
-data := SomeData{
-	name: 'hello'
+fn foo(f string, s int) {
 }

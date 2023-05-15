@@ -20,6 +20,19 @@ pub fn (f FunctionOrMethodDeclaration) identifier_text_range() TextRange {
 }
 
 pub fn (f FunctionOrMethodDeclaration) signature() ?&Signature {
+	if f.stub_id != non_stubbed_element {
+		if stub := f.stubs_list.get_stub(f.stub_id) {
+			signature_stubs := stub.get_children_by_type(.signature)
+			if signature_stubs.len > 0 {
+				psi := signature_stubs.first().get_psi() or { return none }
+				if psi is Signature {
+					return psi
+				}
+			}
+			return none
+		}
+	}
+
 	signature := f.find_child_by_type(.signature) or { return none }
 	if signature is Signature {
 		return signature

@@ -1,5 +1,7 @@
 module psi
 
+import tree_sitter_v as v
+
 pub type StubId = int
 
 const non_stubbed_element = StubId(-1)
@@ -7,6 +9,7 @@ const non_stubbed_element = StubId(-1)
 pub enum StubType as u8 {
 	root
 	function_declaration
+	signature
 	struct_declaration
 	field_declaration
 	constant_declaration
@@ -62,8 +65,20 @@ pub fn (s &StubBase) id() StubId {
 	return s.id
 }
 
-pub fn (s StubBase) stub_type() StubType {
+pub fn (s &StubBase) stub_type() StubType {
 	return s.stub_type
+}
+
+pub fn (s &StubBase) element_type() v.NodeType {
+	return match s.stub_type {
+		.root { .unknown }
+		.function_declaration { .function_declaration }
+		.signature { .signature }
+		.struct_declaration { .struct_declaration }
+		.field_declaration { .struct_field_declaration }
+		.constant_declaration { .const_definition }
+		.builtin_type { .builtin_type }
+	}
 }
 
 pub fn (s StubBase) name() string {

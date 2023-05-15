@@ -14,6 +14,8 @@ pub fn (mut ls LanguageServer) definition(params lsp.TextDocumentPositionParams,
 		return none
 	}
 
+	element_text_range := element.text_range()
+
 	if element is psi.ReferenceExpressionBase {
 		resolved := element.resolve() or {
 			println('cannot resolve ' + element.name())
@@ -23,7 +25,7 @@ pub fn (mut ls LanguageServer) definition(params lsp.TextDocumentPositionParams,
 		data := new_resolve_result(resolved.containing_file(), resolved) or { return [] }
 
 		return [
-			data.to_location_link(),
+			data.to_location_link(element_text_range),
 		]
 	}
 
@@ -50,10 +52,11 @@ pub fn new_resolve_result(containing_file &psi.PsiFileImpl, element psi.PsiEleme
 	return none
 }
 
-fn (r &ResolveResult) to_location_link() lsp.LocationLink {
+fn (r &ResolveResult) to_location_link(origin_selection_range psi.TextRange) lsp.LocationLink {
 	range := text_range_to_lsp_range(r.range)
 	return lsp.LocationLink{
 		target_uri: 'file://' + r.filepath
+		origin_selection_range: text_range_to_lsp_range(origin_selection_range)
 		target_range: range
 		target_selection_range: range
 	}
