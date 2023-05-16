@@ -6,6 +6,7 @@ module jsonrpc
 import json
 import strings
 import io
+import time
 
 // Server represents a JSONRPC server that sends/receives data
 // from a stream (an io.ReaderWriter), inspects data with interceptors
@@ -145,7 +146,11 @@ pub fn (s &Server) writer(cfg NewWriterConfig) &ResponseWriter {
 pub fn (mut s Server) start() {
 	mut rw := s.writer()
 	for {
-		s.internal_respond(mut rw) or { continue }
+		s.internal_respond(mut rw) or {
+			time.sleep(100 * time.millisecond)
+			continue
+		}
+		time.sleep(100 * time.millisecond)
 	}
 }
 

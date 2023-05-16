@@ -2,6 +2,7 @@ module psi
 
 pub enum StubIndexKey {
 	functions
+	methods
 	structs
 	constants
 	type_aliases

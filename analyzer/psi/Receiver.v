@@ -6,32 +6,49 @@ pub struct Receiver {
 	PsiElementImpl
 }
 
-fn (r &Receiver) identifier() ?PsiElement {
-	decl := r.find_child_by_type(.parameter_declaration)?
-	return decl.find_child_by_type(.identifier) or {
-		mutable_identifier := decl.find_child_by_type(.mutable_identifier) or { return none }
-
-		return mutable_identifier.find_child_by_type(.identifier)
+fn (r &Receiver) identifier_text_range() TextRange {
+	if r.stub_id != non_stubbed_element {
+		if stub := r.stubs_list.get_stub(r.stub_id) {
+			return stub.text_range
+		}
 	}
+
+	identifier := r.identifier() or { return TextRange{} }
+	return identifier.text_range()
+}
+
+fn (r &Receiver) stub() ?&StubBase {
+	return none
+}
+
+fn (r &Receiver) identifier() ?PsiElement {
+	return r.find_child_by_type(.identifier)
 }
 
 pub fn (r &Receiver) name() string {
-	if id := r.identifier() {
-		return id.get_text()
+	identifier := r.identifier() or { return '' }
+	return identifier.get_text()
+}
+
+pub fn (r &Receiver) type_element() ?PsiElement {
+	if r.stub_id != non_stubbed_element {
+		if stub := r.stubs_list.get_stub(r.stub_id) {
+			if receiver_stub := stub.get_child_by_type(.plain_type) {
+				psi := receiver_stub.get_psi() or { return none }
+				if psi is PlainType {
+					return psi
+				}
+			}
+			return none
+		}
 	}
 
-	return ''
+	return r.find_child_by_type(.plain_type)
 }
 
 pub fn (r &Receiver) get_type() types.Type {
-	if builtin_typ := r.find_child_by_type(.builtin_type) {
-		return types.new_primitive_type(builtin_typ.get_text())
-	}
-	if ref := r.find_child_by_type(.type_reference_expression) {
-		return types.new_struct_type(ref.get_text())
-	}
-
-	return types.unknown_type
+	inferer := TypeInferer{}
+	return inferer.infer_from_plain_type(r)
 }
 
 pub fn (r &Receiver) mutability_modifiers() ?&MutabilityModifiers {

@@ -61,6 +61,19 @@ pub fn (f FunctionOrMethodDeclaration) doc_comment() string {
 }
 
 pub fn (f FunctionOrMethodDeclaration) receiver() ?&Receiver {
+	if f.stub_id != non_stubbed_element {
+		if stub := f.stubs_list.get_stub(f.stub_id) {
+			receiver_stubs := stub.get_children_by_type(.receiver)
+			if receiver_stubs.len > 0 {
+				psi := receiver_stubs.first().get_psi() or { return none }
+				if psi is Receiver {
+					return psi
+				}
+			}
+			return none
+		}
+	}
+
 	element := f.find_child_by_type(.receiver) or { return none }
 	if element is Receiver {
 		return element

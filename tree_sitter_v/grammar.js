@@ -1024,7 +1024,13 @@ module.exports = grammar({
         )
       ),
 
-    receiver: ($) => prec(PREC.primary, seq("(", $.parameter_declaration, ")")),
+    receiver: ($) => prec(PREC.primary, seq("(",
+        seq(
+          field('mutability', optional($.mutability_modifiers)),
+          field("name", choice($.identifier, $._reserved_identifier)),
+          field("type", $.plain_type
+        )
+    ), ")")),
 
     signature: ($) => prec.right(seq(
         field(

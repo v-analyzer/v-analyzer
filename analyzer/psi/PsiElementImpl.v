@@ -37,6 +37,10 @@ pub fn (n PsiElementImpl) node() AstNode {
 	return n.node
 }
 
+pub fn (n PsiElementImpl) stub_list() &StubList {
+	return n.stubs_list
+}
+
 pub fn (n PsiElementImpl) element_type() v.NodeType {
 	if n.stub_id != non_stubbed_element {
 		if stub := n.stubs_list.get_stub(n.stub_id) {

@@ -13,8 +13,11 @@ pub fn (f &FieldDeclaration) doc_comment() string {
 		}
 	}
 
-	comment := f.find_child_by_type(.comment) or { return '' }
-	return comment.get_text().trim_left('//').trim(' \t')
+	if comment := f.find_child_by_type(.comment) {
+		return comment.get_text().trim_left('//').trim(' \t')
+	}
+
+	return extract_doc_comment(f)
 }
 
 pub fn (f &FieldDeclaration) identifier() ?PsiElement {

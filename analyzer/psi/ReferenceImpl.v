@@ -67,11 +67,24 @@ pub fn (r &SubResolver) process_qualifier_expression(qualifier PsiElement, mut p
 	return true
 }
 
+pub fn (r &SubResolver) calc_methods(typ types.Type) []PsiElement {
+	name := typ.qualified_name()
+	methods := stubs_index.get_elements(.methods, name)
+	return methods
+}
+
 pub fn (r &SubResolver) process_type(typ types.Type, mut processor ResolveProcessor) bool {
 	if typ is types.StructType {
 		if struct_ := r.find_struct(stubs_index, typ.name()) {
 			for field in struct_.fields() {
 				if !processor.execute(field) {
+					return false
+				}
+			}
+
+			methods := r.calc_methods(typ)
+			for method in methods {
+				if !processor.execute(method) {
 					return false
 				}
 			}

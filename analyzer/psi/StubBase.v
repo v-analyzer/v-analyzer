@@ -9,6 +9,8 @@ const non_stubbed_element = StubId(-1)
 pub enum StubType as u8 {
 	root
 	function_declaration
+	method_declaration
+	receiver
 	signature
 	struct_declaration
 	field_declaration
@@ -17,12 +19,18 @@ pub enum StubType as u8 {
 	plain_type
 }
 
+pub struct StubData {
+pub:
+	text     string
+	comment  string
+	receiver string
+}
+
 [heap]
 pub struct StubBase {
+	StubData
 pub:
 	name       string
-	text       string
-	comment    string
 	text_range TextRange
 	stub_list  &StubList
 	parent     &StubElement
@@ -31,11 +39,7 @@ pub mut:
 	id StubId
 }
 
-pub fn new_stub_base(parent &StubElement, stub_type StubType, name string, text string, text_range TextRange) &StubBase {
-	return new_stub_base_with_comment(parent, stub_type, name, text, '', text_range)
-}
-
-pub fn new_stub_base_with_comment(parent &StubElement, stub_type StubType, name string, text string, comment string, text_range TextRange) &StubBase {
+pub fn new_stub_base(parent &StubElement, stub_type StubType, name string, text_range TextRange, data StubData) &StubBase {
 	mut stub_list := if parent is StubBase {
 		if !isnil(parent.stub_list) { parent.stub_list } else { &StubList{} }
 	} else {
@@ -43,8 +47,9 @@ pub fn new_stub_base_with_comment(parent &StubElement, stub_type StubType, name 
 	}
 	mut stub := &StubBase{
 		name: name
-		text: text
-		comment: comment
+		text: data.text
+		comment: data.comment
+		receiver: data.receiver
 		text_range: text_range
 		stub_list: stub_list
 		parent: unsafe { parent }
@@ -80,6 +85,8 @@ pub fn (s &StubBase) element_type() v.NodeType {
 	return match s.stub_type {
 		.root { .unknown }
 		.function_declaration { .function_declaration }
+		.method_declaration { .function_declaration }
+		.receiver { .receiver }
 		.signature { .signature }
 		.struct_declaration { .struct_declaration }
 		.field_declaration { .struct_field_declaration }
@@ -95,6 +102,10 @@ pub fn (s StubBase) name() string {
 
 pub fn (s StubBase) text() string {
 	return s.text
+}
+
+pub fn (s StubBase) receiver() string {
+	return s.receiver
 }
 
 fn (s StubBase) get_psi() ?PsiElement {
@@ -127,6 +138,14 @@ fn (s &StubBase) parent_stub() ?&StubElement {
 		return none
 	}
 	return s.parent
+}
+
+fn (s &StubBase) get_child_by_type(typ StubType) ?StubElement {
+	stubs := s.get_children_by_type(typ)
+	if stubs.len == 0 {
+		return none
+	}
+	return stubs.first()
 }
 
 fn (s &StubBase) get_children_by_type(typ StubType) []StubElement {

@@ -5336,8 +5336,50 @@
             "value": "("
           },
           {
-            "type": "SYMBOL",
-            "name": "parameter_declaration"
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "mutability",
+                "content": {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "mutability_modifiers"
+                    },
+                    {
+                      "type": "BLANK"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "name",
+                "content": {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "identifier"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "_reserved_identifier"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "type",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "plain_type"
+                }
+              }
+            ]
           },
           {
             "type": "STRING",
