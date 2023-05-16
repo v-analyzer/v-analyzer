@@ -13,7 +13,8 @@ pub enum StubType as u8 {
 	struct_declaration
 	field_declaration
 	constant_declaration
-	builtin_type
+	type_alias_declaration
+	plain_type
 }
 
 [heap]
@@ -83,7 +84,8 @@ pub fn (s &StubBase) element_type() v.NodeType {
 		.struct_declaration { .struct_declaration }
 		.field_declaration { .struct_field_declaration }
 		.constant_declaration { .const_definition }
-		.builtin_type { .builtin_type }
+		.type_alias_declaration { .type_declaration }
+		.plain_type { .plain_type }
 	}
 }
 

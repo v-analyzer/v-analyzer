@@ -49,6 +49,11 @@ pub fn (mut p Provider) documentation(element psi.PsiElement) ?string {
 		return p.sb.str()
 	}
 
+	if element is psi.TypeAliasDeclaration {
+		p.type_alias_documentation(element)?
+		return p.sb.str()
+	}
+
 	return none
 }
 
@@ -153,6 +158,8 @@ fn (mut p Provider) field_documentation(element psi.FieldDeclaration) ? {
 	p.sb.write_string(element.get_type().readable_name())
 	p.sb.write_string('\n')
 	p.sb.write_string('```')
+	p.write_separator()
+	p.sb.write_string(element.doc_comment())
 }
 
 fn (mut p Provider) receiver_documentation(element psi.Receiver) ? {
@@ -167,6 +174,20 @@ fn (mut p Provider) receiver_documentation(element psi.Receiver) ? {
 	p.sb.write_string(element.get_type().readable_name())
 	p.sb.write_string('\n')
 	p.sb.write_string('```')
+}
+
+fn (mut p Provider) type_alias_documentation(element psi.TypeAliasDeclaration) ? {
+	p.sb.write_string('```v\n')
+	if modifiers := element.visibility_modifiers() {
+		p.write_visibility_modifiers(modifiers)
+		p.sb.write_string(' ')
+	}
+	p.sb.write_string('type ')
+	p.sb.write_string(element.name())
+	p.sb.write_string('\n')
+	p.sb.write_string('```')
+	p.write_separator()
+	p.sb.write_string(element.doc_comment())
 }
 
 fn (mut p Provider) write_separator() {

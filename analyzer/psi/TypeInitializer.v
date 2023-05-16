@@ -9,12 +9,12 @@ pub struct TypeInitializer {
 fn (n &TypeInitializer) expr() {}
 
 fn (n &TypeInitializer) get_type() types.Type {
-	type_element := n.find_child_by_type(.type_reference_expression) or {
-		return types.unknown_type
-	}
+	type_element := n.find_child_by_type(.plain_type) or { return types.unknown_type }
 
-	if type_element is TypeReferenceExpression {
-		resolved := type_element.resolve() or { return types.unknown_type }
+	type_reference := type_element.first_child() or { return types.unknown_type }
+
+	if type_reference is TypeReferenceExpression {
+		resolved := type_reference.resolve() or { return types.unknown_type }
 		if resolved is StructDeclaration {
 			return types.new_struct_type(resolved.name())
 		}

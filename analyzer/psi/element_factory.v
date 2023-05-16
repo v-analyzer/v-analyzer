@@ -17,8 +17,8 @@ pub fn create_element(node AstNode, containing_file &PsiFileImpl) PsiElement {
 		}
 	}
 
-	if node.type_name == .builtin_type {
-		return BuiltinType{
+	if node.type_name == .plain_type {
+		return PlainType{
 			PsiElementImpl: base_node
 		}
 	}

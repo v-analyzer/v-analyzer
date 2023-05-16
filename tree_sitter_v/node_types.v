@@ -7,7 +7,6 @@ pub enum SuperType {
 	unknown
 	expression
 	expression_with_blocks
-	simple_type
 	statement
 	top_level_declaration
 	type_
@@ -112,6 +111,7 @@ pub enum NodeType {
 	parameter_declaration
 	parameter_list
 	parenthesized_expression
+	plain_type
 	pointer_type
 	pseudo_comptime_identifier
 	qualified_type
@@ -178,7 +178,6 @@ const supertype__expression_nodes = merge(supertype__expression_with_blocks_node
 	.empty_literal_value,
 	.fixed_array,
 	.fn_literal,
-	.identifier,
 	.index_expression,
 	.is_expression,
 	.literal,
@@ -202,24 +201,6 @@ const supertype__expression_with_blocks_nodes = [
 	.select_expression,
 	.sql_expression,
 	.unsafe_expression,
-]
-
-const supertype__simple_type_nodes = [
-	NodeType.array_type,
-	.binded_type,
-	.builtin_type,
-	.channel_type,
-	.fixed_array_type,
-	.function_type,
-	.generic_type,
-	.map_type,
-	.none_type,
-	.pointer_type,
-	.qualified_type,
-	.shared_type,
-	.thread_type,
-	.type_placeholder,
-	.type_reference_expression,
 ]
 
 const supertype__statement_nodes = [
@@ -251,19 +232,18 @@ const supertype__top_level_declaration_nodes = [
 	.type_declaration,
 ]
 
-const supertype__type_nodes = merge(supertype__simple_type_nodes, [
+const supertype__type_nodes = [
 	NodeType.multi_return_type,
 	.option_type,
+	.plain_type,
 	.result_type,
-])
+]
 
 pub fn (typ NodeType) group() SuperType {
 	return if typ in tree_sitter_v.supertype__top_level_declaration_nodes {
 		SuperType.top_level_declaration
 	} else if typ in tree_sitter_v.supertype__type_nodes {
 		SuperType.type_
-	} else if typ in tree_sitter_v.supertype__simple_type_nodes {
-		SuperType.simple_type
 	} else if typ in tree_sitter_v.supertype__expression_nodes {
 		SuperType.expression
 	} else if typ in tree_sitter_v.supertype__expression_with_blocks_nodes {
@@ -426,6 +406,7 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'parameter_declaration' { NodeType.parameter_declaration }
 		'parameter_list' { NodeType.parameter_list }
 		'parenthesized_expression' { NodeType.parenthesized_expression }
+		'plain_type' { NodeType.plain_type }
 		'pointer_type' { NodeType.pointer_type }
 		'pseudo_comptime_identifier' { NodeType.pseudo_comptime_identifier }
 		'qualified_type' { NodeType.qualified_type }

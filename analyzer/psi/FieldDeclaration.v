@@ -6,6 +6,17 @@ pub struct FieldDeclaration {
 	PsiElementImpl
 }
 
+pub fn (f &FieldDeclaration) doc_comment() string {
+	if f.stub_id != non_stubbed_element {
+		if stub := f.stubs_list.get_stub(f.stub_id) {
+			return stub.comment
+		}
+	}
+
+	comment := f.find_child_by_type(.comment) or { return '' }
+	return comment.get_text().trim_left('//').trim(' \t')
+}
+
 pub fn (f &FieldDeclaration) identifier() ?PsiElement {
 	return f.find_child_by_type(.identifier)
 }
@@ -35,20 +46,26 @@ pub fn (f &FieldDeclaration) name() string {
 pub fn (f &FieldDeclaration) get_type() types.Type {
 	if f.stub_id != non_stubbed_element {
 		if stub := f.stubs_list.get_stub(f.stub_id) {
-			builtin_type_stubs := stub.get_children_by_type(.builtin_type)
-			if builtin_type_stubs.len > 0 {
-				return types.new_primitive_type(builtin_type_stubs[0].text())
+			type_stubs := stub.get_children_by_type(.plain_type)
+			if type_stubs.len > 0 {
+				text := type_stubs[0].text()
+				if types.is_primitive_type(text) {
+					return types.new_primitive_type(text)
+				}
+				return types.new_struct_type(text)
 			}
 
 			return types.unknown_type
 		}
 	}
 
-	if builtin_typ := f.find_child_by_type(.builtin_type) {
-		return types.new_primitive_type(builtin_typ.get_text())
-	}
-	if ref := f.find_child_by_type(.type_reference_expression) {
-		return types.new_struct_type(ref.get_text())
+	if plain_typ := f.find_child_by_type(.plain_type) {
+		text := plain_typ.get_text()
+		if types.is_primitive_type(text) {
+			return types.new_primitive_type(text)
+		}
+
+		return types.new_struct_type(text)
 	}
 
 	return types.unknown_type

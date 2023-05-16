@@ -7,11 +7,13 @@ pub struct ParameterDeclaration {
 }
 
 pub fn (p &ParameterDeclaration) get_type() types.Type {
-	if builtin_typ := p.find_child_by_type(.builtin_type) {
-		return types.new_primitive_type(builtin_typ.get_text())
-	}
-	if ref := p.find_child_by_type(.type_reference_expression) {
-		return types.new_struct_type(ref.get_text())
+	if plain_typ := p.find_child_by_type(.plain_type) {
+		text := plain_typ.get_text()
+		if types.is_primitive_type(text) {
+			return types.new_primitive_type(text)
+		}
+
+		return types.new_struct_type(text)
 	}
 
 	return types.unknown_type

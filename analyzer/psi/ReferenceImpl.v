@@ -24,6 +24,7 @@ fn (r &ReferenceImpl) resolve() ?PsiElement {
 	sub := SubResolver{
 		containing_file: r.file
 		element: r.element
+		for_types: r.for_types
 	}
 	mut processor := ResolveProcessor{
 		containing_file: r.file
@@ -40,6 +41,7 @@ fn (r &ReferenceImpl) resolve() ?PsiElement {
 struct SubResolver {
 	containing_file &PsiFileImpl
 	element         ReferenceExpressionBase
+	for_types       bool
 }
 
 fn (r &SubResolver) element() PsiElement {
@@ -94,9 +96,17 @@ pub fn (r &SubResolver) process_unqualified_resolve(mut processor ResolveProcess
 
 	element := r.element()
 	if element is PsiNamedElement {
-		if func := r.find_function(stubs_index, element.name()) {
-			if !processor.execute(func) {
-				return false
+		if !r.for_types {
+			if func := r.find_function(stubs_index, element.name()) {
+				if !processor.execute(func) {
+					return false
+				}
+			}
+
+			if constant := r.find_constant(stubs_index, element.name()) {
+				if !processor.execute(constant) {
+					return false
+				}
 			}
 		}
 
@@ -106,8 +116,8 @@ pub fn (r &SubResolver) process_unqualified_resolve(mut processor ResolveProcess
 			}
 		}
 
-		if constant := r.find_constant(stubs_index, element.name()) {
-			if !processor.execute(constant) {
+		if struct_ := r.find_type_alias(stubs_index, element.name()) {
+			if !processor.execute(struct_) {
 				return false
 			}
 		}
@@ -235,6 +245,17 @@ pub fn (_ &SubResolver) find_constant(stubs_index StubIndex, name string) ?&Cons
 	if found.len != 0 {
 		first := found.first()
 		if first is ConstantDefinition {
+			return first
+		}
+	}
+	return none
+}
+
+pub fn (_ &SubResolver) find_type_alias(stubs_index StubIndex, name string) ?&TypeAliasDeclaration {
+	found := stubs_index.get_elements(.type_aliases, name)
+	if found.len != 0 {
+		first := found.first()
+		if first is TypeAliasDeclaration {
 			return first
 		}
 	}

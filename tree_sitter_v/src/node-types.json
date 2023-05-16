@@ -40,10 +40,6 @@
         "named": true
       },
       {
-        "type": "identifier",
-        "named": true
-      },
-      {
         "type": "index_expression",
         "named": true
       },
@@ -127,72 +123,6 @@
       },
       {
         "type": "unsafe_expression",
-        "named": true
-      }
-    ]
-  },
-  {
-    "type": "_simple_type",
-    "named": true,
-    "subtypes": [
-      {
-        "type": "array_type",
-        "named": true
-      },
-      {
-        "type": "binded_type",
-        "named": true
-      },
-      {
-        "type": "builtin_type",
-        "named": true
-      },
-      {
-        "type": "channel_type",
-        "named": true
-      },
-      {
-        "type": "fixed_array_type",
-        "named": true
-      },
-      {
-        "type": "function_type",
-        "named": true
-      },
-      {
-        "type": "generic_type",
-        "named": true
-      },
-      {
-        "type": "map_type",
-        "named": true
-      },
-      {
-        "type": "none_type",
-        "named": true
-      },
-      {
-        "type": "pointer_type",
-        "named": true
-      },
-      {
-        "type": "qualified_type",
-        "named": true
-      },
-      {
-        "type": "shared_type",
-        "named": true
-      },
-      {
-        "type": "thread_type",
-        "named": true
-      },
-      {
-        "type": "type_placeholder",
-        "named": true
-      },
-      {
-        "type": "type_reference_expression",
         "named": true
       }
     ]
@@ -306,15 +236,15 @@
     "named": true,
     "subtypes": [
       {
-        "type": "_simple_type",
-        "named": true
-      },
-      {
         "type": "multi_return_type",
         "named": true
       },
       {
         "type": "option_type",
+        "named": true
+      },
+      {
+        "type": "plain_type",
         "named": true
       },
       {
@@ -408,7 +338,7 @@
         "required": true,
         "types": [
           {
-            "type": "_simple_type",
+            "type": "plain_type",
             "named": true
           }
         ]
@@ -428,7 +358,7 @@
           "named": true
         },
         {
-          "type": "_simple_type",
+          "type": "plain_type",
           "named": true
         }
       ]
@@ -943,7 +873,7 @@
           "named": true
         },
         {
-          "type": "_simple_type",
+          "type": "plain_type",
           "named": true
         },
         {
@@ -962,7 +892,7 @@
         "required": true,
         "types": [
           {
-            "type": "_simple_type",
+            "type": "plain_type",
             "named": true
           }
         ]
@@ -1429,7 +1359,7 @@
         "required": true,
         "types": [
           {
-            "type": "_simple_type",
+            "type": "plain_type",
             "named": true
           }
         ]
@@ -2212,11 +2142,11 @@
         "required": true,
         "types": [
           {
-            "type": "_simple_type",
+            "type": "option_type",
             "named": true
           },
           {
-            "type": "option_type",
+            "type": "plain_type",
             "named": true
           }
         ]
@@ -2402,7 +2332,7 @@
         "required": true,
         "types": [
           {
-            "type": "_simple_type",
+            "type": "plain_type",
             "named": true
           }
         ]
@@ -2626,11 +2556,11 @@
         "required": true,
         "types": [
           {
-            "type": "_simple_type",
+            "type": "option_type",
             "named": true
           },
           {
-            "type": "option_type",
+            "type": "plain_type",
             "named": true
           }
         ]
@@ -2678,6 +2608,73 @@
     }
   },
   {
+    "type": "plain_type",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "array_type",
+          "named": true
+        },
+        {
+          "type": "binded_type",
+          "named": true
+        },
+        {
+          "type": "channel_type",
+          "named": true
+        },
+        {
+          "type": "fixed_array_type",
+          "named": true
+        },
+        {
+          "type": "function_type",
+          "named": true
+        },
+        {
+          "type": "generic_type",
+          "named": true
+        },
+        {
+          "type": "map_type",
+          "named": true
+        },
+        {
+          "type": "none_type",
+          "named": true
+        },
+        {
+          "type": "pointer_type",
+          "named": true
+        },
+        {
+          "type": "qualified_type",
+          "named": true
+        },
+        {
+          "type": "shared_type",
+          "named": true
+        },
+        {
+          "type": "thread_type",
+          "named": true
+        },
+        {
+          "type": "type_placeholder",
+          "named": true
+        },
+        {
+          "type": "type_reference_expression",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "pointer_type",
     "named": true,
     "fields": {},
@@ -2686,7 +2683,7 @@
       "required": true,
       "types": [
         {
-          "type": "_simple_type",
+          "type": "plain_type",
           "named": true
         }
       ]
@@ -2974,7 +2971,7 @@
       "required": true,
       "types": [
         {
-          "type": "_simple_type",
+          "type": "plain_type",
           "named": true
         }
       ]
@@ -3160,11 +3157,11 @@
           "named": true
         },
         {
-          "type": "_simple_type",
+          "type": "option_type",
           "named": true
         },
         {
-          "type": "option_type",
+          "type": "plain_type",
           "named": true
         }
       ]
@@ -3254,6 +3251,10 @@
         },
         {
           "type": "format_specifier",
+          "named": true
+        },
+        {
+          "type": "identifier",
           "named": true
         }
       ]
@@ -3363,7 +3364,7 @@
       },
       "name": {
         "multiple": false,
-        "required": false,
+        "required": true,
         "types": [
           {
             "type": "field_identifier",
@@ -3376,27 +3377,15 @@
         ]
       },
       "type": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
           {
-            "type": "\n",
-            "named": false
-          },
-          {
-            "type": "\r",
-            "named": false
-          },
-          {
-            "type": "\r\n",
-            "named": false
-          },
-          {
-            "type": "_simple_type",
+            "type": "option_type",
             "named": true
           },
           {
-            "type": "option_type",
+            "type": "plain_type",
             "named": true
           }
         ]
@@ -3417,7 +3406,7 @@
       "required": true,
       "types": [
         {
-          "type": "_simple_type",
+          "type": "plain_type",
           "named": true
         }
       ]
@@ -3431,10 +3420,6 @@
         "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "builtin_type",
-            "named": true
-          },
           {
             "type": "identifier",
             "named": true
@@ -3492,7 +3477,7 @@
         "required": true,
         "types": [
           {
-            "type": "_type",
+            "type": "plain_type",
             "named": true
           }
         ]
@@ -3508,7 +3493,7 @@
       "required": true,
       "types": [
         {
-          "type": "_simple_type",
+          "type": "plain_type",
           "named": true
         }
       ]
@@ -3538,11 +3523,11 @@
         "required": true,
         "types": [
           {
-            "type": "_simple_type",
+            "type": "option_type",
             "named": true
           },
           {
-            "type": "option_type",
+            "type": "plain_type",
             "named": true
           }
         ]
@@ -3568,7 +3553,7 @@
       "required": true,
       "types": [
         {
-          "type": "_simple_type",
+          "type": "plain_type",
           "named": true
         }
       ]

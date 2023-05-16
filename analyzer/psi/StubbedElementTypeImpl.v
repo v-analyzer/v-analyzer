@@ -24,6 +24,14 @@ pub fn (s &StubbedElementType) index_stub(stub &StubBase, mut sink IndexSink) {
 		name := stub.name()
 		sink.occurrence(StubIndexKey.constants, name)
 	}
+
+	if stub.stub_type == .type_alias_declaration {
+		name := stub.name()
+		if name == 'u32' {
+			println(1)
+		}
+		sink.occurrence(StubIndexKey.type_aliases, name)
+	}
 }
 
 pub fn (s &StubbedElementType) create_psi(stub &StubBase) ?PsiElement {
@@ -53,8 +61,13 @@ pub fn (s &StubbedElementType) create_psi(stub &StubBase) ?PsiElement {
 			PsiElementImpl: new_psi_node_from_stub(stub.id, stub.stub_list)
 		}
 	}
-	if stub_type == .builtin_type {
-		return BuiltinType{
+	if stub_type == .type_alias_declaration {
+		return TypeAliasDeclaration{
+			PsiElementImpl: new_psi_node_from_stub(stub.id, stub.stub_list)
+		}
+	}
+	if stub_type == .plain_type {
+		return PlainType{
 			PsiElementImpl: new_psi_node_from_stub(stub.id, stub.stub_list)
 		}
 	}
@@ -94,8 +107,9 @@ pub fn (s &StubbedElementType) create_stub(psi PsiElement, parent_stub &StubElem
 		} else {
 			psi.text_range()
 		}
-		return new_stub_base(parent_stub, .field_declaration, psi.name(), psi.get_text(),
-			text_range)
+		comment := psi.doc_comment()
+		return new_stub_base_with_comment(parent_stub, .field_declaration, psi.name(),
+			psi.get_text(), comment, text_range)
 	}
 
 	if psi is ConstantDefinition {
@@ -109,8 +123,19 @@ pub fn (s &StubbedElementType) create_stub(psi PsiElement, parent_stub &StubElem
 			psi.get_text(), comment, text_range)
 	}
 
-	if psi is BuiltinType {
-		return new_stub_base(parent_stub, .builtin_type, '', psi.get_text(), psi.text_range())
+	if psi is TypeAliasDeclaration {
+		text_range := if identifier := psi.identifier() {
+			identifier.text_range()
+		} else {
+			psi.text_range()
+		}
+		comment := psi.doc_comment()
+		return new_stub_base_with_comment(parent_stub, .type_alias_declaration, psi.name(),
+			psi.get_text(), comment, text_range)
+	}
+
+	if psi is PlainType {
+		return new_stub_base(parent_stub, .plain_type, '', psi.get_text(), psi.text_range())
 	}
 
 	return none
@@ -138,7 +163,7 @@ pub fn (s &StubbedElementType) serialize(stub StubElement, mut stream StubOutput
 		stream.write_name(stub.name())
 	}
 
-	if stub_type == .builtin_type {
+	if stub_type == .plain_type {
 		stream.write_u8(u8(stub_type))
 		stream.write_name(stub.name())
 	}
@@ -164,11 +189,12 @@ pub fn (s &StubbedElementType) deserialize(stream StubInputStream, parent_stub &
 			return new_stub_base(parent_stub, .field_declaration, stream.read_name(),
 				stream.read_name(), TextRange{})
 		}
-		.builtin_type {
-			return new_stub_base(parent_stub, .builtin_type, stream.read_name(), stream.read_name(),
+		.plain_type {
+			return new_stub_base(parent_stub, .plain_type, stream.read_name(), stream.read_name(),
 				TextRange{})
 		}
 		.signature {}
+		.type_alias_declaration {}
 	}
 
 	return none
