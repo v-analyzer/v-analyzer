@@ -198,6 +198,7 @@ pub mut:
 	declaration_provider                 bool                            [json: declarationProvider]
 	execute_command_provider             ExecuteCommandOptions           [json: executeCommandProvider]
 	folding_range_provider               bool                            [json: foldingRangeProvider]
+	semantic_tokens_provider             SemanticTokensOptions           [json: semanticTokensProvider; omitempty]
 	experimental                         map[string]bool
 }
 

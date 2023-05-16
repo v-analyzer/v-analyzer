@@ -52,9 +52,14 @@ pub fn (r &Receiver) get_type() types.Type {
 }
 
 pub fn (r &Receiver) mutability_modifiers() ?&MutabilityModifiers {
-	decl := r.find_child_by_type(.parameter_declaration)?
-	if decl is ParameterDeclaration {
-		return decl.mutability_modifiers()
+	modifiers := r.find_child_by_type(.mutability_modifiers)?
+	if modifiers is MutabilityModifiers {
+		return modifiers
 	}
 	return none
+}
+
+pub fn (r &Receiver) is_mutable() bool {
+	mods := r.mutability_modifiers() or { return false }
+	return mods.is_mutable()
 }

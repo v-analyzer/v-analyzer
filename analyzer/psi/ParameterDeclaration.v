@@ -43,3 +43,8 @@ pub fn (p &ParameterDeclaration) mutability_modifiers() ?&MutabilityModifiers {
 	}
 	return none
 }
+
+pub fn (p &ParameterDeclaration) is_mutable() bool {
+	mods := p.mutability_modifiers() or { return false }
+	return mods.is_mutable()
+}

@@ -61,3 +61,8 @@ pub fn (n &VarDefinition) mutability_modifiers() ?&MutabilityModifiers {
 
 	return none
 }
+
+pub fn (n &VarDefinition) is_mutable() bool {
+	mods := n.mutability_modifiers() or { return false }
+	return mods.is_mutable()
+}

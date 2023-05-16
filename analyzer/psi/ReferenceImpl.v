@@ -20,7 +20,7 @@ fn (r &ReferenceImpl) element() PsiElement {
 	return r.element as PsiElement
 }
 
-fn (r &ReferenceImpl) resolve() ?PsiElement {
+pub fn (r &ReferenceImpl) resolve() ?PsiElement {
 	sub := SubResolver{
 		containing_file: r.file
 		element: r.element

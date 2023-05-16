@@ -196,6 +196,12 @@ pub fn (mut ls LanguageServer) handle_jsonrpc(request &jsonrpc.Request, mut rw j
 				// 	return w.wrap_error(err)
 				// })
 			}
+			'textDocument/semanticTokens/full' {
+				params := json.decode(lsp.SemanticTokensParams, request.params) or {
+					return w.wrap_error(err)
+				}
+				w.write(ls.semantic_tokens_full(params, mut rw) or { return w.wrap_error(err) })
+			}
 			'$/cancelRequest' {
 				println('cancelRequest')
 				return jsonrpc.response_error(error: jsonrpc.method_not_found, data: request.method).err()

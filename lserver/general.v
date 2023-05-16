@@ -46,6 +46,14 @@ pub fn (mut ls LanguageServer) initialize(params lsp.InitializeParams, mut wr Re
 			}
 			code_lens_provider: lsp.CodeLensOptions{}
 			inlay_hint_provider: lsp.InlayHintOptions{}
+			semantic_tokens_provider: lsp.SemanticTokensOptions{
+				legend: lsp.SemanticTokensLegend{
+					token_types: semantic_types
+					token_modifiers: semantic_modifiers
+				}
+				range: false
+				full: true
+			}
 		}
 		server_info: lsp.ServerInfo{
 			name: 'spavn-analyzer'
