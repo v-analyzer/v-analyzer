@@ -8,10 +8,12 @@ pub mut:
 // method: ‘textDocument/codeLens’
 // response: []CodeLens | none
 pub struct CodeLensParams {
+pub:
 	text_document TextDocumentIdentifier [json: textDocument]
 }
 
 pub struct CodeLens {
+pub:
 	range   Range
 	command Command
 	data    string  [raw]

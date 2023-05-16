@@ -171,6 +171,7 @@ pub struct CancelParams {
 }
 
 pub struct Command {
+pub:
 	title     string
 	command   string
 	arguments []string

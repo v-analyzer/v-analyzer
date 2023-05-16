@@ -68,8 +68,9 @@ pub fn (s &StubbedElementType) create_stub(psi PsiElement, parent_stub &StubElem
 		} else {
 			psi.text_range()
 		}
-		return new_stub_base(parent_stub, .function_declaration, psi.name(), psi.get_text(),
-			text_range)
+		comment := psi.doc_comment()
+		return new_stub_base_with_comment(parent_stub, .function_declaration, psi.name(),
+			psi.get_text(), comment, text_range)
 	}
 
 	if psi is Signature {
@@ -82,8 +83,9 @@ pub fn (s &StubbedElementType) create_stub(psi PsiElement, parent_stub &StubElem
 		} else {
 			psi.text_range()
 		}
-		return new_stub_base(parent_stub, .struct_declaration, psi.name(), psi.get_text(),
-			text_range)
+		comment := psi.doc_comment()
+		return new_stub_base_with_comment(parent_stub, .struct_declaration, psi.name(),
+			psi.get_text(), comment, text_range)
 	}
 
 	if psi is FieldDeclaration {
@@ -102,8 +104,9 @@ pub fn (s &StubbedElementType) create_stub(psi PsiElement, parent_stub &StubElem
 		} else {
 			psi.text_range()
 		}
-		return new_stub_base(parent_stub, .constant_declaration, psi.name(), psi.get_text(),
-			text_range)
+		comment := psi.doc_comment()
+		return new_stub_base_with_comment(parent_stub, .constant_declaration, psi.name(),
+			psi.get_text(), comment, text_range)
 	}
 
 	if psi is BuiltinType {

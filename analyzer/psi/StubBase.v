@@ -21,6 +21,7 @@ pub struct StubBase {
 pub:
 	name       string
 	text       string
+	comment    string
 	text_range TextRange
 	stub_list  &StubList
 	parent     &StubElement
@@ -30,6 +31,10 @@ pub mut:
 }
 
 pub fn new_stub_base(parent &StubElement, stub_type StubType, name string, text string, text_range TextRange) &StubBase {
+	return new_stub_base_with_comment(parent, stub_type, name, text, '', text_range)
+}
+
+pub fn new_stub_base_with_comment(parent &StubElement, stub_type StubType, name string, text string, comment string, text_range TextRange) &StubBase {
 	mut stub_list := if parent is StubBase {
 		if !isnil(parent.stub_list) { parent.stub_list } else { &StubList{} }
 	} else {
@@ -38,6 +43,7 @@ pub fn new_stub_base(parent &StubElement, stub_type StubType, name string, text 
 	mut stub := &StubBase{
 		name: name
 		text: text
+		comment: comment
 		text_range: text_range
 		stub_list: stub_list
 		parent: unsafe { parent }

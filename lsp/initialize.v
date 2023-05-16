@@ -20,8 +20,16 @@ pub mut:
 	version string [json: version]
 }
 
+pub struct ServerInfo {
+pub mut:
+	name    string
+	version string
+}
+
 pub struct InitializeResult {
+pub:
 	capabilities ServerCapabilities
+	server_info  ServerInfo         [json: 'serverInfo'; omitempty]
 }
 
 // method: ‘initialized’

@@ -176,10 +176,17 @@ pub fn (mut ls LanguageServer) handle_jsonrpc(request &jsonrpc.Request, mut rw j
 				// ls.did_change_watched_files(params, mut rw)
 			}
 			'textDocument/codeLens' {
-				// params := json.decode(lsp.CodeLensParams, request.params) or {
-				// 	return w.wrap_error(err)
-				// }
-				// w.write(ls.code_lens(lsp.CodeLensParams{}, mut rw) or { return w.wrap_error(err) })
+				params := json.decode(lsp.CodeLensParams, request.params) or {
+					return w.wrap_error(err)
+				}
+				w.write(ls.code_lens(params, mut rw) or { return w.wrap_error(err) })
+			}
+			'textDocument/inlayHint' {
+				println('inlayHint')
+				params := json.decode(lsp.InlayHintParams, request.params) or {
+					return w.wrap_error(err)
+				}
+				w.write(ls.inlay_hints(params, mut rw) or { return w.wrap_error(err) })
 			}
 			'textDocument/documentLink' {
 				// params := json.decode(lsp.DocumentLinkParams, request.params) or {
@@ -194,6 +201,7 @@ pub fn (mut ls LanguageServer) handle_jsonrpc(request &jsonrpc.Request, mut rw j
 				return jsonrpc.response_error(error: jsonrpc.method_not_found, data: request.method).err()
 			}
 			else {
+				println('unhandled ${request.method}')
 				return jsonrpc.response_error(error: jsonrpc.method_not_found, data: request.method).err()
 			}
 		}

@@ -31,6 +31,11 @@ pub fn (c ConstantDefinition) name() string {
 }
 
 pub fn (c ConstantDefinition) doc_comment() string {
+	if c.stub_id != non_stubbed_element {
+		if stub := c.stubs_list.get_stub(c.stub_id) {
+			return stub.comment
+		}
+	}
 	parent := c.parent() or { return '' }
 	return extract_doc_comment(parent)
 }

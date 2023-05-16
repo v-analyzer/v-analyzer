@@ -35,6 +35,11 @@ pub fn (s StructDeclaration) name() string {
 }
 
 pub fn (s StructDeclaration) doc_comment() string {
+	if s.stub_id != non_stubbed_element {
+		if stub := s.stubs_list.get_stub(s.stub_id) {
+			return stub.comment
+		}
+	}
 	return extract_doc_comment(s)
 }
 

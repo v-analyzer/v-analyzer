@@ -44,6 +44,12 @@ pub fn (mut ls LanguageServer) initialize(params lsp.InitializeParams, mut wr Re
 				trigger_characters: ['(', ',']
 				retrigger_characters: [',', ' ']
 			}
+			code_lens_provider: lsp.CodeLensOptions{}
+			inlay_hint_provider: lsp.InlayHintOptions{}
+		}
+		server_info: lsp.ServerInfo{
+			name: 'spavn-analyzer'
+			version: '0.0.1-alpha'
 		}
 	}
 }

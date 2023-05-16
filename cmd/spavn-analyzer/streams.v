@@ -100,7 +100,6 @@ fn read_line(file &os.File, mut buf []u8) !int {
 // TCP Socket
 const base_ip = '127.0.0.1'
 
-// Loopback address.
 fn new_socket_stream_server(port int, log bool) !io.ReaderWriter {
 	server_label := 'vls-server'
 

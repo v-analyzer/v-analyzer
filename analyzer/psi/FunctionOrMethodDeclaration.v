@@ -52,6 +52,11 @@ pub fn (f FunctionOrMethodDeclaration) name() string {
 }
 
 pub fn (f FunctionOrMethodDeclaration) doc_comment() string {
+	if f.stub_id != non_stubbed_element {
+		if stub := f.stubs_list.get_stub(f.stub_id) {
+			return stub.comment
+		}
+	}
 	return extract_doc_comment(f)
 }
 

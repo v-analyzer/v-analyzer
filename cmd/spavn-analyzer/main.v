@@ -59,7 +59,7 @@ fn main() {
 
 	mut rw := unsafe { &lserver.ResponseWriter(jrpc_server.writer(own_buffer: true)) }
 
-	spawn lserver.monitor_changes(mut ls, mut rw)
+	// spawn lserver.monitor_changes(mut ls, mut rw)
 	jrpc_server.start()
 }
 
