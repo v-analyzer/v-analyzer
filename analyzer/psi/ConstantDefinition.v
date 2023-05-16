@@ -6,7 +6,7 @@ pub struct ConstantDefinition {
 	PsiElementImpl
 }
 
-fn (c &ConstantDefinition) get_type() types.Type {
+pub fn (c &ConstantDefinition) get_type() types.Type {
 	expr := c.expression() or { return types.unknown_type }
 
 	if expr is PsiTypedElement {

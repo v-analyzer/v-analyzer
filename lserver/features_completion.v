@@ -2,6 +2,7 @@ module lserver
 
 import lsp
 import analyzer.psi
+import analyzer.parser
 
 struct CompletionProcessor {
 mut:
@@ -13,7 +14,7 @@ fn (mut c CompletionProcessor) execute(element psi.PsiElement) bool {
 		c.result << lsp.CompletionItem{
 			label: element.name()
 			kind: .variable
-			detail: 'Some detail'
+			detail: element.get_type().readable_name()
 			documentation: ''
 			insert_text: element.name()
 			insert_text_format: .plain_text
@@ -21,11 +22,17 @@ fn (mut c CompletionProcessor) execute(element psi.PsiElement) bool {
 	}
 
 	if element is psi.FunctionOrMethodDeclaration {
+		receiver_text := if receiver := element.receiver() {
+			receiver.get_text() + ' '
+		} else {
+			''
+		}
+
 		signature := element.signature() or { return true }
 		c.result << lsp.CompletionItem{
 			label: element.name()
 			kind: .function
-			detail: 'fn ${element.name()}${signature.get_text()}'
+			detail: 'fn ${receiver_text}${element.name()}${signature.get_text()}'
 			documentation: element.doc_comment()
 			insert_text: element.name() + '($1)$0'
 			insert_text_format: .snippet
@@ -35,8 +42,8 @@ fn (mut c CompletionProcessor) execute(element psi.PsiElement) bool {
 	if element is psi.StructDeclaration {
 		c.result << lsp.CompletionItem{
 			label: element.name()
-			kind: .class
-			detail: 'Some detail'
+			kind: .struct_
+			detail: ''
 			documentation: element.doc_comment()
 			insert_text: element.name() + '{$1}$0'
 			insert_text_format: .snippet
@@ -47,10 +54,10 @@ fn (mut c CompletionProcessor) execute(element psi.PsiElement) bool {
 		c.result << lsp.CompletionItem{
 			label: element.name()
 			kind: .constant
-			detail: 'Some detail'
+			detail: element.get_type().readable_name()
 			documentation: element.doc_comment()
 			insert_text: element.name()
-			insert_text_format: .snippet
+			insert_text_format: .plain_text
 		}
 	}
 
@@ -61,7 +68,7 @@ fn (mut c CompletionProcessor) execute(element psi.PsiElement) bool {
 			detail: element.get_type().readable_name()
 			documentation: ''
 			insert_text: element.name()
-			insert_text_format: .snippet
+			insert_text_format: .plain_text
 		}
 	}
 
@@ -76,19 +83,48 @@ pub fn (mut ls LanguageServer) completion(params lsp.CompletionParams, mut wr Re
 	}
 
 	offset := file.find_offset(params.position)
-	element := file.psi_file.root().find_element_at(offset - 1) or {
+
+	mut source := file.psi_file.source_text
+	source = source.insert(offset, 'spavnAnalyzerRulezzz')
+
+	patched_file_content := source.to_string()
+	res := parser.parse_code(patched_file_content)
+	patched_psi_file := psi.new_psi_file(uri.path(), res.tree, res.source_text)
+
+	element := patched_psi_file.root().find_element_at(offset) or {
 		println('cannot find element at ' + offset.str())
 		return []
 	}
 
 	mut processor := CompletionProcessor{}
 
-	block := element.parent_of_type_or_self(.block) or { return [] }
-	if block is psi.Block {
-		block.process_declarations(mut processor)
+	if parent := element.parent() {
+		if parent is psi.TypeReferenceExpression {
+			sub := psi.SubResolver{
+				containing_file: parent.containing_file
+				element: parent
+				for_types: false
+			}
+
+			sub.process_resolve_variants(mut processor)
+		}
+		if parent is psi.ReferenceExpression {
+			sub := psi.SubResolver{
+				containing_file: parent.containing_file
+				element: parent
+				for_types: false
+			}
+
+			sub.process_resolve_variants(mut processor)
+		}
 	}
 
-	file.psi_file.process_declarations(mut processor)
+	// block := element.parent_of_type_or_self(.block) or { return [] }
+	// if block is psi.Block {
+	// 	block.process_declarations(mut processor)
+	// }
+
+	res.tree.raw_tree.free()
 
 	return processor.result
 }

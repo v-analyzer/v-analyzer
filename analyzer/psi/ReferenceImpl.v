@@ -38,7 +38,7 @@ pub fn (r &ReferenceImpl) resolve() ?PsiElement {
 	return none
 }
 
-struct SubResolver {
+pub struct SubResolver {
 	containing_file &PsiFileImpl
 	element         ReferenceExpressionBase
 	for_types       bool
@@ -48,7 +48,7 @@ fn (r &SubResolver) element() PsiElement {
 	return r.element as PsiElement
 }
 
-pub fn (r &SubResolver) process_resolve_variants(mut processor ResolveProcessor) bool {
+pub fn (r &SubResolver) process_resolve_variants(mut processor PsiScopeProcessor) bool {
 	return if qualifier := r.element.qualifier() {
 		r.process_qualifier_expression(qualifier, mut processor)
 	} else {
@@ -56,7 +56,7 @@ pub fn (r &SubResolver) process_resolve_variants(mut processor ResolveProcessor)
 	}
 }
 
-pub fn (r &SubResolver) process_qualifier_expression(qualifier PsiElement, mut processor ResolveProcessor) bool {
+pub fn (r &SubResolver) process_qualifier_expression(qualifier PsiElement, mut processor PsiScopeProcessor) bool {
 	if qualifier is PsiTypedElement {
 		typ := qualifier.get_type()
 		if typ !is types.UnknownType {
@@ -73,7 +73,7 @@ pub fn (r &SubResolver) calc_methods(typ types.Type) []PsiElement {
 	return methods
 }
 
-pub fn (r &SubResolver) process_type(typ types.Type, mut processor ResolveProcessor) bool {
+pub fn (r &SubResolver) process_type(typ types.Type, mut processor PsiScopeProcessor) bool {
 	if typ is types.StructType {
 		if struct_ := r.find_struct(stubs_index, typ.name()) {
 			for field in struct_.fields() {
@@ -93,7 +93,7 @@ pub fn (r &SubResolver) process_type(typ types.Type, mut processor ResolveProces
 	return true
 }
 
-pub fn (r &SubResolver) process_unqualified_resolve(mut processor ResolveProcessor) bool {
+pub fn (r &SubResolver) process_unqualified_resolve(mut processor PsiScopeProcessor) bool {
 	if parent := r.element().parent() {
 		if parent is FieldName {
 			return r.process_type_initializer_field(mut processor)
@@ -139,7 +139,7 @@ pub fn (r &SubResolver) process_unqualified_resolve(mut processor ResolveProcess
 	return true
 }
 
-pub fn (r &SubResolver) walk_up(element PsiElement, mut processor ResolveProcessor) bool {
+pub fn (r &SubResolver) walk_up(element PsiElement, mut processor PsiScopeProcessor) bool {
 	mut run := element
 	for {
 		if mut run is Block {
@@ -191,28 +191,26 @@ pub fn (_ &SubResolver) process_receiver(b Block, mut processor PsiScopeProcesso
 	return true
 }
 
-pub fn (r &SubResolver) process_block(mut processor ResolveProcessor) bool {
-	mut delegate := ResolveProcessor{
-		...processor
-	}
-	r.walk_up(r.element as PsiElement, mut delegate)
+pub fn (r &SubResolver) process_block(mut processor PsiScopeProcessor) bool {
+	// mut delegate := ResolveProcessor{
+	// 	...processor
+	// }
+	// if delegate.result.len == 0 {
+	// 	return true
+	// }
+	//
+	// for result in delegate.result {
+	// 	processor.result << result
+	// }
 
-	if delegate.result.len == 0 {
-		return true
-	}
-
-	for result in delegate.result {
-		processor.result << result
-	}
-
-	return false
+	return r.walk_up(r.element as PsiElement, mut processor)
 }
 
-pub fn (r &SubResolver) process_file(mut processor ResolveProcessor) bool {
+pub fn (r &SubResolver) process_file(mut processor PsiScopeProcessor) bool {
 	return r.containing_file.process_declarations(mut processor)
 }
 
-pub fn (r &SubResolver) process_type_initializer_field(mut processor ResolveProcessor) bool {
+pub fn (r &SubResolver) process_type_initializer_field(mut processor PsiScopeProcessor) bool {
 	init_expr := r.element().parent_of_type(.type_initializer) or { return true }
 	if init_expr is PsiTypedElement {
 		typ := init_expr.get_type()

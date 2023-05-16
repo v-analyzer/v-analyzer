@@ -43,8 +43,7 @@ pub fn (r &Rope) len() int {
 	return r.length
 }
 
-// str() has & appended which is annoying ://
-pub fn (r &Rope) string() string {
+pub fn (r &Rope) to_string() string {
 	if isnil(r) {
 		return ''
 	}
@@ -52,7 +51,7 @@ pub fn (r &Rope) string() string {
 }
 
 pub fn (r &Rope) str() string {
-	return r.string()
+	return r.to_string()
 }
 
 pub fn (r &Rope) runes() []rune {
@@ -83,7 +82,7 @@ pub fn (r &Rope) concat(other &Rope) &Rope {
 	} else if isnil(other) || other.len() == 0 {
 		return r
 	} else if r.len() + other.len() <= ropes.max_leaf_size {
-		return new(r.string() + other.string())
+		return new(r.to_string() + other.to_string())
 	}
 
 	r_depth := r.safe_depth()
@@ -123,13 +122,13 @@ pub fn (r &Rope) split(idx int) (&Rope, &Rope) {
 	}
 }
 
-pub fn (r &Rope) insert(idx int, str string) &Rope {
+pub fn (r &Rope) insert(idx u32, str string) &Rope {
 	if isnil(r) {
 		return new(str)
 	} else if str.len == 0 {
 		return r
 	}
-	r1, r2 := r.split(idx)
+	r1, r2 := r.split(int(idx))
 	return r1.concat(new(str)).concat(r2)
 }
 

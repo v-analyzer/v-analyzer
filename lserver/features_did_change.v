@@ -16,7 +16,7 @@ pub fn (mut ls LanguageServer) did_change(params lsp.DidChangeTextDocumentParams
 		psi_file: file.psi_file
 	}
 
-	ls.analyzer_instance.indexer.mark_as_dirty(uri.path())
+	// ls.analyzer_instance.indexer.mark_as_dirty(uri.path())
 
 	println('reparsed file ${uri}')
 }

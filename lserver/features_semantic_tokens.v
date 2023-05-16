@@ -169,7 +169,9 @@ fn (mut f SemanticVisitor) visit_element_impl(element psi.PsiElement) bool {
 			}
 
 			if parent.type_name == .attribute_declaration || parent.type_name == .attribute_spec {
-				f.result << element_to_semantic(element.node, 'decorator')
+				if text == '[' || text == ']' {
+					f.result << element_to_semantic(element.node, 'decorator')
+				}
 			}
 		}
 	}

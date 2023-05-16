@@ -1,5 +1,7 @@
 module tree_sitter
 
+import analyzer.structures.ropes
+
 #flag -I@VMODROOT/tree_sitter/lib
 // #flag @VMODROOT/tree_sitter/lib/lib.o
 #flag -L @VMODROOT/tree_sitter/lib
@@ -918,4 +920,6 @@ pub interface SourceText {
 	len() int
 	at(idx int) rune
 	substr(start int, end int) string
+	insert(idx u32, str string) &ropes.Rope
+	to_string() string
 }
