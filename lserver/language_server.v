@@ -188,6 +188,18 @@ pub fn (mut ls LanguageServer) handle_jsonrpc(request &jsonrpc.Request, mut rw j
 				}
 				w.write(ls.inlay_hints(params, mut rw) or { return w.wrap_error(err) })
 			}
+			'textDocument/prepareRename' {
+				params := json.decode(lsp.PrepareRenameParams, request.params) or {
+					return w.wrap_error(err)
+				}
+				w.write(ls.prepare_rename(params, mut rw) or { return w.wrap_error(err) })
+			}
+			'textDocument/rename' {
+				params := json.decode(lsp.RenameParams, request.params) or {
+					return w.wrap_error(err)
+				}
+				w.write(ls.rename(params, mut rw) or { return w.wrap_error(err) })
+			}
 			'textDocument/documentLink' {
 				// params := json.decode(lsp.DocumentLinkParams, request.params) or {
 				// 	return w.wrap_error(err)

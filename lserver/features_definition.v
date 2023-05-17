@@ -16,20 +16,16 @@ pub fn (mut ls LanguageServer) definition(params lsp.TextDocumentPositionParams,
 
 	element_text_range := element.text_range()
 
-	if element is psi.ReferenceExpressionBase {
-		resolved := element.resolve() or {
-			println('cannot resolve ' + element.name())
-			return none
-		}
-
-		data := new_resolve_result(resolved.containing_file(), resolved) or { return [] }
-
-		return [
-			data.to_location_link(element_text_range),
-		]
+	resolved := element.resolve() or {
+		println('cannot resolve ' + element.name())
+		return none
 	}
 
-	return []
+	data := new_resolve_result(resolved.containing_file(), resolved) or { return [] }
+
+	return [
+		data.to_location_link(element_text_range),
+	]
 }
 
 struct ResolveResult {

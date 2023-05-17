@@ -192,7 +192,7 @@ pub mut:
 	code_lens_provider                   CodeLensOptions                 [json: codeLensProvider]
 	document_formatting_provider         bool                            [json: documentFormattingProvider]
 	document_on_type_formatting_provider DocumentOnTypeFormattingOptions [json: documentOnTypeFormattingProvider]
-	rename_provider                      bool                            [json: renameProvider]
+	rename_provider                      RenameOptions                   [json: renameProvider]
 	document_link_provider               DocumentLinkOptions             [json: documentLinkProvider]
 	color_provider                       bool                            [json: colorProvider]
 	declaration_provider                 bool                            [json: declarationProvider]

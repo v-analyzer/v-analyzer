@@ -54,6 +54,9 @@ pub fn (mut ls LanguageServer) initialize(params lsp.InitializeParams, mut wr Re
 				range: false
 				full: true
 			}
+			rename_provider: lsp.RenameOptions{
+				prepare_provider: false
+			}
 		}
 		server_info: lsp.ServerInfo{
 			name: 'spavn-analyzer'

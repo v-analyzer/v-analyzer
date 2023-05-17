@@ -2,13 +2,24 @@ module lserver
 
 import lsp
 import analyzer.psi
-import tree_sitter_v as v
 
 struct FindReferencesVisitor {
-	element      psi.PsiNamedElement
-	element_type v.NodeType
+	element_to_find psi.PsiNamedElement
 mut:
 	result []psi.PsiElement
+}
+
+fn (mut f FindReferencesVisitor) elements() []psi.PsiElement {
+	return f.result
+}
+
+fn (mut f FindReferencesVisitor) locations() []lsp.Location {
+	return f.result.map(fn (it psi.PsiElement) lsp.Location {
+		return lsp.Location{
+			uri: 'file://' + it.containing_file.path()
+			range: text_range_to_lsp_range(it.text_range())
+		}
+	})
 }
 
 fn (mut f FindReferencesVisitor) visit_element(element psi.PsiElement) {
@@ -24,10 +35,10 @@ fn (mut f FindReferencesVisitor) visit_element(element psi.PsiElement) {
 
 fn (mut f FindReferencesVisitor) visit_element_impl(element psi.PsiElement) bool {
 	resolved := f.try_resolve(element) or { return true }
-	typ := resolved.element_type()
 
 	if resolved is psi.PsiNamedElement {
-		if f.element_type == typ && f.element.name() == resolved.name() {
+		if f.element_to_find.name() == resolved.name()
+			&& f.element_to_find.identifier_text_range() == resolved.identifier_text_range() {
 			f.result << element
 			return false
 		}
@@ -64,25 +75,18 @@ pub fn (mut ls LanguageServer) references(params lsp.ReferenceParams, mut wr Res
 
 	offset := file.find_offset(params.position)
 	element := file.psi_file.find_element_at(offset) or {
-		println('cannot find reference at ' + offset.str())
+		println('cannot find element at ' + offset.str())
 		return []
 	}
 
-	named_element := element.parent() or { return [] }
+	element_to_find := resolve_identifier(element)
 
-	if named_element is psi.PsiNamedElement {
+	if element_to_find is psi.PsiNamedElement {
 		mut visit := FindReferencesVisitor{
-			element: named_element
-			element_type: (named_element as psi.PsiElement).element_type()
+			element_to_find: element_to_find
 		}
 		file.psi_file.root().accept_mut(mut visit)
-
-		return visit.result.map(fn (it psi.PsiElement) lsp.Location {
-			return lsp.Location{
-				uri: 'file://' + it.containing_file.path()
-				range: text_range_to_lsp_range(it.text_range())
-			}
-		})
+		return visit.locations()
 	}
 
 	return []
