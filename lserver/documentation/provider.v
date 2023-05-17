@@ -170,6 +170,15 @@ fn (mut p Provider) parameter_documentation(element psi.ParameterDeclaration) ? 
 fn (mut p Provider) field_documentation(element psi.FieldDeclaration) ? {
 	p.sb.write_string('```v\n')
 
+	is_mut, is_pub := element.is_mutable_public()
+
+	if is_pub {
+		p.sb.write_string('pub ')
+	}
+	if is_mut {
+		p.sb.write_string('mut ')
+	}
+
 	if owner := element.owner() {
 		if owner is psi.PsiNamedElement {
 			p.sb.write_string(owner.name())

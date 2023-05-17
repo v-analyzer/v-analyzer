@@ -126,6 +126,18 @@ pub fn (n PsiElementImpl) parent_of_type(typ v.NodeType) ?PsiElement {
 	return none
 }
 
+pub fn (n PsiElementImpl) sibling_of_type_backward(typ v.NodeType) ?PsiElement {
+	mut res := PsiElement(n)
+	for {
+		res = res.prev_sibling() or { return none }
+		if res.node.type_name == typ {
+			return res
+		}
+	}
+
+	return none
+}
+
 pub fn (n PsiElementImpl) parent_of_type_or_self(typ v.NodeType) ?PsiElement {
 	if n.node.type_name == typ {
 		return create_element(n.node, n.containing_file)

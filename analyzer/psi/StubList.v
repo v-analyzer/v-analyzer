@@ -29,6 +29,20 @@ fn (s &StubList) get_children_stubs(id StubId) []StubElement {
 	return stubs
 }
 
+fn (s &StubList) prev_sibling(id StubId) ?&StubElement {
+	stub := s.get_stub(id)?
+	parent := stub.parent_stub()?
+
+	children_ids := s.child_map[parent.id()]
+	index := children_ids.index(id)
+	if index == 0 || index == -1 {
+		return none
+	}
+
+	prev_id := children_ids[index - 1]
+	return s.index_map[prev_id]
+}
+
 fn (s StubList) get_stub(id StubId) ?&StubBase {
 	return s.index_map[id] or { return none }
 }

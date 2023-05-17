@@ -80,6 +80,11 @@ pub fn (s &StubbedElementType) create_psi(stub &StubBase) ?PsiElement {
 			PsiElementImpl: base_psi
 		}
 	}
+	if stub_type == .struct_field_scope {
+		return StructFieldScope{
+			PsiElementImpl: base_psi
+		}
+	}
 	if stub_type == .constant_declaration {
 		return ConstantDefinition{
 			PsiElementImpl: base_psi
@@ -199,6 +204,13 @@ pub fn (s &StubbedElementType) create_stub(psi PsiElement, parent_stub &StubElem
 		)
 	}
 
+	if psi is StructFieldScope {
+		return new_stub_base(parent_stub, .struct_field_scope, psi.name(), psi.text_range(),
+
+			text: psi.get_text()
+		)
+	}
+
 	if psi is ConstantDefinition {
 		text_range := if identifier := psi.identifier() {
 			identifier.text_range()
@@ -304,6 +316,7 @@ pub fn (s &StubbedElementType) deserialize(stream StubInputStream, parent_stub &
 		.receiver {}
 		.enum_declaration {}
 		.enum_field_definition {}
+		.struct_field_scope {}
 	}
 
 	return none

@@ -15,6 +15,7 @@ pub enum StubType as u8 {
 	struct_declaration
 	enum_declaration
 	field_declaration
+	struct_field_scope
 	enum_field_definition
 	constant_declaration
 	type_alias_declaration
@@ -97,6 +98,7 @@ pub fn (s &StubBase) element_type() v.NodeType {
 		.plain_type { .plain_type }
 		.enum_declaration { .enum_declaration }
 		.enum_field_definition { .enum_field_definition }
+		.struct_field_scope { .struct_field_scope }
 	}
 }
 
@@ -137,6 +139,27 @@ fn (s &StubBase) parent_of_type(typ StubType) ?StubElement {
 	return none
 }
 
+fn (s &StubBase) sibling_of_type_backward(typ StubType) ?StubElement {
+	mut res := &StubBase{
+		...s
+	}
+	for {
+		prev := res.prev_sibling() or { return none }
+
+		if prev is StubBase {
+			res = prev
+		} else {
+			return none
+		}
+
+		if res.stub_type == typ {
+			return res
+		}
+	}
+
+	return none
+}
+
 fn (s &StubBase) parent_stub() ?&StubElement {
 	if isnil(s.parent) {
 		return none
@@ -154,6 +177,10 @@ fn (s &StubBase) get_child_by_type(typ StubType) ?StubElement {
 
 fn (s &StubBase) get_children_by_type(typ StubType) []StubElement {
 	return s.stub_list.get_children_stubs(s.id).filter(it.stub_type() == typ)
+}
+
+fn (s &StubBase) prev_sibling() ?&StubElement {
+	return s.stub_list.prev_sibling(s.id)
 }
 
 fn (s &StubBase) children_stubs() []StubElement {

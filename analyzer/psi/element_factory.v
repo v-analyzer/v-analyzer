@@ -121,6 +121,12 @@ pub fn create_element(node AstNode, containing_file &PsiFileImpl) PsiElement {
 		}
 	}
 
+	if node.type_name == .struct_field_scope {
+		return StructFieldScope{
+			PsiElementImpl: base_node
+		}
+	}
+
 	if node.type_name == .enum_field_definition {
 		return EnumFieldDeclaration{
 			PsiElementImpl: base_node

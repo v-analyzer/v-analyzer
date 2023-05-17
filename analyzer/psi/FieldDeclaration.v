@@ -89,6 +89,34 @@ pub fn (f &FieldDeclaration) owner() ?PsiElement {
 	return f.parent_of_type(.struct_declaration)
 }
 
+pub fn (f &FieldDeclaration) scope() ?&StructFieldScope {
+	if f.stub_id != non_stubbed_element {
+		if stub := f.stubs_list.get_stub(f.stub_id) {
+			if parent := stub.sibling_of_type_backward(.struct_field_scope) {
+				if parent.is_valid() {
+					element := parent.get_psi()?
+					if element is StructFieldScope {
+						return element
+					}
+					return none
+				}
+			}
+			return none
+		}
+	}
+
+	element := f.sibling_of_type_backward(.struct_field_scope)?
+	if element is StructFieldScope {
+		return element
+	}
+	return none
+}
+
+pub fn (f &FieldDeclaration) is_mutable_public() (bool, bool) {
+	scope := f.scope() or { return false, false }
+	return scope.is_mutable_public()
+}
+
 pub fn (f FieldDeclaration) stub() ?&StubBase {
 	return none
 }
