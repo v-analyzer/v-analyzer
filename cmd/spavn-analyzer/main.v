@@ -35,7 +35,8 @@ fn (a &Analyzer) want_die() {
 }
 
 fn main() {
-	// mut fp := flag.new_flag_parser(os.args)
+	mut fp := flag.new_flag_parser(os.args)
+	stdin := fp.bool('stdin', 0, false, 'use stdin')
 	// id := fp.int('id', 0, 6790, 'id of analyzer')
 	// port := fp.int('port', `p`, 6790, 'port to listen on')
 	// daemon_port := fp.int('daemon-port', 0, 0, 'daemon port')
@@ -45,7 +46,8 @@ fn main() {
 	analyzer_instance := analyzer.new()
 
 	// mut stream := new_stdio_stream()!
-	mut stream := new_socket_stream_server(5007, true)!
+	mut stream := if stdin { new_stdio_stream()! } else { new_socket_stream_server(5007, true)! }
+
 	mut ls := lserver.new(analyzer_instance)
 	mut jrpc_server := &jsonrpc.Server{
 		stream: stream
