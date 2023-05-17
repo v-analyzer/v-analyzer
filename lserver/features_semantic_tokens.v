@@ -161,12 +161,16 @@ fn (mut f SemanticVisitor) visit_element_impl(element psi.PsiElement) bool {
 
 	if element.node.type_name == .identifier {
 		if parent := element.node.parent() {
-			if parent.type_name == .attribute_spec {
-				f.result << element_to_semantic(element.node, 'decorator')
-			}
-
 			if parent.type_name == .enum_declaration {
 				f.result << element_to_semantic(element.node, 'enum')
+			}
+		}
+	}
+
+	if element.node.type_name == .type_reference_expression {
+		if parent := element.node.parent() {
+			if parent.type_name == .value_attribute || parent.type_name == .key_value_attribute {
+				f.result << element_to_semantic(element.node, 'decorator')
 			}
 		}
 	}
@@ -184,7 +188,7 @@ fn (mut f SemanticVisitor) visit_element_impl(element psi.PsiElement) bool {
 				}
 			}
 
-			if parent.type_name == .attribute_declaration || parent.type_name == .attribute_spec {
+			if parent.type_name == .attribute || parent.type_name == .attribute_expression {
 				if text == '[' || text == ']' {
 					f.result << element_to_semantic(element.node, 'decorator')
 				}

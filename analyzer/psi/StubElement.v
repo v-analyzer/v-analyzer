@@ -7,6 +7,7 @@ pub interface StubElement {
 	receiver() string
 	stub_type() StubType
 	parent_stub() ?&StubElement
+	first_child() ?&StubElement
 	children_stubs() []StubElement
 	get_child_by_type(typ StubType) ?StubElement
 	get_children_by_type(typ StubType) []StubElement

@@ -19,9 +19,14 @@ pub enum StubType as u8 {
 	enum_field_definition
 	constant_declaration
 	type_alias_declaration
+	attributes
+	attribute
+	attribute_expression
+	value_attribute
 	plain_type
 }
 
+[params]
 pub struct StubData {
 pub:
 	text     string
@@ -99,6 +104,10 @@ pub fn (s &StubBase) element_type() v.NodeType {
 		.enum_declaration { .enum_declaration }
 		.enum_field_definition { .enum_field_definition }
 		.struct_field_scope { .struct_field_scope }
+		.attributes { .attributes }
+		.attribute { .attribute }
+		.attribute_expression { .attribute_expression }
+		.value_attribute { .value_attribute }
 	}
 }
 
@@ -185,6 +194,10 @@ fn (s &StubBase) prev_sibling() ?&StubElement {
 
 fn (s &StubBase) children_stubs() []StubElement {
 	return s.stub_list.get_children_stubs(s.id)
+}
+
+fn (s &StubBase) first_child() ?&StubElement {
+	return s.stub_list.first_child(s.id)
 }
 
 fn (s &StubBase) is_valid() bool {

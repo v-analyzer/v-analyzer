@@ -39,6 +39,12 @@ pub fn (r TypeReferenceExpression) qualifier() ?PsiElement {
 }
 
 pub fn (r TypeReferenceExpression) reference() PsiReference {
+	if grand := r.parent_nth(2) {
+		if grand is AttributeExpression {
+			return new_attribute_reference(r.containing_file, r)
+		}
+	}
+
 	return new_reference(r.containing_file, r, true)
 }
 

@@ -1,5 +1,7 @@
 module psi
 
+import utils
+
 pub struct StubbedElementType {
 	name       string
 	debug_name string
@@ -22,6 +24,13 @@ pub fn (s &StubbedElementType) index_stub(stub &StubBase, mut sink IndexSink) {
 
 	if stub.stub_type == .struct_declaration {
 		name := stub.name()
+		if name.ends_with('Attribute') {
+			// convert DeprecatedAfter to deprecated_after
+			clear_name := utils.pascal_case_to_snake_case(name.trim_string_right('Attribute'))
+			sink.occurrence(StubIndexKey.attributes, clear_name)
+			return
+		}
+
 		sink.occurrence(StubIndexKey.structs, name)
 	}
 
@@ -95,6 +104,26 @@ pub fn (s &StubbedElementType) create_psi(stub &StubBase) ?PsiElement {
 			PsiElementImpl: base_psi
 		}
 	}
+	if stub_type == .attributes {
+		return Attributes{
+			PsiElementImpl: base_psi
+		}
+	}
+	if stub_type == .attribute {
+		return Attribute{
+			PsiElementImpl: base_psi
+		}
+	}
+	if stub_type == .attribute_expression {
+		return AttributeExpression{
+			PsiElementImpl: base_psi
+		}
+	}
+	if stub_type == .value_attribute {
+		return ValueAttribute{
+			PsiElementImpl: base_psi
+		}
+	}
 	if stub_type == .plain_type {
 		return PlainType{
 			PsiElementImpl: base_psi
@@ -156,8 +185,12 @@ pub fn (s &StubbedElementType) create_stub(psi PsiElement, parent_stub &StubElem
 			psi.text_range()
 		}
 		comment := psi.doc_comment()
-		return new_stub_base(parent_stub, .struct_declaration, psi.name(), text_range,
-
+		name := if psi.is_attribute() {
+			psi.name() + 'Attribute'
+		} else {
+			psi.name()
+		}
+		return new_stub_base(parent_stub, .struct_declaration, name, text_range,
 			text: ''
 			comment: comment
 		)
@@ -220,7 +253,6 @@ pub fn (s &StubbedElementType) create_stub(psi PsiElement, parent_stub &StubElem
 		comment := psi.doc_comment()
 		return new_stub_base(parent_stub, .constant_declaration, psi.name(), text_range,
 
-			text: ''
 			comment: comment
 		)
 	}
@@ -234,8 +266,25 @@ pub fn (s &StubbedElementType) create_stub(psi PsiElement, parent_stub &StubElem
 		comment := psi.doc_comment()
 		return new_stub_base(parent_stub, .type_alias_declaration, psi.name(), text_range,
 
-			text: ''
 			comment: comment
+		)
+	}
+
+	if psi is Attributes {
+		return new_stub_base(parent_stub, .attributes, '', psi.text_range())
+	}
+
+	if psi is Attribute {
+		return new_stub_base(parent_stub, .attribute, '', psi.text_range())
+	}
+
+	if psi is AttributeExpression {
+		return new_stub_base(parent_stub, .attribute_expression, '', psi.text_range())
+	}
+
+	if psi is ValueAttribute {
+		return new_stub_base(parent_stub, .value_attribute, '', psi.text_range(),
+			text: psi.get_text()
 		)
 	}
 
@@ -317,6 +366,10 @@ pub fn (s &StubbedElementType) deserialize(stream StubInputStream, parent_stub &
 		.enum_declaration {}
 		.enum_field_definition {}
 		.struct_field_scope {}
+		.attribute {}
+		.attribute_expression {}
+		.value_attribute {}
+		.attributes {}
 	}
 
 	return none

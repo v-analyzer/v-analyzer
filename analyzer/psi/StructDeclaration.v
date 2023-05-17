@@ -4,6 +4,29 @@ pub struct StructDeclaration {
 	PsiElementImpl
 }
 
+pub fn (s &StructDeclaration) attributes() []PsiElement {
+	if s.stub_id != non_stubbed_element {
+		if stub := s.stubs_list.get_stub(s.stub_id) {
+			if attributes_stub := stub.get_child_by_type(.attributes) {
+				if attributes := attributes_stub.get_psi() {
+					if attributes is Attributes {
+						return attributes.attributes()
+					}
+				}
+			}
+			return []
+		}
+	}
+
+	if attributes := s.find_child_by_type(.attributes) {
+		if attributes is Attributes {
+			return attributes.attributes()
+		}
+	}
+
+	return []
+}
+
 pub fn (s StructDeclaration) identifier() ?PsiElement {
 	return s.find_child_by_type(.identifier)
 }
@@ -64,4 +87,18 @@ pub fn (s StructDeclaration) fields() []PsiElement {
 
 pub fn (s StructDeclaration) stub() ?&StubBase {
 	return none
+}
+
+pub fn (s &StructDeclaration) is_attribute() bool {
+	attrs := s.attributes()
+	if attrs.len == 0 {
+		return false
+	}
+	attr := attrs.first()
+	if attr is Attribute {
+		keys := attr.keys()
+		return 'attribute' in keys
+	}
+
+	return false
 }

@@ -20,6 +20,17 @@ fn (mut s StubList) add_stub(mut stub StubBase, parent &StubElement) {
 	s.child_map[parent_id] = parent_children
 }
 
+fn (s &StubList) first_child(id StubId) ?&StubElement {
+	stub := s.get_stub(id)?
+	children_ids := s.child_map[stub.id()]
+	if children_ids.len == 0 {
+		return none
+	}
+
+	child_id := children_ids.first()
+	return s.index_map[child_id]
+}
+
 fn (s &StubList) get_children_stubs(id StubId) []StubElement {
 	stub_ids := s.child_map[id]
 	mut stubs := []StubElement{cap: stub_ids.len}

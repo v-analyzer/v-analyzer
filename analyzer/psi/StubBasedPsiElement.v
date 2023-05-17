@@ -7,6 +7,7 @@ pub enum StubIndexKey {
 	constants
 	type_aliases
 	enums
+	attributes
 }
 
 pub interface IndexSink {

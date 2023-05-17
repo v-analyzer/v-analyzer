@@ -545,7 +545,7 @@ module.exports = grammar({
         )
       ),
 
-    array: ($) => prec.right(PREC.composite_literal, $._non_empty_array),
+    array: ($) => prec.right(PREC.primary, $._non_empty_array),
 
     fixed_array: ($) =>
       prec.right(
@@ -1007,7 +1007,7 @@ module.exports = grammar({
     function_declaration: ($) =>
       prec.right(
         seq(
-          field("attributes", optional($.attribute_list)),
+          field("attributes", optional($.attributes)),
           optional($.visibility_modifiers),
           fn_keyword,
           field("receiver", optional($.receiver)),
@@ -1323,31 +1323,52 @@ module.exports = grammar({
         )
       ),
 
-    attribute_spec: ($) =>
+    attributes: ($) =>
+        repeat1(seq($.attribute, optional(terminator))),
+
+    attribute: ($) =>
+        seq("[", seq($.attribute_expression, repeat(seq(";", $.attribute_expression))), "]"),
+
+    attribute_expression: ($) =>
       prec(
         PREC.attributes,
         choice(
-          seq(if_keyword, $.identifier, optional("?")),
-          alias("unsafe", $.identifier),
-          $.identifier,
-          $.interpreted_string_literal,
-          seq(
-            field("name", choice(alias("unsafe", $.identifier), $.identifier)),
-            ":",
-            field("value", choice($._string_literal, $.identifier))
-          )
+          $.if_attribute,
+          $._plain_attribute,
         )
       ),
 
-    attribute_declaration: ($) =>
-      seq("[", seq($.attribute_spec, repeat(seq(";", $.attribute_spec))), "]"),
+    // [if some ?]
+    if_attribute: ($) => seq(if_keyword, $.identifier, optional("?")),
 
-    attribute_list: ($) =>
-      repeat1(seq($.attribute_declaration, optional(terminator))),
+    _plain_attribute: ($) => choice(
+        $.literal_attribute,
+        $.value_attribute,
+        $.key_value_attribute
+    ),
+
+    // ['/query']
+    literal_attribute: ($) => $.literal,
+
+    value_attribute: ($) => prec(
+        PREC.attributes,
+        field("name", choice(alias("unsafe", $.type_reference_expression), $.type_reference_expression)),
+    ),
+
+    // [key]
+    // [key: value]
+    key_value_attribute: ($) => prec(
+      PREC.attributes,
+      seq(
+        $.value_attribute,
+        ":",
+        field("value", choice($.literal, $.identifier))
+      ),
+    ),
 
     struct_declaration: ($) =>
       seq(
-        field("attributes", optional($.attribute_list)),
+        field("attributes", optional($.attributes)),
         optional($.visibility_modifiers),
         choice(struct_keyword, union_keyword),
         field("name", $.identifier),
@@ -1387,7 +1408,7 @@ module.exports = grammar({
           seq(
             field("name", $.field_definition),
             field("type", choice($.plain_type, $.option_type)),
-            field("attributes", optional($.attribute_declaration)),
+            field("attributes", optional($.attribute)),
             optional(seq("=", field("default_value", $._expression))),
             optional(terminator)
           ),
@@ -1403,7 +1424,7 @@ module.exports = grammar({
 
     _binded_struct_declaration: ($) =>
       seq(
-        field("attributes", optional($.attribute_list)),
+        field("attributes", optional($.attributes)),
         optional($.visibility_modifiers),
         choice(struct_keyword, union_keyword),
         field("name", prec.dynamic(PREC.composite_literal, $._binded_type)),
@@ -1436,7 +1457,7 @@ module.exports = grammar({
             alias($._old_identifier, $.field_identifier)
           )),
           field("type", choice($.plain_type, $.option_type)),
-          field("attributes", optional($.attribute_declaration)),
+          field("attributes", optional($.attribute)),
           optional(seq("=", field("default_value", $._expression))),
           optional(terminator)
         )
@@ -1444,7 +1465,7 @@ module.exports = grammar({
 
     enum_declaration: ($) =>
       seq(
-        field("attributes", optional($.attribute_list)),
+        field("attributes", optional($.attributes)),
         optional($.visibility_modifiers),
         enum_keyword,
         field("name", $.identifier),
@@ -1483,7 +1504,7 @@ module.exports = grammar({
 
     interface_declaration: ($) =>
       seq(
-        field("attributes", optional($.attribute_list)),
+        field("attributes", optional($.attributes)),
         optional($.visibility_modifiers),
         interface_keyword,
         field("name", choice($.type_reference_expression, $.generic_type)),
@@ -1524,7 +1545,7 @@ module.exports = grammar({
 
     module_clause: ($) =>
       seq(
-        field("attributes", optional($.attribute_list)),
+        field("attributes", optional($.attributes)),
         "module",
         " ",
         $.identifier,

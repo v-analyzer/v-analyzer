@@ -60,15 +60,15 @@ pub fn (p &PsiFileImpl) find_element_at(offset u32) ?PsiElement {
 	return p.root.find_element_at(offset)
 }
 
-pub fn (p &PsiFileImpl) find_reference_at(offset u32) ?PsiElement {
+pub fn (p &PsiFileImpl) find_reference_at(offset u32) ?ReferenceExpressionBase {
 	element := p.find_element_at(offset)?
 	if element is ReferenceExpressionBase {
-		return element as PsiElement
+		return element
 	}
 	if element is Identifier {
 		parent := element.parent()?
 		if parent is ReferenceExpressionBase {
-			return parent as PsiElement
+			return parent
 		}
 	}
 	return none

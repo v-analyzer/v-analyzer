@@ -199,5 +199,29 @@ pub fn create_element(node AstNode, containing_file &PsiFileImpl) PsiElement {
 		}
 	}
 
+	if node.type_name == .attributes {
+		return Attributes{
+			PsiElementImpl: base_node
+		}
+	}
+
+	if node.type_name == .attribute {
+		return Attribute{
+			PsiElementImpl: base_node
+		}
+	}
+
+	if node.type_name == .attribute_expression {
+		return AttributeExpression{
+			PsiElementImpl: base_node
+		}
+	}
+
+	if node.type_name == .value_attribute {
+		return ValueAttribute{
+			PsiElementImpl: base_node
+		}
+	}
+
 	return base_node
 }

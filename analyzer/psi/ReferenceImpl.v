@@ -1,11 +1,13 @@
 module psi
 
 import analyzer.psi.types
+import utils
 
 pub struct ReferenceImpl {
-	element   ReferenceExpressionBase
-	file      &PsiFileImpl
-	for_types bool
+	element        ReferenceExpressionBase
+	file           &PsiFileImpl
+	for_types      bool
+	for_attributes bool
 }
 
 pub fn new_reference(file &PsiFileImpl, element ReferenceExpressionBase, for_types bool) &ReferenceImpl {
@@ -13,6 +15,14 @@ pub fn new_reference(file &PsiFileImpl, element ReferenceExpressionBase, for_typ
 		element: element
 		file: file
 		for_types: for_types
+	}
+}
+
+pub fn new_attribute_reference(file &PsiFileImpl, element ReferenceExpressionBase) &ReferenceImpl {
+	return &ReferenceImpl{
+		element: element
+		file: file
+		for_attributes: true
 	}
 }
 
@@ -25,6 +35,7 @@ pub fn (r &ReferenceImpl) resolve() ?PsiElement {
 		containing_file: r.file
 		element: r.element
 		for_types: r.for_types
+		for_attributes: r.for_attributes
 	}
 	mut processor := ResolveProcessor{
 		containing_file: r.file
@@ -42,6 +53,7 @@ pub struct SubResolver {
 	containing_file &PsiFileImpl
 	element         ReferenceExpressionBase
 	for_types       bool
+	for_attributes  bool
 }
 
 fn (r &SubResolver) element() PsiElement {
@@ -103,6 +115,10 @@ pub fn (r &SubResolver) process_type(typ types.Type, mut processor PsiScopeProce
 }
 
 pub fn (r &SubResolver) process_unqualified_resolve(mut processor PsiScopeProcessor) bool {
+	if r.for_attributes {
+		return r.resolve_attribute(mut processor)
+	}
+
 	if parent := r.element().parent() {
 		if parent is FieldName {
 			return r.process_type_initializer_field(mut processor)
@@ -299,6 +315,30 @@ pub fn (_ &SubResolver) find_type_alias(stubs_index StubIndex, name string) ?&Ty
 	return none
 }
 
+pub fn (_ &SubResolver) find_attribute(stubs_index StubIndex, name string) ?&StructDeclaration {
+	found := stubs_index.get_elements(.attributes, name)
+	if found.len != 0 {
+		first := found.first()
+		if first is StructDeclaration {
+			return first
+		}
+	}
+	return none
+}
+
+pub fn (r &SubResolver) resolve_attribute(mut processor PsiScopeProcessor) bool {
+	element := r.element()
+	if element is PsiNamedElement {
+		if attr := r.find_attribute(stubs_index, element.name()) {
+			if !processor.execute(attr) {
+				return false
+			}
+		}
+	}
+
+	return true
+}
+
 pub struct ResolveProcessor {
 	containing_file &PsiFileImpl
 	ref             ReferenceExpressionBase
@@ -312,7 +352,10 @@ fn (mut r ResolveProcessor) execute(element PsiElement) bool {
 		return false
 	}
 	if element is PsiNamedElement {
-		name := element.name()
+		mut name := element.name()
+		if name.ends_with('Attribute') {
+			name = utils.pascal_case_to_snake_case(name.trim_string_right('Attribute'))
+		}
 		ref_name := r.ref.name()
 		if name == ref_name {
 			r.result << element as PsiElement

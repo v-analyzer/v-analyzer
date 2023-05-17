@@ -483,7 +483,7 @@
     }
   },
   {
-    "type": "attribute_declaration",
+    "type": "attribute",
     "named": true,
     "fields": {},
     "children": {
@@ -491,74 +491,49 @@
       "required": true,
       "types": [
         {
-          "type": "attribute_spec",
+          "type": "attribute_expression",
           "named": true
         }
       ]
     }
   },
   {
-    "type": "attribute_list",
+    "type": "attribute_expression",
     "named": true,
     "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "attribute_declaration",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "attribute_spec",
-    "named": true,
-    "fields": {
-      "name": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      },
-      "value": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "c_string_literal",
-            "named": true
-          },
-          {
-            "type": "identifier",
-            "named": true
-          },
-          {
-            "type": "interpreted_string_literal",
-            "named": true
-          },
-          {
-            "type": "raw_string_literal",
-            "named": true
-          }
-        ]
-      }
-    },
     "children": {
       "multiple": false,
-      "required": false,
+      "required": true,
       "types": [
         {
-          "type": "identifier",
+          "type": "if_attribute",
           "named": true
         },
         {
-          "type": "interpreted_string_literal",
+          "type": "key_value_attribute",
+          "named": true
+        },
+        {
+          "type": "literal_attribute",
+          "named": true
+        },
+        {
+          "type": "value_attribute",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "attributes",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "attribute",
           "named": true
         }
       ]
@@ -1208,7 +1183,7 @@
         "required": false,
         "types": [
           {
-            "type": "attribute_list",
+            "type": "attributes",
             "named": true
           }
         ]
@@ -1542,7 +1517,7 @@
         "required": false,
         "types": [
           {
-            "type": "attribute_list",
+            "type": "attributes",
             "named": true
           }
         ]
@@ -1807,6 +1782,21 @@
     }
   },
   {
+    "type": "if_attribute",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "if_expression",
     "named": true,
     "fields": {
@@ -2013,7 +2003,7 @@
         "required": false,
         "types": [
           {
-            "type": "attribute_list",
+            "type": "attributes",
             "named": true
           }
         ]
@@ -2178,6 +2168,36 @@
     }
   },
   {
+    "type": "key_value_attribute",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "literal",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "value_attribute",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "keyed_element",
     "named": true,
     "fields": {
@@ -2275,6 +2295,21 @@
         },
         {
           "type": "true",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "literal_attribute",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "literal",
           "named": true
         }
       ]
@@ -2416,7 +2451,7 @@
         "required": false,
         "types": [
           {
-            "type": "attribute_list",
+            "type": "attributes",
             "named": true
           }
         ]
@@ -3314,7 +3349,7 @@
         "required": false,
         "types": [
           {
-            "type": "attribute_list",
+            "type": "attributes",
             "named": true
           }
         ]
@@ -3394,7 +3429,7 @@
         "required": false,
         "types": [
           {
-            "type": "attribute_declaration",
+            "type": "attribute",
             "named": true
           }
         ]
@@ -3718,6 +3753,22 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "value_attribute",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "type_reference_expression",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {

@@ -23,9 +23,9 @@ pub enum NodeType {
 	asm_statement
 	assert_statement
 	assignment_statement
-	attribute_declaration
-	attribute_list
-	attribute_spec
+	attribute
+	attribute_expression
+	attributes
 	binary_expression
 	binded_identifier
 	binded_type
@@ -75,6 +75,7 @@ pub enum NodeType {
 	hash_statement
 	identifier
 	identifier_list
+	if_attribute
 	if_expression
 	import_alias
 	import_declaration
@@ -89,9 +90,11 @@ pub enum NodeType {
 	interface_spec_list
 	interpreted_string_literal
 	is_expression
+	key_value_attribute
 	keyed_element
 	labeled_statement
 	literal
+	literal_attribute
 	literal_value
 	lock_expression
 	map_
@@ -152,6 +155,7 @@ pub enum NodeType {
 	type_selector_expression
 	unary_expression
 	unsafe_expression
+	value_attribute
 	var_declaration
 	var_definition
 	visibility_modifiers
@@ -257,8 +261,7 @@ pub fn (typ NodeType) group() SuperType {
 }
 
 const declaration_node_types = [
-	NodeType.attribute_declaration,
-	.const_declaration,
+	NodeType.const_declaration,
 	.enum_declaration,
 	.function_declaration,
 	.global_var_declaration,
@@ -319,9 +322,9 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'asm_statement' { NodeType.asm_statement }
 		'assert_statement' { NodeType.assert_statement }
 		'assignment_statement' { NodeType.assignment_statement }
-		'attribute_declaration' { NodeType.attribute_declaration }
-		'attribute_list' { NodeType.attribute_list }
-		'attribute_spec' { NodeType.attribute_spec }
+		'attribute' { NodeType.attribute }
+		'attribute_expression' { NodeType.attribute_expression }
+		'attributes' { NodeType.attributes }
 		'binary_expression' { NodeType.binary_expression }
 		'binded_identifier' { NodeType.binded_identifier }
 		'binded_type' { NodeType.binded_type }
@@ -371,6 +374,7 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'hash_statement' { NodeType.hash_statement }
 		'identifier' { NodeType.identifier }
 		'identifier_list' { NodeType.identifier_list }
+		'if_attribute' { NodeType.if_attribute }
 		'if_expression' { NodeType.if_expression }
 		'import_alias' { NodeType.import_alias }
 		'import_declaration' { NodeType.import_declaration }
@@ -385,9 +389,11 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'interface_spec_list' { NodeType.interface_spec_list }
 		'interpreted_string_literal' { NodeType.interpreted_string_literal }
 		'is_expression' { NodeType.is_expression }
+		'key_value_attribute' { NodeType.key_value_attribute }
 		'keyed_element' { NodeType.keyed_element }
 		'labeled_statement' { NodeType.labeled_statement }
 		'literal' { NodeType.literal }
+		'literal_attribute' { NodeType.literal_attribute }
 		'literal_value' { NodeType.literal_value }
 		'lock_expression' { NodeType.lock_expression }
 		'map' { NodeType.map_ }
@@ -448,6 +454,7 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'type_selector_expression' { NodeType.type_selector_expression }
 		'unary_expression' { NodeType.unary_expression }
 		'unsafe_expression' { NodeType.unsafe_expression }
+		'value_attribute' { NodeType.value_attribute }
 		'var_declaration' { NodeType.var_declaration }
 		'var_definition' { NodeType.var_definition }
 		'visibility_modifiers' { NodeType.visibility_modifiers }
