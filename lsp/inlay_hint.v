@@ -96,7 +96,7 @@ pub:
 pub struct InlayHintParams {
 pub:
 	// The text document.
-	text_document TextDocumentIdentifier [json: 'TextDocument']
+	text_document TextDocumentIdentifier [json: 'textDocument']
 	// The document range for which inlay hints should be computed.
 	range Range
 }

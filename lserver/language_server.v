@@ -182,7 +182,6 @@ pub fn (mut ls LanguageServer) handle_jsonrpc(request &jsonrpc.Request, mut rw j
 				w.write(ls.code_lens(params, mut rw) or { return w.wrap_error(err) })
 			}
 			'textDocument/inlayHint' {
-				println('inlayHint')
 				params := json.decode(lsp.InlayHintParams, request.params) or {
 					return w.wrap_error(err)
 				}
