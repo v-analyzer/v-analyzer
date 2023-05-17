@@ -109,8 +109,20 @@ pub fn create_element(node AstNode, containing_file &PsiFileImpl) PsiElement {
 		}
 	}
 
+	if node.type_name == .enum_declaration {
+		return EnumDeclaration{
+			PsiElementImpl: base_node
+		}
+	}
+
 	if node.type_name == .struct_field_declaration {
 		return FieldDeclaration{
+			PsiElementImpl: base_node
+		}
+	}
+
+	if node.type_name == .enum_field_definition {
+		return EnumFieldDeclaration{
 			PsiElementImpl: base_node
 		}
 	}

@@ -13,7 +13,9 @@ pub enum StubType as u8 {
 	receiver
 	signature
 	struct_declaration
+	enum_declaration
 	field_declaration
+	enum_field_definition
 	constant_declaration
 	type_alias_declaration
 	plain_type
@@ -93,6 +95,8 @@ pub fn (s &StubBase) element_type() v.NodeType {
 		.constant_declaration { .const_definition }
 		.type_alias_declaration { .type_declaration }
 		.plain_type { .plain_type }
+		.enum_declaration { .enum_declaration }
+		.enum_field_definition { .enum_field_definition }
 	}
 }
 

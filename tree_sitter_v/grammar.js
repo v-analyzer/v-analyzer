@@ -309,7 +309,8 @@ module.exports = grammar({
         $.fn_literal,
         $.selector_expression,
         $.parenthesized_expression,
-        $._expression_with_blocks
+        $._expression_with_blocks,
+        $.enum_fetch
       ),
 
     parenthesized_expression: ($) => seq("(", $._expression, ")"),
@@ -868,9 +869,9 @@ module.exports = grammar({
       prec(
         PREC.resolve,
         seq(
-          token.immediate("<"),
+          choice(token.immediate("["), token.immediate("<")),
           comma_sep1($.plain_type),
-          token.immediate(">")
+          choice(token.immediate("]"), token.immediate(">")),
         )
       ),
 
@@ -1349,18 +1350,8 @@ module.exports = grammar({
         field("attributes", optional($.attribute_list)),
         optional($.visibility_modifiers),
         choice(struct_keyword, union_keyword),
-        field(
-          "name",
-          prec.dynamic(
-            PREC.composite_literal,
-            choice(
-              $.identifier,
-              // in order to parse builtin
-              $.builtin_type,
-              $.generic_type
-            )
-          )
-        ),
+        field("name", $.identifier),
+        field("type_parameters", optional($.type_parameters)),
         $._struct_field_declaration_list
       ),
 
@@ -1453,33 +1444,38 @@ module.exports = grammar({
 
     enum_declaration: ($) =>
       seq(
-        optional($.attribute_list),
+        field("attributes", optional($.attribute_list)),
         optional($.visibility_modifiers),
         enum_keyword,
-        field("name", $.type_reference_expression),
-        $.enum_member_declaration_list
+        field("name", $.identifier),
+        optional($.enum_backed_type),
+        $._enum_member_declaration_list
       ),
 
-    enum_member_declaration_list: ($) =>
+    enum_backed_type: ($) => seq(as_keyword, $.plain_type),
+
+    _enum_member_declaration_list: ($) =>
       seq(
         "{",
-        optional(seq(repeat(seq($.enum_member, optional(terminator))))),
+        repeat(
+            seq($.enum_field_definition, optional(terminator))
+        ),
         "}"
       ),
 
-    enum_member: ($) =>
+    enum_field_definition: ($) =>
       seq(
         field("name", $.identifier),
         optional(seq("=", field("value", $._expression)))
       ),
 
+    enum_fetch : ($) => seq(".", $.identifier),
+
     type_selector_expression: ($) =>
       seq(
         field(
           "type",
-          optional(
-            choice($.type_placeholder, $.type_reference_expression)
-          )
+            $.type_reference_expression
         ),
         ".",
         field("field_name", choice($._reserved_identifier, $.type_reference_expression))

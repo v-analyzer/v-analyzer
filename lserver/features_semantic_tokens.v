@@ -7,7 +7,7 @@ pub fn (mut ls LanguageServer) semantic_tokens_full(params lsp.SemanticTokensPar
 	uri := params.text_document.uri.normalize()
 	file := ls.get_file(uri) or { return none }
 
-	if file.psi_file.source_text.len() > 5000 {
+	if file.psi_file.source_text.len() > 30000 {
 		return none
 	}
 
@@ -71,6 +71,12 @@ fn (mut f SemanticVisitor) visit_element_impl(element psi.PsiElement) bool {
 		}
 	}
 
+	if element.node.type_name == .enum_field_definition {
+		if first_child := element.node.first_child() {
+			f.result << element_to_semantic(first_child, 'enumMember')
+		}
+	}
+
 	if element.node.type_name == .module_clause {
 		if last_child := element.node.last_child() {
 			f.result << element_to_semantic(last_child, 'namespace')
@@ -118,9 +124,15 @@ fn (mut f SemanticVisitor) visit_element_impl(element psi.PsiElement) bool {
 					} else if res is psi.ConstantDefinition {
 						f.result << element_to_semantic(first_child, 'property')
 					} else if res is psi.StructDeclaration {
-						f.result << element_to_semantic(first_child, 'struct')
+						if res.name() != 'string' {
+							f.result << element_to_semantic(first_child, 'struct')
+						}
+					} else if res is psi.EnumDeclaration {
+						f.result << element_to_semantic(first_child, 'enum')
 					} else if res is psi.FieldDeclaration {
 						f.result << element_to_semantic(first_child, 'property')
+					} else if res is psi.EnumFieldDeclaration {
+						f.result << element_to_semantic(first_child, 'enumMember')
 					} else if res is psi.ParameterDeclaration {
 						mut mods := []string{}
 						if res.is_mutable() {
@@ -151,6 +163,10 @@ fn (mut f SemanticVisitor) visit_element_impl(element psi.PsiElement) bool {
 		if parent := element.node.parent() {
 			if parent.type_name == .attribute_spec {
 				f.result << element_to_semantic(element.node, 'decorator')
+			}
+
+			if parent.type_name == .enum_declaration {
+				f.result << element_to_semantic(element.node, 'enum')
 			}
 		}
 	}

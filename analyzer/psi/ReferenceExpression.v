@@ -35,6 +35,16 @@ pub fn (r ReferenceExpression) qualifier() ?PsiElement {
 		return left
 	}
 
+	// удалить после решения проблемы с селекторами
+	if parent is TypeSelectorExpression {
+		left := parent.left()
+		if left.is_equal(r) {
+			return none
+		}
+
+		return left
+	}
+
 	return none
 }
 

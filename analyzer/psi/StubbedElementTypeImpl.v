@@ -25,6 +25,11 @@ pub fn (s &StubbedElementType) index_stub(stub &StubBase, mut sink IndexSink) {
 		sink.occurrence(StubIndexKey.structs, name)
 	}
 
+	if stub.stub_type == .enum_declaration {
+		name := stub.name()
+		sink.occurrence(StubIndexKey.enums, name)
+	}
+
 	if stub.stub_type == .constant_declaration {
 		name := stub.name()
 		sink.occurrence(StubIndexKey.constants, name)
@@ -57,6 +62,16 @@ pub fn (s &StubbedElementType) create_psi(stub &StubBase) ?PsiElement {
 	}
 	if stub_type == .struct_declaration {
 		return StructDeclaration{
+			PsiElementImpl: base_psi
+		}
+	}
+	if stub_type == .enum_declaration {
+		return EnumDeclaration{
+			PsiElementImpl: base_psi
+		}
+	}
+	if stub_type == .enum_field_definition {
+		return EnumFieldDeclaration{
 			PsiElementImpl: base_psi
 		}
 	}
@@ -106,7 +121,7 @@ pub fn (s &StubbedElementType) create_stub(psi PsiElement, parent_stub &StubElem
 			StubType.function_declaration
 		}
 		return new_stub_base(parent_stub, stub_type, psi.name(), text_range,
-			text: psi.get_text()
+			text: ''
 			comment: comment
 			receiver: receiver_type
 		)
@@ -138,6 +153,33 @@ pub fn (s &StubbedElementType) create_stub(psi PsiElement, parent_stub &StubElem
 		comment := psi.doc_comment()
 		return new_stub_base(parent_stub, .struct_declaration, psi.name(), text_range,
 
+			text: ''
+			comment: comment
+		)
+	}
+
+	if psi is EnumDeclaration {
+		text_range := if identifier := psi.identifier() {
+			identifier.text_range()
+		} else {
+			psi.text_range()
+		}
+		comment := psi.doc_comment()
+		return new_stub_base(parent_stub, .enum_declaration, psi.name(), text_range,
+			text: ''
+			comment: comment
+		)
+	}
+
+	if psi is EnumFieldDeclaration {
+		text_range := if identifier := psi.identifier() {
+			identifier.text_range()
+		} else {
+			psi.text_range()
+		}
+		comment := psi.doc_comment()
+		return new_stub_base(parent_stub, .enum_field_definition, psi.name(), text_range,
+
 			text: psi.get_text()
 			comment: comment
 		)
@@ -166,7 +208,7 @@ pub fn (s &StubbedElementType) create_stub(psi PsiElement, parent_stub &StubElem
 		comment := psi.doc_comment()
 		return new_stub_base(parent_stub, .constant_declaration, psi.name(), text_range,
 
-			text: psi.get_text()
+			text: ''
 			comment: comment
 		)
 	}
@@ -180,7 +222,7 @@ pub fn (s &StubbedElementType) create_stub(psi PsiElement, parent_stub &StubElem
 		comment := psi.doc_comment()
 		return new_stub_base(parent_stub, .type_alias_declaration, psi.name(), text_range,
 
-			text: psi.get_text()
+			text: ''
 			comment: comment
 		)
 	}
@@ -260,6 +302,8 @@ pub fn (s &StubbedElementType) deserialize(stream StubInputStream, parent_stub &
 		.type_alias_declaration {}
 		.method_declaration {}
 		.receiver {}
+		.enum_declaration {}
+		.enum_field_definition {}
 	}
 
 	return none

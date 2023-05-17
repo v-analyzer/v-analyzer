@@ -5,11 +5,7 @@ pub struct StructDeclaration {
 }
 
 pub fn (s StructDeclaration) identifier() ?PsiElement {
-	return s.find_child_by_type(.identifier) or {
-		s.find_child_by_type(.builtin_type) or {
-			s.find_child_by_type(.binded_type) or { return none }
-		}
-	}
+	return s.find_child_by_type(.identifier)
 }
 
 pub fn (s StructDeclaration) identifier_text_range() TextRange {

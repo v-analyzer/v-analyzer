@@ -72,6 +72,17 @@ fn (mut c CompletionProcessor) execute(element psi.PsiElement) bool {
 		}
 	}
 
+	if element is psi.EnumFieldDeclaration {
+		c.result << lsp.CompletionItem{
+			label: element.name()
+			kind: .enum_member
+			detail: ''
+			documentation: ''
+			insert_text: element.name()
+			insert_text_format: .plain_text
+		}
+	}
+
 	return true
 }
 

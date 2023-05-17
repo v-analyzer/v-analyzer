@@ -207,6 +207,10 @@
         {
           "type": "SYMBOL",
           "name": "_expression_with_blocks"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "enum_fetch"
         }
       ]
     },
@@ -4359,11 +4363,23 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "IMMEDIATE_TOKEN",
-            "content": {
-              "type": "STRING",
-              "value": "<"
-            }
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "IMMEDIATE_TOKEN",
+                "content": {
+                  "type": "STRING",
+                  "value": "["
+                }
+              },
+              {
+                "type": "IMMEDIATE_TOKEN",
+                "content": {
+                  "type": "STRING",
+                  "value": "<"
+                }
+              }
+            ]
           },
           {
             "type": "SEQ",
@@ -4391,11 +4407,23 @@
             ]
           },
           {
-            "type": "IMMEDIATE_TOKEN",
-            "content": {
-              "type": "STRING",
-              "value": ">"
-            }
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "IMMEDIATE_TOKEN",
+                "content": {
+                  "type": "STRING",
+                  "value": "]"
+                }
+              },
+              {
+                "type": "IMMEDIATE_TOKEN",
+                "content": {
+                  "type": "STRING",
+                  "value": ">"
+                }
+              }
+            ]
           }
         ]
       }
@@ -7012,25 +7040,24 @@
           "type": "FIELD",
           "name": "name",
           "content": {
-            "type": "PREC_DYNAMIC",
-            "value": -1,
-            "content": {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "SYMBOL",
-                  "name": "identifier"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "builtin_type"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "generic_type"
-                }
-              ]
-            }
+            "type": "SYMBOL",
+            "name": "identifier"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "type_parameters",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "type_parameters"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
           }
         },
         {
@@ -7498,16 +7525,20 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "attribute_list"
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
+          "type": "FIELD",
+          "name": "attributes",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "attribute_list"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          }
         },
         {
           "type": "CHOICE",
@@ -7530,66 +7561,15 @@
           "name": "name",
           "content": {
             "type": "SYMBOL",
-            "name": "type_reference_expression"
+            "name": "identifier"
           }
-        },
-        {
-          "type": "SYMBOL",
-          "name": "enum_member_declaration_list"
-        }
-      ]
-    },
-    "enum_member_declaration_list": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "{"
         },
         {
           "type": "CHOICE",
           "members": [
             {
-              "type": "SEQ",
-              "members": [
-                {
-                  "type": "REPEAT",
-                  "content": {
-                    "type": "SEQ",
-                    "members": [
-                      {
-                        "type": "SYMBOL",
-                        "name": "enum_member"
-                      },
-                      {
-                        "type": "CHOICE",
-                        "members": [
-                          {
-                            "type": "CHOICE",
-                            "members": [
-                              {
-                                "type": "STRING",
-                                "value": "\n"
-                              },
-                              {
-                                "type": "STRING",
-                                "value": "\r"
-                              },
-                              {
-                                "type": "STRING",
-                                "value": "\r\n"
-                              }
-                            ]
-                          },
-                          {
-                            "type": "BLANK"
-                          }
-                        ]
-                      }
-                    ]
-                  }
-                }
-              ]
+              "type": "SYMBOL",
+              "name": "enum_backed_type"
             },
             {
               "type": "BLANK"
@@ -7597,12 +7577,75 @@
           ]
         },
         {
+          "type": "SYMBOL",
+          "name": "_enum_member_declaration_list"
+        }
+      ]
+    },
+    "enum_backed_type": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "as"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "plain_type"
+        }
+      ]
+    },
+    "_enum_member_declaration_list": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "{"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "enum_field_definition"
+              },
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "STRING",
+                        "value": "\n"
+                      },
+                      {
+                        "type": "STRING",
+                        "value": "\r"
+                      },
+                      {
+                        "type": "STRING",
+                        "value": "\r\n"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "BLANK"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
           "type": "STRING",
           "value": "}"
         }
       ]
     },
-    "enum_member": {
+    "enum_field_definition": {
       "type": "SEQ",
       "members": [
         {
@@ -7640,6 +7683,19 @@
         }
       ]
     },
+    "enum_fetch": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "."
+        },
+        {
+          "type": "SYMBOL",
+          "name": "identifier"
+        }
+      ]
+    },
     "type_selector_expression": {
       "type": "SEQ",
       "members": [
@@ -7647,25 +7703,8 @@
           "type": "FIELD",
           "name": "type",
           "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "SYMBOL",
-                    "name": "type_placeholder"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "type_reference_expression"
-                  }
-                ]
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
+            "type": "SYMBOL",
+            "name": "type_reference_expression"
           }
         },
         {

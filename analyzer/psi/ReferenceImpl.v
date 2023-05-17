@@ -90,6 +90,15 @@ pub fn (r &SubResolver) process_type(typ types.Type, mut processor PsiScopeProce
 			}
 		}
 	}
+	if typ is types.EnumType {
+		if enum_ := r.find_enum(stubs_index, typ.name()) {
+			for field in enum_.fields() {
+				if !processor.execute(field) {
+					return false
+				}
+			}
+		}
+	}
 	return true
 }
 
@@ -125,6 +134,12 @@ pub fn (r &SubResolver) process_unqualified_resolve(mut processor PsiScopeProces
 
 		if struct_ := r.find_struct(stubs_index, element.name()) {
 			if !processor.execute(struct_) {
+				return false
+			}
+		}
+
+		if enum_ := r.find_enum(stubs_index, element.name()) {
+			if !processor.execute(enum_) {
 				return false
 			}
 		}
@@ -245,6 +260,17 @@ pub fn (_ &SubResolver) find_struct(stubs_index StubIndex, name string) ?&Struct
 	if found.len != 0 {
 		first := found.first()
 		if first is StructDeclaration {
+			return first
+		}
+	}
+	return none
+}
+
+pub fn (_ &SubResolver) find_enum(stubs_index StubIndex, name string) ?&EnumDeclaration {
+	found := stubs_index.get_elements(.enums, name)
+	if found.len != 0 {
+		first := found.first()
+		if first is EnumDeclaration {
 			return first
 		}
 	}

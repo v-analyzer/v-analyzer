@@ -6,6 +6,7 @@ pub enum StubIndexKey {
 	structs
 	constants
 	type_aliases
+	enums
 }
 
 pub interface IndexSink {

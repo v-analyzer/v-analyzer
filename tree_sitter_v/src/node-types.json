@@ -32,6 +32,10 @@
         "named": true
       },
       {
+        "type": "enum_fetch",
+        "named": true
+      },
+      {
         "type": "fixed_array",
         "named": true
       },
@@ -775,11 +779,6 @@
     }
   },
   {
-    "type": "builtin_type",
-    "named": true,
-    "fields": {}
-  },
-  {
     "type": "c_string_literal",
     "named": true,
     "fields": {},
@@ -1186,15 +1185,40 @@
     "fields": {}
   },
   {
+    "type": "enum_backed_type",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "plain_type",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "enum_declaration",
     "named": true,
     "fields": {
+      "attributes": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "attribute_list",
+            "named": true
+          }
+        ]
+      },
       "name": {
         "multiple": false,
         "required": true,
         "types": [
           {
-            "type": "type_reference_expression",
+            "type": "identifier",
             "named": true
           }
         ]
@@ -1202,14 +1226,14 @@
     },
     "children": {
       "multiple": true,
-      "required": true,
+      "required": false,
       "types": [
         {
-          "type": "attribute_list",
+          "type": "enum_backed_type",
           "named": true
         },
         {
-          "type": "enum_member_declaration_list",
+          "type": "enum_field_definition",
           "named": true
         },
         {
@@ -1220,7 +1244,22 @@
     }
   },
   {
-    "type": "enum_member",
+    "type": "enum_fetch",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "enum_field_definition",
     "named": true,
     "fields": {
       "name": {
@@ -1243,21 +1282,6 @@
           }
         ]
       }
-    }
-  },
-  {
-    "type": "enum_member_declaration_list",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "enum_member",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -3330,15 +3354,17 @@
             "named": true
           },
           {
-            "type": "builtin_type",
-            "named": true
-          },
-          {
-            "type": "generic_type",
-            "named": true
-          },
-          {
             "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "type_parameters": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "type_parameters",
             "named": true
           }
         ]
@@ -3615,12 +3641,8 @@
       },
       "type": {
         "multiple": false,
-        "required": false,
+        "required": true,
         "types": [
-          {
-            "type": "type_placeholder",
-            "named": true
-          },
           {
             "type": "type_reference_expression",
             "named": true
@@ -4149,11 +4171,11 @@
   },
   {
     "type": "int_literal",
-    "named": false
+    "named": true
   },
   {
     "type": "int_literal",
-    "named": true
+    "named": false
   },
   {
     "type": "interface",

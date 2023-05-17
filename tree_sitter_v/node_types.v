@@ -31,7 +31,6 @@ pub enum NodeType {
 	binded_type
 	block
 	break_statement
-	builtin_type
 	c_string_literal
 	call_expression
 	case_list
@@ -51,9 +50,10 @@ pub enum NodeType {
 	element
 	element_list
 	empty_literal_value
+	enum_backed_type
 	enum_declaration
-	enum_member
-	enum_member_declaration_list
+	enum_fetch
+	enum_field_definition
 	exposed_variables_list
 	expression_case
 	expression_list
@@ -176,6 +176,7 @@ const supertype__expression_nodes = merge(supertype__expression_with_blocks_node
 	.binded_identifier,
 	.call_expression,
 	.empty_literal_value,
+	.enum_fetch,
 	.fixed_array,
 	.fn_literal,
 	.index_expression,
@@ -326,7 +327,6 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'binded_type' { NodeType.binded_type }
 		'block' { NodeType.block }
 		'break_statement' { NodeType.break_statement }
-		'builtin_type' { NodeType.builtin_type }
 		'c_string_literal' { NodeType.c_string_literal }
 		'call_expression' { NodeType.call_expression }
 		'case_list' { NodeType.case_list }
@@ -346,9 +346,10 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'element' { NodeType.element }
 		'element_list' { NodeType.element_list }
 		'empty_literal_value' { NodeType.empty_literal_value }
+		'enum_backed_type' { NodeType.enum_backed_type }
 		'enum_declaration' { NodeType.enum_declaration }
-		'enum_member' { NodeType.enum_member }
-		'enum_member_declaration_list' { NodeType.enum_member_declaration_list }
+		'enum_fetch' { NodeType.enum_fetch }
+		'enum_field_definition' { NodeType.enum_field_definition }
 		'exposed_variables_list' { NodeType.exposed_variables_list }
 		'expression_case' { NodeType.expression_case }
 		'expression_list' { NodeType.expression_list }

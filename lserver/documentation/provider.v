@@ -24,6 +24,11 @@ pub fn (mut p Provider) documentation(element psi.PsiElement) ?string {
 		return p.sb.str()
 	}
 
+	if element is psi.EnumDeclaration {
+		p.enum_documentation(element)?
+		return p.sb.str()
+	}
+
 	if element is psi.ConstantDefinition {
 		p.const_documentation(element)?
 		return p.sb.str()
@@ -46,6 +51,11 @@ pub fn (mut p Provider) documentation(element psi.PsiElement) ?string {
 
 	if element is psi.FieldDeclaration {
 		p.field_documentation(element)?
+		return p.sb.str()
+	}
+
+	if element is psi.EnumFieldDeclaration {
+		p.enum_field_documentation(element)?
 		return p.sb.str()
 	}
 
@@ -92,6 +102,20 @@ fn (mut p Provider) struct_documentation(element psi.StructDeclaration) ? {
 		p.sb.write_string(' ')
 	}
 	p.sb.write_string('struct ')
+	p.sb.write_string(element.name())
+	p.sb.write_string('\n')
+	p.sb.write_string('```')
+	p.write_separator()
+	p.sb.write_string(element.doc_comment())
+}
+
+fn (mut p Provider) enum_documentation(element psi.EnumDeclaration) ? {
+	p.sb.write_string('```v\n')
+	if modifiers := element.visibility_modifiers() {
+		p.write_visibility_modifiers(modifiers)
+		p.sb.write_string(' ')
+	}
+	p.sb.write_string('enum ')
 	p.sb.write_string(element.name())
 	p.sb.write_string('\n')
 	p.sb.write_string('```')
@@ -156,6 +180,23 @@ fn (mut p Provider) field_documentation(element psi.FieldDeclaration) ? {
 	p.sb.write_string(element.name())
 	p.sb.write_string(' ')
 	p.sb.write_string(element.get_type().readable_name())
+	p.sb.write_string('\n')
+	p.sb.write_string('```')
+	p.write_separator()
+	p.sb.write_string(element.doc_comment())
+}
+
+fn (mut p Provider) enum_field_documentation(element psi.EnumFieldDeclaration) ? {
+	p.sb.write_string('```v\n')
+
+	if owner := element.owner() {
+		if owner is psi.PsiNamedElement {
+			p.sb.write_string(owner.name())
+			p.sb.write_string('.')
+		}
+	}
+
+	p.sb.write_string(element.name())
 	p.sb.write_string('\n')
 	p.sb.write_string('```')
 	p.write_separator()
