@@ -57,7 +57,7 @@ pub fn (mut s Server) dispatch_event(event_name string, data InterceptorData) ! 
 }
 
 // process_raw_request decodes the raw request string into JSONRPC request.
-fn (s Server) process_raw_request(raw_request string) !Request {
+fn (_ Server) process_raw_request(raw_request string) !Request {
 	json_payload := raw_request.all_after('\r\n\r\n')
 	return json.decode(Request, json_payload) or { return err }
 }

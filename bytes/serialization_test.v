@@ -1,4 +1,4 @@
-module serializer
+module bytes
 
 fn test_serialize_deserialize() {
 	mut s := Serializer{}

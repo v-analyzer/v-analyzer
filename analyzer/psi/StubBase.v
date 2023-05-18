@@ -6,26 +6,6 @@ pub type StubId = int
 
 const non_stubbed_element = StubId(-1)
 
-pub enum StubType as u8 {
-	root
-	function_declaration
-	method_declaration
-	receiver
-	signature
-	struct_declaration
-	enum_declaration
-	field_declaration
-	struct_field_scope
-	enum_field_definition
-	constant_declaration
-	type_alias_declaration
-	attributes
-	attribute
-	attribute_expression
-	value_attribute
-	plain_type
-}
-
 [params]
 pub struct StubData {
 pub:

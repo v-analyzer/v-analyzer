@@ -13,11 +13,6 @@ pub fn (mut ls LanguageServer) rename(params lsp.RenameParams, mut wr ResponseWr
 		return error('cannot find element at ' + offset.str())
 	}
 
-	// element_to_find := element.resolve() or {
-	// 	println('cannot resolve reference "${element.get_text()}"')
-	// 	return error('cannot resolve reference "${element.get_text()}"')
-	// }
-
 	element_to_find := resolve_identifier(element)
 	if element_to_find !is psi.VarDefinition {
 		return error('cannot rename non-variable element')

@@ -47,7 +47,10 @@ pub fn (f &EnumFieldDeclaration) name() string {
 }
 
 pub fn (f &EnumFieldDeclaration) get_type() types.Type {
-	// TODO
+	owner := f.owner() or { return types.unknown_type }
+	if owner is PsiTypedElement {
+		return owner.get_type()
+	}
 	return types.unknown_type
 }
 
@@ -66,6 +69,4 @@ pub fn (f &EnumFieldDeclaration) owner() ?PsiElement {
 	return f.parent_of_type(.enum_declaration)
 }
 
-pub fn (f EnumFieldDeclaration) stub() ?&StubBase {
-	return none
-}
+pub fn (_ EnumFieldDeclaration) stub() {}

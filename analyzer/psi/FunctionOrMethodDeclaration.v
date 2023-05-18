@@ -89,6 +89,4 @@ pub fn (f FunctionOrMethodDeclaration) visibility_modifiers() ?&VisibilityModifi
 	return none
 }
 
-pub fn (f FunctionOrMethodDeclaration) stub() ?&StubBase {
-	return none
-}
+pub fn (_ FunctionOrMethodDeclaration) stub() {}

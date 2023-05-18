@@ -79,7 +79,7 @@ pub fn (r &SubResolver) process_qualifier_expression(qualifier PsiElement, mut p
 	return true
 }
 
-pub fn (r &SubResolver) calc_methods(typ types.Type) []PsiElement {
+pub fn (_ &SubResolver) calc_methods(typ types.Type) []PsiElement {
 	name := typ.qualified_name()
 	methods := stubs_index.get_elements(.methods, name)
 	return methods

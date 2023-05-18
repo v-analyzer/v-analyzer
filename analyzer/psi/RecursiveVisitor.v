@@ -14,7 +14,7 @@ fn (r &RecursiveVisitorBase) visit_element(element PsiElement) {
 	}
 }
 
-fn (r &RecursiveVisitorBase) visit_element_impl(element PsiElement) bool {
+fn (_ &RecursiveVisitorBase) visit_element_impl(element PsiElement) bool {
 	println('visit ${element.node.type_name}')
 	return true
 }

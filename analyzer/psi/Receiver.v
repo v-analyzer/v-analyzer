@@ -17,15 +17,17 @@ fn (r &Receiver) identifier_text_range() TextRange {
 	return identifier.text_range()
 }
 
-fn (r &Receiver) stub() ?&StubBase {
-	return none
-}
-
 fn (r &Receiver) identifier() ?PsiElement {
 	return r.find_child_by_type(.identifier)
 }
 
 pub fn (r &Receiver) name() string {
+	if r.stub_id != non_stubbed_element {
+		if stub := r.stubs_list.get_stub(r.stub_id) {
+			return stub.name
+		}
+	}
+
 	identifier := r.identifier() or { return '' }
 	return identifier.get_text()
 }
@@ -63,3 +65,5 @@ pub fn (r &Receiver) is_mutable() bool {
 	mods := r.mutability_modifiers() or { return false }
 	return mods.is_mutable()
 }
+
+fn (_ &Receiver) stub() {}

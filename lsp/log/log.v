@@ -151,9 +151,9 @@ pub fn (mut l LogRecorder) on_event(name string, data jsonrpc.InterceptorData) !
 	}
 }
 
-pub fn (l &LogRecorder) on_raw_request(req []u8) ! {}
+pub fn (_ &LogRecorder) on_raw_request(req []u8) ! {}
 
-pub fn (l &LogRecorder) on_raw_response(raw_resp []u8) ! {}
+pub fn (_ &LogRecorder) on_raw_response(raw_resp []u8) ! {}
 
 pub fn (mut l LogRecorder) on_request(req &jsonrpc.Request) ! {
 	log_kind := if req.id.len == 0 {

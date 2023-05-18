@@ -6,7 +6,7 @@ pub struct Literal {
 	PsiElementImpl
 }
 
-fn (n &Literal) expr() {}
+fn (_ &Literal) expr() {}
 
 fn (n &Literal) get_type() types.Type {
 	child := n.first_child() or { return types.unknown_type }

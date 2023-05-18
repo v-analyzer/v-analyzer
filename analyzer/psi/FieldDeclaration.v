@@ -47,31 +47,8 @@ pub fn (f &FieldDeclaration) name() string {
 }
 
 pub fn (f &FieldDeclaration) get_type() types.Type {
-	if f.stub_id != non_stubbed_element {
-		if stub := f.stubs_list.get_stub(f.stub_id) {
-			type_stubs := stub.get_children_by_type(.plain_type)
-			if type_stubs.len > 0 {
-				text := type_stubs[0].text()
-				if types.is_primitive_type(text) {
-					return types.new_primitive_type(text)
-				}
-				return types.new_struct_type(text)
-			}
-
-			return types.unknown_type
-		}
-	}
-
-	if plain_typ := f.find_child_by_type(.plain_type) {
-		text := plain_typ.get_text()
-		if types.is_primitive_type(text) {
-			return types.new_primitive_type(text)
-		}
-
-		return types.new_struct_type(text)
-	}
-
-	return types.unknown_type
+	inferer := TypeInferer{}
+	return inferer.infer_from_plain_type(f)
 }
 
 pub fn (f &FieldDeclaration) owner() ?PsiElement {
@@ -117,6 +94,4 @@ pub fn (f &FieldDeclaration) is_mutable_public() (bool, bool) {
 	return scope.is_mutable_public()
 }
 
-pub fn (f FieldDeclaration) stub() ?&StubBase {
-	return none
-}
+pub fn (_ FieldDeclaration) stub() {}

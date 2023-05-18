@@ -6,12 +6,14 @@ pub struct VarDeclaration {
 
 fn (v VarDeclaration) index_of(def VarDefinition) int {
 	first_child := v.first_child() or { return -1 }
-	children := first_child.children().filter(it is VarDefinition || it is MutExpression).map(fn (it PsiElement) PsiElement {
-		if it is MutExpression {
-			return it.last_child() or { return it }
-		}
-		return it
-	})
+	children := first_child.children()
+		.filter(it is VarDefinition || it is MutExpression)
+		.map(fn (it PsiElement) PsiElement {
+			if it is MutExpression {
+				return it.last_child() or { return it }
+			}
+			return it
+		})
 
 	for i, definition in children {
 		if definition.is_equal(def) {

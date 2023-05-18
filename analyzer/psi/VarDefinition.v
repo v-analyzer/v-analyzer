@@ -6,7 +6,7 @@ pub struct VarDefinition {
 	PsiElementImpl
 }
 
-fn (n &VarDefinition) expr() {}
+fn (_ &VarDefinition) expr() {}
 
 pub fn (n &VarDefinition) identifier() ?PsiElement {
 	return n.find_child_by_type(.identifier)
@@ -18,11 +18,8 @@ pub fn (n &VarDefinition) identifier_text_range() TextRange {
 }
 
 pub fn (n &VarDefinition) name() string {
-	if id := n.identifier() {
-		return id.get_text()
-	}
-
-	return ''
+	identifier := n.identifier() or { return '' }
+	return identifier.get_text()
 }
 
 pub fn (n &VarDefinition) declaration() ?&VarDeclaration {

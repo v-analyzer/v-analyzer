@@ -1,11 +1,11 @@
 module index
 
 import analyzer.psi
-import serializer
+import bytes
 
 pub struct IndexSerializer {
 mut:
-	s serializer.Serializer
+	s bytes.Serializer
 }
 
 pub fn (mut s IndexSerializer) serialize_index(index Index) {

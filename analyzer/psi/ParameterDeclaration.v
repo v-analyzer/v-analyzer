@@ -7,16 +7,8 @@ pub struct ParameterDeclaration {
 }
 
 pub fn (p &ParameterDeclaration) get_type() types.Type {
-	if plain_typ := p.find_child_by_type(.plain_type) {
-		text := plain_typ.get_text()
-		if types.is_primitive_type(text) {
-			return types.new_primitive_type(text)
-		}
-
-		return types.new_struct_type(text)
-	}
-
-	return types.unknown_type
+	inferer := TypeInferer{}
+	return inferer.infer_from_plain_type(p)
 }
 
 pub fn (p &ParameterDeclaration) identifier() ?PsiElement {
@@ -29,11 +21,8 @@ pub fn (p &ParameterDeclaration) identifier_text_range() TextRange {
 }
 
 pub fn (p &ParameterDeclaration) name() string {
-	if id := p.identifier() {
-		return id.get_text()
-	}
-
-	return ''
+	identifier := p.identifier() or { return '' }
+	return identifier.get_text()
 }
 
 pub fn (p &ParameterDeclaration) mutability_modifiers() ?&MutabilityModifiers {

@@ -85,7 +85,7 @@ pub fn (mut ls LanguageServer) exit(mut rw ResponseWriter) {
 	exit(int(ls.status != .shutdown))
 }
 
-fn (mut ls LanguageServer) print_info(process_id int, client_info lsp.ClientInfo, mut wr ResponseWriter) {
+fn (mut _ LanguageServer) print_info(process_id int, client_info lsp.ClientInfo, mut wr ResponseWriter) {
 	arch := if runtime.is_64bit() { 64 } else { 32 }
 	client_name := if client_info.name.len != 0 {
 		'${client_info.name} ${client_info.version}'

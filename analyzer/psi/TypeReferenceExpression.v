@@ -7,7 +7,7 @@ pub struct TypeReferenceExpression {
 }
 
 // marker method for Expression
-fn (r &TypeReferenceExpression) expr() {}
+fn (_ &TypeReferenceExpression) expr() {}
 
 pub fn (r TypeReferenceExpression) identifier() ?PsiElement {
 	return r.first_child()

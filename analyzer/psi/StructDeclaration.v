@@ -85,10 +85,6 @@ pub fn (s StructDeclaration) fields() []PsiElement {
 	return s.find_children_by_type(.struct_field_declaration)
 }
 
-pub fn (s StructDeclaration) stub() ?&StubBase {
-	return none
-}
-
 pub fn (s &StructDeclaration) is_attribute() bool {
 	attrs := s.attributes()
 	if attrs.len == 0 {
@@ -102,3 +98,5 @@ pub fn (s &StructDeclaration) is_attribute() bool {
 
 	return false
 }
+
+pub fn (_ StructDeclaration) stub() {}

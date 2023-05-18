@@ -6,7 +6,7 @@ pub struct EnumDeclaration {
 	PsiElementImpl
 }
 
-fn (e &EnumDeclaration) get_type() types.Type {
+pub fn (e &EnumDeclaration) get_type() types.Type {
 	return types.new_enum_type(e.name())
 }
 
@@ -68,6 +68,4 @@ pub fn (e EnumDeclaration) fields() []PsiElement {
 	return e.find_children_by_type(.enum_field_definition)
 }
 
-pub fn (e EnumDeclaration) stub() ?&StubBase {
-	return none
-}
+pub fn (_ EnumDeclaration) stub() {}

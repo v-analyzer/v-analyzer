@@ -311,7 +311,7 @@ pub const type_factory = &VNodeTypeFactory{}
 
 pub struct VNodeTypeFactory {}
 
-pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
+pub fn (_ VNodeTypeFactory) get_type(type_name string) NodeType {
 	return match type_name {
 		'ERROR' { NodeType.error }
 		'argument' { NodeType.argument }

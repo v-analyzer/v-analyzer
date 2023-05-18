@@ -10,14 +10,14 @@ fn new_unknown_type() &UnknownType {
 	return &UnknownType{}
 }
 
-fn (s &UnknownType) name() string {
+fn (_ &UnknownType) name() string {
 	return 'unknown'
 }
 
-fn (s &UnknownType) qualified_name() string {
+fn (_ &UnknownType) qualified_name() string {
 	return 'unknown'
 }
 
-fn (s &UnknownType) readable_name() string {
+fn (_ &UnknownType) readable_name() string {
 	return 'unknown'
 }

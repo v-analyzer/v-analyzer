@@ -2,19 +2,31 @@ module psi
 
 import utils
 
-pub struct StubbedElementType {
-	name       string
-	debug_name string
+pub enum StubType as u8 {
+	root
+	function_declaration
+	method_declaration
+	receiver
+	signature
+	struct_declaration
+	enum_declaration
+	field_declaration
+	struct_field_scope
+	enum_field_definition
+	constant_declaration
+	type_alias_declaration
+	attributes
+	attribute
+	attribute_expression
+	value_attribute
+	plain_type
 }
 
-fn (s &StubbedElementType) external_id() string {
-	return 'vlang.${s.debug_name}'
-}
+pub struct StubbedElementType {}
 
-pub fn (s &StubbedElementType) index_stub(stub &StubBase, mut sink IndexSink) {
+pub fn (_ &StubbedElementType) index_stub(stub &StubBase, mut sink IndexSink) {
 	if stub.stub_type == .function_declaration {
-		name := stub.name()
-		sink.occurrence(StubIndexKey.functions, name)
+		sink.occurrence(StubIndexKey.functions, stub.name())
 	}
 
 	if stub.stub_type == .method_declaration {
@@ -35,22 +47,19 @@ pub fn (s &StubbedElementType) index_stub(stub &StubBase, mut sink IndexSink) {
 	}
 
 	if stub.stub_type == .enum_declaration {
-		name := stub.name()
-		sink.occurrence(StubIndexKey.enums, name)
+		sink.occurrence(StubIndexKey.enums, stub.name())
 	}
 
 	if stub.stub_type == .constant_declaration {
-		name := stub.name()
-		sink.occurrence(StubIndexKey.constants, name)
+		sink.occurrence(StubIndexKey.constants, stub.name())
 	}
 
 	if stub.stub_type == .type_alias_declaration {
-		name := stub.name()
-		sink.occurrence(StubIndexKey.type_aliases, name)
+		sink.occurrence(StubIndexKey.type_aliases, stub.name())
 	}
 }
 
-pub fn (s &StubbedElementType) create_psi(stub &StubBase) ?PsiElement {
+pub fn (_ &StubbedElementType) create_psi(stub &StubBase) ?PsiElement {
 	stub_type := stub.stub_type()
 	base_psi := new_psi_node_from_stub(stub.id, stub.stub_list)
 
@@ -132,7 +141,7 @@ pub fn (s &StubbedElementType) create_psi(stub &StubBase) ?PsiElement {
 	return base_psi
 }
 
-pub fn (s &StubbedElementType) get_receiver_type(psi FunctionOrMethodDeclaration) string {
+pub fn (_ &StubbedElementType) get_receiver_type(psi FunctionOrMethodDeclaration) string {
 	receiver := psi.receiver() or { return '' }
 	typ := receiver.type_element() or { return '' }
 	return typ.get_text()
@@ -238,8 +247,7 @@ pub fn (s &StubbedElementType) create_stub(psi PsiElement, parent_stub &StubElem
 	}
 
 	if psi is StructFieldScope {
-		return new_stub_base(parent_stub, .struct_field_scope, psi.name(), psi.text_range(),
-
+		return new_stub_base(parent_stub, .struct_field_scope, '', psi.text_range(),
 			text: psi.get_text()
 		)
 	}
@@ -292,84 +300,6 @@ pub fn (s &StubbedElementType) create_stub(psi PsiElement, parent_stub &StubElem
 		return new_stub_base(parent_stub, .plain_type, '', psi.text_range(),
 			text: psi.get_text()
 		)
-	}
-
-	return none
-}
-
-pub fn (s &StubbedElementType) serialize(stub StubElement, mut stream StubOutputStream) {
-	stub_type := stub.stub_type()
-	if stub_type == .function_declaration {
-		stream.write_u8(u8(stub_type))
-		stream.write_name(stub.name())
-	}
-
-	if stub_type == .struct_declaration {
-		stream.write_u8(u8(stub_type))
-		stream.write_name(stub.name())
-	}
-
-	if stub_type == .field_declaration {
-		stream.write_u8(u8(stub_type))
-		stream.write_name(stub.name())
-	}
-
-	if stub_type == .constant_declaration {
-		stream.write_u8(u8(stub_type))
-		stream.write_name(stub.name())
-	}
-
-	if stub_type == .plain_type {
-		stream.write_u8(u8(stub_type))
-		stream.write_name(stub.name())
-	}
-}
-
-pub fn (s &StubbedElementType) deserialize(stream StubInputStream, parent_stub &StubElement) ?&StubElement {
-	stub_type := unsafe { StubType(stream.read_u8()) }
-	match stub_type {
-		.root {}
-		.function_declaration {
-			return new_stub_base(parent_stub, .function_declaration, stream.read_name(),
-				TextRange{},
-				text: stream.read_name()
-			)
-		}
-		.constant_declaration {
-			return new_stub_base(parent_stub, .constant_declaration, stream.read_name(),
-				TextRange{},
-				text: stream.read_name()
-			)
-		}
-		.struct_declaration {
-			return new_stub_base(parent_stub, .struct_declaration, stream.read_name(),
-				TextRange{},
-				text: stream.read_name()
-			)
-		}
-		.field_declaration {
-			return new_stub_base(parent_stub, .field_declaration, stream.read_name(),
-				TextRange{},
-				text: stream.read_name()
-			)
-		}
-		.plain_type {
-			return new_stub_base(parent_stub, .plain_type, stream.read_name(), TextRange{},
-
-				text: stream.read_name()
-			)
-		}
-		.signature {}
-		.type_alias_declaration {}
-		.method_declaration {}
-		.receiver {}
-		.enum_declaration {}
-		.enum_field_definition {}
-		.struct_field_scope {}
-		.attribute {}
-		.attribute_expression {}
-		.value_attribute {}
-		.attributes {}
 	}
 
 	return none

@@ -47,7 +47,7 @@ fn (mut f FindReferencesVisitor) visit_element_impl(element psi.PsiElement) bool
 	return true
 }
 
-fn (mut f FindReferencesVisitor) try_resolve(element psi.PsiElement) ?psi.PsiElement {
+fn (mut _ FindReferencesVisitor) try_resolve(element psi.PsiElement) ?psi.PsiElement {
 	if element.node.type_name == .reference_expression {
 		if element is psi.PsiElementImpl {
 			el := psi.ReferenceExpression{

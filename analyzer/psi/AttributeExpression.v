@@ -4,14 +4,6 @@ pub struct AttributeExpression {
 	PsiElementImpl
 }
 
-fn (n &AttributeExpression) name() string {
-	return ''
-}
-
-fn (n &AttributeExpression) stub() ?&StubBase {
-	return none
-}
-
 pub fn (n &AttributeExpression) value() string {
 	if n.stub_id != non_stubbed_element {
 		if stub := n.stubs_list.get_stub(n.stub_id) {
@@ -30,3 +22,5 @@ pub fn (n &AttributeExpression) value() string {
 
 	return ''
 }
+
+fn (_ &AttributeExpression) stub() {}

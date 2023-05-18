@@ -67,6 +67,4 @@ pub fn (c &ConstantDefinition) expression() ?PsiElement {
 	return c.last_child()
 }
 
-pub fn (c ConstantDefinition) stub() ?&StubBase {
-	return none
-}
+pub fn (_ ConstantDefinition) stub() {}

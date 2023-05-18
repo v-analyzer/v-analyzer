@@ -4,13 +4,7 @@ pub struct Attributes {
 	PsiElementImpl
 }
 
-fn (n &Attributes) name() string {
-	return ''
-}
-
-fn (n &Attributes) stub() ?&StubBase {
-	return none
-}
+fn (_ &Attributes) stub() {}
 
 pub fn (n Attributes) attributes() []PsiElement {
 	if n.stub_id != non_stubbed_element {

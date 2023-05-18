@@ -1,4 +1,4 @@
-module serializer
+module bytes
 
 enum BeginSymbols as u8 {
 	unknown = 0
@@ -10,10 +10,6 @@ enum BeginSymbols as u8 {
 pub struct Serializer {
 pub mut:
 	data []u8
-}
-
-pub fn new_serializer() &Serializer {
-	return &Serializer{}
 }
 
 pub fn (mut s Serializer) write_string(str string) {

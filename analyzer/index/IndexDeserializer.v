@@ -1,17 +1,17 @@
 module index
 
 import analyzer.psi
-import serializer
+import bytes
 import time
 
 pub struct IndexDeserializer {
 mut:
-	d serializer.Deserializer
+	d bytes.Deserializer
 }
 
 pub fn new_index_deserializer(data []u8) IndexDeserializer {
 	return IndexDeserializer{
-		d: serializer.new_deserializer(data)
+		d: bytes.new_deserializer(data)
 	}
 }
 

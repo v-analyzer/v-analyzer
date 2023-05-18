@@ -5,11 +5,11 @@ import analyzer.psi.types
 pub struct TypeInferer {
 }
 
-pub fn (t &TypeInferer) infer_type(element PsiElement) types.Type {
+pub fn (_ &TypeInferer) infer_type(element PsiElement) types.Type {
 	return types.unknown_type
 }
 
-pub fn (t &TypeInferer) infer_from_plain_type(element PsiElement) types.Type {
+pub fn (_ &TypeInferer) infer_from_plain_type(element PsiElement) types.Type {
 	if element.stub_id != non_stubbed_element {
 		if stub := element.stub_list().get_stub(element.stub_id) {
 			type_stubs := stub.get_children_by_type(.plain_type)

@@ -4,10 +4,6 @@ pub struct TypeAliasDeclaration {
 	PsiElementImpl
 }
 
-fn (a &TypeAliasDeclaration) stub() ?&StubBase {
-	return none
-}
-
 pub fn (a TypeAliasDeclaration) doc_comment() string {
 	if a.stub_id != non_stubbed_element {
 		if stub := a.stubs_list.get_stub(a.stub_id) {
@@ -50,3 +46,5 @@ pub fn (a TypeAliasDeclaration) visibility_modifiers() ?&VisibilityModifiers {
 	}
 	return none
 }
+
+fn (_ &TypeAliasDeclaration) stub() {}

@@ -6,7 +6,7 @@ pub struct TypeInitializer {
 	PsiElementImpl
 }
 
-fn (n &TypeInitializer) expr() {}
+fn (_ &TypeInitializer) expr() {}
 
 fn (n &TypeInitializer) get_type() types.Type {
 	type_element := n.find_child_by_type(.plain_type) or { return types.unknown_type }

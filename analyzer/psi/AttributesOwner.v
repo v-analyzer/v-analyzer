@@ -1,5 +1,5 @@
 module psi
 
 pub interface AttributesOwner {
-	attributes() []Attribute
+	attributes() []PsiElement
 }

@@ -21,8 +21,6 @@ pub fn (mut ls LanguageServer) signature_help(params lsp.SignatureHelpParams, mu
 	}
 
 	if call is psi.CallExpression {
-		println('call expression: ' + call.get_text())
-
 		if resolved := call.resolve() {
 			if resolved is psi.FunctionOrMethodDeclaration {
 				ctx := params.context

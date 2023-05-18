@@ -9,7 +9,7 @@ mut:
 	nums []int
 }
 
-fn (mut h TestHandler) handle_jsonrpc(req &jsonrpc.Request, mut wr jsonrpc.ResponseWriter) ! {
+fn (mut _ TestHandler) handle_jsonrpc(req &jsonrpc.Request, mut wr jsonrpc.ResponseWriter) ! {
 	match req.method {
 		'sum' {
 			params := req.decode_params[SumParams]()!
@@ -83,7 +83,7 @@ fn (mut t TestInterceptor) on_event(name string, data jsonrpc.InterceptorData) !
 	}
 }
 
-fn (mut t TestInterceptor) on_raw_request(req []u8) ! {}
+fn (mut _ TestInterceptor) on_raw_request(req []u8) ! {}
 
 fn (mut t TestInterceptor) on_request(req &jsonrpc.Request) ! {
 	t.methods_recv << req.method
