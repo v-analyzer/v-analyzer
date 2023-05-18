@@ -40,11 +40,12 @@ pub struct StubBase {
 pub:
 	name       string
 	text_range TextRange
-	stub_list  &StubList
-	parent     &StubElement
+	parent_id  StubId
 	stub_type  StubType
 pub mut:
-	id StubId
+	stub_list &StubList
+	parent    &StubElement
+	id        StubId
 }
 
 pub fn new_stub_base(parent &StubElement, stub_type StubType, name string, text_range TextRange, data StubData) &StubBase {
@@ -53,6 +54,7 @@ pub fn new_stub_base(parent &StubElement, stub_type StubType, name string, text_
 	} else {
 		&StubList{}
 	}
+	parent_id := if !isnil(parent) { parent.id() } else { psi.non_stubbed_element }
 	mut stub := &StubBase{
 		name: name
 		text: data.text
@@ -60,6 +62,7 @@ pub fn new_stub_base(parent &StubElement, stub_type StubType, name string, text_
 		receiver: data.receiver
 		text_range: text_range
 		stub_list: stub_list
+		parent_id: parent_id
 		parent: unsafe { parent }
 		stub_type: stub_type
 	}
@@ -74,6 +77,7 @@ pub fn new_root_stub(path string) &StubBase {
 	mut stub := &StubBase{
 		name: '<root>'
 		stub_list: stub_list
+		parent_id: -1
 		parent: unsafe { nil }
 		stub_type: .root
 	}
@@ -170,10 +174,16 @@ fn (s &StubBase) sibling_of_type_backward(typ StubType) ?StubElement {
 }
 
 fn (s &StubBase) parent_stub() ?&StubElement {
-	if isnil(s.parent) {
+	is_nil := isnil(s.parent)
+	if !is_nil {
+		return s.parent
+	}
+
+	if s.parent_id == -1 {
 		return none
 	}
-	return s.parent
+
+	return s.stub_list.get_stub(s.parent_id) or { return none }
 }
 
 fn (s &StubBase) get_child_by_type(typ StubType) ?StubElement {

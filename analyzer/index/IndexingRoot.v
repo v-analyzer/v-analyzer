@@ -31,7 +31,7 @@ pub mut:
 
 // new_indexing_root создает новый IndexingRoot для переданного пути.
 pub fn new_indexing_root(root string) &IndexingRoot {
-	cache_file := 'spavn_index_${md5.hexhash(root)}.json'
+	cache_file := 'spavn_index_${md5.hexhash(root)}.txt'
 	return &IndexingRoot{
 		root: root
 		cache_file: cache_file
@@ -45,7 +45,7 @@ pub fn (mut i IndexingRoot) load_index() ! {
 		return IndexNotFoundError{}
 	}
 
-	data := os.read_file(i.cache_file) or {
+	data := os.read_bytes(i.cache_file) or {
 		println('Failed to read ${i.cache_file}')
 		return IndexNotFoundError{}
 	}
@@ -62,7 +62,7 @@ pub fn (mut i IndexingRoot) load_index() ! {
 
 pub fn (mut i IndexingRoot) save_index() ! {
 	data := i.index.encode()
-	os.write_file(i.cache_file, data) or {
+	os.write_file_array(i.cache_file, data) or {
 		println('Failed to write index.json')
 		return err
 	}
@@ -139,12 +139,14 @@ pub fn (mut _ IndexingRoot) index_file(path string) !FileIndex {
 	stub_tree := build_stub_tree(psi_file)
 
 	stub_type := psi.StubbedElementType{}
-	stubs := stub_tree.root.stub_list.index_map.values()
+	stub_list := stub_tree.root.stub_list
+	stubs := stub_list.index_map.values()
 	for stub in stubs {
 		cache.sink.stub_id = stub.id
 		cache.sink.stub_list = stub.stub_list
 		stub_type.index_stub(stub, mut cache.sink)
 	}
+	cache.stub_list = stub_list
 
 	res.tree.raw_tree.free()
 	return cache

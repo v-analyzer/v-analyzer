@@ -1,6 +1,5 @@
 module index
 
-import json
 import time
 
 // IndexNotFoundError возвращается, если индекс не найден.
@@ -30,15 +29,19 @@ pub mut:
 // decode инкапсулирует логику декодирования индекса.
 // Если индекс был поврежден и его не удалось декодировать, возвращается ошибка.
 // Если версия индекса не совпадает с последней, возвращается ошибка IndexVersionMismatchError.
-pub fn (mut i Index) decode(data string) ! {
-	res := json.decode(Index, data) or { return error('Failed to decode index') }
-	if res.version != i.version {
+pub fn (mut i Index) decode(data []u8) ! {
+	mut d := new_index_deserializer(data)
+	index := d.deserialize_index()
+	if index.version != i.version {
+		// TODO: проверять версию без декодирования всего файла
 		return IndexVersionMismatchError{}
 	}
-	i.per_file = res.per_file
+	i.per_file = index.per_file
 }
 
 // encode инкапсулирует логику кодирования индекса.
-pub fn (i &Index) encode() string {
-	return json.encode(i)
+pub fn (i &Index) encode() []u8 {
+	mut s := IndexSerializer{}
+	s.serialize_index(i)
+	return s.s.data
 }

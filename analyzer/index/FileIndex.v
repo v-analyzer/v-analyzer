@@ -22,5 +22,6 @@ pub mut:
 	// если модуль не определен, то пустая строка
 	module_fqn string
 
-	sink &psi.StubIndexSink [json: '-']
+	stub_list &psi.StubList      [json: '-']
+	sink      &psi.StubIndexSink [json: '-']
 }

@@ -14,7 +14,7 @@ pub fn (f &FieldDeclaration) doc_comment() string {
 	}
 
 	if comment := f.find_child_by_type(.comment) {
-		return comment.get_text().trim_left('//').trim(' \t')
+		return comment.get_text().trim_string_left('//').trim(' \t')
 	}
 
 	return extract_doc_comment(f)

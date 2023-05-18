@@ -1,6 +1,6 @@
 module psi
 
-pub enum StubIndexKey {
+pub enum StubIndexKey as u8 {
 	functions
 	methods
 	structs

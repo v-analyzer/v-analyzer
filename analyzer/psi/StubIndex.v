@@ -23,7 +23,7 @@ pub fn (s &StubIndex) get_elements(key StubIndexKey, name string) []PsiElement {
 }
 
 fn (s &StubIndex) get_elements_from_sink(key StubIndexKey, name string, sink StubIndexSink) []PsiElement {
-	data := sink.data[key] or { return [] }
+	data := sink.data[u8(key)] or { return [] }
 	stub_info := data[name] or { return [] }
 	stub := stub_info.stub_list.index_map[stub_info.stub_id] or { return [] }
 

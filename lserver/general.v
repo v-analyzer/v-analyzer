@@ -22,9 +22,9 @@ pub fn (mut ls LanguageServer) initialize(params lsp.InitializeParams, mut wr Re
 		ls.analyzer_instance.indexer.ensure_indexed()
 	}
 
-	// ls.analyzer_instance.indexer.save_indexes() or {
-	// 	wr.log_message('Failed to save index: ${err}', .error)
-	// }
+	ls.analyzer_instance.indexer.save_indexes() or {
+		wr.log_message('Failed to save index: ${err}', .error)
+	}
 
 	ls.analyzer_instance.setup_stub_indexes()
 
