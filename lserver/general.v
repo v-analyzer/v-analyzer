@@ -25,16 +25,16 @@ pub fn (mut ls LanguageServer) initialize(params lsp.InitializeParams, mut wr Re
 	ls.setup_stubs(mut wr)
 
 	if vlib_root := ls.vlib_root() {
-		ls.analyzer_instance.indexer.add_indexing_root(vlib_root)
+		ls.analyzer_instance.indexer.add_indexing_root(vlib_root, .standard_library)
 	}
 	if vmodules_root := ls.vmodules_root() {
-		ls.analyzer_instance.indexer.add_indexing_root(vmodules_root)
+		ls.analyzer_instance.indexer.add_indexing_root(vmodules_root, .modules)
 	}
 	if stubs_root := ls.stubs_root() {
-		ls.analyzer_instance.indexer.add_indexing_root(stubs_root)
+		ls.analyzer_instance.indexer.add_indexing_root(stubs_root, .stubs)
 	}
 
-	ls.analyzer_instance.indexer.add_indexing_root(ls.root_uri.path())
+	ls.analyzer_instance.indexer.add_indexing_root(ls.root_uri.path(), .user_code)
 
 	status := ls.analyzer_instance.indexer.index()
 	if status == .needs_ensure_indexed {
@@ -77,6 +77,7 @@ pub fn (mut ls LanguageServer) initialize(params lsp.InitializeParams, mut wr Re
 			rename_provider: lsp.RenameOptions{
 				prepare_provider: false
 			}
+			document_symbol_provider: true
 		}
 		server_info: lsp.ServerInfo{
 			name: 'spavn-analyzer'

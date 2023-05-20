@@ -144,7 +144,8 @@ pub fn (_ &StubbedElementType) create_psi(stub &StubBase) ?PsiElement {
 pub fn (_ &StubbedElementType) get_receiver_type(psi FunctionOrMethodDeclaration) string {
 	receiver := psi.receiver() or { return '' }
 	typ := receiver.type_element() or { return '' }
-	return typ.get_text()
+	text := typ.get_text()
+	return text.trim_string_left('&')
 }
 
 pub fn (s &StubbedElementType) create_stub(psi PsiElement, parent_stub &StubElement) ?&StubBase {

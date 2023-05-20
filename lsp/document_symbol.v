@@ -39,20 +39,22 @@ pub enum SymbolKind {
 
 pub struct DocumentSymbol {
 pub mut:
-	name            string
-	detail          string
-	kind            SymbolKind
-	deprecated      bool
-	range           Range
-	selection_range Range            [json: selectionRange]
-	children        []DocumentSymbol
-}
-
-pub struct SymbolInformation {
-pub mut:
-	name           string
-	kind           SymbolKind
-	deprecated     bool
-	location       Location
-	container_name string     [json: containerName]
+	// The name of this symbol. Will be displayed in the user interface and
+	// therefore must not be an empty string or a string only consisting of
+	// white spaces.
+	name string
+	//  More detail for this symbol, e.g the signature of a function.
+	detail     string     [omitempty]
+	kind       SymbolKind
+	deprecated bool       [omitempty]
+	// The range enclosing this symbol not including leading/trailing whitespace
+	// but everything else like comments. This information is typically used to
+	// determine if the clients cursor is inside the symbol to reveal in the
+	// symbol in the UI.
+	range Range
+	// The range that should be selected and revealed when this symbol is being
+	// picked, e.g. the name of a function. Must be contained by the `range`.
+	selection_range Range [json: 'selectionRange'; omitempty]
+	// Children of this symbol, e.g. properties of a class.
+	children []DocumentSymbol [omitempty]
 }

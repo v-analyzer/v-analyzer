@@ -15,8 +15,14 @@ pub fn new_index_deserializer(data []u8) IndexDeserializer {
 	}
 }
 
-pub fn (mut d IndexDeserializer) deserialize_index() Index {
+pub fn (mut d IndexDeserializer) deserialize_index(expected_version string) !Index {
 	version := d.d.read_string()
+	if version != expected_version {
+		// Ввиду того, что структура индекса может меняться, мы не можем
+		// просто так восстановить индекс, если версия не совпадает, поэтому
+		// при несовпадении мы останавливаем восстановление индекса сразу.
+		return IndexVersionMismatchError{}
+	}
 	updated_at_unix := d.d.read_i64()
 	file_indexes := d.deserialize_file_indexes()
 
@@ -60,25 +66,28 @@ pub fn (mut d IndexDeserializer) deserialize_file_index() FileIndex {
 
 pub fn (mut d IndexDeserializer) deserialize_stub_index_sink(stub_list &psi.StubList) &psi.StubIndexSink {
 	len := d.d.read_int()
-	mut sink := &psi.StubIndexSink{}
+	mut sink := &psi.StubIndexSink{
+		stub_list: stub_list
+	}
 	for _ in 0 .. len {
 		key := d.d.read_u8()
-		mut sink_map := d.deserialize_stub_index_sink_map(stub_list)
+		mut sink_map := d.deserialize_stub_index_sink_map()
 		sink.data[key] = sink_map.move()
 	}
 	return sink
 }
 
-pub fn (mut d IndexDeserializer) deserialize_stub_index_sink_map(stub_list &psi.StubList) map[string]psi.StubInfo {
+pub fn (mut d IndexDeserializer) deserialize_stub_index_sink_map() map[string][]psi.StubId {
 	len := d.d.read_int()
-	mut sink_map := map[string]psi.StubInfo{}
+	mut sink_map := map[string][]psi.StubId{}
 	for _ in 0 .. len {
 		key := d.d.read_string()
-		stub_id := d.d.read_int()
-		sink_map[key] = psi.StubInfo{
-			stub_id: stub_id
-			stub_list: stub_list
+		stub_ids_len := d.d.read_int()
+		mut stub_ids := []psi.StubId{cap: stub_ids_len}
+		for _ in 0 .. stub_ids_len {
+			stub_ids << d.d.read_int()
 		}
+		sink_map[key] = stub_ids
 	}
 	return sink_map
 }

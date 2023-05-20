@@ -23,7 +23,7 @@ fn new_psi_node(id ID, containing_file &PsiFileImpl, node AstNode) PsiElementImp
 fn new_psi_node_from_stub(id StubId, stubs_list &StubList) PsiElementImpl {
 	return PsiElementImpl{
 		node: AstNode{}
-		containing_file: unsafe { nil }
+		containing_file: new_stub_psi_file(stubs_list.path)
 		stub_id: id
 		stubs_list: stubs_list
 	}
@@ -231,6 +231,12 @@ pub fn (n PsiElementImpl) get_text() string {
 }
 
 pub fn (n PsiElementImpl) text_range() TextRange {
+	if n.stub_id != non_stubbed_element {
+		if stub := n.stubs_list.get_stub(n.stub_id) {
+			return stub.text_range
+		}
+	}
+
 	return TextRange{
 		line: int(n.node.start_point().row)
 		column: int(n.node.start_point().column)

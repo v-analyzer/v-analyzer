@@ -15,6 +15,14 @@ pub enum BuiltIndexStatus {
 	from_scratch // индекс был построен с нуля
 }
 
+// IndexingRootKind описывает тип корня, который индексируется.
+pub enum IndexingRootKind {
+	standard_library
+	modules
+	stubs
+	user_code
+}
+
 // IndexingRoot инкапсулирует в себе логику индексации/реиндексации
 // конкретного корня файловой системы.
 //
@@ -24,6 +32,7 @@ pub enum BuiltIndexStatus {
 pub struct IndexingRoot {
 pub:
 	root string // корень, который индексируется
+	kind IndexingRootKind // тип корня
 pub mut:
 	updated_at time.Time // время последнего обновления индекса
 	index      Index     // кэш по файлам
@@ -31,10 +40,11 @@ pub mut:
 }
 
 // new_indexing_root создает новый IndexingRoot для переданного пути.
-pub fn new_indexing_root(root string) &IndexingRoot {
+pub fn new_indexing_root(root string, kind IndexingRootKind) &IndexingRoot {
 	cache_file := 'spavn_index_${md5.hexhash(root)}.txt'
 	return &IndexingRoot{
 		root: root
+		kind: kind
 		cache_file: cache_file
 	}
 }

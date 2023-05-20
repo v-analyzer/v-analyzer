@@ -81,7 +81,7 @@ pub fn (r &SubResolver) process_qualifier_expression(qualifier PsiElement, mut p
 
 pub fn (_ &SubResolver) calc_methods(typ types.Type) []PsiElement {
 	name := typ.qualified_name()
-	methods := stubs_index.get_elements(.methods, name)
+	methods := stubs_index.get_elements_by_name(.methods, name)
 	return methods
 }
 
@@ -261,7 +261,7 @@ pub fn (r &SubResolver) process_type_initializer_field(mut processor PsiScopePro
 }
 
 pub fn (_ &SubResolver) find_function(stubs_index StubIndex, name string) ?&FunctionOrMethodDeclaration {
-	found := stubs_index.get_elements(.functions, name)
+	found := stubs_index.get_elements_by_name(.functions, name)
 	if found.len != 0 {
 		first := found.first()
 		if first is FunctionOrMethodDeclaration {
@@ -272,7 +272,7 @@ pub fn (_ &SubResolver) find_function(stubs_index StubIndex, name string) ?&Func
 }
 
 pub fn (_ &SubResolver) find_struct(stubs_index StubIndex, name string) ?&StructDeclaration {
-	found := stubs_index.get_elements(.structs, name)
+	found := stubs_index.get_elements_by_name(.structs, name)
 	if found.len != 0 {
 		first := found.first()
 		if first is StructDeclaration {
@@ -283,7 +283,7 @@ pub fn (_ &SubResolver) find_struct(stubs_index StubIndex, name string) ?&Struct
 }
 
 pub fn (_ &SubResolver) find_enum(stubs_index StubIndex, name string) ?&EnumDeclaration {
-	found := stubs_index.get_elements(.enums, name)
+	found := stubs_index.get_elements_by_name(.enums, name)
 	if found.len != 0 {
 		first := found.first()
 		if first is EnumDeclaration {
@@ -294,7 +294,7 @@ pub fn (_ &SubResolver) find_enum(stubs_index StubIndex, name string) ?&EnumDecl
 }
 
 pub fn (_ &SubResolver) find_constant(stubs_index StubIndex, name string) ?&ConstantDefinition {
-	found := stubs_index.get_elements(.constants, name)
+	found := stubs_index.get_elements_by_name(.constants, name)
 	if found.len != 0 {
 		first := found.first()
 		if first is ConstantDefinition {
@@ -305,7 +305,7 @@ pub fn (_ &SubResolver) find_constant(stubs_index StubIndex, name string) ?&Cons
 }
 
 pub fn (_ &SubResolver) find_type_alias(stubs_index StubIndex, name string) ?&TypeAliasDeclaration {
-	found := stubs_index.get_elements(.type_aliases, name)
+	found := stubs_index.get_elements_by_name(.type_aliases, name)
 	if found.len != 0 {
 		first := found.first()
 		if first is TypeAliasDeclaration {
@@ -316,7 +316,7 @@ pub fn (_ &SubResolver) find_type_alias(stubs_index StubIndex, name string) ?&Ty
 }
 
 pub fn (_ &SubResolver) find_attribute(stubs_index StubIndex, name string) ?&StructDeclaration {
-	found := stubs_index.get_elements(.attributes, name)
+	found := stubs_index.get_elements_by_name(.attributes, name)
 	if found.len != 0 {
 		first := found.first()
 		if first is StructDeclaration {

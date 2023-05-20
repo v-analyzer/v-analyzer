@@ -122,7 +122,7 @@ pub fn (mut ls LanguageServer) handle_jsonrpc(request &jsonrpc.Request, mut rw j
 				params := json.decode(lsp.DidSaveTextDocumentParams, request.params) or {
 					return err
 				}
-				// ls.did_save(params, mut rw)
+				ls.did_save(params, mut rw)
 			}
 			'textDocument/didChange' {
 				params := json.decode(lsp.DidChangeTextDocumentParams, request.params) or {
@@ -152,7 +152,7 @@ pub fn (mut ls LanguageServer) handle_jsonrpc(request &jsonrpc.Request, mut rw j
 				params := json.decode(lsp.DocumentSymbolParams, request.params) or {
 					return w.wrap_error(err)
 				}
-				// w.write(ls.document_symbol(params, mut rw) or { return w.wrap_error(err) })
+				w.write(ls.document_symbol(params, mut rw) or { return w.wrap_error(err) })
 			}
 			'workspace/symbol' {
 				// params := json.decode(lsp.WorkspaceSymbolParams, request.params) or {

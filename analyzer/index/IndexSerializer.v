@@ -39,11 +39,14 @@ pub fn (mut s IndexSerializer) serialize_stub_index_sink(sink &psi.StubIndexSink
 	}
 }
 
-pub fn (mut s IndexSerializer) serialize_stub_index_sink_map(sink_map map[string]psi.StubInfo) {
+pub fn (mut s IndexSerializer) serialize_stub_index_sink_map(sink_map map[string][]psi.StubId) {
 	s.s.write_int(sink_map.len)
-	for key, info in sink_map {
+	for key, stub_ids in sink_map {
 		s.s.write_string(key)
-		s.s.write_int(info.stub_id)
+		s.s.write_int(stub_ids.len)
+		for id in stub_ids {
+			s.s.write_int(id)
+		}
 	}
 }
 

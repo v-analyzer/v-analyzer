@@ -21,6 +21,14 @@ pub fn (mut a Analyzer) setup_stub_indexes() {
 		res << root.index.per_file.get_sinks()
 	}
 
-	a.stub_index = psi.new_stubs_index(res)
+	mut user_code_sinks := []psi.StubIndexSink{cap: a.indexer.roots.len * 10}
+	for root in a.indexer.roots {
+		if root.kind != .user_code {
+			continue
+		}
+		user_code_sinks << root.index.per_file.get_sinks()
+	}
+
+	a.stub_index = psi.new_stubs_index(res, user_code_sinks)
 	stubs_index = a.stub_index
 }

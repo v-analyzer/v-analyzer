@@ -20,9 +20,9 @@ pub fn new_indexer() &Indexer {
 	return &Indexer{}
 }
 
-pub fn (mut i Indexer) add_indexing_root(root string) {
+pub fn (mut i Indexer) add_indexing_root(root string, kind index.IndexingRootKind) {
 	println('Adding indexing root ${root}')
-	i.roots << index.new_indexing_root(root)
+	i.roots << index.new_indexing_root(root, kind)
 }
 
 pub fn (mut i Indexer) index() IndexingRootsStatus {

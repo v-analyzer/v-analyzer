@@ -20,7 +20,7 @@ pub struct IndexVersionMismatchError {
 // Index инкапсулирует логику хранения индекса.
 pub struct Index {
 pub:
-	version string = '4'
+	version string = '5'
 pub mut:
 	updated_at time.Time // время последнего обновления индекса
 	per_file   PerFileIndex
@@ -31,11 +31,7 @@ pub mut:
 // Если версия индекса не совпадает с последней, возвращается ошибка IndexVersionMismatchError.
 pub fn (mut i Index) decode(data []u8) ! {
 	mut d := new_index_deserializer(data)
-	index := d.deserialize_index()
-	if index.version != i.version {
-		// TODO: проверять версию без декодирования всего файла
-		return IndexVersionMismatchError{}
-	}
+	index := d.deserialize_index(i.version)!
 	i.per_file = index.per_file
 }
 
