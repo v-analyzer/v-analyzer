@@ -1,8 +1,6 @@
 module main
 
 import os
-import lserver
-import vex.server
 
 const content_length = 'Content-Length: '
 

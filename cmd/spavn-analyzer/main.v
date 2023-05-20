@@ -1,8 +1,5 @@
 module main
 
-import vex.server as vserver
-import vex.ctx
-import vex.router
 import flag
 import os
 import net.http
@@ -65,16 +62,17 @@ fn main() {
 	jrpc_server.start()
 }
 
-fn run_server(id int, port int, daemon_port int) {
-	mut app := router.new()
-
-	app.route(.get, '/', fn (_ &ctx.Req, mut res ctx.Resp) {
-		res.send_html('<p>Hello Analyzer</p>', 200)
-	})
-
-	app.route(.get, '/alive', fn (_ &ctx.Req, mut res ctx.Resp) {
-		res.send_status(200)
-	})
-
-	vserver.serve(app, port)
-}
+//
+// fn run_server(id int, port int, daemon_port int) {
+// 	mut app := router.new()
+//
+// 	app.route(.get, '/', fn (_ &ctx.Req, mut res ctx.Resp) {
+// 		res.send_html('<p>Hello Analyzer</p>', 200)
+// 	})
+//
+// 	app.route(.get, '/alive', fn (_ &ctx.Req, mut res ctx.Resp) {
+// 		res.send_status(200)
+// 	})
+//
+// 	vserver.serve(app, port)
+// }
