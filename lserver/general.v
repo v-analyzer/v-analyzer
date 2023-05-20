@@ -55,6 +55,7 @@ pub fn (mut ls LanguageServer) initialize(params lsp.InitializeParams, mut wr Re
 			hover_provider: true
 			definition_provider: true
 			references_provider: true
+			document_formatting_provider: true
 			completion_provider: lsp.CompletionOptions{
 				resolve_provider: false
 				trigger_characters: ['=', '.', ':', '{', ',', '(', ' ']
@@ -87,20 +88,20 @@ pub fn (mut ls LanguageServer) initialize(params lsp.InitializeParams, mut wr Re
 fn (mut ls LanguageServer) setup_toolchain(mut rw ResponseWriter) {
 	toolchain_candidates := project.get_toolchain_candidates()
 	if toolchain_candidates.len > 0 {
-		println('Found toolchain candidates:')
+		rw.log_message('Found toolchain candidates:', .info)
 		for toolchain_candidate in toolchain_candidates {
-			println('  ${toolchain_candidate}')
+			rw.log_message('  ${toolchain_candidate}', .info)
 		}
 
-		println('Using ${toolchain_candidates.first()} as toolchain')
+		rw.log_message('Using "${toolchain_candidates.first()}" as toolchain', .info)
 		ls.vroot = toolchain_candidates.first()
-		rw.show_message('Using ${toolchain_candidates.first()} as toolchain', .info)
 	} else {
-		println('No toolchain candidates found')
+		rw.log_message("No toolchain candidates found, some of the features won't work properly.",
+			.error)
 	}
 
 	ls.vmodules_root = project.get_modules_location()
-	println('Using ${ls.vmodules_root} as vmodules root')
+	rw.log_message('Using "${ls.vmodules_root}" as vmodules root', .info)
 }
 
 fn (mut _ LanguageServer) setup_config_dir(mut rw ResponseWriter) {

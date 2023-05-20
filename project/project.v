@@ -20,5 +20,13 @@ pub fn get_modules_location() string {
 // 3. Путь из переменной окружения PATH
 // 4. Другие дополнительные варианты поиска
 pub fn get_toolchain_candidates() []string {
-	return flavors.get_toolchain_candidates()
+	return distinct_strings(flavors.get_toolchain_candidates())
+}
+
+fn distinct_strings(arr []string) []string {
+	mut set := map[string]bool{}
+	for el in arr {
+		set[el] = true
+	}
+	return set.keys()
 }

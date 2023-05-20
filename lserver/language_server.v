@@ -42,6 +42,13 @@ pub fn new(analyzer_instance analyzer.Analyzer) &LanguageServer {
 	}
 }
 
+pub fn (mut ls LanguageServer) compiler_path() ?string {
+	if ls.vroot == '' {
+		return none
+	}
+	return os.join_path(ls.vroot, 'v')
+}
+
 pub fn (mut ls LanguageServer) vlib_root() ?string {
 	if ls.vroot == '' {
 		return none
@@ -139,7 +146,7 @@ pub fn (mut ls LanguageServer) handle_jsonrpc(request &jsonrpc.Request, mut rw j
 				params := json.decode(lsp.DocumentFormattingParams, request.params) or {
 					return w.wrap_error(err)
 				}
-				// w.write(ls.formatting(params, mut rw) or { return w.wrap_error(err) })
+				w.write(ls.formatting(params, mut rw) or { return w.wrap_error(err) })
 			}
 			'textDocument/documentSymbol' {
 				params := json.decode(lsp.DocumentSymbolParams, request.params) or {
@@ -289,4 +296,12 @@ pub fn monitor_changes(mut ls LanguageServer, mut wr ResponseWriter) {
 			}
 		}
 	}
+}
+
+pub fn (mut ls LanguageServer) launch_tool(args ...string) !&os.Process {
+	compiler_path := ls.compiler_path() or { return error('Cannot run tool without vroot') }
+	mut p := os.new_process(compiler_path)
+	p.set_args(args)
+	p.set_redirect_stdio()
+	return p
 }
