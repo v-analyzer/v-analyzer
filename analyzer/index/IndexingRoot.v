@@ -7,6 +7,7 @@ import sync
 import runtime
 import crypto.md5
 import analyzer.psi
+import math
 
 // BuiltIndexStatus описывает статус построенного индекса.
 pub enum BuiltIndexStatus {
@@ -158,7 +159,8 @@ pub fn (mut _ IndexingRoot) index_file(path string) !FileIndex {
 
 pub fn (mut i IndexingRoot) spawn_indexing_workers(cache_chan chan FileIndex, file_chan chan string) {
 	mut wg := sync.new_waitgroup()
-	workers := runtime.nr_cpus() - 4
+	cpus := runtime.nr_cpus()
+	workers := math.max(cpus - 4, 1)
 	wg.add(workers)
 	for j := 0; j < workers; j++ {
 		spawn fn [file_chan, mut wg, mut i, cache_chan] () {

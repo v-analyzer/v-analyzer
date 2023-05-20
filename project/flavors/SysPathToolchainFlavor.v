@@ -8,8 +8,6 @@ fn (s &SysPathToolchainFlavor) get_home_page_candidates() []string {
 	return os.getenv('PATH')
 		.split(os.path_delimiter)
 		.filter(it != '')
-		.filter(os.is_executable)
-		.map(os.dir)
 		.filter(os.is_dir)
 }
 
