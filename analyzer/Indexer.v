@@ -1,6 +1,5 @@
 module analyzer
 
-import lsp
 import time
 import analyzer.index
 
@@ -21,9 +20,9 @@ pub fn new_indexer() &Indexer {
 	return &Indexer{}
 }
 
-pub fn (mut i Indexer) add_indexing_root(root lsp.DocumentUri) {
+pub fn (mut i Indexer) add_indexing_root(root string) {
 	println('Adding indexing root ${root}')
-	i.roots << index.new_indexing_root(root.path())
+	i.roots << index.new_indexing_root(root)
 }
 
 pub fn (mut i Indexer) index() IndexingRootsStatus {

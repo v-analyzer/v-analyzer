@@ -3,6 +3,14 @@ module lserver
 import lsp
 import runtime
 import os
+import project
+import metadata
+import time
+
+const (
+	analyzer_configs_path = os.expand_tilde_to_home('~/.spavn-analyzer')
+	analyzer_stubs_path   = os.join_path(analyzer_configs_path, 'metadata')
+)
 
 // initialize sends the server capabilities to the client
 pub fn (mut ls LanguageServer) initialize(params lsp.InitializeParams, mut wr ResponseWriter) lsp.InitializeResult {
@@ -12,10 +20,21 @@ pub fn (mut ls LanguageServer) initialize(params lsp.InitializeParams, mut wr Re
 	ls.status = .initialized
 
 	ls.print_info(params.process_id, params.client_info, mut wr)
+	ls.setup_toolchain(mut wr)
+	ls.setup_config_dir(mut wr)
+	ls.setup_stubs(mut wr)
 
-	ls.analyzer_instance.indexer.add_indexing_root('file:///Users/petrmakhnev/v/vlib')
-	ls.analyzer_instance.indexer.add_indexing_root('file:///Users/petrmakhnev/intellij-v/src/main/resources/stubs/')
-	ls.analyzer_instance.indexer.add_indexing_root(ls.root_uri)
+	if vlib_root := ls.vlib_root() {
+		ls.analyzer_instance.indexer.add_indexing_root(vlib_root)
+	}
+	if vmodules_root := ls.vmodules_root() {
+		ls.analyzer_instance.indexer.add_indexing_root(vmodules_root)
+	}
+	if stubs_root := ls.stubs_root() {
+		ls.analyzer_instance.indexer.add_indexing_root(stubs_root)
+	}
+
+	ls.analyzer_instance.indexer.add_indexing_root(ls.root_uri.path())
 
 	status := ls.analyzer_instance.indexer.index()
 	if status == .needs_ensure_indexed {
@@ -65,6 +84,47 @@ pub fn (mut ls LanguageServer) initialize(params lsp.InitializeParams, mut wr Re
 	}
 }
 
+fn (mut ls LanguageServer) setup_toolchain(mut rw ResponseWriter) {
+	toolchain_candidates := project.get_toolchain_candidates()
+	if toolchain_candidates.len > 0 {
+		println('Found toolchain candidates:')
+		for toolchain_candidate in toolchain_candidates {
+			println('  ${toolchain_candidate}')
+		}
+
+		println('Using ${toolchain_candidates.first()} as toolchain')
+		ls.vroot = toolchain_candidates.first()
+		rw.show_message('Using ${toolchain_candidates.first()} as toolchain', .info)
+	} else {
+		println('No toolchain candidates found')
+	}
+
+	ls.vmodules_root = project.get_modules_location()
+	println('Using ${ls.vmodules_root} as vmodules root')
+}
+
+fn (mut _ LanguageServer) setup_config_dir(mut rw ResponseWriter) {
+	if os.exists(lserver.analyzer_configs_path) {
+		return
+	}
+
+	os.mkdir(lserver.analyzer_configs_path) or {
+		rw.log_message('Failed to create analyzer configs directory: ${err}', .error)
+	}
+}
+
+fn (mut _ LanguageServer) setup_stubs(mut rw ResponseWriter) {
+	if os.exists(lserver.analyzer_stubs_path) {
+		// TODO: check if the stubs are up to date
+		return
+	}
+
+	stubs := metadata.embed_fs()
+	stubs.unpack_to(lserver.analyzer_stubs_path) or {
+		rw.log_message('Failed to unpack stubs: ${err}', .error)
+	}
+}
+
 // shutdown sets the state to shutdown but does not exit
 [noreturn]
 pub fn (mut ls LanguageServer) shutdown(mut wr ResponseWriter) {
@@ -93,8 +153,9 @@ fn (mut _ LanguageServer) print_info(process_id int, client_info lsp.ClientInfo,
 		'Unknown'
 	}
 
-	wr.log_message('VLS Version: 0.0.1, OS: ${os.user_os()} ${arch}', .info)
-	wr.log_message('VLS executable path: ${os.executable()}', .info)
-	wr.log_message('VLS build with V ${@VHASH}', .info)
+	wr.log_message('spavn-analyzer version: 0.0.1, OS: ${os.user_os()} x${arch}', .info)
+	wr.log_message('spavn-analyzer executable path: ${os.executable()}', .info)
+	wr.log_message('spavn-analyzer build with V ${@VHASH}', .info)
+	wr.log_message('spavn-analyzer build at ${time.now().format_ss()}', .info)
 	wr.log_message('Client / Editor: ${client_name} (PID: ${process_id})', .info)
 }

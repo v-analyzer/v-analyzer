@@ -6,6 +6,7 @@ import lsp
 import time
 import utils
 import analyzer
+import os
 
 pub enum ServerStatus {
 	off
@@ -29,6 +30,9 @@ mut:
 	// файл из `opened_files`.
 	opened_files map[lsp.DocumentUri]analyzer.OpenedFile
 
+	vmodules_root string
+	vroot         string
+
 	analyzer_instance analyzer.Analyzer
 }
 
@@ -36,6 +40,32 @@ pub fn new(analyzer_instance analyzer.Analyzer) &LanguageServer {
 	return &LanguageServer{
 		analyzer_instance: analyzer_instance
 	}
+}
+
+pub fn (mut ls LanguageServer) vlib_root() ?string {
+	if ls.vroot == '' {
+		return none
+	}
+
+	path := os.join_path(ls.vroot, 'vlib')
+	if !os.is_dir(path) {
+		return none
+	}
+	return path
+}
+
+pub fn (mut ls LanguageServer) vmodules_root() ?string {
+	if !os.is_dir(ls.vmodules_root) {
+		return none
+	}
+	return ls.vmodules_root
+}
+
+pub fn (mut _ LanguageServer) stubs_root() ?string {
+	if !os.exists(analyzer_stubs_path) {
+		return none
+	}
+	return analyzer_stubs_path
 }
 
 pub fn (mut ls LanguageServer) get_file(uri lsp.DocumentUri) ?analyzer.OpenedFile {
