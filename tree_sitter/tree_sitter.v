@@ -3,9 +3,9 @@ module tree_sitter
 import analyzer.structures.ropes
 
 #flag -I@VMODROOT/tree_sitter/lib
-// #flag @VMODROOT/tree_sitter/lib/lib.o
-#flag -L @VMODROOT/tree_sitter/lib
-#flag -lts
+#flag @VMODROOT/tree_sitter/lib/lib.c
+// #flag -L @VMODROOT/tree_sitter/lib
+// #flag -lts
 #flag -I @VMODROOT/tree_sitter/lib
 #include "api.h"
 
