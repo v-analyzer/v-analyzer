@@ -28,11 +28,20 @@ fn has_vlib(path string) bool {
 
 pub fn get_toolchain_candidates() []string {
 	mut flavors := []ToolchainFlavor{}
-	flavors << SymlinkToolchainFlavor{}
+	flavors << VenvToolchainFlavor{}
+	$if !windows {
+		// На Windows не создается симлинк на V, так что
+		// нет смысла проверять этот вариант.
+		flavors << SymlinkToolchainFlavor{}
+	}
 	flavors << SysPathToolchainFlavor{}
 	flavors << UserHomeToolchainFlavor{}
-	flavors << MacToolchainFlavor{}
-	flavors << WinToolchainFlavor{}
+	$if macos {
+		flavors << MacToolchainFlavor{}
+	}
+	$if windows {
+		flavors << WinToolchainFlavor{}
+	}
 
 	return arrays.flatten(flavors
 		.filter(it.is_applicable())
