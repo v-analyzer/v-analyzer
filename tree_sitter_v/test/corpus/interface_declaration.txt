@@ -1,0 +1,293 @@
+================================================================================
+Simple interface
+================================================================================
+interface Foo {
+    name string
+    do() string
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (identifier)
+    (struct_field_declaration
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier))))
+    (interface_method_definition
+      (identifier)
+      (signature
+        (parameter_list)
+        (plain_type
+          (type_reference_expression
+            (identifier)))))))
+
+================================================================================
+Simple public interface
+================================================================================
+pub interface Foo {
+    name string
+    do() string
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (visibility_modifiers)
+    (identifier)
+    (struct_field_declaration
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier))))
+    (interface_method_definition
+      (identifier)
+      (signature
+        (parameter_list)
+        (plain_type
+          (type_reference_expression
+            (identifier)))))))
+
+================================================================================
+Simple interface with several methods
+================================================================================
+interface Foo {
+    do() string
+    foo(name string) ?string
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (identifier)
+    (interface_method_definition
+      (identifier)
+      (signature
+        (parameter_list)
+        (plain_type
+          (type_reference_expression
+            (identifier)))))
+    (interface_method_definition
+      (identifier)
+      (signature
+        (parameter_list
+          (parameter_declaration
+            (identifier)
+            (plain_type
+              (type_reference_expression
+                (identifier)))))
+        (option_type
+          (plain_type
+            (type_reference_expression
+              (identifier))))))))
+
+================================================================================
+Simple interface with scopes
+================================================================================
+interface Foo {
+mut:
+    name string
+mut:
+    do() string
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (identifier)
+    (struct_field_scope)
+    (struct_field_declaration
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier))))
+    (struct_field_scope)
+    (interface_method_definition
+      (identifier)
+      (signature
+        (parameter_list)
+        (plain_type
+          (type_reference_expression
+            (identifier)))))))
+
+================================================================================
+Interface with field with default type and attribute
+================================================================================
+interface Foo {
+    name string [json: 'Name'] = ''
+    do() string
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (identifier)
+    (struct_field_declaration
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier)))
+      (attribute
+        (attribute_expression
+          (key_value_attribute
+            (value_attribute
+              (type_reference_expression
+                (identifier)))
+            (literal
+              (interpreted_string_literal)))))
+      (literal
+        (interpreted_string_literal)))
+    (interface_method_definition
+      (identifier)
+      (signature
+        (parameter_list)
+        (plain_type
+          (type_reference_expression
+            (identifier)))))))
+
+================================================================================
+Simple interface with attributes
+================================================================================
+[attr]
+[attr2]
+interface Foo {
+    name string
+    do() string
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (attributes
+      (attribute
+        (attribute_expression
+          (value_attribute
+            (type_reference_expression
+              (identifier)))))
+      (attribute
+        (attribute_expression
+          (value_attribute
+            (type_reference_expression
+              (identifier))))))
+    (identifier)
+    (struct_field_declaration
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier))))
+    (interface_method_definition
+      (identifier)
+      (signature
+        (parameter_list)
+        (plain_type
+          (type_reference_expression
+            (identifier)))))))
+
+================================================================================
+Simple interface with attributes and comment
+================================================================================
+// Foo is a simple interface
+[attr]
+[attr2]
+interface Foo {
+    name string
+    do() string
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (comment)
+  (interface_declaration
+    (attributes
+      (attribute
+        (attribute_expression
+          (value_attribute
+            (type_reference_expression
+              (identifier)))))
+      (attribute
+        (attribute_expression
+          (value_attribute
+            (type_reference_expression
+              (identifier))))))
+    (identifier)
+    (struct_field_declaration
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier))))
+    (interface_method_definition
+      (identifier)
+      (signature
+        (parameter_list)
+        (plain_type
+          (type_reference_expression
+            (identifier)))))))
+
+================================================================================
+Interface embedding
+================================================================================
+interface Foo {
+    Embedded
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (identifier)
+    (struct_field_declaration
+      (embedded_definition
+        (plain_type
+          (type_reference_expression
+            (identifier)))))))
+
+================================================================================
+Interface with several embedded interfaces
+================================================================================
+interface Foo {
+    Embedded
+    Embedded2
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (identifier)
+    (struct_field_declaration
+      (embedded_definition
+        (plain_type
+          (type_reference_expression
+            (identifier)))))
+    (struct_field_declaration
+      (embedded_definition
+        (plain_type
+          (type_reference_expression
+            (identifier)))))))
+
+================================================================================
+Generic interface
+================================================================================
+interface Foo[T] {
+    name T
+    do() T
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (interface_declaration
+    (identifier)
+    (generic_parameters
+      (generic_parameter
+        (identifier)))
+    (struct_field_declaration
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier))))
+    (interface_method_definition
+      (identifier)
+      (signature
+        (parameter_list)
+        (plain_type
+          (type_reference_expression
+            (identifier)))))))

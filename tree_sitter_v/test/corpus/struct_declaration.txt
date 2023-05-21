@@ -1,0 +1,667 @@
+================================================================================
+Simple struct
+================================================================================
+struct Foo {
+    name string
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (struct_declaration
+    (identifier)
+    (struct_field_declaration
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier))))))
+
+================================================================================
+Simple public struct
+================================================================================
+pub struct Foo {
+    name string
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (struct_declaration
+    (visibility_modifiers)
+    (identifier)
+    (struct_field_declaration
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier))))))
+
+================================================================================
+Simple union
+================================================================================
+union Foo {
+    name string
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (struct_declaration
+    (identifier)
+    (struct_field_declaration
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier))))))
+
+================================================================================
+Simple empty struct
+================================================================================
+struct Foo {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (struct_declaration
+    (identifier)))
+
+================================================================================
+Simple struct with attribute
+================================================================================
+[heap]
+struct Foo {
+    name string
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (struct_declaration
+    (attributes
+      (attribute
+        (attribute_expression
+          (value_attribute
+            (type_reference_expression
+              (identifier))))))
+    (identifier)
+    (struct_field_declaration
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier))))))
+
+================================================================================
+Simple struct with attribute and comment
+================================================================================
+// This is a comment
+[heap]
+struct Foo {
+    name string
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (comment)
+  (struct_declaration
+    (attributes
+      (attribute
+        (attribute_expression
+          (value_attribute
+            (type_reference_expression
+              (identifier))))))
+    (identifier)
+    (struct_field_declaration
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier))))))
+
+================================================================================
+Simple struct with several fields
+================================================================================
+struct Foo {
+    name  string
+    age   int
+    other f32
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (struct_declaration
+    (identifier)
+    (struct_field_declaration
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier))))
+    (struct_field_declaration
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier))))
+    (struct_field_declaration
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier))))))
+
+================================================================================
+Simple struct with several fields with different scopes
+================================================================================
+struct Foo {
+    name  string
+mut:
+    age   int
+pub:
+    other f32
+pub mut:
+    other2 bool
+__global:
+    other3 i8
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (struct_declaration
+    (identifier)
+    (struct_field_declaration
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier))))
+    (struct_field_scope)
+    (struct_field_declaration
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier))))
+    (struct_field_scope)
+    (struct_field_declaration
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier))))
+    (struct_field_scope)
+    (struct_field_declaration
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier))))
+    (struct_field_scope)
+    (struct_field_declaration
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier))))))
+
+================================================================================
+Simple struct with modifier with space before colon
+================================================================================
+struct Foo {
+mut :
+    age   int
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (struct_declaration
+    (identifier)
+    (struct_field_scope)
+    (struct_field_declaration
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier))))))
+
+================================================================================
+Simple struct with not ended modifier
+================================================================================
+struct Foo {
+mut
+    age   int
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (struct_declaration
+    (identifier)
+    (ERROR)
+    (struct_field_declaration
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier))))))
+
+================================================================================
+Simple struct with several fields and embedding
+================================================================================
+struct Foo {
+    Embedded
+    name  string
+    age   int
+    other f32
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (struct_declaration
+    (identifier)
+    (struct_field_declaration
+      (embedded_definition
+        (plain_type
+          (type_reference_expression
+            (identifier)))))
+    (struct_field_declaration
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier))))
+    (struct_field_declaration
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier))))
+    (struct_field_declaration
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier))))))
+
+================================================================================
+Simple struct with several embedding
+================================================================================
+struct Foo {
+    Embedded
+    Embedded2
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (struct_declaration
+    (identifier)
+    (struct_field_declaration
+      (embedded_definition
+        (plain_type
+          (type_reference_expression
+            (identifier)))))
+    (struct_field_declaration
+      (embedded_definition
+        (plain_type
+          (type_reference_expression
+            (identifier)))))))
+
+================================================================================
+Simple struct with several embedding and fields
+================================================================================
+struct Foo {
+    Embedded
+    Embedded2
+    name  string
+mut:
+    age   int
+pub:
+    other f32
+pub mut:
+    other2 bool
+__global:
+    other3 i8
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (struct_declaration
+    (identifier)
+    (struct_field_declaration
+      (embedded_definition
+        (plain_type
+          (type_reference_expression
+            (identifier)))))
+    (struct_field_declaration
+      (embedded_definition
+        (plain_type
+          (type_reference_expression
+            (identifier)))))
+    (struct_field_declaration
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier))))
+    (struct_field_scope)
+    (struct_field_declaration
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier))))
+    (struct_field_scope)
+    (struct_field_declaration
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier))))
+    (struct_field_scope)
+    (struct_field_declaration
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier))))
+    (struct_field_scope)
+    (struct_field_declaration
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier))))))
+
+================================================================================
+Simple struct with fields with default values
+================================================================================
+struct Foo {
+    name  string = 'hello'
+    age   int = 10
+    other f32 = 3.14
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (struct_declaration
+    (identifier)
+    (struct_field_declaration
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier)))
+      (literal
+        (interpreted_string_literal)))
+    (struct_field_declaration
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier)))
+      (literal
+        (int_literal)))
+    (struct_field_declaration
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier)))
+      (literal
+        (float_literal)))))
+
+================================================================================
+Simple struct with fields with attributes
+================================================================================
+struct Foo {
+    name  string [json: 'Name']
+    age   int    [json: 'Age']
+    other f32    [json: 'Other'; omitempty]
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (struct_declaration
+    (identifier)
+    (struct_field_declaration
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier)))
+      (attribute
+        (attribute_expression
+          (key_value_attribute
+            (value_attribute
+              (type_reference_expression
+                (identifier)))
+            (literal
+              (interpreted_string_literal))))))
+    (struct_field_declaration
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier)))
+      (attribute
+        (attribute_expression
+          (key_value_attribute
+            (value_attribute
+              (type_reference_expression
+                (identifier)))
+            (literal
+              (interpreted_string_literal))))))
+    (struct_field_declaration
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier)))
+      (attribute
+        (attribute_expression
+          (key_value_attribute
+            (value_attribute
+              (type_reference_expression
+                (identifier)))
+            (literal
+              (interpreted_string_literal))))
+        (attribute_expression
+          (value_attribute
+            (type_reference_expression
+              (identifier))))))))
+
+================================================================================
+Simple struct with fields with attributes and default values
+================================================================================
+struct Foo {
+    name  string [json: 'Name'] = 'hello'
+    age   int    [json: 'Age'] = 10
+    other f32    [json: 'Other'; omitempty] = 3.14
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (struct_declaration
+    (identifier)
+    (struct_field_declaration
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier)))
+      (attribute
+        (attribute_expression
+          (key_value_attribute
+            (value_attribute
+              (type_reference_expression
+                (identifier)))
+            (literal
+              (interpreted_string_literal)))))
+      (literal
+        (interpreted_string_literal)))
+    (struct_field_declaration
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier)))
+      (attribute
+        (attribute_expression
+          (key_value_attribute
+            (value_attribute
+              (type_reference_expression
+                (identifier)))
+            (literal
+              (interpreted_string_literal)))))
+      (literal
+        (int_literal)))
+    (struct_field_declaration
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier)))
+      (attribute
+        (attribute_expression
+          (key_value_attribute
+            (value_attribute
+              (type_reference_expression
+                (identifier)))
+            (literal
+              (interpreted_string_literal))))
+        (attribute_expression
+          (value_attribute
+            (type_reference_expression
+              (identifier)))))
+      (literal
+        (float_literal)))))
+
+================================================================================
+Simple generic struct
+================================================================================
+struct Foo[T] {
+    value T
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (struct_declaration
+    (identifier)
+    (generic_parameters
+      (generic_parameter
+        (identifier)))
+    (struct_field_declaration
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier))))))
+
+================================================================================
+Generic struct with several generic parameters
+================================================================================
+struct Foo[T, U, V] {
+    value T
+    value2 U
+    value3 V
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (struct_declaration
+    (identifier)
+    (generic_parameters
+      (generic_parameter
+        (identifier))
+      (generic_parameter
+        (identifier))
+      (generic_parameter
+        (identifier)))
+    (struct_field_declaration
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier))))
+    (struct_field_declaration
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier))))
+    (struct_field_declaration
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier))))))
+
+================================================================================
+C struct
+================================================================================
+[typedef]
+struct C.Foo {
+    name string
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (struct_declaration
+    (attributes
+      (attribute
+        (attribute_expression
+          (value_attribute
+            (type_reference_expression
+              (identifier))))))
+    (binded_identifier
+      (identifier))
+    (struct_field_declaration
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier))))))
+
+================================================================================
+JS struct
+================================================================================
+[heap]
+struct JS.Foo {
+    name string
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (struct_declaration
+    (attributes
+      (attribute
+        (attribute_expression
+          (value_attribute
+            (type_reference_expression
+              (identifier))))))
+    (binded_identifier
+      (identifier))
+    (struct_field_declaration
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier))))))
+
+================================================================================
+Struct all in one
+================================================================================
+struct Hello {
+    hidden string
+pub:
+    foo string [json: 'foo'] = 'hey'
+    bar int = 10
+pub mut:
+    baz int
+__global:
+    blu i64
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (struct_declaration
+    (identifier)
+    (struct_field_declaration
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier))))
+    (struct_field_scope)
+    (struct_field_declaration
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier)))
+      (attribute
+        (attribute_expression
+          (key_value_attribute
+            (value_attribute
+              (type_reference_expression
+                (identifier)))
+            (literal
+              (interpreted_string_literal)))))
+      (literal
+        (interpreted_string_literal)))
+    (struct_field_declaration
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier)))
+      (literal
+        (int_literal)))
+    (struct_field_scope)
+    (struct_field_declaration
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier))))
+    (struct_field_scope)
+    (struct_field_declaration
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier))))))

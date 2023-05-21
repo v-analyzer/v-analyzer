@@ -258,25 +258,6 @@
     ]
   },
   {
-    "type": "_struct_field_declaration_list",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "struct_field_declaration",
-          "named": true
-        },
-        {
-          "type": "struct_field_scope",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "argument",
     "named": true,
     "fields": {},
@@ -1155,6 +1136,21 @@
     }
   },
   {
+    "type": "embedded_definition",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "plain_type",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "empty_literal_value",
     "named": true,
     "fields": {}
@@ -1237,6 +1233,16 @@
     "type": "enum_field_definition",
     "named": true,
     "fields": {
+      "attributes": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "attribute",
+            "named": true
+          }
+        ]
+      },
       "name": {
         "multiple": false,
         "required": true,
@@ -1979,16 +1985,26 @@
           }
         ]
       },
+      "generic_parameters": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "generic_parameters",
+            "named": true
+          }
+        ]
+      },
       "name": {
         "multiple": false,
         "required": true,
         "types": [
           {
-            "type": "generic_type",
+            "type": "binded_identifier",
             "named": true
           },
           {
-            "type": "type_reference_expression",
+            "type": "identifier",
             "named": true
           }
         ]
@@ -1996,10 +2012,18 @@
     },
     "children": {
       "multiple": true,
-      "required": true,
+      "required": false,
       "types": [
         {
-          "type": "interface_spec_list",
+          "type": "interface_method_definition",
+          "named": true
+        },
+        {
+          "type": "struct_field_declaration",
+          "named": true
+        },
+        {
+          "type": "struct_field_scope",
           "named": true
         },
         {
@@ -2010,14 +2034,29 @@
     }
   },
   {
-    "type": "interface_field_scope",
-    "named": true,
-    "fields": {}
-  },
-  {
-    "type": "interface_spec",
+    "type": "interface_method_definition",
     "named": true,
     "fields": {
+      "attributes": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "attribute",
+            "named": true
+          }
+        ]
+      },
+      "generic_parameters": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "generic_parameters",
+            "named": true
+          }
+        ]
+      },
       "name": {
         "multiple": false,
         "required": true,
@@ -2028,53 +2067,16 @@
           }
         ]
       },
-      "parameters": {
+      "signature": {
         "multiple": false,
         "required": true,
         "types": [
           {
-            "type": "parameter_list",
-            "named": true
-          },
-          {
-            "type": "type_only_parameter_list",
-            "named": true
-          }
-        ]
-      },
-      "result": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "_type",
+            "type": "signature",
             "named": true
           }
         ]
       }
-    }
-  },
-  {
-    "type": "interface_spec_list",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "interface_field_scope",
-          "named": true
-        },
-        {
-          "type": "interface_spec",
-          "named": true
-        },
-        {
-          "type": "struct_field_declaration",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -3320,28 +3322,12 @@
           }
         ]
       },
-      "fields_groups": {
-        "multiple": true,
+      "generic_parameters": {
+        "multiple": false,
         "required": false,
         "types": [
           {
-            "type": "\n",
-            "named": false
-          },
-          {
-            "type": "\r",
-            "named": false
-          },
-          {
-            "type": "\r\n",
-            "named": false
-          },
-          {
-            "type": "struct_field_declaration",
-            "named": true
-          },
-          {
-            "type": "struct_field_scope",
+            "type": "generic_parameters",
             "named": true
           }
         ]
@@ -3351,21 +3337,11 @@
         "required": true,
         "types": [
           {
-            "type": "binded_type",
+            "type": "binded_identifier",
             "named": true
           },
           {
             "type": "identifier",
-            "named": true
-          }
-        ]
-      },
-      "type_parameters": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "type_parameters",
             "named": true
           }
         ]
@@ -3376,7 +3352,11 @@
       "required": false,
       "types": [
         {
-          "type": "_struct_field_declaration_list",
+          "type": "struct_field_declaration",
+          "named": true
+        },
+        {
+          "type": "struct_field_scope",
           "named": true
         },
         {
@@ -3412,12 +3392,8 @@
       },
       "name": {
         "multiple": false,
-        "required": true,
+        "required": false,
         "types": [
-          {
-            "type": "field_identifier",
-            "named": true
-          },
           {
             "type": "identifier",
             "named": true
@@ -3426,7 +3402,7 @@
       },
       "type": {
         "multiple": false,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "option_type",
@@ -3438,6 +3414,16 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "embedded_definition",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -3464,6 +3450,16 @@
     "type": "type_declaration",
     "named": true,
     "fields": {
+      "generic_parameters": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "generic_parameters",
+            "named": true
+          }
+        ]
+      },
       "name": {
         "multiple": false,
         "required": true,
@@ -3474,22 +3470,12 @@
           }
         ]
       },
-      "type_parameters": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "type_parameters",
-            "named": true
-          }
-        ]
-      },
       "types": {
         "multiple": false,
         "required": true,
         "types": [
           {
-            "type": "type_list",
+            "type": "type_union_list",
             "named": true
           }
         ]
@@ -3530,21 +3516,6 @@
           }
         ]
       }
-    }
-  },
-  {
-    "type": "type_list",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "plain_type",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -3660,6 +3631,21 @@
           }
         ]
       }
+    }
+  },
+  {
+    "type": "type_union_list",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "plain_type",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -4090,10 +4076,6 @@
   },
   {
     "type": "false",
-    "named": true
-  },
-  {
-    "type": "field_identifier",
     "named": true
   },
   {

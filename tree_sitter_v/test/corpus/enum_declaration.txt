@@ -1,0 +1,202 @@
+================================================================================
+Simple enum
+================================================================================
+enum Colors {
+    red
+    green
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (enum_declaration
+    (identifier)
+    (enum_field_definition
+      (identifier))
+    (enum_field_definition
+      (identifier))))
+
+================================================================================
+Simple empty enum
+================================================================================
+enum Colors {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (enum_declaration
+    (identifier)))
+
+================================================================================
+Simple public enum
+================================================================================
+pub enum Colors {
+    red
+    green
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (enum_declaration
+    (visibility_modifiers)
+    (identifier)
+    (enum_field_definition
+      (identifier))
+    (enum_field_definition
+      (identifier))))
+
+================================================================================
+Enum with backed type
+================================================================================
+enum Colors as u8 {
+    red
+    green
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (enum_declaration
+    (identifier)
+    (enum_backed_type
+      (plain_type
+        (type_reference_expression
+          (identifier))))
+    (enum_field_definition
+      (identifier))
+    (enum_field_definition
+      (identifier))))
+
+================================================================================
+Enum with field value
+================================================================================
+enum Colors {
+    red
+    green = 2
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (enum_declaration
+    (identifier)
+    (enum_field_definition
+      (identifier))
+    (enum_field_definition
+      (identifier)
+      (literal
+        (int_literal)))))
+
+================================================================================
+Enum with fields values
+================================================================================
+enum Colors {
+    red = 1
+    green = 2
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (enum_declaration
+    (identifier)
+    (enum_field_definition
+      (identifier)
+      (literal
+        (int_literal)))
+    (enum_field_definition
+      (identifier)
+      (literal
+        (int_literal)))))
+
+================================================================================
+Enum with fields bitshift values
+================================================================================
+enum Colors {
+    red = 1 << 1
+    green = 2 << 2
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (enum_declaration
+    (identifier)
+    (enum_field_definition
+      (identifier)
+      (binary_expression
+        (literal
+          (int_literal))
+        (literal
+          (int_literal))))
+    (enum_field_definition
+      (identifier)
+      (binary_expression
+        (literal
+          (int_literal))
+        (literal
+          (int_literal))))))
+
+================================================================================
+Enum with fields attributes
+================================================================================
+enum Colors {
+    red   [json: 'Red']
+    green [json: 'Green']
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (enum_declaration
+    (identifier)
+    (enum_field_definition
+      (identifier)
+      (attribute
+        (attribute_expression
+          (key_value_attribute
+            (value_attribute
+              (type_reference_expression
+                (identifier)))
+            (literal
+              (interpreted_string_literal))))))
+    (enum_field_definition
+      (identifier)
+      (attribute
+        (attribute_expression
+          (key_value_attribute
+            (value_attribute
+              (type_reference_expression
+                (identifier)))
+            (literal
+              (interpreted_string_literal))))))))
+
+================================================================================
+Enum with fields attributes and values
+================================================================================
+enum Colors {
+    red   = 1 [json: 'Red']
+    green = 2 [json: 'Green']
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (enum_declaration
+    (identifier)
+    (enum_field_definition
+      (identifier)
+      (literal
+        (int_literal))
+      (attribute
+        (attribute_expression
+          (key_value_attribute
+            (value_attribute
+              (type_reference_expression
+                (identifier)))
+            (literal
+              (interpreted_string_literal))))))
+    (enum_field_definition
+      (identifier)
+      (literal
+        (int_literal))
+      (attribute
+        (attribute_expression
+          (key_value_attribute
+            (value_attribute
+              (type_reference_expression
+                (identifier)))
+            (literal
+              (interpreted_string_literal))))))))

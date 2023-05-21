@@ -49,6 +49,7 @@ pub enum NodeType {
 	defer_statement
 	element
 	element_list
+	embedded_definition
 	empty_literal_value
 	enum_backed_type
 	enum_declaration
@@ -85,9 +86,7 @@ pub enum NodeType {
 	inc_statement
 	index_expression
 	interface_declaration
-	interface_field_scope
-	interface_spec
-	interface_spec_list
+	interface_method_definition
 	interpreted_string_literal
 	is_expression
 	key_value_attribute
@@ -148,12 +147,12 @@ pub enum NodeType {
 	thread_type
 	type_declaration
 	type_initializer
-	type_list
 	type_only_parameter_declaration
 	type_only_parameter_list
 	type_parameters
 	type_reference_expression
 	type_selector_expression
+	type_union_list
 	unary_expression
 	unsafe_expression
 	value_attribute
@@ -162,7 +161,6 @@ pub enum NodeType {
 	visibility_modifiers
 	escape_sequence
 	false_
-	field_identifier
 	float_literal
 	identifier
 	int_literal
@@ -280,7 +278,6 @@ const identifier_node_types = [
 	.comptime_identifier,
 	.mutable_identifier,
 	.pseudo_comptime_identifier,
-	.field_identifier,
 	.identifier,
 ]
 
@@ -347,6 +344,7 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'defer_statement' { NodeType.defer_statement }
 		'element' { NodeType.element }
 		'element_list' { NodeType.element_list }
+		'embedded_definition' { NodeType.embedded_definition }
 		'empty_literal_value' { NodeType.empty_literal_value }
 		'enum_backed_type' { NodeType.enum_backed_type }
 		'enum_declaration' { NodeType.enum_declaration }
@@ -383,9 +381,7 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'inc_statement' { NodeType.inc_statement }
 		'index_expression' { NodeType.index_expression }
 		'interface_declaration' { NodeType.interface_declaration }
-		'interface_field_scope' { NodeType.interface_field_scope }
-		'interface_spec' { NodeType.interface_spec }
-		'interface_spec_list' { NodeType.interface_spec_list }
+		'interface_method_definition' { NodeType.interface_method_definition }
 		'interpreted_string_literal' { NodeType.interpreted_string_literal }
 		'is_expression' { NodeType.is_expression }
 		'key_value_attribute' { NodeType.key_value_attribute }
@@ -446,12 +442,12 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'thread_type' { NodeType.thread_type }
 		'type_declaration' { NodeType.type_declaration }
 		'type_initializer' { NodeType.type_initializer }
-		'type_list' { NodeType.type_list }
 		'type_only_parameter_declaration' { NodeType.type_only_parameter_declaration }
 		'type_only_parameter_list' { NodeType.type_only_parameter_list }
 		'type_parameters' { NodeType.type_parameters }
 		'type_reference_expression' { NodeType.type_reference_expression }
 		'type_selector_expression' { NodeType.type_selector_expression }
+		'type_union_list' { NodeType.type_union_list }
 		'unary_expression' { NodeType.unary_expression }
 		'unsafe_expression' { NodeType.unsafe_expression }
 		'value_attribute' { NodeType.value_attribute }
@@ -460,7 +456,6 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'visibility_modifiers' { NodeType.visibility_modifiers }
 		'escape_sequence' { NodeType.escape_sequence }
 		'false' { NodeType.false_ }
-		'field_identifier' { NodeType.field_identifier }
 		'float_literal' { NodeType.float_literal }
 		'identifier' { NodeType.identifier }
 		'int_literal' { NodeType.int_literal }

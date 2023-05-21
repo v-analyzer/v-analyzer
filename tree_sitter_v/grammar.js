@@ -165,10 +165,9 @@ module.exports = grammar({
       choice(
         $.const_declaration,
         $.global_var_declaration,
-        $.function_declaration,
         $.type_declaration,
+        $.function_declaration,
         $.struct_declaration,
-        alias($._binded_struct_declaration, $.struct_declaration),
         $.enum_declaration,
         $.interface_declaration,
       ),
@@ -210,6 +209,19 @@ module.exports = grammar({
     ),
 
     _global_var_value: ($) => seq('=', field('value', $._expression)),
+
+    type_declaration: ($) =>
+      seq(
+        optional($.visibility_modifiers),
+        'type',
+        field("name", $.identifier),
+        field("generic_parameters", optional($.generic_parameters)),
+        "=",
+        field("types", $.type_union_list)
+      ),
+
+    // int | string | Foo
+    type_union_list: ($) => seq($.plain_type, repeat(seq("|", $.plain_type))),
 
     function_declaration: ($) => prec.right(PREC.resolve,
       seq(
@@ -275,6 +287,124 @@ module.exports = grammar({
       ),
 
     generic_parameter: ($) => $.identifier,
+
+
+    struct_declaration: ($) =>
+      seq(
+        field('attributes', optional($.attributes)),
+        optional($.visibility_modifiers),
+        choice('struct', 'union'),
+        field('name', choice($.identifier, $.binded_identifier)),
+        field('generic_parameters', optional($.generic_parameters)),
+        $._struct_body,
+      ),
+
+    _struct_body: ($) =>
+      seq(
+        '{',
+        repeat(
+          choice(
+            seq($.struct_field_scope, optional(terminator)),
+            seq($.struct_field_declaration, optional(terminator)),
+          ),
+        ),
+        '}'
+      ),
+
+    // pub:
+    // mut:
+    // pub mut:
+    // __global:
+    struct_field_scope: ($) =>
+      seq(
+        choice(
+          'pub',
+          'mut',
+          seq('pub', 'mut'),
+          '__global'
+        ),
+        ':'
+      ),
+
+    struct_field_declaration: ($) =>
+        choice(
+          $._struct_field_definition,
+          $.embedded_definition,
+        ),
+
+    _struct_field_definition: ($) =>
+      prec.right(PREC.type_initializer,
+        seq(
+          field('name', $.field_definition),
+          field('type', choice($.plain_type, $.option_type)),
+          field('attributes', optional($.attribute)),
+          optional(seq('=', field('default_value', $._expression))),
+        ),
+      ),
+
+    embedded_definition: ($) => prec.right(PREC.unary, $.plain_type),
+
+
+    enum_declaration: ($) =>
+      seq(
+        field("attributes", optional($.attributes)),
+        optional($.visibility_modifiers),
+        'enum',
+        field("name", $.identifier),
+        optional($.enum_backed_type),
+        $._enum_body
+      ),
+
+    enum_backed_type: ($) => seq('as', $.plain_type),
+
+    _enum_body: ($) =>
+      seq(
+        "{",
+        repeat(seq($.enum_field_definition, optional(terminator))),
+        "}"
+      ),
+
+    enum_field_definition: ($) =>
+      seq(
+        field("name", $.identifier),
+        optional(seq("=", field("value", $._expression))),
+        field('attributes', optional($.attribute)),
+      ),
+
+
+    interface_declaration: ($) =>
+      seq(
+        field('attributes', optional($.attributes)),
+        optional($.visibility_modifiers),
+        'interface',
+        field('name', choice($.identifier, $.binded_identifier)),
+        field('generic_parameters', optional($.generic_parameters)),
+        $._interface_body,
+      ),
+
+    _interface_body: ($) =>
+      seq(
+        '{',
+        repeat(
+          choice(
+            seq($.struct_field_scope, optional(terminator)),
+            seq($.struct_field_declaration, optional(terminator)),
+            seq($.interface_method_definition, optional(terminator)),
+          ),
+        ),
+        '}'
+      ),
+
+    interface_method_definition: ($) =>
+      prec.right(
+        seq(
+          field('name', $.identifier),
+          field('generic_parameters', optional($.generic_parameters)),
+          field('signature', $.signature),
+          field('attributes', optional($.attribute)),
+        )
+      ),
+
 
     _expression: ($) =>
       choice(
@@ -822,7 +952,7 @@ module.exports = grammar({
     type_list: ($) => comma_sep1($._type),
 
     plain_type: ($) =>
-      prec(PREC.primary,
+      prec.right(PREC.primary,
         choice(
           $.type_reference_expression,
           // $.builtin_type,
@@ -1016,18 +1146,6 @@ module.exports = grammar({
 
     return_statement: ($) =>
       prec.right(seq('return', optional(field("expression_list", $.expression_list)))),
-
-    type_declaration: ($) =>
-      seq(
-        optional($.visibility_modifiers),
-        'type',
-        field("name", $.identifier),
-        field("type_parameters", optional($.type_parameters)),
-        "=",
-        field("types", alias($.sum_type_list, $.type_list))
-      ),
-
-    sum_type_list: ($) => seq($.plain_type, repeat(seq("|", $.plain_type))),
 
     go_statement: ($) => seq('go', $._expression),
 
@@ -1250,130 +1368,6 @@ module.exports = grammar({
       ),
     ),
 
-    struct_declaration: ($) =>
-      seq(
-        field("attributes", optional($.attributes)),
-        optional($.visibility_modifiers),
-        choice('struct', 'union'),
-        field("name", $.identifier),
-        field("type_parameters", optional($.type_parameters)),
-        $._struct_field_declaration_list
-      ),
-
-    _struct_field_declaration_list: ($) =>
-      seq(
-        "{",
-        field(
-          "fields_groups",
-          repeat(
-            seq(
-              choice($.struct_field_scope, $.struct_field_declaration),
-              optional(terminator)
-            )
-          ),
-        ),
-        "}"
-      ),
-
-    struct_field_scope: ($) =>
-      seq(
-        choice(
-          'pub',
-          'mut',
-          seq('pub', 'mut'),
-          '__global'
-        ),
-        token.immediate(":")
-      ),
-
-    struct_field_declaration: ($) =>
-      prec.right(
-        choice(
-          seq(
-            field("name", $.field_definition),
-            field("type", choice($.plain_type, $.option_type)),
-            field("attributes", optional($.attribute)),
-            optional(seq("=", field("default_value", $._expression))),
-            optional(terminator)
-          ),
-          // field(
-          //   "type",
-          //   seq(
-          //     choice($.type_reference_expression, $.qualified_type),
-          //     optional(terminator)
-          //   )
-          // )
-        )
-      ),
-
-    _binded_struct_declaration: ($) =>
-      seq(
-        field("attributes", optional($.attributes)),
-        optional($.visibility_modifiers),
-        choice('struct', 'union'),
-        field("name", prec.dynamic(PREC.composite_literal, $._binded_type)),
-        alias($._binded__struct_field_declaration_list, $._struct_field_declaration_list)
-      ),
-
-    _binded__struct_field_declaration_list: ($) =>
-      seq(
-        "{",
-        repeat(
-          seq(
-            choice(
-              $.struct_field_scope,
-              alias(
-                $._binded_struct_field_declaration,
-                $.struct_field_declaration
-              )
-            ),
-            optional(terminator)
-          )
-        ),
-        "}"
-      ),
-
-    _binded_struct_field_declaration: ($) =>
-      prec.right(
-        seq(
-          field("name", choice(
-            $.field_definition,
-            alias($._old_identifier, $.field_identifier)
-          )),
-          field("type", choice($.plain_type, $.option_type)),
-          field("attributes", optional($.attribute)),
-          optional(seq("=", field("default_value", $._expression))),
-          optional(terminator)
-        )
-      ),
-
-    enum_declaration: ($) =>
-      seq(
-        field("attributes", optional($.attributes)),
-        optional($.visibility_modifiers),
-        'enum',
-        field("name", $.identifier),
-        optional($.enum_backed_type),
-        $._enum_member_declaration_list
-      ),
-
-    enum_backed_type: ($) => seq('as', $.plain_type),
-
-    _enum_member_declaration_list: ($) =>
-      seq(
-        "{",
-        repeat(
-            seq($.enum_field_definition, optional(terminator))
-        ),
-        "}"
-      ),
-
-    enum_field_definition: ($) =>
-      seq(
-        field("name", $.identifier),
-        optional(seq("=", field("value", $._expression)))
-      ),
-
     enum_fetch : ($) => seq(".", $.identifier),
 
     type_selector_expression: ($) =>
@@ -1386,44 +1380,6 @@ module.exports = grammar({
         field("field_name", choice($._reserved_identifier, $.type_reference_expression))
       ),
 
-    interface_declaration: ($) =>
-      seq(
-        field("attributes", optional($.attributes)),
-        optional($.visibility_modifiers),
-        'interface',
-        field("name", choice($.type_reference_expression, $.generic_type)),
-        $.interface_spec_list
-      ),
-
-    interface_spec_list: ($) =>
-      seq(
-        "{",
-        optional(
-          repeat(
-            seq(
-              choice(
-                $.struct_field_declaration,
-                $.interface_spec,
-                $.interface_field_scope
-              ),
-              optional(terminator)
-            )
-          )
-        ),
-        "}"
-      ),
-
-    interface_field_scope: ($) =>
-      seq('mut', token.immediate(":")),
-
-    interface_spec: ($) =>
-      prec.right(
-        seq(
-          field("name", $.field_definition),
-          field("parameters", choice($.parameter_list, $.type_only_parameter_list)),
-          field("result", optional($._type))
-        )
-      ),
 
     hash_statement: ($) => seq("#", token.immediate(repeat1(/.|\\\r?\n/)), terminator),
 
