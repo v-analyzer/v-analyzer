@@ -17,7 +17,7 @@ pub enum NodeType {
 	error
 	argument
 	argument_list
-	array
+	array_creation
 	array_type
 	as_type_cast_expression
 	asm_statement
@@ -38,20 +38,20 @@ pub enum NodeType {
 	case_list
 	channel_type
 	comment
-	comptime_for_statement
-	comptime_identifier
-	comptime_if_expression
-	comptime_selector_expression
+	compile_time_for_statement
+	compile_time_identifier
+	compile_time_if_expression
+	compile_time_selector_expression
 	const_declaration
 	const_definition
 	continue_statement
-	cstyle_for_clause
 	dec_statement
 	default_case
 	defer_statement
 	element
 	element_list
 	embedded_definition
+	empty_array_creation
 	empty_literal_value
 	enum_backed_type
 	enum_declaration
@@ -61,9 +61,9 @@ pub enum NodeType {
 	expression_case
 	expression_list
 	field_name
-	fixed_array
+	fixed_array_creation
 	fixed_array_type
-	for_in_operator
+	for_clause
 	for_statement
 	format_specifier
 	function_declaration
@@ -77,7 +77,6 @@ pub enum NodeType {
 	go_statement
 	goto_statement
 	hash_statement
-	identifier_list
 	if_attribute
 	if_expression
 	import_alias
@@ -97,7 +96,8 @@ pub enum NodeType {
 	literal
 	literal_attribute
 	lock_expression
-	map_
+	map_init_expression
+	map_keyed_element
 	map_type
 	match_expression
 	module_clause
@@ -107,6 +107,7 @@ pub enum NodeType {
 	mutable_identifier
 	none_
 	none_type
+	not_is_expression
 	option_type
 	or_block
 	overloadable_operator
@@ -115,9 +116,10 @@ pub enum NodeType {
 	parenthesized_expression
 	plain_type
 	pointer_type
-	pseudo_comptime_identifier
+	pseudo_compile_time_identifier
 	qualified_type
 	range
+	range_clause
 	raw_string_literal
 	receiver
 	reference_expression
@@ -167,25 +169,26 @@ pub enum NodeType {
 	nil_
 	rune_literal
 	true_
-	type_placeholder
 }
 
 const supertype__expression_nodes = merge(supertype__expression_with_blocks_nodes, [
-	NodeType.array,
+	NodeType.array_creation,
 	.as_type_cast_expression,
 	.binary_expression,
 	.binded_identifier,
 	.call_expression,
+	.empty_array_creation,
 	.empty_literal_value,
 	.enum_fetch,
-	.fixed_array,
+	.fixed_array_creation,
 	.function_literal,
 	.index_expression,
 	.is_expression,
 	.literal,
-	.map_,
+	.map_init_expression,
+	.not_is_expression,
 	.parenthesized_expression,
-	.pseudo_comptime_identifier,
+	.pseudo_compile_time_identifier,
 	.reference_expression,
 	.selector_expression,
 	.slice_expression,
@@ -194,7 +197,7 @@ const supertype__expression_nodes = merge(supertype__expression_with_blocks_node
 ])
 
 const supertype__expression_with_blocks_nodes = [
-	NodeType.comptime_if_expression,
+	NodeType.compile_time_if_expression,
 	.if_expression,
 	.lock_expression,
 	.match_expression,
@@ -208,7 +211,7 @@ const supertype__statement_nodes = [
 	.assert_statement,
 	.block,
 	.break_statement,
-	.comptime_for_statement,
+	.compile_time_for_statement,
 	.continue_statement,
 	.defer_statement,
 	.for_statement,
@@ -272,9 +275,9 @@ const declaration_node_types = [
 
 const identifier_node_types = [
 	NodeType.binded_identifier,
-	.comptime_identifier,
+	.compile_time_identifier,
 	.mutable_identifier,
-	.pseudo_comptime_identifier,
+	.pseudo_compile_time_identifier,
 	.identifier,
 ]
 
@@ -309,7 +312,7 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'ERROR' { NodeType.error }
 		'argument' { NodeType.argument }
 		'argument_list' { NodeType.argument_list }
-		'array' { NodeType.array }
+		'array_creation' { NodeType.array_creation }
 		'array_type' { NodeType.array_type }
 		'as_type_cast_expression' { NodeType.as_type_cast_expression }
 		'asm_statement' { NodeType.asm_statement }
@@ -330,20 +333,20 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'case_list' { NodeType.case_list }
 		'channel_type' { NodeType.channel_type }
 		'comment' { NodeType.comment }
-		'comptime_for_statement' { NodeType.comptime_for_statement }
-		'comptime_identifier' { NodeType.comptime_identifier }
-		'comptime_if_expression' { NodeType.comptime_if_expression }
-		'comptime_selector_expression' { NodeType.comptime_selector_expression }
+		'compile_time_for_statement' { NodeType.compile_time_for_statement }
+		'compile_time_identifier' { NodeType.compile_time_identifier }
+		'compile_time_if_expression' { NodeType.compile_time_if_expression }
+		'compile_time_selector_expression' { NodeType.compile_time_selector_expression }
 		'const_declaration' { NodeType.const_declaration }
 		'const_definition' { NodeType.const_definition }
 		'continue_statement' { NodeType.continue_statement }
-		'cstyle_for_clause' { NodeType.cstyle_for_clause }
 		'dec_statement' { NodeType.dec_statement }
 		'default_case' { NodeType.default_case }
 		'defer_statement' { NodeType.defer_statement }
 		'element' { NodeType.element }
 		'element_list' { NodeType.element_list }
 		'embedded_definition' { NodeType.embedded_definition }
+		'empty_array_creation' { NodeType.empty_array_creation }
 		'empty_literal_value' { NodeType.empty_literal_value }
 		'enum_backed_type' { NodeType.enum_backed_type }
 		'enum_declaration' { NodeType.enum_declaration }
@@ -353,9 +356,9 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'expression_case' { NodeType.expression_case }
 		'expression_list' { NodeType.expression_list }
 		'field_name' { NodeType.field_name }
-		'fixed_array' { NodeType.fixed_array }
+		'fixed_array_creation' { NodeType.fixed_array_creation }
 		'fixed_array_type' { NodeType.fixed_array_type }
-		'for_in_operator' { NodeType.for_in_operator }
+		'for_clause' { NodeType.for_clause }
 		'for_statement' { NodeType.for_statement }
 		'format_specifier' { NodeType.format_specifier }
 		'function_declaration' { NodeType.function_declaration }
@@ -369,7 +372,6 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'go_statement' { NodeType.go_statement }
 		'goto_statement' { NodeType.goto_statement }
 		'hash_statement' { NodeType.hash_statement }
-		'identifier_list' { NodeType.identifier_list }
 		'if_attribute' { NodeType.if_attribute }
 		'if_expression' { NodeType.if_expression }
 		'import_alias' { NodeType.import_alias }
@@ -389,7 +391,8 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'literal' { NodeType.literal }
 		'literal_attribute' { NodeType.literal_attribute }
 		'lock_expression' { NodeType.lock_expression }
-		'map' { NodeType.map_ }
+		'map_init_expression' { NodeType.map_init_expression }
+		'map_keyed_element' { NodeType.map_keyed_element }
 		'map_type' { NodeType.map_type }
 		'match_expression' { NodeType.match_expression }
 		'module_clause' { NodeType.module_clause }
@@ -399,6 +402,7 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'mutable_identifier' { NodeType.mutable_identifier }
 		'none' { NodeType.none_ }
 		'none_type' { NodeType.none_type }
+		'not_is_expression' { NodeType.not_is_expression }
 		'option_type' { NodeType.option_type }
 		'or_block' { NodeType.or_block }
 		'overloadable_operator' { NodeType.overloadable_operator }
@@ -407,9 +411,10 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'parenthesized_expression' { NodeType.parenthesized_expression }
 		'plain_type' { NodeType.plain_type }
 		'pointer_type' { NodeType.pointer_type }
-		'pseudo_comptime_identifier' { NodeType.pseudo_comptime_identifier }
+		'pseudo_compile_time_identifier' { NodeType.pseudo_compile_time_identifier }
 		'qualified_type' { NodeType.qualified_type }
 		'range' { NodeType.range }
+		'range_clause' { NodeType.range_clause }
 		'raw_string_literal' { NodeType.raw_string_literal }
 		'receiver' { NodeType.receiver }
 		'reference_expression' { NodeType.reference_expression }
@@ -459,7 +464,6 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'nil' { NodeType.nil_ }
 		'rune_literal' { NodeType.rune_literal }
 		'true' { NodeType.true_ }
-		'type_placeholder' { NodeType.type_placeholder }
 		else { NodeType.unknown }
 	}
 }
