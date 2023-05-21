@@ -29,11 +29,11 @@ pub fn create_element(node AstNode, containing_file &PsiFileImpl) PsiElement {
 		}
 	}
 
-	if node.type_name == .type_selector_expression {
-		return TypeSelectorExpression{
-			PsiElementImpl: base_node
-		}
-	}
+	// if node.type_name == .type_selector_expression {
+	// 	return TypeSelectorExpression{
+	// 		PsiElementImpl: base_node
+	// 	}
+	// }
 
 	if node.type_name == .call_expression {
 		return CallExpression{
@@ -219,6 +219,12 @@ pub fn create_element(node AstNode, containing_file &PsiFileImpl) PsiElement {
 
 	if node.type_name == .value_attribute {
 		return ValueAttribute{
+			PsiElementImpl: base_node
+		}
+	}
+
+	if node.type_name == .range {
+		return Range{
 			PsiElementImpl: base_node
 		}
 	}

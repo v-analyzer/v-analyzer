@@ -48,5 +48,25 @@ fn (mut v InlayHintsVisitor) visit_element_impl(element psi.PsiElement) bool {
 		}
 	}
 
+	if element is psi.Range {
+		operator := element.operator() or { return true }
+		v.result << lsp.InlayHint{
+			position: lsp.Position{
+				line: operator.text_range().line
+				character: operator.text_range().column
+			}
+			label: '≤'
+			kind: .type_
+		}
+		v.result << lsp.InlayHint{
+			position: lsp.Position{
+				line: operator.text_range().line
+				character: operator.text_range().end_column
+			}
+			label: '<'
+			kind: .type_
+		}
+	}
+
 	return true
 }
