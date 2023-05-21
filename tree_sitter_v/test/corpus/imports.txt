@@ -1,0 +1,270 @@
+================================================================================
+Simple import
+================================================================================
+import foo
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (import_list
+    (import_declaration
+      (import_spec
+        (import_path
+          (identifier))))))
+
+================================================================================
+Simple import list
+================================================================================
+import foo
+import bar
+import baz
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (import_list
+    (import_declaration
+      (import_spec
+        (import_path
+          (identifier))))
+    (import_declaration
+      (import_spec
+        (import_path
+          (identifier))))
+    (import_declaration
+      (import_spec
+        (import_path
+          (identifier))))))
+
+================================================================================
+Import with alias
+================================================================================
+import foo as bar
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (import_list
+    (import_declaration
+      (import_spec
+        (import_path
+          (identifier))
+        (import_alias
+          (identifier))))))
+
+================================================================================
+Import list with alias
+================================================================================
+import foo as bar
+import baz as qux
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (import_list
+    (import_declaration
+      (import_spec
+        (import_path
+          (identifier))
+        (import_alias
+          (identifier))))
+    (import_declaration
+      (import_spec
+        (import_path
+          (identifier))
+        (import_alias
+          (identifier))))))
+
+================================================================================
+Import list with alias and no alias
+================================================================================
+import foo as bar
+import baz
+import qux as quux
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (import_list
+    (import_declaration
+      (import_spec
+        (import_path
+          (identifier))
+        (import_alias
+          (identifier))))
+    (import_declaration
+      (import_spec
+        (import_path
+          (identifier))))
+    (import_declaration
+      (import_spec
+        (import_path
+          (identifier))
+        (import_alias
+          (identifier))))))
+
+================================================================================
+Import with fqn
+================================================================================
+import foo.bar.baz
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (import_list
+    (import_declaration
+      (import_spec
+        (import_path
+          (identifier)
+          (identifier)
+          (identifier))))))
+
+================================================================================
+Import with fqn and alias
+================================================================================
+import foo.bar.baz as qux
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (import_list
+    (import_declaration
+      (import_spec
+        (import_path
+          (identifier)
+          (identifier)
+          (identifier))
+        (import_alias
+          (identifier))))))
+
+================================================================================
+Simple selective import
+================================================================================
+import foo { bar }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (import_list
+    (import_declaration
+      (import_spec
+        (import_path
+          (identifier))
+        (selective_import_list
+          (reference_expression
+            (identifier)))))))
+
+================================================================================
+Selective import with several items
+================================================================================
+import foo { Bar, baz, qux }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (import_list
+    (import_declaration
+      (import_spec
+        (import_path
+          (identifier))
+        (selective_import_list
+          (reference_expression
+            (identifier))
+          (reference_expression
+            (identifier))
+          (reference_expression
+            (identifier)))))))
+
+================================================================================
+Selective import with several items and trailing comma
+================================================================================
+import foo { bar, baz, qux, }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (import_list
+    (import_declaration
+      (import_spec
+        (import_path
+          (identifier))
+        (selective_import_list
+          (reference_expression
+            (identifier))
+          (reference_expression
+            (identifier))
+          (reference_expression
+            (identifier)))))))
+
+================================================================================
+Selective import with multiline comma separated several items
+================================================================================
+import foo {
+    bar,
+    baz,
+    qux,
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (import_list
+    (import_declaration
+      (import_spec
+        (import_path
+          (identifier))
+        (selective_import_list
+          (reference_expression
+            (identifier))
+          (reference_expression
+            (identifier))
+          (reference_expression
+            (identifier)))))))
+
+================================================================================
+Selective import with multiline new line separated several items
+================================================================================
+import foo {
+    bar
+    baz
+    Qux
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (import_list
+    (import_declaration
+      (import_spec
+        (import_path
+          (identifier))
+        (selective_import_list
+          (reference_expression
+            (identifier))
+          (reference_expression
+            (identifier))
+          (reference_expression
+            (identifier)))))))
+
+================================================================================
+Selective import with several items and alias
+================================================================================
+import foo as bar { bar, Baz, qux, }
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (import_list
+    (import_declaration
+      (import_spec
+        (import_path
+          (identifier))
+        (import_alias
+          (identifier))
+        (selective_import_list
+          (reference_expression
+            (identifier))
+          (reference_expression
+            (identifier))
+          (reference_expression
+            (identifier)))))))

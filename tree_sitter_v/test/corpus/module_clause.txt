@@ -1,17 +1,61 @@
-=============
-Module clause
-=============
-
-[manualfree][foo]
-module main_123
-
----
+================================================================================
+Simple module clause
+================================================================================
+module main
+--------------------------------------------------------------------------------
 
 (source_file
   (module_clause
-    (attribute_list
-      (attribute_declaration 
-        (attribute_spec (identifier))) 
-      (attribute_declaration 
-        (attribute_spec (identifier))))
-    (module_identifier)))
+    (identifier)))
+
+================================================================================
+Simple module clause with comment
+================================================================================
+// This is a comment
+// with two lines
+module main
+--------------------------------------------------------------------------------
+
+(source_file
+  (comment)
+  (comment)
+  (module_clause
+    (identifier)))
+
+================================================================================
+Module clause with attributes
+================================================================================
+[module_attribute]
+module main
+--------------------------------------------------------------------------------
+
+(source_file
+  (module_clause
+    (attributes
+      (attribute
+        (attribute_expression
+          (value_attribute
+            (type_reference_expression
+              (identifier))))))
+    (identifier)))
+
+================================================================================
+Module clause with attributes and comments
+================================================================================
+// This is a comment
+// with two lines
+[module_attribute]
+module main
+--------------------------------------------------------------------------------
+
+(source_file
+  (comment)
+  (comment)
+  (module_clause
+    (attributes
+      (attribute
+        (attribute_expression
+          (value_attribute
+            (type_reference_expression
+              (identifier))))))
+    (identifier)))

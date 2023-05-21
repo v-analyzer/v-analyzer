@@ -1,15 +1,121 @@
-===
-Const declaration
-===
-
-const (
-  name = 'Foo'
-  num = 100
-)
-
----
+================================================================================
+Simple constant
+================================================================================
+const name = 100
+--------------------------------------------------------------------------------
 
 (source_file
   (const_declaration
-    (const_spec (identifier) (interpreted_string_literal))
-    (const_spec (identifier) (int_literal))))
+    (const_definition
+      (identifier)
+      (literal
+        (int_literal)))))
+
+================================================================================
+Several constants
+================================================================================
+const name = 100
+const other = 100
+--------------------------------------------------------------------------------
+
+(source_file
+  (const_declaration
+    (const_definition
+      (identifier)
+      (literal
+        (int_literal))))
+  (const_declaration
+    (const_definition
+      (identifier)
+      (literal
+        (int_literal)))))
+
+================================================================================
+Several constants with visibility modifiers
+================================================================================
+const name = 100
+pub const other = 100
+--------------------------------------------------------------------------------
+
+(source_file
+  (const_declaration
+    (const_definition
+      (identifier)
+      (literal
+        (int_literal))))
+  (const_declaration
+    (visibility_modifiers)
+    (const_definition
+      (identifier)
+      (literal
+        (int_literal)))))
+
+================================================================================
+Multiline constant
+================================================================================
+const (
+    name = 100
+)
+--------------------------------------------------------------------------------
+
+(source_file
+  (const_declaration
+    (const_definition
+      (identifier)
+      (literal
+        (int_literal)))))
+
+================================================================================
+Multiline constant in one line with error
+================================================================================
+const ( name = 100 )
+--------------------------------------------------------------------------------
+
+(source_file
+  (const_declaration
+    (ERROR
+      (const_definition
+        (identifier)
+        (literal
+          (int_literal))))))
+
+================================================================================
+Multiline constants
+================================================================================
+const (
+    name = 100
+    other = 100
+)
+--------------------------------------------------------------------------------
+
+(source_file
+  (const_declaration
+    (const_definition
+      (identifier)
+      (literal
+        (int_literal)))
+    (const_definition
+      (identifier)
+      (literal
+        (int_literal)))))
+
+================================================================================
+Multiline constants with visibility modifiers
+================================================================================
+pub const (
+    name = 100
+    other = 100
+)
+--------------------------------------------------------------------------------
+
+(source_file
+  (const_declaration
+    (visibility_modifiers)
+    (const_definition
+      (identifier)
+      (literal
+        (int_literal)))
+    (const_definition
+      (identifier)
+      (literal
+        (int_literal)))))

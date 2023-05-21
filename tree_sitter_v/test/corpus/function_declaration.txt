@@ -1,53 +1,570 @@
-===
-Function Declaration
-===
-
-fn hello_world(mut s []string, i int, words ...Text) ? {}
-
----
+================================================================================
+Simple function
+================================================================================
+fn foo() {}
+--------------------------------------------------------------------------------
 
 (source_file
   (function_declaration
     (identifier)
-    (parameter_list
-      (parameter_declaration
-        (mutable_identifier (identifier)) 
-        (array_type (builtin_type)))
-      (parameter_declaration (identifier) (builtin_type))
-      (parameter_declaration 
-        (identifier) 
-        (variadic_type (type_identifier))))
-    (option_type)
+    (signature
+      (parameter_list))
     (block)))
 
-===
-Function Definition
-===
-
-fn C.PQerrorMessage(voidptr) &byte
-
----
-
-(source_file 
-  (function_declaration 
-    (binded_identifier (identifier)) 
-    (type_only_parameter_list 
-      (type_parameter_declaration (builtin_type))) 
-    (pointer_type (builtin_type))))
-
-===
-Function Declaration with Closures
-===
-
-fn [foo, bar] hello_world() {}
-
----
+================================================================================
+Simple function with param
+================================================================================
+fn foo(param int) {}
+--------------------------------------------------------------------------------
 
 (source_file
   (function_declaration
-    (exposed_variables_list
-      (expression_list 
-        (identifier) (identifier)))
     (identifier)
-    (parameter_list)
+    (signature
+      (parameter_list
+        (parameter_declaration
+          (identifier)
+          (plain_type
+            (type_reference_expression
+              (identifier))))))
+    (block)))
+
+================================================================================
+Simple function with params
+================================================================================
+fn foo(param int, param2 string) {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_declaration
+    (identifier)
+    (signature
+      (parameter_list
+        (parameter_declaration
+          (identifier)
+          (plain_type
+            (type_reference_expression
+              (identifier))))
+        (parameter_declaration
+          (identifier)
+          (plain_type
+            (type_reference_expression
+              (identifier))))))
+    (block)))
+
+================================================================================
+Simple function with params and trailing comma error
+================================================================================
+fn foo(param int, param2 string,) {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_declaration
+    (identifier)
+    (signature
+      (parameter_list
+        (parameter_declaration
+          (identifier)
+          (plain_type
+            (type_reference_expression
+              (identifier))))
+        (parameter_declaration
+          (identifier)
+          (plain_type
+            (type_reference_expression
+              (identifier))))
+        (ERROR)))
+    (block)))
+
+================================================================================
+Simple function with params and last variadic param
+================================================================================
+fn foo(param int, param2 string, variadic ...[]string) {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_declaration
+    (identifier)
+    (signature
+      (parameter_list
+        (parameter_declaration
+          (identifier)
+          (plain_type
+            (type_reference_expression
+              (identifier))))
+        (parameter_declaration
+          (identifier)
+          (plain_type
+            (type_reference_expression
+              (identifier))))
+        (parameter_declaration
+          (identifier)
+          (plain_type
+            (array_type
+              (plain_type
+                (type_reference_expression
+                  (identifier))))))))
+    (block)))
+
+================================================================================
+Simple function with mutable and shared params
+================================================================================
+fn foo(mut param int, shared param2 string) {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_declaration
+    (identifier)
+    (signature
+      (parameter_list
+        (parameter_declaration
+          (mutability_modifiers)
+          (identifier)
+          (plain_type
+            (type_reference_expression
+              (identifier))))
+        (parameter_declaration
+          (mutability_modifiers)
+          (identifier)
+          (plain_type
+            (type_reference_expression
+              (identifier))))))
+    (block)))
+
+================================================================================
+Simple function with return type
+================================================================================
+fn foo(mut param int) string {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_declaration
+    (identifier)
+    (signature
+      (parameter_list
+        (parameter_declaration
+          (mutability_modifiers)
+          (identifier)
+          (plain_type
+            (type_reference_expression
+              (identifier)))))
+      (plain_type
+        (type_reference_expression
+          (identifier))))
+    (block)))
+
+================================================================================
+Simple function with Result return type
+================================================================================
+fn foo(mut param int) !string {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_declaration
+    (identifier)
+    (signature
+      (parameter_list
+        (parameter_declaration
+          (mutability_modifiers)
+          (identifier)
+          (plain_type
+            (type_reference_expression
+              (identifier)))))
+      (result_type
+        (plain_type
+          (type_reference_expression
+            (identifier)))))
+    (block)))
+
+================================================================================
+Simple function with Option return type
+================================================================================
+fn foo(mut param int) ?string {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_declaration
+    (identifier)
+    (signature
+      (parameter_list
+        (parameter_declaration
+          (mutability_modifiers)
+          (identifier)
+          (plain_type
+            (type_reference_expression
+              (identifier)))))
+      (option_type
+        (plain_type
+          (type_reference_expression
+            (identifier)))))
+    (block)))
+
+================================================================================
+Simple function with several return type
+================================================================================
+fn foo(mut param int) (string, int) {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_declaration
+    (identifier)
+    (signature
+      (parameter_list
+        (parameter_declaration
+          (mutability_modifiers)
+          (identifier)
+          (plain_type
+            (type_reference_expression
+              (identifier)))))
+      (multi_return_type
+        (plain_type
+          (type_reference_expression
+            (identifier)))
+        (plain_type
+          (type_reference_expression
+            (identifier)))))
+    (block)))
+
+================================================================================
+Simple function with several return type and trailing comma
+================================================================================
+fn foo(mut param int) (string, int,) {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_declaration
+    (identifier)
+    (signature
+      (parameter_list
+        (parameter_declaration
+          (mutability_modifiers)
+          (identifier)
+          (plain_type
+            (type_reference_expression
+              (identifier)))))
+      (multi_return_type
+        (plain_type
+          (type_reference_expression
+            (identifier)))
+        (plain_type
+          (type_reference_expression
+            (identifier)))))
+    (block)))
+
+================================================================================
+Simple function with empty brace return type
+================================================================================
+fn foo(mut param int) () {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_declaration
+    (identifier)
+    (signature
+      (parameter_list
+        (parameter_declaration
+          (mutability_modifiers)
+          (identifier)
+          (plain_type
+            (type_reference_expression
+              (identifier)))))
+      (multi_return_type
+        (plain_type
+          (type_reference_expression
+            (MISSING identifier)))))
+    (block)))
+
+================================================================================
+Simple function with Result of several return type
+================================================================================
+fn foo(mut param int) !(string, int) {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_declaration
+    (identifier)
+    (signature
+      (parameter_list
+        (parameter_declaration
+          (mutability_modifiers)
+          (identifier)
+          (plain_type
+            (type_reference_expression
+              (identifier)))))
+      (result_type
+        (multi_return_type
+          (plain_type
+            (type_reference_expression
+              (identifier)))
+          (plain_type
+            (type_reference_expression
+              (identifier))))))
+    (block)))
+
+================================================================================
+Simple function with Option of several return type
+================================================================================
+fn foo(mut param int) ?(string, int) {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_declaration
+    (identifier)
+    (signature
+      (parameter_list
+        (parameter_declaration
+          (mutability_modifiers)
+          (identifier)
+          (plain_type
+            (type_reference_expression
+              (identifier)))))
+      (option_type
+        (multi_return_type
+          (plain_type
+            (type_reference_expression
+              (identifier)))
+          (plain_type
+            (type_reference_expression
+              (identifier))))))
+    (block)))
+
+================================================================================
+Simple function without block
+================================================================================
+fn foo()
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_declaration
+    (identifier)
+    (signature
+      (parameter_list))))
+
+================================================================================
+Simple C function without block
+================================================================================
+fn C.foo()
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_declaration
+    (binded_identifier
+      (identifier))
+    (signature
+      (parameter_list))))
+
+================================================================================
+Simple JS function without block
+================================================================================
+fn JS.foo()
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_declaration
+    (binded_identifier
+      (identifier))
+    (signature
+      (parameter_list))))
+
+================================================================================
+Simple function with attribute
+================================================================================
+[unsafe]
+fn foo() {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_declaration
+    (attributes
+      (attribute
+        (attribute_expression
+          (value_attribute
+            (type_reference_expression)))))
+    (identifier)
+    (signature
+      (parameter_list))
+    (block)))
+
+================================================================================
+Simple function with attributes
+================================================================================
+[unsafe]
+[other]
+fn foo() {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_declaration
+    (attributes
+      (attribute
+        (attribute_expression
+          (value_attribute
+            (type_reference_expression))))
+      (attribute
+        (attribute_expression
+          (value_attribute
+            (type_reference_expression
+              (identifier))))))
+    (identifier)
+    (signature
+      (parameter_list))
+    (block)))
+
+================================================================================
+Simple function with attributes and comment
+================================================================================
+// foo is a functions
+[unsafe]
+[other]
+fn foo() {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (comment)
+  (function_declaration
+    (attributes
+      (attribute
+        (attribute_expression
+          (value_attribute
+            (type_reference_expression))))
+      (attribute
+        (attribute_expression
+          (value_attribute
+            (type_reference_expression
+              (identifier))))))
+    (identifier)
+    (signature
+      (parameter_list))
+    (block)))
+
+================================================================================
+Simple public function
+================================================================================
+pub fn foo() {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_declaration
+    (visibility_modifiers)
+    (identifier)
+    (signature
+      (parameter_list))
+    (block)))
+
+================================================================================
+Simple generic function
+================================================================================
+fn foo[T]() {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_declaration
+    (identifier)
+    (generic_parameters
+      (generic_parameter
+        (identifier)))
+    (signature
+      (parameter_list))
+    (block)))
+
+================================================================================
+Simple generic function with old syntax
+================================================================================
+fn foo<T>() {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_declaration
+    (identifier)
+    (generic_parameters
+      (generic_parameter
+        (identifier)))
+    (signature
+      (parameter_list))
+    (block)))
+
+================================================================================
+Generic function with several generic parameters
+================================================================================
+fn foo[T, U]() {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_declaration
+    (identifier)
+    (generic_parameters
+      (generic_parameter
+        (identifier))
+      (generic_parameter
+        (identifier)))
+    (signature
+      (parameter_list))
+    (block)))
+
+================================================================================
+Generic function with several generic parameters and trailing comma
+================================================================================
+fn foo[T, U, ]() {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_declaration
+    (identifier)
+    (generic_parameters
+      (generic_parameter
+        (identifier))
+      (generic_parameter
+        (identifier)))
+    (signature
+      (parameter_list))
+    (block)))
+
+================================================================================
+All in one function
+================================================================================
+// comment
+[unsafe; other]
+pub fn C.foo[T, U, ](foo string, age ...int) !(int, string, ) {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (comment)
+  (function_declaration
+    (attributes
+      (attribute
+        (attribute_expression
+          (value_attribute
+            (type_reference_expression)))
+        (attribute_expression
+          (value_attribute
+            (type_reference_expression
+              (identifier))))))
+    (visibility_modifiers)
+    (binded_identifier
+      (identifier))
+    (generic_parameters
+      (generic_parameter
+        (identifier))
+      (generic_parameter
+        (identifier)))
+    (signature
+      (parameter_list
+        (parameter_declaration
+          (identifier)
+          (plain_type
+            (type_reference_expression
+              (identifier))))
+        (parameter_declaration
+          (identifier)
+          (plain_type
+            (type_reference_expression
+              (identifier)))))
+      (result_type
+        (multi_return_type
+          (plain_type
+            (type_reference_expression
+              (identifier)))
+          (plain_type
+            (type_reference_expression
+              (identifier))))))
     (block)))

@@ -1,0 +1,98 @@
+================================================================================
+Simple method
+================================================================================
+fn (f Foo) foo() {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_declaration
+    (receiver
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier))))
+    (identifier)
+    (signature
+      (parameter_list))
+    (block)))
+
+================================================================================
+Simple method with mutable receiver
+================================================================================
+fn (mut f Foo) foo() {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_declaration
+    (receiver
+      (mutability_modifiers)
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier))))
+    (identifier)
+    (signature
+      (parameter_list))
+    (block)))
+
+================================================================================
+Simple method with shared receiver
+================================================================================
+fn (shared f Foo) foo() {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_declaration
+    (receiver
+      (mutability_modifiers)
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier))))
+    (identifier)
+    (signature
+      (parameter_list))
+    (block)))
+
+================================================================================
+Simple method with pointer receiver
+================================================================================
+fn (f &Foo) foo() {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_declaration
+    (receiver
+      (identifier)
+      (plain_type
+        (pointer_type
+          (plain_type
+            (type_reference_expression
+              (identifier))))))
+    (identifier)
+    (signature
+      (parameter_list))
+    (block)))
+
+================================================================================
+Overload method
+================================================================================
+fn (f Foo) == (o Foo) {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_declaration
+    (receiver
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier))))
+    (overloadable_operator)
+    (signature
+      (parameter_list
+        (parameter_declaration
+          (identifier)
+          (plain_type
+            (type_reference_expression
+              (identifier))))))
+    (block)))
