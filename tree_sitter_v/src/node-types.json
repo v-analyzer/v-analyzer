@@ -2294,32 +2294,6 @@
     }
   },
   {
-    "type": "literal_value",
-    "named": true,
-    "fields": {
-      "element_list": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "element_list",
-            "named": true
-          }
-        ]
-      },
-      "short_element_list": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "short_element_list",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
     "type": "lock_expression",
     "named": true,
     "fields": {
@@ -3443,7 +3417,7 @@
         "required": true,
         "types": [
           {
-            "type": "literal_value",
+            "type": "type_initializer_body",
             "named": true
           }
         ]
@@ -3454,6 +3428,32 @@
         "types": [
           {
             "type": "plain_type",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "type_initializer_body",
+    "named": true,
+    "fields": {
+      "element_list": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "element_list",
+            "named": true
+          }
+        ]
+      },
+      "short_element_list": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "short_element_list",
             "named": true
           }
         ]
@@ -3543,32 +3543,6 @@
           "named": true
         }
       ]
-    }
-  },
-  {
-    "type": "type_selector_expression",
-    "named": true,
-    "fields": {
-      "field_name": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "type_reference_expression",
-            "named": true
-          }
-        ]
-      },
-      "type": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "type_reference_expression",
-            "named": true
-          }
-        ]
-      }
     }
   },
   {

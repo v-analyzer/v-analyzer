@@ -410,9 +410,9 @@ module.exports = grammar({
       choice(
         $.parenthesized_expression,
         $.call_expression,
+        $.type_initializer,
         $.empty_literal_value,
         $.binded_identifier,
-        $.type_initializer,
         $.reference_expression,
         $._single_line_expression,
         $.map,
@@ -480,6 +480,49 @@ module.exports = grammar({
         optional(seq(',', $._expression)),
         ')',
       ),
+
+
+    type_initializer: ($) =>
+      prec.right(
+        PREC.type_initializer,
+        seq(
+          field('type', $.plain_type),
+          field('body', $.type_initializer_body)
+        )
+      ),
+
+    type_initializer_body: ($) =>
+      seq(
+        '{',
+        optional(
+          choice(
+            field('element_list', $.element_list),
+            // For short struct init syntax
+            field('short_element_list', $.short_element_list)
+          )
+        ),
+        '}'
+      ),
+
+    element_list: ($) => repeat1(
+      seq(
+        choice($.spread_expression, $.keyed_element),
+        optional(list_separator)
+      )
+    ),
+
+    short_element_list: ($) => repeat1(seq($.element, optional(list_separator))),
+
+    element: ($) => $._expression,
+
+    keyed_element: ($) => seq(
+      field('key', $.field_name),
+      ':',
+      field('value', $._expression)
+    ),
+
+    field_name: ($) => $.reference_expression,
+
 
     reference_expression: ($) => prec(PREC.primary, $.identifier),
     type_reference_expression: ($) => prec(PREC.primary, $.identifier),
@@ -595,65 +638,6 @@ module.exports = grammar({
         )
       ),
 
-    type_initializer: ($) =>
-      prec.right(
-        PREC.type_initializer,
-        seq(
-          field(
-            "type",
-              $.plain_type
-          ),
-          field("body", $.literal_value)
-        )
-      ),
-
-    literal_value: ($) =>
-      seq(
-        "{",
-        optional(
-          choice(
-            field('element_list', $.element_list),
-            // For short struct init syntax
-            field('short_element_list', $.short_element_list)
-          )
-        ),
-        "}"
-      ),
-
-    element_list: ($) => repeat1(
-      seq(
-        choice($.spread_expression, $.keyed_element),
-        optional(choice(",", terminator))
-      )
-    ),
-
-    short_element_list: ($) => seq(
-      $.element,
-      repeat(seq(",", $.element))
-    ),
-
-    element: ($) => $._expression,
-
-    keyed_element: ($) => seq(
-      field("key", $.field_name),
-      ":",
-      field("value", $._expression)
-    ),
-
-    field_name: ($) => $.reference_expression,
-
-    _element_key: ($) =>
-      choice(
-        prec(1, $.field_definition),
-        $.type_reference_expression,
-        $._string_literal,
-        $.int_literal,
-        $.call_expression,
-        $.selector_expression,
-        $.type_selector_expression,
-        $.index_expression
-      ),
-
     map: ($) =>
       prec(
         PREC.composite_literal,
@@ -664,7 +648,7 @@ module.exports = grammar({
         )
       ),
 
-    array: ($) => prec.right(PREC.primary, $._non_empty_array),
+    array: ($) => prec.right(PREC.multiplicative, $._non_empty_array),
 
     fixed_array: ($) =>
       prec.right(
@@ -673,7 +657,7 @@ module.exports = grammar({
       ),
 
     _non_empty_array: ($) =>
-      seq("[", repeat(seq($._expression, optional(","))), "]"),
+      seq("[", repeat1(seq($._expression, optional(","))), "]"),
 
     fixed_array_type: ($) =>
       seq(
