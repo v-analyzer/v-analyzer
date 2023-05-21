@@ -258,7 +258,7 @@ module.exports = grammar({
     parameter_declaration: ($) =>
       seq(
         field('mutability', optional($.mutability_modifiers)),
-        field("name", choice($.identifier, $._reserved_identifier)),
+        field("name", $.identifier),
         optional(field("variadic", "...")),
         field("type", choice($.plain_type, $.option_type))
       ),
@@ -410,9 +410,7 @@ module.exports = grammar({
       choice(
         $.parenthesized_expression,
         $.call_expression,
-        // $.special_call_expression,
         $.empty_literal_value,
-        // $._reserved_identifier,
         $.binded_identifier,
         $.type_initializer,
         $.reference_expression,
@@ -473,16 +471,6 @@ module.exports = grammar({
         $.mutable_expression,
         $.keyed_element,
         $.spread_expression,
-      ),
-
-    special_call_expression: ($) =>
-      prec.right(
-        PREC.comparative,
-        seq(
-          field('function', seq(optional(seq('json', '.')), 'decode')),
-          field('arguments', $.special_argument_list),
-          optional($.error_propagate)
-        )
       ),
 
     special_argument_list: ($) =>
@@ -807,9 +795,6 @@ module.exports = grammar({
         )
       ),
 
-    _reserved_identifier: ($) =>
-      alias(choice("array", "string", "char", "sql"), $.identifier),
-
     identifier: ($) =>
       token(
         seq(
@@ -854,10 +839,7 @@ module.exports = grammar({
         PREC.resolve,
         seq(
           $.mutability_modifiers,
-          choice(
-            $.identifier,
-            $._reserved_identifier
-          )
+          $.identifier,
         )
       ),
 
@@ -890,7 +872,7 @@ module.exports = grammar({
       ),
 
     identifier_list: ($) =>
-      prec(PREC.and, comma_sep1(choice($.mutable_identifier, $.identifier, $._reserved_identifier))),
+      prec(PREC.and, comma_sep1(choice($.mutable_identifier, $.identifier))),
 
     expression_list: ($) =>
       prec(PREC.resolve, comma_sep1(choice($._expression, $.mutable_expression))),
@@ -1206,7 +1188,6 @@ module.exports = grammar({
               $.reference_expression,
               // $.type_reference_expression,
               // alias($.type_placeholder, $.type_reference_expression),
-              // $._reserved_identifier,
               $.comptime_identifier,
               $.comptime_selector_expression
             )
@@ -1349,7 +1330,7 @@ module.exports = grammar({
             $.type_reference_expression
         ),
         ".",
-        field("field_name", choice($._reserved_identifier, $.type_reference_expression))
+        field("field_name", $.type_reference_expression)
       ),
 
 

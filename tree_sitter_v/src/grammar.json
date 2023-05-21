@@ -1007,17 +1007,8 @@
           "type": "FIELD",
           "name": "name",
           "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "identifier"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "_reserved_identifier"
-              }
-            ]
+            "type": "SYMBOL",
+            "name": "identifier"
           }
         },
         {
@@ -2360,69 +2351,6 @@
           "name": "spread_expression"
         }
       ]
-    },
-    "special_call_expression": {
-      "type": "PREC_RIGHT",
-      "value": 3,
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "FIELD",
-            "name": "function",
-            "content": {
-              "type": "SEQ",
-              "members": [
-                {
-                  "type": "CHOICE",
-                  "members": [
-                    {
-                      "type": "SEQ",
-                      "members": [
-                        {
-                          "type": "STRING",
-                          "value": "json"
-                        },
-                        {
-                          "type": "STRING",
-                          "value": "."
-                        }
-                      ]
-                    },
-                    {
-                      "type": "BLANK"
-                    }
-                  ]
-                },
-                {
-                  "type": "STRING",
-                  "value": "decode"
-                }
-              ]
-            }
-          },
-          {
-            "type": "FIELD",
-            "name": "arguments",
-            "content": {
-              "type": "SYMBOL",
-              "name": "special_argument_list"
-            }
-          },
-          {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "error_propagate"
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
-          }
-        ]
-      }
     },
     "special_argument_list": {
       "type": "SEQ",
@@ -5083,32 +5011,6 @@
         }
       ]
     },
-    "_reserved_identifier": {
-      "type": "ALIAS",
-      "content": {
-        "type": "CHOICE",
-        "members": [
-          {
-            "type": "STRING",
-            "value": "array"
-          },
-          {
-            "type": "STRING",
-            "value": "string"
-          },
-          {
-            "type": "STRING",
-            "value": "char"
-          },
-          {
-            "type": "STRING",
-            "value": "sql"
-          }
-        ]
-      },
-      "named": true,
-      "value": "identifier"
-    },
     "identifier": {
       "type": "TOKEN",
       "content": {
@@ -5321,17 +5223,8 @@
             "name": "mutability_modifiers"
           },
           {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "identifier"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "_reserved_identifier"
-              }
-            ]
+            "type": "SYMBOL",
+            "name": "identifier"
           }
         ]
       }
@@ -5446,10 +5339,6 @@
               {
                 "type": "SYMBOL",
                 "name": "identifier"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "_reserved_identifier"
               }
             ]
           },
@@ -5472,10 +5361,6 @@
                     {
                       "type": "SYMBOL",
                       "name": "identifier"
-                    },
-                    {
-                      "type": "SYMBOL",
-                      "name": "_reserved_identifier"
                     }
                   ]
                 }
@@ -7632,17 +7517,8 @@
           "type": "FIELD",
           "name": "field_name",
           "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "_reserved_identifier"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "type_reference_expression"
-              }
-            ]
+            "type": "SYMBOL",
+            "name": "type_reference_expression"
           }
         }
       ]

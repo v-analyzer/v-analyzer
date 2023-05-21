@@ -3554,10 +3554,6 @@
         "required": true,
         "types": [
           {
-            "type": "identifier",
-            "named": true
-          },
-          {
             "type": "type_reference_expression",
             "named": true
           }
@@ -4001,10 +3997,6 @@
     "named": false
   },
   {
-    "type": "decode",
-    "named": false
-  },
-  {
     "type": "defer",
     "named": false
   },
@@ -4070,10 +4062,6 @@
   },
   {
     "type": "is",
-    "named": false
-  },
-  {
-    "type": "json",
     "named": false
   },
   {
