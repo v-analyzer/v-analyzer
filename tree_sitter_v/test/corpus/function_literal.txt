@@ -1,0 +1,195 @@
+================================================================================
+Simple function literal
+================================================================================
+fn () {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (function_literal
+      (signature
+        (parameter_list))
+      (block))))
+
+================================================================================
+Simple function literal with parameters
+================================================================================
+fn (a string, b int) {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (function_literal
+      (signature
+        (parameter_list
+          (parameter_declaration
+            (identifier)
+            (plain_type
+              (type_reference_expression
+                (identifier))))
+          (parameter_declaration
+            (identifier)
+            (plain_type
+              (type_reference_expression
+                (identifier))))))
+      (block))))
+
+================================================================================
+Simple function literal with return type
+================================================================================
+fn (a string, b int) Foo {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (function_literal
+      (signature
+        (parameter_list
+          (parameter_declaration
+            (identifier)
+            (plain_type
+              (type_reference_expression
+                (identifier))))
+          (parameter_declaration
+            (identifier)
+            (plain_type
+              (type_reference_expression
+                (identifier)))))
+        (plain_type
+          (type_reference_expression
+            (identifier))))
+      (block))))
+
+================================================================================
+Simple function literal with capture
+================================================================================
+fn [cap] () {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (function_literal
+      (capture_list
+        (capture
+          (reference_expression
+            (identifier))))
+      (signature
+        (parameter_list))
+      (block))))
+
+================================================================================
+Simple function literal with captures
+================================================================================
+fn [cap, cap2] () {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (function_literal
+      (capture_list
+        (capture
+          (reference_expression
+            (identifier)))
+        (capture
+          (reference_expression
+            (identifier))))
+      (signature
+        (parameter_list))
+      (block))))
+
+================================================================================
+Simple function literal with captures with trailing comma
+================================================================================
+fn [cap, cap2, ] () {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (function_literal
+      (capture_list
+        (capture
+          (reference_expression
+            (identifier)))
+        (capture
+          (reference_expression
+            (identifier))))
+      (signature
+        (parameter_list))
+      (block))))
+
+================================================================================
+Simple function literal with mutable captures
+================================================================================
+fn [mut cap, cap2, shared cap3] () {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (function_literal
+      (capture_list
+        (capture
+          (mutability_modifiers)
+          (reference_expression
+            (identifier)))
+        (capture
+          (reference_expression
+            (identifier)))
+        (capture
+          (mutability_modifiers)
+          (reference_expression
+            (identifier))))
+      (signature
+        (parameter_list))
+      (block))))
+
+================================================================================
+Simple function literal with call
+================================================================================
+fn () {}()
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (call_expression
+      (function_literal
+        (signature
+          (parameter_list))
+        (block))
+      (argument_list))))
+
+================================================================================
+Simple function literal as parameter
+================================================================================
+app.handle(fn (req &Req, res Res) ? {
+    return
+})
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (call_expression
+      (selector_expression
+        (reference_expression
+          (identifier))
+        (reference_expression
+          (identifier)))
+      (argument_list
+        (argument
+          (function_literal
+            (signature
+              (parameter_list
+                (parameter_declaration
+                  (identifier)
+                  (plain_type
+                    (pointer_type
+                      (plain_type
+                        (type_reference_expression
+                          (identifier))))))
+                (parameter_declaration
+                  (identifier)
+                  (plain_type
+                    (type_reference_expression
+                      (identifier)))))
+              (option_type))
+            (block
+              (return_statement))))))))

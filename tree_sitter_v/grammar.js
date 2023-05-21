@@ -411,10 +411,11 @@ module.exports = grammar({
         $.parenthesized_expression,
         $.call_expression,
         $.type_initializer,
+        $.function_literal,
         $.empty_literal_value,
         $.binded_identifier,
         $.reference_expression,
-        $._single_line_expression,
+        $._max_group,
         $.map,
         $.array,
         $.fixed_array,
@@ -425,7 +426,6 @@ module.exports = grammar({
         $.slice_expression,
         // $.type_cast_expression,
         $.as_type_cast_expression,
-        $.fn_literal,
         $.selector_expression,
         $._expression_with_blocks,
         $.enum_fetch,
@@ -524,6 +524,21 @@ module.exports = grammar({
     field_name: ($) => $.reference_expression,
 
 
+    function_literal: ($) =>
+      prec.right(
+        seq(
+          'fn',
+          field('capture_list', optional($.capture_list)),
+          field('generic_parameters', optional($.generic_parameters)),
+          field('signature', $.signature),
+          field('body', $.block),
+        )
+      ),
+
+    capture_list: ($) => seq('[', comma_sep($.capture), optional(','), ']'),
+
+    capture: ($) => seq(optional($.mutability_modifiers), $.reference_expression),
+
     reference_expression: ($) => prec(PREC.primary, $.identifier),
     type_reference_expression: ($) => prec(PREC.primary, $.identifier),
 
@@ -581,12 +596,11 @@ module.exports = grammar({
         $.comptime_if_expression
       ),
 
-    _single_line_expression: ($) =>
+    _max_group: ($) =>
       prec.left(
         PREC.resolve,
         choice(
           $.pseudo_comptime_identifier,
-          // $.type_selector_expression,
           $.literal,
         )
       ),
@@ -1042,8 +1056,6 @@ module.exports = grammar({
 
     overloadable_operator: ($) => choice(...overridable_operators),
 
-    exposed_variables_list: ($) => seq("[", $.expression_list, "]"),
-
     function_type: ($) =>
       prec.right(
         seq(
@@ -1052,17 +1064,6 @@ module.exports = grammar({
             "signature",
             $.signature
           ),
-        )
-      ),
-
-    fn_literal: ($) =>
-      prec.right(
-        seq(
-          'fn',
-          field("exposed_variables", optional($.exposed_variables_list)),
-          field("signature", $.signature),
-          field("body", $.block),
-          field("arguments", optional($.argument_list))
         )
       ),
 
