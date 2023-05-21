@@ -128,6 +128,9 @@ module.exports = grammar({
         ),
       ),
 
+    // http://stackoverflow.com/questions/13014947/regex-to-match-a-c-style-multiline-comment/36328890#36328890
+    comment: ($) => $._comment,
+
     module_clause: ($) =>
       seq(
         optional($.attributes),
@@ -416,9 +419,10 @@ module.exports = grammar({
         $.binded_identifier,
         $.reference_expression,
         $._max_group,
-        $.map,
-        $.array,
-        $.fixed_array,
+        $.map_init_expression,
+        $.array_creation,
+        $.empty_array_creation,
+        $.fixed_array_creation,
         $.unary_expression,
         $.binary_expression,
         $.is_expression,
@@ -577,9 +581,9 @@ module.exports = grammar({
         ")"
       ),
 
-    comptime_identifier: ($) => comp_time($.identifier),
+    compile_time_identifier: ($) => comp_time($.identifier),
 
-    comptime_selector_expression: ($) =>
+    compile_time_selector_expression: ($) =>
       comp_time(seq("(", $.selector_expression, ")")),
 
     error_propagate: ($) => prec.right(choice("?", "!", $.or_block)),
@@ -594,20 +598,17 @@ module.exports = grammar({
         $.sql_expression,
         $.lock_expression,
         $.unsafe_expression,
-        $.comptime_if_expression
+        $.compile_time_if_expression
       ),
 
     _max_group: ($) =>
       prec.left(
         PREC.resolve,
         choice(
-          $.pseudo_comptime_identifier,
+          $.pseudo_compile_time_identifier,
           $.literal,
         )
       ),
-
-    // http://stackoverflow.com/questions/13014947/regex-to-match-a-c-style-multiline-comment/36328890#36328890
-    comment: ($) => $._comment,
 
     escape_sequence: ($) =>
       token(
@@ -640,35 +641,43 @@ module.exports = grammar({
     ),
 
     none: ($) => 'none',
-    true: ($) => "true",
-    false: ($) => "false",
-    nil: ($) => "nil",
+    true: ($) => 'true',
+    false: ($) => 'false',
+    nil: ($) => 'nil',
 
     spread_expression: ($) =>
       prec.right(
         PREC.unary,
         seq(
-          "...",
+          '...',
           $._expression
         )
       ),
 
-    map: ($) =>
+    map_init_expression: ($) =>
       prec(
         PREC.composite_literal,
         seq(
-          "{",
-          repeat1(seq($.keyed_element, optional(choice(",", terminator)))),
-          "}"
+          '{',
+          repeat1(seq($.map_keyed_element, optional(list_separator))),
+          '}'
         )
       ),
 
-    array: ($) => prec.right(PREC.multiplicative, $._non_empty_array),
+    map_keyed_element: ($) => seq(
+      field('key', $._expression),
+      ':',
+      field('value', $._expression)
+    ),
 
-    fixed_array: ($) =>
+    array_creation: ($) => prec.right(PREC.multiplicative, $._non_empty_array),
+
+    empty_array_creation: ($) => prec(PREC.composite_literal, seq('[', ']')),
+
+    fixed_array_creation: ($) =>
       prec.right(
-        PREC.composite_literal,
-        seq($._non_empty_array, "!")
+        PREC.multiplicative,
+        seq($._non_empty_array, '!')
       ),
 
     _non_empty_array: ($) =>
@@ -676,10 +685,10 @@ module.exports = grammar({
 
     fixed_array_type: ($) =>
       seq(
-        "[",
-        field("size", choice($.int_literal, $.identifier)),
-        "]",
-        field("element", $.plain_type)
+        '[',
+        field('size', choice($.int_literal, $.identifier)),
+        ']',
+        field('element', $.plain_type)
       ),
 
     array_type: ($) =>
@@ -934,7 +943,7 @@ module.exports = grammar({
         field("name", $.type_reference_expression)
       ),
 
-    pseudo_comptime_identifier: ($) =>
+    pseudo_compile_time_identifier: ($) =>
       seq("@", alias(/[A-Z][A-Z0-9_]+/, $.identifier)),
 
     field_definition: ($) => $.identifier,
@@ -1160,7 +1169,7 @@ module.exports = grammar({
         seq(
           field("operand", choice(
             $._expression,
-            $.comptime_identifier
+            $.compile_time_identifier
           )),
           ".",
           field(
@@ -1168,8 +1177,8 @@ module.exports = grammar({
             choice(
               $.reference_expression,
               // $.type_reference_expression,
-              $.comptime_identifier,
-              $.comptime_selector_expression
+              $.compile_time_identifier,
+              $.compile_time_selector_expression
             )
           )
         )
@@ -1193,7 +1202,7 @@ module.exports = grammar({
         seq(field("operand", $._expression), "[", $.range, "]")
       ),
 
-    comptime_if_expression: ($) =>
+    compile_time_if_expression: ($) =>
       seq(
         "$" + 'if',
         field(
@@ -1208,7 +1217,7 @@ module.exports = grammar({
               "alternative",
               choice(
                 $.block,
-                $.comptime_if_expression
+                $.compile_time_if_expression
               )
             )
           )

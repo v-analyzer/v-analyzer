@@ -125,6 +125,10 @@
         }
       ]
     },
+    "comment": {
+      "type": "SYMBOL",
+      "name": "_comment"
+    },
     "module_clause": {
       "type": "SEQ",
       "members": [
@@ -2000,15 +2004,19 @@
         },
         {
           "type": "SYMBOL",
-          "name": "map"
+          "name": "map_init_expression"
         },
         {
           "type": "SYMBOL",
-          "name": "array"
+          "name": "array_creation"
         },
         {
           "type": "SYMBOL",
-          "name": "fixed_array"
+          "name": "empty_array_creation"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "fixed_array_creation"
         },
         {
           "type": "SYMBOL",
@@ -3135,7 +3143,7 @@
         }
       ]
     },
-    "comptime_identifier": {
+    "compile_time_identifier": {
       "type": "SEQ",
       "members": [
         {
@@ -3148,7 +3156,7 @@
         }
       ]
     },
-    "comptime_selector_expression": {
+    "compile_time_selector_expression": {
       "type": "SEQ",
       "members": [
         {
@@ -3237,7 +3245,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "comptime_if_expression"
+          "name": "compile_time_if_expression"
         }
       ]
     },
@@ -3249,7 +3257,7 @@
         "members": [
           {
             "type": "SYMBOL",
-            "name": "pseudo_comptime_identifier"
+            "name": "pseudo_compile_time_identifier"
           },
           {
             "type": "SYMBOL",
@@ -3257,10 +3265,6 @@
           }
         ]
       }
-    },
-    "comment": {
-      "type": "SYMBOL",
-      "name": "_comment"
     },
     "escape_sequence": {
       "type": "TOKEN",
@@ -3381,7 +3385,7 @@
         ]
       }
     },
-    "map": {
+    "map_init_expression": {
       "type": "PREC",
       "value": -1,
       "content": {
@@ -3398,7 +3402,7 @@
               "members": [
                 {
                   "type": "SYMBOL",
-                  "name": "keyed_element"
+                  "name": "map_keyed_element"
                 },
                 {
                   "type": "CHOICE",
@@ -3407,25 +3411,34 @@
                       "type": "CHOICE",
                       "members": [
                         {
-                          "type": "STRING",
-                          "value": ","
-                        },
-                        {
                           "type": "CHOICE",
                           "members": [
                             {
-                              "type": "STRING",
-                              "value": "\n"
+                              "type": "CHOICE",
+                              "members": [
+                                {
+                                  "type": "STRING",
+                                  "value": "\n"
+                                },
+                                {
+                                  "type": "STRING",
+                                  "value": "\r"
+                                },
+                                {
+                                  "type": "STRING",
+                                  "value": "\r\n"
+                                }
+                              ]
                             },
                             {
                               "type": "STRING",
-                              "value": "\r"
-                            },
-                            {
-                              "type": "STRING",
-                              "value": "\r\n"
+                              "value": ";"
                             }
                           ]
+                        },
+                        {
+                          "type": "STRING",
+                          "value": ","
                         }
                       ]
                     },
@@ -3444,7 +3457,32 @@
         ]
       }
     },
-    "array": {
+    "map_keyed_element": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "key",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_expression"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ":"
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_expression"
+          }
+        }
+      ]
+    },
+    "array_creation": {
       "type": "PREC_RIGHT",
       "value": 5,
       "content": {
@@ -3452,9 +3490,26 @@
         "name": "_non_empty_array"
       }
     },
-    "fixed_array": {
-      "type": "PREC_RIGHT",
+    "empty_array_creation": {
+      "type": "PREC",
       "value": -1,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "["
+          },
+          {
+            "type": "STRING",
+            "value": "]"
+          }
+        ]
+      }
+    },
+    "fixed_array_creation": {
+      "type": "PREC_RIGHT",
+      "value": 5,
       "content": {
         "type": "SEQ",
         "members": [
@@ -5860,7 +5915,7 @@
         }
       ]
     },
-    "pseudo_comptime_identifier": {
+    "pseudo_compile_time_identifier": {
       "type": "SEQ",
       "members": [
         {
@@ -6973,7 +7028,7 @@
                 },
                 {
                   "type": "SYMBOL",
-                  "name": "comptime_identifier"
+                  "name": "compile_time_identifier"
                 }
               ]
             }
@@ -6994,11 +7049,11 @@
                 },
                 {
                   "type": "SYMBOL",
-                  "name": "comptime_identifier"
+                  "name": "compile_time_identifier"
                 },
                 {
                   "type": "SYMBOL",
-                  "name": "comptime_selector_expression"
+                  "name": "compile_time_selector_expression"
                 }
               ]
             }
@@ -7080,7 +7135,7 @@
         ]
       }
     },
-    "comptime_if_expression": {
+    "compile_time_if_expression": {
       "type": "SEQ",
       "members": [
         {
@@ -7142,7 +7197,7 @@
                       },
                       {
                         "type": "SYMBOL",
-                        "name": "comptime_if_expression"
+                        "name": "compile_time_if_expression"
                       }
                     ]
                   }

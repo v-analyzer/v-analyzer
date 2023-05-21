@@ -183,7 +183,7 @@ fn test_parse_compact_text() {
                     (identifier))))))))
       (return_statement
         (expression_list
-          (array
+          (array_creation
             (reference_expression
               (identifier)))))))
   (function_declaration

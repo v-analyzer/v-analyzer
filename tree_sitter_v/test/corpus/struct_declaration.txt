@@ -85,7 +85,7 @@ struct Foo {
           (identifier))))))
 
 ================================================================================
-Simple struct with attribute and comment, TODO: fix
+Simple struct with attribute and comment
 ================================================================================
 // This is a comment
 [heap]

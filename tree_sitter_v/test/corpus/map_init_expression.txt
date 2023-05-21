@@ -1,0 +1,52 @@
+================================================================================
+Simple map init expression
+================================================================================
+{
+    '0': 1
+    1: 2
+    true: 3
+    Foo.name: 4
+    .name: 5
+    1 + 3: 6
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (map_init_expression
+      (map_keyed_element
+        (literal
+          (interpreted_string_literal))
+        (literal
+          (int_literal)))
+      (map_keyed_element
+        (literal
+          (int_literal))
+        (literal
+          (int_literal)))
+      (map_keyed_element
+        (literal
+          (true))
+        (literal
+          (int_literal)))
+      (map_keyed_element
+        (selector_expression
+          (reference_expression
+            (identifier))
+          (reference_expression
+            (identifier)))
+        (literal
+          (int_literal)))
+      (map_keyed_element
+        (enum_fetch
+          (identifier))
+        (literal
+          (int_literal)))
+      (map_keyed_element
+        (binary_expression
+          (literal
+            (int_literal))
+          (literal
+            (int_literal)))
+        (literal
+          (int_literal))))))

@@ -8,7 +8,7 @@
         "named": true
       },
       {
-        "type": "array",
+        "type": "array_creation",
         "named": true
       },
       {
@@ -28,6 +28,10 @@
         "named": true
       },
       {
+        "type": "empty_array_creation",
+        "named": true
+      },
+      {
         "type": "empty_literal_value",
         "named": true
       },
@@ -36,7 +40,7 @@
         "named": true
       },
       {
-        "type": "fixed_array",
+        "type": "fixed_array_creation",
         "named": true
       },
       {
@@ -56,7 +60,7 @@
         "named": true
       },
       {
-        "type": "map",
+        "type": "map_init_expression",
         "named": true
       },
       {
@@ -68,7 +72,7 @@
         "named": true
       },
       {
-        "type": "pseudo_comptime_identifier",
+        "type": "pseudo_compile_time_identifier",
         "named": true
       },
       {
@@ -98,7 +102,7 @@
     "named": true,
     "subtypes": [
       {
-        "type": "comptime_if_expression",
+        "type": "compile_time_if_expression",
         "named": true
       },
       {
@@ -296,7 +300,7 @@
     }
   },
   {
-    "type": "array",
+    "type": "array_creation",
     "named": true,
     "fields": {},
     "children": {
@@ -914,7 +918,7 @@
     }
   },
   {
-    "type": "comptime_identifier",
+    "type": "compile_time_identifier",
     "named": true,
     "fields": {},
     "children": {
@@ -929,7 +933,7 @@
     }
   },
   {
-    "type": "comptime_if_expression",
+    "type": "compile_time_if_expression",
     "named": true,
     "fields": {
       "alternative": {
@@ -941,7 +945,7 @@
             "named": true
           },
           {
-            "type": "comptime_if_expression",
+            "type": "compile_time_if_expression",
             "named": true
           }
         ]
@@ -973,7 +977,7 @@
     }
   },
   {
-    "type": "comptime_selector_expression",
+    "type": "compile_time_selector_expression",
     "named": true,
     "fields": {},
     "children": {
@@ -1141,6 +1145,11 @@
         }
       ]
     }
+  },
+  {
+    "type": "empty_array_creation",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "empty_literal_value",
@@ -1333,7 +1342,7 @@
     }
   },
   {
-    "type": "fixed_array",
+    "type": "fixed_array_creation",
     "named": true,
     "fields": {},
     "children": {
@@ -2278,7 +2287,7 @@
     }
   },
   {
-    "type": "map",
+    "type": "map_init_expression",
     "named": true,
     "fields": {},
     "children": {
@@ -2286,10 +2295,36 @@
       "required": true,
       "types": [
         {
-          "type": "keyed_element",
+          "type": "map_keyed_element",
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "map_keyed_element",
+    "named": true,
+    "fields": {
+      "key": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_expression",
+            "named": true
+          }
+        ]
+      },
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_expression",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -2663,7 +2698,7 @@
     }
   },
   {
-    "type": "pseudo_comptime_identifier",
+    "type": "pseudo_compile_time_identifier",
     "named": true,
     "fields": {},
     "children": {
@@ -2942,11 +2977,11 @@
         "required": true,
         "types": [
           {
-            "type": "comptime_identifier",
+            "type": "compile_time_identifier",
             "named": true
           },
           {
-            "type": "comptime_selector_expression",
+            "type": "compile_time_selector_expression",
             "named": true
           },
           {
@@ -2964,7 +2999,7 @@
             "named": true
           },
           {
-            "type": "comptime_identifier",
+            "type": "compile_time_identifier",
             "named": true
           }
         ]

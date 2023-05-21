@@ -217,7 +217,7 @@ foo(100, 100, ...[1, 2, 3])
             (int_literal)))
         (argument
           (spread_expression
-            (array
+            (array_creation
               (literal
                 (int_literal))
               (literal
