@@ -1,0 +1,82 @@
+================================================================================
+Simple slice expression
+================================================================================
+name[0..10]
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (slice_expression
+      (reference_expression
+        (identifier))
+      (range
+        (literal
+          (int_literal))
+        (literal
+          (int_literal))))))
+
+================================================================================
+Slice expression with only left index
+================================================================================
+name[0..]
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (slice_expression
+      (reference_expression
+        (identifier))
+      (range
+        (literal
+          (int_literal))))))
+
+================================================================================
+Slice expression with only right index
+================================================================================
+name[..10]
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (slice_expression
+      (reference_expression
+        (identifier))
+      (range
+        (literal
+          (int_literal))))))
+
+================================================================================
+Slice expression without indices
+================================================================================
+name[..]
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (slice_expression
+      (reference_expression
+        (identifier))
+      (range))))
+
+================================================================================
+Slice expression with binary expression indices
+================================================================================
+name[10 + 4..20 + 10]
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (slice_expression
+      (reference_expression
+        (identifier))
+      (range
+        (binary_expression
+          (literal
+            (int_literal))
+          (literal
+            (int_literal)))
+        (binary_expression
+          (literal
+            (int_literal))
+          (literal
+            (int_literal)))))))
