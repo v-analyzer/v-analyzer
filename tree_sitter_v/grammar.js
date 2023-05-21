@@ -408,6 +408,9 @@ module.exports = grammar({
 
     _expression: ($) =>
       choice(
+        $.parenthesized_expression,
+        $.call_expression,
+        // $.special_call_expression,
         $.empty_literal_value,
         // $._reserved_identifier,
         $.binded_identifier,
@@ -424,50 +427,96 @@ module.exports = grammar({
         $.slice_expression,
         // $.type_cast_expression,
         $.as_type_cast_expression,
-        $.call_expression,
-        $.special_call_expression,
         $.fn_literal,
         $.selector_expression,
-        $.parenthesized_expression,
         $._expression_with_blocks,
-        $.enum_fetch
+        $.enum_fetch,
       ),
 
     parenthesized_expression: ($) => seq("(", $._expression, ")"),
 
+    call_expression: ($) => prec.right(PREC.primary, choice(
+      seq(
+        field('function', token.immediate('json.decode')),
+        field('arguments', $.special_argument_list),
+        optional($.error_propagate),
+      ),
+      seq(
+        field('name', $._expression),
+        field('type_parameters', optional($.type_parameters)),
+        field('arguments', $.argument_list),
+        optional($.error_propagate),
+      )
+    )),
+
+    type_parameters: ($) => prec(PREC.resolve,
+      seq(
+        '[',
+        comma_sep1($.plain_type),
+        ']',
+      )
+    ),
+
+    argument_list: ($) => seq(
+      '(',
+      optional(seq(
+        choice($.argument),
+        repeat(seq(list_separator, choice($.argument))),
+        optional(list_separator)
+      )),
+      ')'
+    ),
+
+    argument: ($) =>
+      choice(
+        $._expression,
+        $.mutable_expression,
+        $.keyed_element,
+        $.spread_expression,
+      ),
+
+    special_call_expression: ($) =>
+      prec.right(
+        PREC.comparative,
+        seq(
+          field('function', seq(optional(seq('json', '.')), 'decode')),
+          field('arguments', $.special_argument_list),
+          optional($.error_propagate)
+        )
+      ),
+
+    special_argument_list: ($) =>
+      seq(
+        '(',
+        choice($.plain_type, $.option_type),
+        optional(seq(',', $._expression)),
+        ')',
+      ),
+
     reference_expression: ($) => prec(PREC.primary, $.identifier),
     type_reference_expression: ($) => prec(PREC.primary, $.identifier),
 
-    unary_expression: ($) =>
-      prec(
-        PREC.unary,
-        seq(
-          field("operator", choice(...unary_operators)),
-          field("operand", choice($._expression))
-        )
-      ),
+    unary_expression: ($) => prec(PREC.unary, seq(
+      field('operator', choice(...unary_operators)),
+      field('operand', $._expression)
+    )),
 
     binary_expression: ($) => {
       const table = [
         [PREC.multiplicative, choice(...multiplicative_operators)],
         [PREC.additive, choice(...additive_operators)],
         [PREC.comparative, choice(...comparative_operators)],
-        [PREC.and, "&&"],
-        [PREC.or, "||"],
+        [PREC.and, '&&'],
+        [PREC.or, '||'],
       ];
 
-      return choice(
-        ...table.map(([precedence, operator]) =>
-          prec.left(
-            precedence,
-            seq(
-              field("left", $._expression),
-              field("operator", operator),
-              field("right", $._expression)
-            )
-          )
-        )
-      );
+      return choice(...table.map(([precedence, operator]) =>
+        prec.left(precedence, seq(
+          field('left', $._expression),
+          field('operator', operator),
+          field('right', $._expression)
+        ))
+      ));
     },
 
     as_type_cast_expression: ($) =>
@@ -481,50 +530,12 @@ module.exports = grammar({
         ")"
       ),
 
-    call_expression: ($) =>
-      prec.right(
-        PREC.comparative,
-        seq(
-          field(
-            "name",
-            choice(
-              $.reference_expression,
-              $.binded_identifier,
-              $.comptime_identifier,
-              $.selector_expression,
-              $.comptime_selector_expression
-            )
-          ),
-          field("type_parameters", optional($.type_parameters)),
-          field("arguments", $.argument_list),
-          optional($.option_propagator)
-        )
-      ),
-
-    special_argument_list: ($) =>
-      seq(
-        "(",
-        choice($.plain_type, $.option_type),
-        optional(seq(",", $._expression)),
-        ")"
-      ),
-
-    special_call_expression: ($) =>
-      prec.right(
-        PREC.comparative,
-        seq(
-          field("function", choice($.identifier, $.selector_expression)),
-          field("arguments", $.special_argument_list),
-          optional($.option_propagator)
-        )
-      ),
-
     comptime_identifier: ($) => comp_time($.identifier),
 
     comptime_selector_expression: ($) =>
       comp_time(seq("(", $.selector_expression, ")")),
 
-    option_propagator: ($) => prec.right(choice("?", "!", $.or_block)),
+    error_propagate: ($) => prec.right(choice("?", "!", $.or_block)),
 
     or_block: ($) => seq("or", $.block),
 
@@ -544,7 +555,7 @@ module.exports = grammar({
         PREC.resolve,
         choice(
           $.pseudo_comptime_identifier,
-          $.type_selector_expression,
+          // $.type_selector_expression,
           $.literal,
         )
       ),
@@ -587,7 +598,7 @@ module.exports = grammar({
     false: ($) => "false",
     nil: ($) => "nil",
 
-    spread_operator: ($) =>
+    spread_expression: ($) =>
       prec.right(
         PREC.unary,
         seq(
@@ -597,7 +608,7 @@ module.exports = grammar({
       ),
 
     type_initializer: ($) =>
-      prec(
+      prec.right(
         PREC.type_initializer,
         seq(
           field(
@@ -623,7 +634,7 @@ module.exports = grammar({
 
     element_list: ($) => repeat1(
       seq(
-        choice($.spread_operator, $.keyed_element),
+        choice($.spread_expression, $.keyed_element),
         optional(choice(",", terminator))
       )
     ),
@@ -906,35 +917,6 @@ module.exports = grammar({
 
     empty_literal_value: ($) => prec(PREC.composite_literal, seq("{", "}")),
 
-    argument_list: ($) =>
-      seq(
-        "(",
-        optional(
-          seq(
-            $.argument,
-            // TODO: accept terminator as argument separator for now
-            // to avoid complexities in the grammar.
-            // Finalize the syntax with keyed elements (aka struct init fields)
-            repeat(
-              seq(
-                choice(",", $._automatic_separator),
-                $.argument,
-              )
-            ),
-            optional($._automatic_separator)
-          )
-        ),
-        ")"
-      ),
-
-    argument: ($) =>
-        choice(
-            $._expression,
-            $.mutable_expression,
-            $.keyed_element,
-            $.spread_operator
-        ),
-
     _type: ($) => choice($.plain_type, $.option_type, $.result_type, $.multi_return_type),
 
     option_type: ($) =>
@@ -970,16 +952,6 @@ module.exports = grammar({
           $.thread_type,
           $.none_type,
         ),
-      ),
-
-    type_parameters: ($) =>
-      prec(
-        PREC.resolve,
-        seq(
-          choice(token.immediate("["), token.immediate("<")),
-          comma_sep1($.plain_type),
-          choice(token.immediate("]"), token.immediate(">")),
-        )
       ),
 
     _binded_type: ($) => prec.right(alias($.binded_identifier, $.binded_type)),
@@ -1232,9 +1204,9 @@ module.exports = grammar({
             "field",
             choice(
               $.reference_expression,
-              $.type_reference_expression,
-              alias($.type_placeholder, $.type_reference_expression),
-              $._reserved_identifier,
+              // $.type_reference_expression,
+              // alias($.type_placeholder, $.type_reference_expression),
+              // $._reserved_identifier,
               $.comptime_identifier,
               $.comptime_selector_expression
             )
@@ -1250,7 +1222,7 @@ module.exports = grammar({
           "[",
           field("index", $._expression),
           "]",
-          optional($.option_propagator)
+          optional($.error_propagate)
         )
       ),
 

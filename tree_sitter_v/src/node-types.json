@@ -80,15 +80,7 @@
         "named": true
       },
       {
-        "type": "special_call_expression",
-        "named": true
-      },
-      {
         "type": "type_initializer",
-        "named": true
-      },
-      {
-        "type": "type_selector_expression",
         "named": true
       },
       {
@@ -278,7 +270,7 @@
           "named": true
         },
         {
-          "type": "spread_operator",
+          "type": "spread_expression",
           "named": true
         }
       ]
@@ -764,31 +756,29 @@
           {
             "type": "argument_list",
             "named": true
+          },
+          {
+            "type": "special_argument_list",
+            "named": true
+          }
+        ]
+      },
+      "function": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "json.decode",
+            "named": false
           }
         ]
       },
       "name": {
         "multiple": false,
-        "required": true,
+        "required": false,
         "types": [
           {
-            "type": "binded_identifier",
-            "named": true
-          },
-          {
-            "type": "comptime_identifier",
-            "named": true
-          },
-          {
-            "type": "comptime_selector_expression",
-            "named": true
-          },
-          {
-            "type": "reference_expression",
-            "named": true
-          },
-          {
-            "type": "selector_expression",
+            "type": "_expression",
             "named": true
           }
         ]
@@ -809,7 +799,7 @@
       "required": false,
       "types": [
         {
-          "type": "option_propagator",
+          "type": "error_propagate",
           "named": true
         }
       ]
@@ -1129,7 +1119,7 @@
           "named": true
         },
         {
-          "type": "spread_operator",
+          "type": "spread_expression",
           "named": true
         }
       ]
@@ -1263,6 +1253,21 @@
           }
         ]
       }
+    }
+  },
+  {
+    "type": "error_propagate",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "or_block",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -1965,7 +1970,7 @@
       "required": false,
       "types": [
         {
-          "type": "option_propagator",
+          "type": "error_propagate",
           "named": true
         }
       ]
@@ -2503,21 +2508,6 @@
     "fields": {}
   },
   {
-    "type": "option_propagator",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "or_block",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "option_type",
     "named": true,
     "fields": {},
@@ -2968,15 +2958,7 @@
             "named": true
           },
           {
-            "type": "identifier",
-            "named": true
-          },
-          {
             "type": "reference_expression",
-            "named": true
-          },
-          {
-            "type": "type_reference_expression",
             "named": true
           }
         ]
@@ -3216,47 +3198,7 @@
     }
   },
   {
-    "type": "special_call_expression",
-    "named": true,
-    "fields": {
-      "arguments": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "special_argument_list",
-            "named": true
-          }
-        ]
-      },
-      "function": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          },
-          {
-            "type": "selector_expression",
-            "named": true
-          }
-        ]
-      }
-    },
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "option_propagator",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "spread_operator",
+    "type": "spread_expression",
     "named": true,
     "fields": {},
     "children": {
@@ -4059,6 +4001,10 @@
     "named": false
   },
   {
+    "type": "decode",
+    "named": false
+  },
+  {
     "type": "defer",
     "named": false
   },
@@ -4124,6 +4070,14 @@
   },
   {
     "type": "is",
+    "named": false
+  },
+  {
+    "type": "json",
+    "named": false
+  },
+  {
+    "type": "json.decode",
     "named": false
   },
   {
