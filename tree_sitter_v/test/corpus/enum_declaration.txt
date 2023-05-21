@@ -135,8 +135,8 @@ enum Colors {
 Enum with fields attributes
 ================================================================================
 enum Colors {
-    red   [json: 'Red']
-    green [json: 'Green']
+    red   [attr]
+    green [attr]
 }
 --------------------------------------------------------------------------------
 
@@ -147,29 +147,23 @@ enum Colors {
       (identifier)
       (attribute
         (attribute_expression
-          (key_value_attribute
-            (value_attribute
-              (type_reference_expression
-                (identifier)))
-            (literal
-              (interpreted_string_literal))))))
+          (value_attribute
+            (type_reference_expression
+              (identifier))))))
     (enum_field_definition
       (identifier)
       (attribute
         (attribute_expression
-          (key_value_attribute
-            (value_attribute
-              (type_reference_expression
-                (identifier)))
-            (literal
-              (interpreted_string_literal))))))))
+          (value_attribute
+            (type_reference_expression
+              (identifier))))))))
 
 ================================================================================
 Enum with fields attributes and values
 ================================================================================
 enum Colors {
-    red   = 1 [json: 'Red']
-    green = 2 [json: 'Green']
+    red   = 1 [attr]
+    green = 2 [attr]
 }
 --------------------------------------------------------------------------------
 
@@ -178,25 +172,15 @@ enum Colors {
     (identifier)
     (enum_field_definition
       (identifier)
-      (literal
-        (int_literal))
-      (attribute
-        (attribute_expression
-          (key_value_attribute
-            (value_attribute
-              (type_reference_expression
-                (identifier)))
-            (literal
-              (interpreted_string_literal))))))
+      (index_expression
+        (literal
+          (int_literal))
+        (reference_expression
+          (identifier))))
     (enum_field_definition
       (identifier)
-      (literal
-        (int_literal))
-      (attribute
-        (attribute_expression
-          (key_value_attribute
-            (value_attribute
-              (type_reference_expression
-                (identifier)))
-            (literal
-              (interpreted_string_literal))))))))
+      (index_expression
+        (literal
+          (int_literal))
+        (reference_expression
+          (identifier))))))

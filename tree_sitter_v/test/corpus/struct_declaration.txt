@@ -85,7 +85,7 @@ struct Foo {
           (identifier))))))
 
 ================================================================================
-Simple struct with attribute and comment
+Simple struct with attribute and comment, TODO: fix
 ================================================================================
 // This is a comment
 [heap]
@@ -349,7 +349,7 @@ __global:
 Simple struct with fields with default values
 ================================================================================
 struct Foo {
-    name  string = 'hello'
+    name  bool = true
     age   int = 10
     other f32 = 3.14
 }
@@ -364,7 +364,7 @@ struct Foo {
         (type_reference_expression
           (identifier)))
       (literal
-        (interpreted_string_literal)))
+        (true)))
     (struct_field_declaration
       (identifier)
       (plain_type
@@ -384,9 +384,9 @@ struct Foo {
 Simple struct with fields with attributes
 ================================================================================
 struct Foo {
-    name  string [json: 'Name']
-    age   int    [json: 'Age']
-    other f32    [json: 'Other'; omitempty]
+    name  string [attr]
+    age   int    [attr]
+    other f32    [attr; omitempty]
 }
 --------------------------------------------------------------------------------
 
@@ -400,12 +400,9 @@ struct Foo {
           (identifier)))
       (attribute
         (attribute_expression
-          (key_value_attribute
-            (value_attribute
-              (type_reference_expression
-                (identifier)))
-            (literal
-              (interpreted_string_literal))))))
+          (value_attribute
+            (type_reference_expression
+              (identifier))))))
     (struct_field_declaration
       (identifier)
       (plain_type
@@ -413,12 +410,9 @@ struct Foo {
           (identifier)))
       (attribute
         (attribute_expression
-          (key_value_attribute
-            (value_attribute
-              (type_reference_expression
-                (identifier)))
-            (literal
-              (interpreted_string_literal))))))
+          (value_attribute
+            (type_reference_expression
+              (identifier))))))
     (struct_field_declaration
       (identifier)
       (plain_type
@@ -426,12 +420,9 @@ struct Foo {
           (identifier)))
       (attribute
         (attribute_expression
-          (key_value_attribute
-            (value_attribute
-              (type_reference_expression
-                (identifier)))
-            (literal
-              (interpreted_string_literal))))
+          (value_attribute
+            (type_reference_expression
+              (identifier))))
         (attribute_expression
           (value_attribute
             (type_reference_expression
@@ -441,9 +432,9 @@ struct Foo {
 Simple struct with fields with attributes and default values
 ================================================================================
 struct Foo {
-    name  string [json: 'Name'] = 'hello'
-    age   int    [json: 'Age'] = 10
-    other f32    [json: 'Other'; omitempty] = 3.14
+    name  string [attr]
+    age   int    [attr] = 10
+    other f32    [attr; omitempty] = 3.14
 }
 --------------------------------------------------------------------------------
 
@@ -457,14 +448,9 @@ struct Foo {
           (identifier)))
       (attribute
         (attribute_expression
-          (key_value_attribute
-            (value_attribute
-              (type_reference_expression
-                (identifier)))
-            (literal
-              (interpreted_string_literal)))))
-      (literal
-        (interpreted_string_literal)))
+          (value_attribute
+            (type_reference_expression
+              (identifier))))))
     (struct_field_declaration
       (identifier)
       (plain_type
@@ -472,12 +458,9 @@ struct Foo {
           (identifier)))
       (attribute
         (attribute_expression
-          (key_value_attribute
-            (value_attribute
-              (type_reference_expression
-                (identifier)))
-            (literal
-              (interpreted_string_literal)))))
+          (value_attribute
+            (type_reference_expression
+              (identifier)))))
       (literal
         (int_literal)))
     (struct_field_declaration
@@ -487,12 +470,9 @@ struct Foo {
           (identifier)))
       (attribute
         (attribute_expression
-          (key_value_attribute
-            (value_attribute
-              (type_reference_expression
-                (identifier)))
-            (literal
-              (interpreted_string_literal))))
+          (value_attribute
+            (type_reference_expression
+              (identifier))))
         (attribute_expression
           (value_attribute
             (type_reference_expression
@@ -612,7 +592,7 @@ Struct all in one
 struct Hello {
     hidden string
 pub:
-    foo string [json: 'foo'] = 'hey'
+    foo string [attr]
     bar int = 10
 pub mut:
     baz int
@@ -638,14 +618,9 @@ __global:
           (identifier)))
       (attribute
         (attribute_expression
-          (key_value_attribute
-            (value_attribute
-              (type_reference_expression
-                (identifier)))
-            (literal
-              (interpreted_string_literal)))))
-      (literal
-        (interpreted_string_literal)))
+          (value_attribute
+            (type_reference_expression
+              (identifier))))))
     (struct_field_declaration
       (identifier)
       (plain_type

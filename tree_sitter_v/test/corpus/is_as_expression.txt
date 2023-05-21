@@ -1,0 +1,747 @@
+================================================================================
+Simple is expression
+================================================================================
+if a is []Any {
+} else if a is map[string]Any {
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (if_expression
+      (is_expression
+        (reference_expression
+          (identifier))
+        (plain_type
+          (array_type
+            (plain_type
+              (type_reference_expression
+                (identifier))))))
+      (block)
+      (if_expression
+        (is_expression
+          (reference_expression
+            (identifier))
+          (plain_type
+            (map_type
+              (plain_type
+                (type_reference_expression
+                  (identifier)))
+              (plain_type
+                (type_reference_expression
+                  (identifier))))))
+        (block)))))
+
+================================================================================
+Is and as expressions
+================================================================================
+
+// array returns `Any` as an array.
+pub fn (a Any) array() []Any {
+	if a is []Any {
+		return a
+	} else if a is map[string]Any {
+		mut arr := []Any{}
+		for _, v in a {
+			arr << v
+		}
+		return arr
+	}
+	return [a]
+}
+
+fn test_parse_compact_text() {
+	toml_doc := toml.parse_text(toml_text) or { panic(err) }
+
+	title := toml_doc.value('title')
+	assert title == toml.Any('TOML Example')
+	assert title as string == 'TOML Example'
+
+	database := toml_doc.value('database') as map[string]toml.Any
+	db_serv := database[1] or {
+		panic('could not access "server" index in "database" variable')
+	}
+	assert db_serv as string == '192.168.1.1'
+
+	assert toml_doc.value('owner.name') as string == 'Tom Preston-Werner'
+
+	assert toml_doc.value('database.server') as string == '192.168.1.1'
+
+	database_ports := toml_doc.value('database.ports') as []toml.Any
+	assert database_ports[0] as i64 == 8000
+	assert database_ports[1] as i64 == 8001
+	assert database_ports[2] as i64 == 8002
+	assert database_ports[0].int() == 8000
+	assert database_ports[1].int() == 8001
+	assert database_ports[2].int() == 8002
+
+	assert toml_doc.value('database.connection_max') as i64 == 5000
+	assert toml_doc.value('database.enabled') as bool == true
+
+	assert toml_doc.value('servers.alpha.ip').string() == '10.0.0.1'
+	assert toml_doc.value('servers.alpha.dc').string() == 'eqdc10'
+
+	assert toml_doc.value('servers.beta.ip').string() == '10.0.0.2'
+	assert toml_doc.value('servers.beta.dc').string() == 'eqdc10'
+
+	clients_data := (toml_doc.value('clients.data') as []toml.Any)
+	// dump(clients_data)
+	// assert false
+	gamma_delta_array := clients_data[0] as []toml.Any
+	digits_array := clients_data[1] as []toml.Any
+	assert gamma_delta_array[0].string() == 'gamma'
+	assert gamma_delta_array[1].string() == 'delta'
+	assert digits_array[0].int() == 1
+	assert digits_array[1].int() == 2
+
+	clients_hosts := (toml_doc.value('clients.hosts') as []toml.Any).as_strings()
+	assert clients_hosts[0] == 'alpha'
+	assert clients_hosts[1] == 'omega'
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (comment)
+  (function_declaration
+    (visibility_modifiers)
+    (receiver
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier))))
+    (identifier)
+    (signature
+      (parameter_list)
+      (plain_type
+        (array_type
+          (plain_type
+            (type_reference_expression
+              (identifier))))))
+    (block
+      (simple_statement
+        (if_expression
+          (is_expression
+            (reference_expression
+              (identifier))
+            (plain_type
+              (array_type
+                (plain_type
+                  (type_reference_expression
+                    (identifier))))))
+          (block
+            (return_statement
+              (expression_list
+                (reference_expression
+                  (identifier)))))
+          (if_expression
+            (is_expression
+              (reference_expression
+                (identifier))
+              (plain_type
+                (map_type
+                  (plain_type
+                    (type_reference_expression
+                      (identifier)))
+                  (plain_type
+                    (type_reference_expression
+                      (identifier))))))
+            (block
+              (simple_statement
+                (var_declaration
+                  (expression_list
+                    (mutable_expression
+                      (mutability_modifiers)
+                      (reference_expression
+                        (identifier))))
+                  (expression_list
+                    (type_initializer
+                      (plain_type
+                        (array_type
+                          (plain_type
+                            (type_reference_expression
+                              (identifier)))))
+                      (type_initializer_body)))))
+              (for_statement
+                (range_clause
+                  (var_definition
+                    (identifier))
+                  (var_definition
+                    (identifier))
+                  (reference_expression
+                    (identifier)))
+                (block
+                  (simple_statement
+                    (binary_expression
+                      (reference_expression
+                        (identifier))
+                      (reference_expression
+                        (identifier))))))
+              (return_statement
+                (expression_list
+                  (reference_expression
+                    (identifier))))))))
+      (return_statement
+        (expression_list
+          (array
+            (reference_expression
+              (identifier)))))))
+  (function_declaration
+    (identifier)
+    (signature
+      (parameter_list))
+    (block
+      (simple_statement
+        (var_declaration
+          (expression_list
+            (reference_expression
+              (identifier)))
+          (expression_list
+            (call_expression
+              (selector_expression
+                (reference_expression
+                  (identifier))
+                (reference_expression
+                  (identifier)))
+              (argument_list
+                (argument
+                  (reference_expression
+                    (identifier))))
+              (error_propagate
+                (or_block
+                  (block
+                    (simple_statement
+                      (call_expression
+                        (reference_expression
+                          (identifier))
+                        (argument_list
+                          (argument
+                            (reference_expression
+                              (identifier)))))))))))))
+      (simple_statement
+        (var_declaration
+          (expression_list
+            (reference_expression
+              (identifier)))
+          (expression_list
+            (call_expression
+              (selector_expression
+                (reference_expression
+                  (identifier))
+                (reference_expression
+                  (identifier)))
+              (argument_list
+                (argument
+                  (literal
+                    (interpreted_string_literal))))))))
+      (assert_statement
+        (binary_expression
+          (reference_expression
+            (identifier))
+          (call_expression
+            (selector_expression
+              (reference_expression
+                (identifier))
+              (reference_expression
+                (identifier)))
+            (argument_list
+              (argument
+                (literal
+                  (interpreted_string_literal)))))))
+      (assert_statement
+        (binary_expression
+          (as_type_cast_expression
+            (reference_expression
+              (identifier))
+            (plain_type
+              (type_reference_expression
+                (identifier))))
+          (literal
+            (interpreted_string_literal))))
+      (simple_statement
+        (var_declaration
+          (expression_list
+            (reference_expression
+              (identifier)))
+          (expression_list
+            (selector_expression
+              (as_type_cast_expression
+                (call_expression
+                  (selector_expression
+                    (reference_expression
+                      (identifier))
+                    (reference_expression
+                      (identifier)))
+                  (argument_list
+                    (argument
+                      (literal
+                        (interpreted_string_literal)))))
+                (plain_type
+                  (map_type
+                    (plain_type
+                      (type_reference_expression
+                        (identifier)))
+                    (plain_type
+                      (type_reference_expression
+                        (identifier))))))
+              (reference_expression
+                (identifier))))))
+      (simple_statement
+        (var_declaration
+          (expression_list
+            (reference_expression
+              (identifier)))
+          (expression_list
+            (index_expression
+              (reference_expression
+                (identifier))
+              (literal
+                (int_literal))
+              (error_propagate
+                (or_block
+                  (block
+                    (simple_statement
+                      (call_expression
+                        (reference_expression
+                          (identifier))
+                        (argument_list
+                          (argument
+                            (literal
+                              (interpreted_string_literal)))))))))))))
+      (assert_statement
+        (binary_expression
+          (as_type_cast_expression
+            (reference_expression
+              (identifier))
+            (plain_type
+              (type_reference_expression
+                (identifier))))
+          (literal
+            (interpreted_string_literal))))
+      (assert_statement
+        (binary_expression
+          (as_type_cast_expression
+            (call_expression
+              (selector_expression
+                (reference_expression
+                  (identifier))
+                (reference_expression
+                  (identifier)))
+              (argument_list
+                (argument
+                  (literal
+                    (interpreted_string_literal)))))
+            (plain_type
+              (type_reference_expression
+                (identifier))))
+          (literal
+            (interpreted_string_literal))))
+      (assert_statement
+        (binary_expression
+          (as_type_cast_expression
+            (call_expression
+              (selector_expression
+                (reference_expression
+                  (identifier))
+                (reference_expression
+                  (identifier)))
+              (argument_list
+                (argument
+                  (literal
+                    (interpreted_string_literal)))))
+            (plain_type
+              (type_reference_expression
+                (identifier))))
+          (literal
+            (interpreted_string_literal))))
+      (simple_statement
+        (var_declaration
+          (expression_list
+            (reference_expression
+              (identifier)))
+          (expression_list
+            (selector_expression
+              (as_type_cast_expression
+                (call_expression
+                  (selector_expression
+                    (reference_expression
+                      (identifier))
+                    (reference_expression
+                      (identifier)))
+                  (argument_list
+                    (argument
+                      (literal
+                        (interpreted_string_literal)))))
+                (plain_type
+                  (array_type
+                    (plain_type
+                      (type_reference_expression
+                        (identifier))))))
+              (reference_expression
+                (identifier))))))
+      (assert_statement
+        (binary_expression
+          (as_type_cast_expression
+            (index_expression
+              (reference_expression
+                (identifier))
+              (literal
+                (int_literal)))
+            (plain_type
+              (type_reference_expression
+                (identifier))))
+          (literal
+            (int_literal))))
+      (assert_statement
+        (binary_expression
+          (as_type_cast_expression
+            (index_expression
+              (reference_expression
+                (identifier))
+              (literal
+                (int_literal)))
+            (plain_type
+              (type_reference_expression
+                (identifier))))
+          (literal
+            (int_literal))))
+      (assert_statement
+        (binary_expression
+          (as_type_cast_expression
+            (index_expression
+              (reference_expression
+                (identifier))
+              (literal
+                (int_literal)))
+            (plain_type
+              (type_reference_expression
+                (identifier))))
+          (literal
+            (int_literal))))
+      (assert_statement
+        (binary_expression
+          (call_expression
+            (selector_expression
+              (index_expression
+                (reference_expression
+                  (identifier))
+                (literal
+                  (int_literal)))
+              (reference_expression
+                (identifier)))
+            (argument_list))
+          (literal
+            (int_literal))))
+      (assert_statement
+        (binary_expression
+          (call_expression
+            (selector_expression
+              (index_expression
+                (reference_expression
+                  (identifier))
+                (literal
+                  (int_literal)))
+              (reference_expression
+                (identifier)))
+            (argument_list))
+          (literal
+            (int_literal))))
+      (assert_statement
+        (binary_expression
+          (call_expression
+            (selector_expression
+              (index_expression
+                (reference_expression
+                  (identifier))
+                (literal
+                  (int_literal)))
+              (reference_expression
+                (identifier)))
+            (argument_list))
+          (literal
+            (int_literal))))
+      (assert_statement
+        (binary_expression
+          (as_type_cast_expression
+            (call_expression
+              (selector_expression
+                (reference_expression
+                  (identifier))
+                (reference_expression
+                  (identifier)))
+              (argument_list
+                (argument
+                  (literal
+                    (interpreted_string_literal)))))
+            (plain_type
+              (type_reference_expression
+                (identifier))))
+          (literal
+            (int_literal))))
+      (assert_statement
+        (binary_expression
+          (as_type_cast_expression
+            (call_expression
+              (selector_expression
+                (reference_expression
+                  (identifier))
+                (reference_expression
+                  (identifier)))
+              (argument_list
+                (argument
+                  (literal
+                    (interpreted_string_literal)))))
+            (plain_type
+              (type_reference_expression
+                (identifier))))
+          (literal
+            (true))))
+      (assert_statement
+        (binary_expression
+          (call_expression
+            (selector_expression
+              (call_expression
+                (selector_expression
+                  (reference_expression
+                    (identifier))
+                  (reference_expression
+                    (identifier)))
+                (argument_list
+                  (argument
+                    (literal
+                      (interpreted_string_literal)))))
+              (reference_expression
+                (identifier)))
+            (argument_list))
+          (literal
+            (interpreted_string_literal))))
+      (assert_statement
+        (binary_expression
+          (call_expression
+            (selector_expression
+              (call_expression
+                (selector_expression
+                  (reference_expression
+                    (identifier))
+                  (reference_expression
+                    (identifier)))
+                (argument_list
+                  (argument
+                    (literal
+                      (interpreted_string_literal)))))
+              (reference_expression
+                (identifier)))
+            (argument_list))
+          (literal
+            (interpreted_string_literal))))
+      (assert_statement
+        (binary_expression
+          (call_expression
+            (selector_expression
+              (call_expression
+                (selector_expression
+                  (reference_expression
+                    (identifier))
+                  (reference_expression
+                    (identifier)))
+                (argument_list
+                  (argument
+                    (literal
+                      (interpreted_string_literal)))))
+              (reference_expression
+                (identifier)))
+            (argument_list))
+          (literal
+            (interpreted_string_literal))))
+      (assert_statement
+        (binary_expression
+          (call_expression
+            (selector_expression
+              (call_expression
+                (selector_expression
+                  (reference_expression
+                    (identifier))
+                  (reference_expression
+                    (identifier)))
+                (argument_list
+                  (argument
+                    (literal
+                      (interpreted_string_literal)))))
+              (reference_expression
+                (identifier)))
+            (argument_list))
+          (literal
+            (interpreted_string_literal))))
+      (simple_statement
+        (var_declaration
+          (expression_list
+            (reference_expression
+              (identifier)))
+          (expression_list
+            (parenthesized_expression
+              (selector_expression
+                (as_type_cast_expression
+                  (call_expression
+                    (selector_expression
+                      (reference_expression
+                        (identifier))
+                      (reference_expression
+                        (identifier)))
+                    (argument_list
+                      (argument
+                        (literal
+                          (interpreted_string_literal)))))
+                  (plain_type
+                    (array_type
+                      (plain_type
+                        (type_reference_expression
+                          (identifier))))))
+                (reference_expression
+                  (identifier)))))))
+      (comment)
+      (comment)
+      (simple_statement
+        (var_declaration
+          (expression_list
+            (reference_expression
+              (identifier)))
+          (expression_list
+            (selector_expression
+              (as_type_cast_expression
+                (index_expression
+                  (reference_expression
+                    (identifier))
+                  (literal
+                    (int_literal)))
+                (plain_type
+                  (array_type
+                    (plain_type
+                      (type_reference_expression
+                        (identifier))))))
+              (reference_expression
+                (identifier))))))
+      (simple_statement
+        (var_declaration
+          (expression_list
+            (reference_expression
+              (identifier)))
+          (expression_list
+            (selector_expression
+              (as_type_cast_expression
+                (index_expression
+                  (reference_expression
+                    (identifier))
+                  (literal
+                    (int_literal)))
+                (plain_type
+                  (array_type
+                    (plain_type
+                      (type_reference_expression
+                        (identifier))))))
+              (reference_expression
+                (identifier))))))
+      (assert_statement
+        (binary_expression
+          (call_expression
+            (selector_expression
+              (index_expression
+                (reference_expression
+                  (identifier))
+                (literal
+                  (int_literal)))
+              (reference_expression
+                (identifier)))
+            (argument_list))
+          (literal
+            (interpreted_string_literal))))
+      (assert_statement
+        (binary_expression
+          (call_expression
+            (selector_expression
+              (index_expression
+                (reference_expression
+                  (identifier))
+                (literal
+                  (int_literal)))
+              (reference_expression
+                (identifier)))
+            (argument_list))
+          (literal
+            (interpreted_string_literal))))
+      (assert_statement
+        (binary_expression
+          (call_expression
+            (selector_expression
+              (index_expression
+                (reference_expression
+                  (identifier))
+                (literal
+                  (int_literal)))
+              (reference_expression
+                (identifier)))
+            (argument_list))
+          (literal
+            (int_literal))))
+      (assert_statement
+        (binary_expression
+          (call_expression
+            (selector_expression
+              (index_expression
+                (reference_expression
+                  (identifier))
+                (literal
+                  (int_literal)))
+              (reference_expression
+                (identifier)))
+            (argument_list))
+          (literal
+            (int_literal))))
+      (simple_statement
+        (var_declaration
+          (expression_list
+            (reference_expression
+              (identifier)))
+          (expression_list
+            (call_expression
+              (selector_expression
+                (parenthesized_expression
+                  (selector_expression
+                    (as_type_cast_expression
+                      (call_expression
+                        (selector_expression
+                          (reference_expression
+                            (identifier))
+                          (reference_expression
+                            (identifier)))
+                        (argument_list
+                          (argument
+                            (literal
+                              (interpreted_string_literal)))))
+                      (plain_type
+                        (array_type
+                          (plain_type
+                            (type_reference_expression
+                              (identifier))))))
+                    (reference_expression
+                      (identifier))))
+                (reference_expression
+                  (identifier)))
+              (argument_list)))))
+      (assert_statement
+        (binary_expression
+          (index_expression
+            (reference_expression
+              (identifier))
+            (literal
+              (int_literal)))
+          (literal
+            (interpreted_string_literal))))
+      (assert_statement
+        (binary_expression
+          (index_expression
+            (reference_expression
+              (identifier))
+            (literal
+              (int_literal)))
+          (literal
+            (interpreted_string_literal)))))))

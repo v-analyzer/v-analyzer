@@ -33,6 +33,8 @@ pub enum NodeType {
 	break_statement
 	c_string_literal
 	call_expression
+	capture
+	capture_list
 	case_list
 	channel_type
 	comment
@@ -55,17 +57,17 @@ pub enum NodeType {
 	enum_declaration
 	enum_fetch
 	enum_field_definition
-	exposed_variables_list
+	error_propagate
 	expression_case
 	expression_list
 	field_name
 	fixed_array
 	fixed_array_type
-	fn_literal
 	for_in_operator
 	for_statement
 	format_specifier
 	function_declaration
+	function_literal
 	function_type
 	generic_parameter
 	generic_parameters
@@ -94,7 +96,6 @@ pub enum NodeType {
 	labeled_statement
 	literal
 	literal_attribute
-	literal_value
 	lock_expression
 	map_
 	map_type
@@ -106,7 +107,6 @@ pub enum NodeType {
 	mutable_identifier
 	none_
 	none_type
-	option_propagator
 	option_type
 	or_block
 	overloadable_operator
@@ -137,8 +137,7 @@ pub enum NodeType {
 	source_file
 	spawn_statement
 	special_argument_list
-	special_call_expression
-	spread_operator
+	spread_expression
 	sql_expression
 	string_interpolation
 	struct_declaration
@@ -147,11 +146,11 @@ pub enum NodeType {
 	thread_type
 	type_declaration
 	type_initializer
+	type_initializer_body
 	type_only_parameter_declaration
 	type_only_parameter_list
 	type_parameters
 	type_reference_expression
-	type_selector_expression
 	type_union_list
 	unary_expression
 	unsafe_expression
@@ -180,7 +179,7 @@ const supertype__expression_nodes = merge(supertype__expression_with_blocks_node
 	.empty_literal_value,
 	.enum_fetch,
 	.fixed_array,
-	.fn_literal,
+	.function_literal,
 	.index_expression,
 	.is_expression,
 	.literal,
@@ -190,9 +189,7 @@ const supertype__expression_nodes = merge(supertype__expression_with_blocks_node
 	.reference_expression,
 	.selector_expression,
 	.slice_expression,
-	.special_call_expression,
 	.type_initializer,
-	.type_selector_expression,
 	.unary_expression,
 ])
 
@@ -283,7 +280,7 @@ const identifier_node_types = [
 
 const literal_node_types = [
 	NodeType.c_string_literal,
-	.fn_literal,
+	.function_literal,
 	.interpreted_string_literal,
 	.raw_string_literal,
 	.float_literal,
@@ -328,6 +325,8 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'break_statement' { NodeType.break_statement }
 		'c_string_literal' { NodeType.c_string_literal }
 		'call_expression' { NodeType.call_expression }
+		'capture' { NodeType.capture }
+		'capture_list' { NodeType.capture_list }
 		'case_list' { NodeType.case_list }
 		'channel_type' { NodeType.channel_type }
 		'comment' { NodeType.comment }
@@ -350,17 +349,17 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'enum_declaration' { NodeType.enum_declaration }
 		'enum_fetch' { NodeType.enum_fetch }
 		'enum_field_definition' { NodeType.enum_field_definition }
-		'exposed_variables_list' { NodeType.exposed_variables_list }
+		'error_propagate' { NodeType.error_propagate }
 		'expression_case' { NodeType.expression_case }
 		'expression_list' { NodeType.expression_list }
 		'field_name' { NodeType.field_name }
 		'fixed_array' { NodeType.fixed_array }
 		'fixed_array_type' { NodeType.fixed_array_type }
-		'fn_literal' { NodeType.fn_literal }
 		'for_in_operator' { NodeType.for_in_operator }
 		'for_statement' { NodeType.for_statement }
 		'format_specifier' { NodeType.format_specifier }
 		'function_declaration' { NodeType.function_declaration }
+		'function_literal' { NodeType.function_literal }
 		'function_type' { NodeType.function_type }
 		'generic_parameter' { NodeType.generic_parameter }
 		'generic_parameters' { NodeType.generic_parameters }
@@ -389,7 +388,6 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'labeled_statement' { NodeType.labeled_statement }
 		'literal' { NodeType.literal }
 		'literal_attribute' { NodeType.literal_attribute }
-		'literal_value' { NodeType.literal_value }
 		'lock_expression' { NodeType.lock_expression }
 		'map' { NodeType.map_ }
 		'map_type' { NodeType.map_type }
@@ -401,7 +399,6 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'mutable_identifier' { NodeType.mutable_identifier }
 		'none' { NodeType.none_ }
 		'none_type' { NodeType.none_type }
-		'option_propagator' { NodeType.option_propagator }
 		'option_type' { NodeType.option_type }
 		'or_block' { NodeType.or_block }
 		'overloadable_operator' { NodeType.overloadable_operator }
@@ -432,8 +429,7 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'source_file' { NodeType.source_file }
 		'spawn_statement' { NodeType.spawn_statement }
 		'special_argument_list' { NodeType.special_argument_list }
-		'special_call_expression' { NodeType.special_call_expression }
-		'spread_operator' { NodeType.spread_operator }
+		'spread_expression' { NodeType.spread_expression }
 		'sql_expression' { NodeType.sql_expression }
 		'string_interpolation' { NodeType.string_interpolation }
 		'struct_declaration' { NodeType.struct_declaration }
@@ -442,11 +438,11 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'thread_type' { NodeType.thread_type }
 		'type_declaration' { NodeType.type_declaration }
 		'type_initializer' { NodeType.type_initializer }
+		'type_initializer_body' { NodeType.type_initializer_body }
 		'type_only_parameter_declaration' { NodeType.type_only_parameter_declaration }
 		'type_only_parameter_list' { NodeType.type_only_parameter_list }
 		'type_parameters' { NodeType.type_parameters }
 		'type_reference_expression' { NodeType.type_reference_expression }
-		'type_selector_expression' { NodeType.type_selector_expression }
 		'type_union_list' { NodeType.type_union_list }
 		'unary_expression' { NodeType.unary_expression }
 		'unsafe_expression' { NodeType.unsafe_expression }

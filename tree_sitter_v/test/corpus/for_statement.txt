@@ -1,0 +1,164 @@
+================================================================================
+Simple for in statement with two variables
+================================================================================
+for _, v in a {
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (for_statement
+    (range_clause
+      (var_definition
+        (identifier))
+      (var_definition
+        (identifier))
+      (reference_expression
+        (identifier)))
+    (block)))
+
+================================================================================
+Simple for in statement with one variable
+================================================================================
+for v in a {
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (for_statement
+    (range_clause
+      (var_definition
+        (identifier))
+      (reference_expression
+        (identifier)))
+    (block)))
+
+================================================================================
+Simple for in statement with range
+================================================================================
+for i in 0 .. 10 {
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (for_statement
+    (range_clause
+      (var_definition
+        (identifier))
+      (range
+        (literal
+          (int_literal))
+        (literal
+          (int_literal))))
+    (block)))
+
+================================================================================
+Simple C for statement
+================================================================================
+for i := 0; i < 10; i++ {
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (for_statement
+    (for_clause
+      (simple_statement
+        (var_declaration
+          (expression_list
+            (reference_expression
+              (identifier)))
+          (expression_list
+            (literal
+              (int_literal)))))
+      (binary_expression
+        (reference_expression
+          (identifier))
+        (literal
+          (int_literal)))
+      (simple_statement
+        (inc_statement
+          (reference_expression
+            (identifier)))))
+    (block)))
+
+================================================================================
+Simple C for statement without last statement
+================================================================================
+for i := 0; i < 10; {
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (for_statement
+    (for_clause
+      (simple_statement
+        (var_declaration
+          (expression_list
+            (reference_expression
+              (identifier)))
+          (expression_list
+            (literal
+              (int_literal)))))
+      (binary_expression
+        (reference_expression
+          (identifier))
+        (literal
+          (int_literal))))
+    (block)))
+
+================================================================================
+Simple C for statement without all statements
+================================================================================
+for ;; {
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (for_statement
+    (for_clause)
+    (block)))
+
+================================================================================
+Simple infinite for statement
+================================================================================
+for {
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (for_statement
+    (block)))
+
+================================================================================
+Simple condition for statement
+================================================================================
+for a > 100 {
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (for_statement
+    (binary_expression
+      (reference_expression
+        (identifier))
+      (literal
+        (int_literal)))
+    (block)))
+
+================================================================================
+Compile-time for statement
+================================================================================
+$for field in T.fields {
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (compile_time_for_statement
+    (range_clause
+      (var_definition
+        (identifier))
+      (selector_expression
+        (reference_expression
+          (identifier))
+        (reference_expression
+          (identifier))))
+    (block)))

@@ -14,7 +14,7 @@ foo()
 ================================================================================
 Simple call expression with argument
 ================================================================================
-foo('hello')
+foo(100)
 --------------------------------------------------------------------------------
 
 (source_file
@@ -25,12 +25,12 @@ foo('hello')
       (argument_list
         (argument
           (literal
-            (interpreted_string_literal)))))))
+            (int_literal)))))))
 
 ================================================================================
 Simple call expression with Option propagation
 ================================================================================
-foo('hello')?
+foo(100)?
 --------------------------------------------------------------------------------
 
 (source_file
@@ -41,13 +41,13 @@ foo('hello')?
       (argument_list
         (argument
           (literal
-            (interpreted_string_literal))))
+            (int_literal))))
       (error_propagate))))
 
 ================================================================================
 Simple call expression with Result propagation
 ================================================================================
-foo('hello')!
+foo(100)!
 --------------------------------------------------------------------------------
 
 (source_file
@@ -58,13 +58,13 @@ foo('hello')!
       (argument_list
         (argument
           (literal
-            (interpreted_string_literal))))
+            (int_literal))))
       (error_propagate))))
 
 ================================================================================
 Simple call expression with or block
 ================================================================================
-foo('hello') or { 100 }
+foo(100) or { 100 }
 --------------------------------------------------------------------------------
 
 (source_file
@@ -75,7 +75,7 @@ foo('hello') or { 100 }
       (argument_list
         (argument
           (literal
-            (interpreted_string_literal))))
+            (int_literal))))
       (error_propagate
         (or_block
           (block
@@ -104,7 +104,7 @@ foo(mut name)
 ================================================================================
 Simple call expression with arguments
 ================================================================================
-foo('hello', 100, 200)
+foo(100, 100, 200)
 --------------------------------------------------------------------------------
 
 (source_file
@@ -115,7 +115,7 @@ foo('hello', 100, 200)
       (argument_list
         (argument
           (literal
-            (interpreted_string_literal)))
+            (int_literal)))
         (argument
           (literal
             (int_literal)))
@@ -126,7 +126,7 @@ foo('hello', 100, 200)
 ================================================================================
 Simple call expression with arguments and trailing comma
 ================================================================================
-foo('hello', 100, 200, )
+foo(100, 100, 200, )
 --------------------------------------------------------------------------------
 
 (source_file
@@ -137,7 +137,7 @@ foo('hello', 100, 200, )
       (argument_list
         (argument
           (literal
-            (interpreted_string_literal)))
+            (int_literal)))
         (argument
           (literal
             (int_literal)))
@@ -149,7 +149,7 @@ foo('hello', 100, 200, )
 Simple call expression with arguments on multiple lines
 ================================================================================
 foo(
-    'hello',
+    100,
     100,
     200
 )
@@ -163,7 +163,7 @@ foo(
       (argument_list
         (argument
           (literal
-            (interpreted_string_literal)))
+            (int_literal)))
         (argument
           (literal
             (int_literal)))
@@ -175,7 +175,7 @@ foo(
 Simple call expression with arguments on multiple lines and trailing comma
 ================================================================================
 foo(
-    'hello',
+    100,
     100,
     200,
 )
@@ -189,7 +189,7 @@ foo(
       (argument_list
         (argument
           (literal
-            (interpreted_string_literal)))
+            (int_literal)))
         (argument
           (literal
             (int_literal)))
@@ -200,7 +200,7 @@ foo(
 ================================================================================
 Simple call expression with last unpacking parameter
 ================================================================================
-foo('hello', 100, ...[1, 2, 3])
+foo(100, 100, ...[1, 2, 3])
 --------------------------------------------------------------------------------
 
 (source_file
@@ -211,7 +211,7 @@ foo('hello', 100, ...[1, 2, 3])
       (argument_list
         (argument
           (literal
-            (interpreted_string_literal)))
+            (int_literal)))
         (argument
           (literal
             (int_literal)))

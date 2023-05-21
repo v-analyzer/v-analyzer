@@ -422,6 +422,7 @@ module.exports = grammar({
         $.unary_expression,
         $.binary_expression,
         $.is_expression,
+        $.not_is_expression,
         $.index_expression,
         $.slice_expression,
         // $.type_cast_expression,
@@ -841,18 +842,6 @@ module.exports = grammar({
         )
       ),
 
-    _mutable_expression_2: ($) =>
-      prec(
-        PREC.resolve,
-        seq(
-          $.mutability_modifiers,
-          choice(
-            $.selector_expression,
-            $.index_expression
-          )
-        )
-      ),
-
     mutable_expression: ($) =>
       prec(
         PREC.resolve,
@@ -918,7 +907,6 @@ module.exports = grammar({
         choice(
           $.type_reference_expression,
           // $.builtin_type,
-          $.type_placeholder,
           $._binded_type,
           $.qualified_type,
           $.pointer_type,
@@ -946,8 +934,6 @@ module.exports = grammar({
         field("name", $.type_reference_expression)
       ),
 
-    type_placeholder: ($) => token(unicode_letter),
-
     pseudo_comptime_identifier: ($) =>
       seq("@", alias(/[A-Z][A-Z0-9_]+/, $.identifier)),
 
@@ -973,7 +959,7 @@ module.exports = grammar({
         $.labeled_statement,
         $.defer_statement,
         $.for_statement,
-        $.comptime_for_statement,
+        $.compile_time_for_statement,
         $.send_statement,
         $.block,
         $.hash_statement
@@ -1011,12 +997,11 @@ module.exports = grammar({
           )
       ),
 
-    _var_definition_list: ($) =>
-        prec(PREC.primary, comma_sep1($.var_definition)),
+    _var_definition_list: ($) => comma_sep1($.var_definition),
 
     var_definition: ($) =>
         prec(
-            PREC.primary,
+            PREC.type_initializer,
             seq(
                 field("modifiers", optional('mut')),
                 field("name", $.identifier),
@@ -1106,30 +1091,30 @@ module.exports = grammar({
         )
       ),
 
+    compile_time_for_statement: ($) =>
+      seq('$for', $.range_clause, field('body', $.block)),
+
     for_statement: ($) =>
       seq(
         'for',
         optional(
           choice(
-            $.for_in_operator,
-            $.cstyle_for_clause,
-            $._expression, // condition-based for
+            $.range_clause,
+            $.for_clause,
+            $._expression,
           )
         ),
-        field("body", $.block)
+        field('body', $.block)
       ),
 
-    comptime_for_statement: ($) =>
-      seq("$for", $.for_in_operator, field("body", $.block)),
-
-    for_in_operator: ($) =>
+    range_clause: ($) =>
       prec.left(
         PREC.primary,
         seq(
-          field("left", choice($._expression, $.identifier_list)),
+          field('left', $._var_definition_list),
           'in',
           field(
-            "right",
+            'right',
             choice(
               alias($._definite_range, $.range),
               $._expression
@@ -1138,23 +1123,34 @@ module.exports = grammar({
         )
       ),
 
+    for_clause: ($) =>
+      prec.left(
+        seq(
+          field('initializer', optional($.simple_statement)),
+          ';',
+          field('condition', optional($._expression)),
+          ';',
+          field('update', optional($.simple_statement))
+        )
+      ),
+
     _definite_range: ($) =>
       prec(
         PREC.multiplicative,
         seq(
-          field("start", $._expression),
-          choice("..", "..."),
-          field("end", $._expression)
+          field('start', $._expression),
+          choice('..', '...'),
+          field('end', $._expression)
         )
       ),
 
-    _range: ($) =>
+    range: ($) =>
       prec(
         PREC.multiplicative,
         seq(
-          field("start", optional($._expression)),
-          "..",
-          field("end", optional($._expression))
+          field('start', optional($._expression)),
+          '..',
+          field('end', optional($._expression))
         )
       ),
 
@@ -1172,7 +1168,6 @@ module.exports = grammar({
             choice(
               $.reference_expression,
               // $.type_reference_expression,
-              // alias($.type_placeholder, $.type_reference_expression),
               $.comptime_identifier,
               $.comptime_selector_expression
             )
@@ -1195,18 +1190,7 @@ module.exports = grammar({
     slice_expression: ($) =>
       prec(
         PREC.primary,
-        seq(field("operand", $._expression), "[", $._range, "]")
-      ),
-
-    cstyle_for_clause: ($) =>
-      prec.left(
-        seq(
-          field("initializer", optional($.simple_statement)),
-          ";",
-          field("condition", optional($._expression)),
-          ";",
-          field("update", optional($.simple_statement))
-        )
+        seq(field("operand", $._expression), "[", $.range, "]")
       ),
 
     comptime_if_expression: ($) =>
@@ -1251,14 +1235,18 @@ module.exports = grammar({
       prec.left(
         PREC.comparative,
         seq(
-          field("left", choice(
-            $.type_placeholder,
-            $.mutable_identifier,
-            alias($._mutable_expression_2, $.mutable_expression),
-            $.mutable_expression,
-            $._expression
-          )),
-          choice('is', "!" + 'is'),
+          field("left", $._expression),
+          'is',
+          field("right", choice($.option_type, $.plain_type))
+        )
+      ),
+
+    not_is_expression: ($) =>
+      prec.left(
+        PREC.comparative,
+        seq(
+          field("left", $._expression),
+          '!is',
           field("right", choice($.option_type, $.plain_type))
         )
       ),
@@ -1307,16 +1295,6 @@ module.exports = grammar({
     ),
 
     enum_fetch : ($) => seq(".", $.identifier),
-
-    type_selector_expression: ($) =>
-      seq(
-        field(
-          "type",
-            $.type_reference_expression
-        ),
-        ".",
-        field("field_name", $.type_reference_expression)
-      ),
 
 
     hash_statement: ($) => seq("#", token.immediate(repeat1(/.|\\\r?\n/)), terminator),
