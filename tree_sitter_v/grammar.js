@@ -1167,7 +1167,7 @@ module.exports = grammar({
     literal_attribute: ($) => prec(PREC.attributes, $.literal),
 
     value_attribute: ($) => prec(PREC.attributes,
-      field('name', choice(alias('unsafe', $.type_reference_expression), $.type_reference_expression)),
+      field('name', choice(alias('unsafe', $.reference_expression), $.reference_expression)),
     ),
 
     // [key]

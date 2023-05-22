@@ -2,7 +2,6 @@
 (comment) @comment
 
 (identifier) @variable
-(module_identifier) @variable
 (import_path) @variable
 
 (parameter_declaration
@@ -10,23 +9,20 @@
 (function_declaration
   name: (identifier) @function)
 (function_declaration
-  receiver: (parameter_list)
+  receiver: (receiver)
   name: (identifier) @method)
 
 (call_expression
-  function: (identifier) @function)
-(call_expression
-  function: (selector_expression
-    field: (identifier) @method))
+ name: (selector_expression
+    field: (reference_expression) @method))
 
-(type_identifier) @type
-(builtin_type) @type
+(type_reference_expression) @type
 (pointer_type) @type
 (array_type) @type
 
-(field_identifier) @property
+(field_name) @property
 (selector_expression
-  field: (identifier) @property)
+  field: (reference_expression) @property)
 
 (int_literal) @number
 (interpreted_string_literal) @string
@@ -38,9 +34,9 @@
  "asm"
  "assert"
  ;"atomic"
- ;"break"
+ "break"
  "const"
- ;"continue"
+ "continue"
  "defer"
  "else"
  "enum"
@@ -67,11 +63,11 @@
  "return"
  "rlock"
  "select"
- ;"shared"
- ;"static"
+ "shared"
+ "static"
  "struct"
  "type"
- ;"union"
+ "union"
  "unsafe"
 ] @keyword
 
@@ -96,7 +92,7 @@
  "]"
 ] @punctuation.bracket
 
-(array) @punctuation.bracket
+(array_creation) @punctuation.bracket
 
 [
  "++"

@@ -132,7 +132,7 @@ interface Foo {
         (attribute_expression
           (key_value_attribute
             (value_attribute
-              (type_reference_expression
+              (reference_expression
                 (identifier)))
             (literal
               (interpreted_string_literal)))))
@@ -163,12 +163,12 @@ interface Foo {
       (attribute
         (attribute_expression
           (value_attribute
-            (type_reference_expression
+            (reference_expression
               (identifier)))))
       (attribute
         (attribute_expression
           (value_attribute
-            (type_reference_expression
+            (reference_expression
               (identifier))))))
     (identifier)
     (struct_field_declaration
@@ -203,12 +203,12 @@ interface Foo {
       (attribute
         (attribute_expression
           (value_attribute
-            (type_reference_expression
+            (reference_expression
               (identifier)))))
       (attribute
         (attribute_expression
           (value_attribute
-            (type_reference_expression
+            (reference_expression
               (identifier))))))
     (identifier)
     (struct_field_declaration

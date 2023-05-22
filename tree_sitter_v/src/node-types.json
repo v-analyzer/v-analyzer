@@ -2938,7 +2938,7 @@
     "fields": {},
     "children": {
       "multiple": false,
-      "required": true,
+      "required": false,
       "types": [
         {
           "type": "identifier",
@@ -3687,7 +3687,7 @@
     "fields": {},
     "children": {
       "multiple": false,
-      "required": false,
+      "required": true,
       "types": [
         {
           "type": "identifier",
@@ -3789,7 +3789,7 @@
         "required": true,
         "types": [
           {
-            "type": "type_reference_expression",
+            "type": "reference_expression",
             "named": true
           }
         ]

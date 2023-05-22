@@ -133,7 +133,7 @@ const name = 100
       (attribute
         (attribute_expression
           (value_attribute
-            (type_reference_expression
+            (reference_expression
               (identifier))))))
     (const_definition
       (identifier)
@@ -157,12 +157,12 @@ pub const (
       (attribute
         (attribute_expression
           (value_attribute
-            (type_reference_expression
+            (reference_expression
               (identifier)))))
       (attribute
         (attribute_expression
           (value_attribute
-            (type_reference_expression
+            (reference_expression
               (identifier))))))
     (visibility_modifiers)
     (const_definition

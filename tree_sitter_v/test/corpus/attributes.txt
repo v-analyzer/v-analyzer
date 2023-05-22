@@ -11,7 +11,7 @@ struct Foo {}
       (attribute
         (attribute_expression
           (value_attribute
-            (type_reference_expression
+            (reference_expression
               (identifier))))))
     (identifier)))
 
@@ -30,17 +30,17 @@ struct Foo {}
       (attribute
         (attribute_expression
           (value_attribute
-            (type_reference_expression
+            (reference_expression
               (identifier)))))
       (attribute
         (attribute_expression
           (value_attribute
-            (type_reference_expression
+            (reference_expression
               (identifier)))))
       (attribute
         (attribute_expression
           (value_attribute
-            (type_reference_expression
+            (reference_expression
               (identifier))))))
     (identifier)))
 
@@ -113,14 +113,14 @@ struct Foo {}
         (attribute_expression
           (key_value_attribute
             (value_attribute
-              (type_reference_expression
+              (reference_expression
                 (identifier)))
             (identifier))))
       (attribute
         (attribute_expression
           (key_value_attribute
             (value_attribute
-              (type_reference_expression
+              (reference_expression
                 (identifier)))
             (literal
               (interpreted_string_literal)))))
@@ -128,7 +128,7 @@ struct Foo {}
         (attribute_expression
           (key_value_attribute
             (value_attribute
-              (type_reference_expression
+              (reference_expression
                 (identifier)))
             (literal
               (int_literal)))))
@@ -136,7 +136,7 @@ struct Foo {}
         (attribute_expression
           (key_value_attribute
             (value_attribute
-              (type_reference_expression
+              (reference_expression
                 (identifier)))
             (literal
               (true))))))

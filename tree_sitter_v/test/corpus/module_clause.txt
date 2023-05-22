@@ -35,7 +35,7 @@ module main
       (attribute
         (attribute_expression
           (value_attribute
-            (type_reference_expression
+            (reference_expression
               (identifier))))))
     (identifier)))
 
@@ -56,6 +56,6 @@ module main
       (attribute
         (attribute_expression
           (value_attribute
-            (type_reference_expression
+            (reference_expression
               (identifier))))))
     (identifier)))

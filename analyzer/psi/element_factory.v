@@ -48,17 +48,19 @@ pub fn create_element(node AstNode, containing_file &PsiFileImpl) PsiElement {
 	}
 
 	if node.type_name == .reference_expression {
-		if parent := node.parent_nth(2) {
-			if parent.type_name == .var_declaration {
+		if grand := node.parent_nth(2) {
+			if grand.type_name == .var_declaration {
 				return VarDefinition{
 					PsiElementImpl: base_node
 				}
 			}
 		}
-		if parent := node.parent_nth(3) {
-			if parent.type_name == .var_declaration {
-				return VarDefinition{
-					PsiElementImpl: base_node
+		if grand_grand := node.parent_nth(3) {
+			if parent := node.parent_nth(1) {
+				if grand_grand.type_name == .var_declaration && parent.type_name == .mutable_expression {
+					return VarDefinition{
+						PsiElementImpl: base_node
+					}
 				}
 			}
 		}

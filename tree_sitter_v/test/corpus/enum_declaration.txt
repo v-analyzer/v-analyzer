@@ -148,14 +148,14 @@ enum Colors {
       (attribute
         (attribute_expression
           (value_attribute
-            (type_reference_expression
+            (reference_expression
               (identifier))))))
     (enum_field_definition
       (identifier)
       (attribute
         (attribute_expression
           (value_attribute
-            (type_reference_expression
+            (reference_expression
               (identifier))))))))
 
 ================================================================================
@@ -172,15 +172,19 @@ enum Colors {
     (identifier)
     (enum_field_definition
       (identifier)
-      (index_expression
-        (literal
-          (int_literal))
-        (reference_expression
-          (identifier))))
+      (literal
+        (int_literal))
+      (attribute
+        (attribute_expression
+          (value_attribute
+            (reference_expression
+              (identifier))))))
     (enum_field_definition
       (identifier)
-      (index_expression
-        (literal
-          (int_literal))
-        (reference_expression
-          (identifier))))))
+      (literal
+        (int_literal))
+      (attribute
+        (attribute_expression
+          (value_attribute
+            (reference_expression
+              (identifier))))))))

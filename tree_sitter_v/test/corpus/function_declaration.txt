@@ -379,7 +379,7 @@ fn foo() {}
       (attribute
         (attribute_expression
           (value_attribute
-            (type_reference_expression)))))
+            (reference_expression)))))
     (identifier)
     (signature
       (parameter_list))
@@ -399,11 +399,11 @@ fn foo() {}
       (attribute
         (attribute_expression
           (value_attribute
-            (type_reference_expression))))
+            (reference_expression))))
       (attribute
         (attribute_expression
           (value_attribute
-            (type_reference_expression
+            (reference_expression
               (identifier))))))
     (identifier)
     (signature
@@ -426,11 +426,11 @@ fn foo() {}
       (attribute
         (attribute_expression
           (value_attribute
-            (type_reference_expression))))
+            (reference_expression))))
       (attribute
         (attribute_expression
           (value_attribute
-            (type_reference_expression
+            (reference_expression
               (identifier))))))
     (identifier)
     (signature
@@ -534,10 +534,10 @@ pub fn C.foo[T, U, ](foo string, age ...int) !(int, string, ) {}
       (attribute
         (attribute_expression
           (value_attribute
-            (type_reference_expression)))
+            (reference_expression)))
         (attribute_expression
           (value_attribute
-            (type_reference_expression
+            (reference_expression
               (identifier))))))
     (visibility_modifiers)
     (binded_identifier

@@ -119,7 +119,7 @@ __global g_var = 0
       (attribute
         (attribute_expression
           (value_attribute
-            (type_reference_expression
+            (reference_expression
               (identifier))))))
     (global_var_definition
       (identifier)
@@ -144,12 +144,12 @@ __global (
       (attribute
         (attribute_expression
           (value_attribute
-            (type_reference_expression
+            (reference_expression
               (identifier)))))
       (attribute
         (attribute_expression
           (value_attribute
-            (type_reference_expression
+            (reference_expression
               (identifier))))))
     (global_var_definition
       (identifier)

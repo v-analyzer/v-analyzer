@@ -7899,11 +7899,11 @@
                 "value": "unsafe"
               },
               "named": true,
-              "value": "type_reference_expression"
+              "value": "reference_expression"
             },
             {
               "type": "SYMBOL",
-              "name": "type_reference_expression"
+              "name": "reference_expression"
             }
           ]
         }
