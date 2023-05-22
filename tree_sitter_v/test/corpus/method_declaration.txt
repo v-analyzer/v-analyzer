@@ -87,7 +87,7 @@ fn (f Foo) == (o Foo) {}
       (plain_type
         (type_reference_expression
           (identifier))))
-    (overloadable_operator)
+    (overridable_operator)
     (signature
       (parameter_list
         (parameter_declaration

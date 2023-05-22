@@ -1,0 +1,143 @@
+================================================================================
+Simple attribute
+================================================================================
+[name]
+struct Foo {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (struct_declaration
+    (attributes
+      (attribute
+        (attribute_expression
+          (value_attribute
+            (type_reference_expression
+              (identifier))))))
+    (identifier)))
+
+================================================================================
+Simple attributes
+================================================================================
+[name]
+[name1]
+[name2]
+struct Foo {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (struct_declaration
+    (attributes
+      (attribute
+        (attribute_expression
+          (value_attribute
+            (type_reference_expression
+              (identifier)))))
+      (attribute
+        (attribute_expression
+          (value_attribute
+            (type_reference_expression
+              (identifier)))))
+      (attribute
+        (attribute_expression
+          (value_attribute
+            (type_reference_expression
+              (identifier))))))
+    (identifier)))
+
+================================================================================
+If attribute
+================================================================================
+[if name]
+[if name1 ?]
+struct Foo {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (struct_declaration
+    (attributes
+      (attribute
+        (attribute_expression
+          (if_attribute
+            (reference_expression
+              (identifier)))))
+      (attribute
+        (attribute_expression
+          (if_attribute
+            (reference_expression
+              (identifier))))))
+    (identifier)))
+
+================================================================================
+Literal attribute
+================================================================================
+['hello']
+[100]
+[true]
+struct Foo {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (struct_declaration
+    (attributes
+      (attribute
+        (attribute_expression
+          (literal_attribute
+            (literal
+              (interpreted_string_literal)))))
+      (attribute
+        (attribute_expression
+          (literal_attribute
+            (literal
+              (int_literal)))))
+      (attribute
+        (attribute_expression
+          (literal_attribute
+            (literal
+              (true))))))
+    (identifier)))
+
+================================================================================
+Key value attribute
+================================================================================
+[key: value]
+[key: 'hello']
+[key: 100]
+[key: true]
+struct Foo {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (struct_declaration
+    (attributes
+      (attribute
+        (attribute_expression
+          (key_value_attribute
+            (value_attribute
+              (type_reference_expression
+                (identifier)))
+            (identifier))))
+      (attribute
+        (attribute_expression
+          (key_value_attribute
+            (value_attribute
+              (type_reference_expression
+                (identifier)))
+            (literal
+              (interpreted_string_literal)))))
+      (attribute
+        (attribute_expression
+          (key_value_attribute
+            (value_attribute
+              (type_reference_expression
+                (identifier)))
+            (literal
+              (int_literal)))))
+      (attribute
+        (attribute_expression
+          (key_value_attribute
+            (value_attribute
+              (type_reference_expression
+                (identifier)))
+            (literal
+              (true))))))
+    (identifier)))

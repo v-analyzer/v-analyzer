@@ -1,0 +1,51 @@
+================================================================================
+Simple spawn expression
+================================================================================
+spawn foo()
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (spawn_expression
+      (call_expression
+        (reference_expression
+          (identifier))
+        (argument_list)))))
+
+================================================================================
+Simple spawn expression with function literal
+================================================================================
+spawn fn () {
+    return
+}()
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (spawn_expression
+      (call_expression
+        (function_literal
+          (signature
+            (parameter_list))
+          (block
+            (return_statement)))
+        (argument_list)))))
+
+================================================================================
+Simple spawn expression with assignment
+================================================================================
+a := spawn foo()
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (var_declaration
+      (expression_list
+        (reference_expression
+          (identifier)))
+      (expression_list
+        (spawn_expression
+          (call_expression
+            (reference_expression
+              (identifier))
+            (argument_list)))))))

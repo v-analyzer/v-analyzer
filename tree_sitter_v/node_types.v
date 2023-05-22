@@ -35,7 +35,6 @@ pub enum NodeType {
 	call_expression
 	capture
 	capture_list
-	case_list
 	channel_type
 	comment
 	compile_time_for_statement
@@ -46,7 +45,6 @@ pub enum NodeType {
 	const_definition
 	continue_statement
 	dec_statement
-	default_case
 	defer_statement
 	element
 	element_list
@@ -58,7 +56,6 @@ pub enum NodeType {
 	enum_fetch
 	enum_field_definition
 	error_propagate
-	expression_case
 	expression_list
 	field_name
 	fixed_array_creation
@@ -74,7 +71,7 @@ pub enum NodeType {
 	generic_type
 	global_var_declaration
 	global_var_definition
-	go_statement
+	go_expression
 	goto_statement
 	hash_statement
 	if_attribute
@@ -92,6 +89,8 @@ pub enum NodeType {
 	is_expression
 	key_value_attribute
 	keyed_element
+	label_definition
+	label_reference
 	labeled_statement
 	literal
 	literal_attribute
@@ -99,7 +98,12 @@ pub enum NodeType {
 	map_init_expression
 	map_keyed_element
 	map_type
+	match_arm
+	match_arm_type
+	match_arms
+	match_else_arm_clause
 	match_expression
+	match_expression_list
 	module_clause
 	multi_return_type
 	mutability_modifiers
@@ -110,7 +114,7 @@ pub enum NodeType {
 	not_is_expression
 	option_type
 	or_block
-	overloadable_operator
+	overridable_operator
 	parameter_declaration
 	parameter_list
 	parenthesized_expression
@@ -137,7 +141,7 @@ pub enum NodeType {
 	simple_statement
 	slice_expression
 	source_file
-	spawn_statement
+	spawn_expression
 	special_argument_list
 	spread_expression
 	sql_expression
@@ -165,7 +169,6 @@ pub enum NodeType {
 	float_literal
 	identifier
 	int_literal
-	label_name
 	nil_
 	rune_literal
 	true_
@@ -182,6 +185,7 @@ const supertype__expression_nodes = merge(supertype__expression_with_blocks_node
 	.enum_fetch,
 	.fixed_array_creation,
 	.function_literal,
+	.go_expression,
 	.index_expression,
 	.is_expression,
 	.literal,
@@ -192,6 +196,7 @@ const supertype__expression_nodes = merge(supertype__expression_with_blocks_node
 	.reference_expression,
 	.selector_expression,
 	.slice_expression,
+	.spawn_expression,
 	.type_initializer,
 	.unary_expression,
 ])
@@ -215,14 +220,12 @@ const supertype__statement_nodes = [
 	.continue_statement,
 	.defer_statement,
 	.for_statement,
-	.go_statement,
 	.goto_statement,
 	.hash_statement,
 	.labeled_statement,
 	.return_statement,
 	.send_statement,
 	.simple_statement,
-	.spawn_statement,
 ]
 
 const supertype__top_level_declaration_nodes = [
@@ -330,7 +333,6 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'call_expression' { NodeType.call_expression }
 		'capture' { NodeType.capture }
 		'capture_list' { NodeType.capture_list }
-		'case_list' { NodeType.case_list }
 		'channel_type' { NodeType.channel_type }
 		'comment' { NodeType.comment }
 		'compile_time_for_statement' { NodeType.compile_time_for_statement }
@@ -341,7 +343,6 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'const_definition' { NodeType.const_definition }
 		'continue_statement' { NodeType.continue_statement }
 		'dec_statement' { NodeType.dec_statement }
-		'default_case' { NodeType.default_case }
 		'defer_statement' { NodeType.defer_statement }
 		'element' { NodeType.element }
 		'element_list' { NodeType.element_list }
@@ -353,7 +354,6 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'enum_fetch' { NodeType.enum_fetch }
 		'enum_field_definition' { NodeType.enum_field_definition }
 		'error_propagate' { NodeType.error_propagate }
-		'expression_case' { NodeType.expression_case }
 		'expression_list' { NodeType.expression_list }
 		'field_name' { NodeType.field_name }
 		'fixed_array_creation' { NodeType.fixed_array_creation }
@@ -369,7 +369,7 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'generic_type' { NodeType.generic_type }
 		'global_var_declaration' { NodeType.global_var_declaration }
 		'global_var_definition' { NodeType.global_var_definition }
-		'go_statement' { NodeType.go_statement }
+		'go_expression' { NodeType.go_expression }
 		'goto_statement' { NodeType.goto_statement }
 		'hash_statement' { NodeType.hash_statement }
 		'if_attribute' { NodeType.if_attribute }
@@ -387,6 +387,8 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'is_expression' { NodeType.is_expression }
 		'key_value_attribute' { NodeType.key_value_attribute }
 		'keyed_element' { NodeType.keyed_element }
+		'label_definition' { NodeType.label_definition }
+		'label_reference' { NodeType.label_reference }
 		'labeled_statement' { NodeType.labeled_statement }
 		'literal' { NodeType.literal }
 		'literal_attribute' { NodeType.literal_attribute }
@@ -394,7 +396,12 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'map_init_expression' { NodeType.map_init_expression }
 		'map_keyed_element' { NodeType.map_keyed_element }
 		'map_type' { NodeType.map_type }
+		'match_arm' { NodeType.match_arm }
+		'match_arm_type' { NodeType.match_arm_type }
+		'match_arms' { NodeType.match_arms }
+		'match_else_arm_clause' { NodeType.match_else_arm_clause }
 		'match_expression' { NodeType.match_expression }
+		'match_expression_list' { NodeType.match_expression_list }
 		'module_clause' { NodeType.module_clause }
 		'multi_return_type' { NodeType.multi_return_type }
 		'mutability_modifiers' { NodeType.mutability_modifiers }
@@ -405,7 +412,7 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'not_is_expression' { NodeType.not_is_expression }
 		'option_type' { NodeType.option_type }
 		'or_block' { NodeType.or_block }
-		'overloadable_operator' { NodeType.overloadable_operator }
+		'overridable_operator' { NodeType.overridable_operator }
 		'parameter_declaration' { NodeType.parameter_declaration }
 		'parameter_list' { NodeType.parameter_list }
 		'parenthesized_expression' { NodeType.parenthesized_expression }
@@ -432,7 +439,7 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'simple_statement' { NodeType.simple_statement }
 		'slice_expression' { NodeType.slice_expression }
 		'source_file' { NodeType.source_file }
-		'spawn_statement' { NodeType.spawn_statement }
+		'spawn_expression' { NodeType.spawn_expression }
 		'special_argument_list' { NodeType.special_argument_list }
 		'spread_expression' { NodeType.spread_expression }
 		'sql_expression' { NodeType.sql_expression }
@@ -460,7 +467,6 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'float_literal' { NodeType.float_literal }
 		'identifier' { NodeType.identifier }
 		'int_literal' { NodeType.int_literal }
-		'label_name' { NodeType.label_name }
 		'nil' { NodeType.nil_ }
 		'rune_literal' { NodeType.rune_literal }
 		'true' { NodeType.true_ }

@@ -394,48 +394,49 @@ fn test_with_value() {
             (plain_type
               (none_type)))
           (block
-            (go_statement
-              (call_expression
-                (function_literal
-                  (signature
-                    (parameter_list
-                      (parameter_declaration
-                        (mutability_modifiers)
-                        (identifier)
-                        (plain_type
-                          (type_reference_expression
-                            (identifier))))
-                      (parameter_declaration
-                        (identifier)
-                        (plain_type
-                          (qualified_type
-                            (identifier)
+            (simple_statement
+              (go_expression
+                (call_expression
+                  (function_literal
+                    (signature
+                      (parameter_list
+                        (parameter_declaration
+                          (mutability_modifiers)
+                          (identifier)
+                          (plain_type
                             (type_reference_expression
-                              (identifier)))))))
-                  (block
-                    (simple_statement
-                      (call_expression
-                        (selector_expression
-                          (reference_expression
-                            (identifier))
-                          (reference_expression
-                            (identifier)))
-                        (argument_list
-                          (argument
-                            (literal
-                              (true)))
-                          (argument
+                              (identifier))))
+                        (parameter_declaration
+                          (identifier)
+                          (plain_type
+                            (qualified_type
+                              (identifier)
+                              (type_reference_expression
+                                (identifier)))))))
+                    (block
+                      (simple_statement
+                        (call_expression
+                          (selector_expression
                             (reference_expression
-                              (identifier))))))))
-                (argument_list
-                  (argument
-                    (mutable_expression
-                      (mutability_modifiers)
+                              (identifier))
+                            (reference_expression
+                              (identifier)))
+                          (argument_list
+                            (argument
+                              (literal
+                                (true)))
+                            (argument
+                              (reference_expression
+                                (identifier))))))))
+                  (argument_list
+                    (argument
+                      (mutable_expression
+                        (mutability_modifiers)
+                        (reference_expression
+                          (identifier))))
+                    (argument
                       (reference_expression
-                        (identifier))))
-                  (argument
-                    (reference_expression
-                      (identifier)))))))))
+                        (identifier))))))))))
       (simple_statement
         (var_declaration
           (expression_list
@@ -521,17 +522,20 @@ fn test_with_value() {
                         (match_expression
                           (reference_expression
                             (identifier))
-                          (expression_case
-                            (case_list
-                              (reference_expression
-                                (identifier)))
-                            (block
-                              (return_statement
-                                (expression_list
-                                  (reference_expression
-                                    (identifier))))))
-                          (default_case
-                            (block)))))))
+                          (match_arms
+                            (match_arm
+                              (match_expression_list
+                                (match_arm_type
+                                  (plain_type
+                                    (type_reference_expression
+                                      (identifier)))))
+                              (block
+                                (return_statement
+                                  (expression_list
+                                    (reference_expression
+                                      (identifier))))))
+                            (match_else_arm_clause
+                              (block))))))))
                 (return_statement
                   (expression_list
                     (reference_expression

@@ -1,0 +1,245 @@
+================================================================================
+Simple match expression
+================================================================================
+match age {
+    100 {}
+    200 {}
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (match_expression
+      (reference_expression
+        (identifier))
+      (match_arms
+        (match_arm
+          (match_expression_list
+            (literal
+              (int_literal)))
+          (block))
+        (match_arm
+          (match_expression_list
+            (literal
+              (int_literal)))
+          (block))))))
+
+================================================================================
+Simple match expression with else
+================================================================================
+match age {
+    100 {}
+    else {}
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (match_expression
+      (reference_expression
+        (identifier))
+      (match_arms
+        (match_arm
+          (match_expression_list
+            (literal
+              (int_literal)))
+          (block))
+        (match_else_arm_clause
+          (block))))))
+
+================================================================================
+Simple match expression with several else
+================================================================================
+match age {
+    100 {}
+    200 {}
+    else {}
+    else {}
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (match_expression
+      (reference_expression
+        (identifier))
+      (match_arms
+        (match_arm
+          (match_expression_list
+            (literal
+              (int_literal)))
+          (block))
+        (match_arm
+          (match_expression_list
+            (literal
+              (int_literal)))
+          (block))
+        (match_else_arm_clause
+          (block))
+        (match_else_arm_clause
+          (block))))))
+
+================================================================================
+Simple match expression with mutable expression
+================================================================================
+match mut age {
+    100 {}
+    200 {}
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (match_expression
+      (mutable_expression
+        (mutability_modifiers)
+        (reference_expression
+          (identifier)))
+      (match_arms
+        (match_arm
+          (match_expression_list
+            (literal
+              (int_literal)))
+          (block))
+        (match_arm
+          (match_expression_list
+            (literal
+              (int_literal)))
+          (block))))))
+
+================================================================================
+Simple match expression with several expression in case
+================================================================================
+match mut age {
+    100, 200 {}
+    200, 300 {}
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (match_expression
+      (mutable_expression
+        (mutability_modifiers)
+        (reference_expression
+          (identifier)))
+      (match_arms
+        (match_arm
+          (match_expression_list
+            (literal
+              (int_literal))
+            (literal
+              (int_literal)))
+          (block))
+        (match_arm
+          (match_expression_list
+            (literal
+              (int_literal))
+            (literal
+              (int_literal)))
+          (block))))))
+
+================================================================================
+Simple match expression with range
+================================================================================
+match b {
+  33, 35...39, 42 { true }
+  else { false }
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (match_expression
+      (reference_expression
+        (identifier))
+      (match_arms
+        (match_arm
+          (match_expression_list
+            (literal
+              (int_literal))
+            (range
+              (literal
+                (int_literal))
+              (literal
+                (int_literal)))
+            (literal
+              (int_literal)))
+          (block
+            (simple_statement
+              (literal
+                (true)))))
+        (match_else_arm_clause
+          (block
+            (simple_statement
+              (literal
+                (false)))))))))
+
+================================================================================
+Simple match expression for types
+================================================================================
+match age {
+    []string {}
+    int {}
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (match_expression
+      (reference_expression
+        (identifier))
+      (match_arms
+        (match_arm
+          (match_expression_list
+            (match_arm_type
+              (plain_type
+                (array_type
+                  (plain_type
+                    (type_reference_expression
+                      (identifier)))))))
+          (block))
+        (match_arm
+          (match_expression_list
+            (match_arm_type
+              (plain_type
+                (type_reference_expression
+                  (identifier)))))
+          (block))))))
+
+================================================================================
+Simple match expression for other types
+================================================================================
+match age {
+    map[int]string {}
+    &int {}
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (match_expression
+      (reference_expression
+        (identifier))
+      (match_arms
+        (match_arm
+          (match_expression_list
+            (match_arm_type
+              (plain_type
+                (map_type
+                  (plain_type
+                    (type_reference_expression
+                      (identifier)))
+                  (plain_type
+                    (type_reference_expression
+                      (identifier)))))))
+          (block))
+        (match_arm
+          (match_expression_list
+            (match_arm_type
+              (plain_type
+                (pointer_type
+                  (plain_type
+                    (type_reference_expression
+                      (identifier)))))))
+          (block))))))

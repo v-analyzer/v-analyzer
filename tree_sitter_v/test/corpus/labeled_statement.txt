@@ -1,0 +1,64 @@
+================================================================================
+Simple labeled for
+================================================================================
+label: for i in 0 .. 10 {
+    println(i)
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (labeled_statement
+    (label_definition
+      (identifier))
+    (for_statement
+      (range_clause
+        (var_definition
+          (identifier))
+        (range
+          (literal
+            (int_literal))
+          (literal
+            (int_literal))))
+      (block
+        (simple_statement
+          (call_expression
+            (reference_expression
+              (identifier))
+            (argument_list
+              (argument
+                (reference_expression
+                  (identifier))))))))))
+
+================================================================================
+Break/continue/goto with label
+================================================================================
+label: for i in 0 .. 10 {
+    break label
+    continue label
+    goto label
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (labeled_statement
+    (label_definition
+      (identifier))
+    (for_statement
+      (range_clause
+        (var_definition
+          (identifier))
+        (range
+          (literal
+            (int_literal))
+          (literal
+            (int_literal))))
+      (block
+        (break_statement
+          (label_reference
+            (identifier)))
+        (continue_statement
+          (label_reference
+            (identifier)))
+        (goto_statement
+          (label_reference
+            (identifier)))))))

@@ -1,0 +1,63 @@
+================================================================================
+Simple lock expression
+================================================================================
+lock a {
+    return
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (lock_expression
+      (expression_list
+        (reference_expression
+          (identifier)))
+      (block
+        (return_statement)))))
+
+================================================================================
+Simple rlock expression
+================================================================================
+rlock a {
+    return
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (lock_expression
+      (expression_list
+        (reference_expression
+          (identifier)))
+      (block
+        (return_statement)))))
+
+================================================================================
+Simple lock expression with several expressions
+================================================================================
+rlock a, b.name, c.other.foo {
+    return
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (lock_expression
+      (expression_list
+        (reference_expression
+          (identifier))
+        (selector_expression
+          (reference_expression
+            (identifier))
+          (reference_expression
+            (identifier)))
+        (selector_expression
+          (selector_expression
+            (reference_expression
+              (identifier))
+            (reference_expression
+              (identifier)))
+          (reference_expression
+            (identifier))))
+      (block
+        (return_statement)))))
