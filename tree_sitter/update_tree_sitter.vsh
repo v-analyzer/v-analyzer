@@ -1,5 +1,4 @@
-// This is a script that will pull and update
-// tree-sitter library files from upstream.
+// Script that will pull and update tree-sitter library files from upstream.
 import x.json2
 
 fn rm_rf(path string) {
@@ -31,12 +30,12 @@ fn patch_includes(lib_files []string, includes_to_replace []string) {
 	}
 }
 
-tree_sitter_dir := join_path(getwd(), 'tree_sitter')
-lib_dir := join_path(tree_sitter_dir, 'lib')
+working_dir := getwd()
+lib_dir := join_path(working_dir, 'lib')
 
-// check if version txt file exists. clone repo
-// if outdated or file does not exist.
-version_file_path := join_path(tree_sitter_dir, 'ts_version.json')
+// Check if version txt file exists.
+// Clone repo if outdated or file does not exist.
+version_file_path := join_path(working_dir, 'ts_version.json')
 mut got_version := ''
 
 if exists(version_file_path) {
@@ -110,18 +109,16 @@ for file_name in files_to_rename {
 	includes_to_replace << ['./${file_name[0]}', './${file_name[1]}']
 }
 
-patch_file(join_path(lib_dir, 'ts_atomic.h'), ['atomic_', 'ts_atomic_'])?
-patch_file(join_path(lib_dir, 'ts_atomic.h'), ['__ts_atomic_load_n', '__atomic_load_n'])?
+patch_file(join_path(lib_dir, 'ts_atomic.h'), ['atomic_', 'ts_atomic_'])!
+patch_file(join_path(lib_dir, 'ts_atomic.h'), ['__ts_atomic_load_n', '__atomic_load_n'])!
 
-patch_file(join_path(lib_dir, 'parser.c'), ['atomic_', 'ts_atomic_'])?
-patch_file(join_path(lib_dir, 'subtree.c'), ['atomic_', 'ts_atomic_'])?
+patch_file(join_path(lib_dir, 'parser.c'), ['atomic_', 'ts_atomic_'])!
+patch_file(join_path(lib_dir, 'subtree.c'), ['atomic_', 'ts_atomic_'])!
 
 patch_includes(glob(join_path(lib_dir, '*.h')) or { []string{} }, includes_to_replace)
 patch_includes(glob(join_path(lib_dir, '*.c')) or { []string{} }, includes_to_replace)
 
-// add txt file for tree-sitter version
 write_file(version_file_path, '{"version": "${curr_version_cmd_out.output.trim_space()}"}')!
 
-// remove temp clone dir
 walk(clone_dir, rm_rf)
 rmdir_all(clone_dir)!

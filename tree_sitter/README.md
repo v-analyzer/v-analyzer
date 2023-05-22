@@ -53,6 +53,14 @@ tree := p.parse_string(source: code, tree: old_tree.raw_tree)
 
 See examples in the `examples` directory.
 
+## Updating tree-sitter
+
+To update the tree-sitter lib, run:
+
+```sh
+v update_tree_sitter.vsh
+```
+
 ## Authors
 
 This project initially started by
