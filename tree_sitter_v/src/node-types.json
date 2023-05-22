@@ -96,10 +96,6 @@
         "named": true
       },
       {
-        "type": "type_initializer",
-        "named": true
-      },
-      {
         "type": "unary_expression",
         "named": true
       }
@@ -131,6 +127,10 @@
       },
       {
         "type": "sql_expression",
+        "named": true
+      },
+      {
+        "type": "type_initializer",
         "named": true
       },
       {
@@ -912,16 +912,12 @@
     "type": "compile_time_if_expression",
     "named": true,
     "fields": {
-      "alternative": {
+      "block": {
         "multiple": false,
-        "required": false,
+        "required": true,
         "types": [
           {
             "type": "block",
-            "named": true
-          },
-          {
-            "type": "compile_time_if_expression",
             "named": true
           }
         ]
@@ -940,12 +936,16 @@
           }
         ]
       },
-      "consequence": {
+      "else_branch": {
         "multiple": false,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "block",
+            "named": true
+          },
+          {
+            "type": "compile_time_if_expression",
             "named": true
           }
         ]
@@ -970,7 +970,18 @@
   {
     "type": "const_declaration",
     "named": true,
-    "fields": {},
+    "fields": {
+      "attributes": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "attributes",
+            "named": true
+          }
+        ]
+      }
+    },
     "children": {
       "multiple": true,
       "required": false,
@@ -1607,7 +1618,18 @@
   {
     "type": "global_var_declaration",
     "named": true,
-    "fields": {},
+    "fields": {
+      "attributes": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "attributes",
+            "named": true
+          }
+        ]
+      }
+    },
     "children": {
       "multiple": true,
       "required": false,
@@ -1689,6 +1711,25 @@
     "type": "hash_statement",
     "named": true,
     "fields": {}
+  },
+  {
+    "type": "identifier_list",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "mutable_identifier",
+          "named": true
+        }
+      ]
+    }
   },
   {
     "type": "if_attribute",
@@ -2938,7 +2979,7 @@
     }
   },
   {
-    "type": "select_branch",
+    "type": "select_arm",
     "named": true,
     "fields": {},
     "children": {
@@ -2950,14 +2991,14 @@
           "named": true
         },
         {
-          "type": "var_declaration",
+          "type": "select_arm_statement",
           "named": true
         }
       ]
     }
   },
   {
-    "type": "select_default_branch",
+    "type": "select_arm_statement",
     "named": true,
     "fields": {},
     "children": {
@@ -2965,9 +3006,28 @@
       "required": true,
       "types": [
         {
-          "type": "_expression",
+          "type": "expression_list",
           "named": true
         },
+        {
+          "type": "send_statement",
+          "named": true
+        },
+        {
+          "type": "var_declaration",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "select_else_arn_clause",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
         {
           "type": "block",
           "named": true
@@ -2995,11 +3055,11 @@
       "required": false,
       "types": [
         {
-          "type": "select_branch",
+          "type": "select_arm",
           "named": true
         },
         {
-          "type": "select_default_branch",
+          "type": "select_else_arn_clause",
           "named": true
         }
       ]
@@ -3756,6 +3816,10 @@
         "types": [
           {
             "type": "expression_list",
+            "named": true
+          },
+          {
+            "type": "identifier_list",
             "named": true
           }
         ]

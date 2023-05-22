@@ -1,0 +1,57 @@
+================================================================================
+Simple unsafe expression
+================================================================================
+unsafe {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (unsafe_expression
+      (block))))
+
+================================================================================
+Simple unsafe expression with several statements
+================================================================================
+unsafe {
+    foo()
+    bar()
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (unsafe_expression
+      (block
+        (simple_statement
+          (call_expression
+            (reference_expression
+              (identifier))
+            (argument_list)))
+        (simple_statement
+          (call_expression
+            (reference_expression
+              (identifier))
+            (argument_list)))))))
+
+================================================================================
+Simple unsafe expression as an expression
+================================================================================
+a := unsafe {
+    foo()
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (var_declaration
+      (expression_list
+        (reference_expression
+          (identifier)))
+      (expression_list
+        (unsafe_expression
+          (block
+            (simple_statement
+              (call_expression
+                (reference_expression
+                  (identifier))
+                (argument_list)))))))))

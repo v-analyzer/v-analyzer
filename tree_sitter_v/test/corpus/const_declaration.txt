@@ -119,3 +119,57 @@ pub const (
       (identifier)
       (literal
         (int_literal)))))
+
+================================================================================
+Simple constant with attribute
+================================================================================
+[attr]
+const name = 100
+--------------------------------------------------------------------------------
+
+(source_file
+  (const_declaration
+    (attributes
+      (attribute
+        (attribute_expression
+          (value_attribute
+            (type_reference_expression
+              (identifier))))))
+    (const_definition
+      (identifier)
+      (literal
+        (int_literal)))))
+
+================================================================================
+Multiline constants with attributes
+================================================================================
+[attr]
+[attr2]
+pub const (
+    name = 100
+    other = 100
+)
+--------------------------------------------------------------------------------
+
+(source_file
+  (const_declaration
+    (attributes
+      (attribute
+        (attribute_expression
+          (value_attribute
+            (type_reference_expression
+              (identifier)))))
+      (attribute
+        (attribute_expression
+          (value_attribute
+            (type_reference_expression
+              (identifier))))))
+    (visibility_modifiers)
+    (const_definition
+      (identifier)
+      (literal
+        (int_literal)))
+    (const_definition
+      (identifier)
+      (literal
+        (int_literal)))))

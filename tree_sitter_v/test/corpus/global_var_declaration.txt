@@ -105,3 +105,61 @@ __global ()
 
 (source_file
   (global_var_declaration))
+
+================================================================================
+Simple global variable with attribute
+================================================================================
+[attr]
+__global g_var = 0
+--------------------------------------------------------------------------------
+
+(source_file
+  (global_var_declaration
+    (attributes
+      (attribute
+        (attribute_expression
+          (value_attribute
+            (type_reference_expression
+              (identifier))))))
+    (global_var_definition
+      (identifier)
+      (literal
+        (int_literal)))))
+
+================================================================================
+Multiline global variables with attributes
+================================================================================
+[attr]
+[attr2]
+__global (
+    g_var = 100
+    g_var2 = 200
+    g_var3 = 300
+)
+--------------------------------------------------------------------------------
+
+(source_file
+  (global_var_declaration
+    (attributes
+      (attribute
+        (attribute_expression
+          (value_attribute
+            (type_reference_expression
+              (identifier)))))
+      (attribute
+        (attribute_expression
+          (value_attribute
+            (type_reference_expression
+              (identifier))))))
+    (global_var_definition
+      (identifier)
+      (literal
+        (int_literal)))
+    (global_var_definition
+      (identifier)
+      (literal
+        (int_literal)))
+    (global_var_definition
+      (identifier)
+      (literal
+        (int_literal)))))

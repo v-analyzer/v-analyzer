@@ -74,6 +74,7 @@ pub enum NodeType {
 	go_expression
 	goto_statement
 	hash_statement
+	identifier_list
 	if_attribute
 	if_expression
 	import_alias
@@ -129,8 +130,9 @@ pub enum NodeType {
 	reference_expression
 	result_type
 	return_statement
-	select_branch
-	select_default_branch
+	select_arm
+	select_arm_statement
+	select_else_arn_clause
 	select_expression
 	selective_import_list
 	selector_expression
@@ -197,7 +199,6 @@ const supertype__expression_nodes = merge(supertype__expression_with_blocks_node
 	.selector_expression,
 	.slice_expression,
 	.spawn_expression,
-	.type_initializer,
 	.unary_expression,
 ])
 
@@ -208,6 +209,7 @@ const supertype__expression_with_blocks_nodes = [
 	.match_expression,
 	.select_expression,
 	.sql_expression,
+	.type_initializer,
 	.unsafe_expression,
 ]
 
@@ -372,6 +374,7 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'go_expression' { NodeType.go_expression }
 		'goto_statement' { NodeType.goto_statement }
 		'hash_statement' { NodeType.hash_statement }
+		'identifier_list' { NodeType.identifier_list }
 		'if_attribute' { NodeType.if_attribute }
 		'if_expression' { NodeType.if_expression }
 		'import_alias' { NodeType.import_alias }
@@ -427,8 +430,9 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'reference_expression' { NodeType.reference_expression }
 		'result_type' { NodeType.result_type }
 		'return_statement' { NodeType.return_statement }
-		'select_branch' { NodeType.select_branch }
-		'select_default_branch' { NodeType.select_default_branch }
+		'select_arm' { NodeType.select_arm }
+		'select_arm_statement' { NodeType.select_arm_statement }
+		'select_else_arn_clause' { NodeType.select_else_arn_clause }
 		'select_expression' { NodeType.select_expression }
 		'selective_import_list' { NodeType.selective_import_list }
 		'selector_expression' { NodeType.selector_expression }

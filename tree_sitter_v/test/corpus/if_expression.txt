@@ -1,0 +1,134 @@
+================================================================================
+Simple if expression
+================================================================================
+if true {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (if_expression
+      (literal
+        (true))
+      (block))))
+
+================================================================================
+Simple if expression with braces
+================================================================================
+if (true) {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (if_expression
+      (parenthesized_expression
+        (literal
+          (true)))
+      (block))))
+
+================================================================================
+Simple if expression with else
+================================================================================
+if true {} else {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (if_expression
+      (literal
+        (true))
+      (block)
+      (block))))
+
+================================================================================
+Simple if expression with else if
+================================================================================
+if true {} else if false {} else {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (if_expression
+      (literal
+        (true))
+      (block)
+      (if_expression
+        (literal
+          (false))
+        (block)
+        (block)))))
+
+================================================================================
+If guard
+================================================================================
+if a := foo() {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (if_expression
+      (var_declaration
+        (expression_list
+          (reference_expression
+            (identifier)))
+        (expression_list
+          (call_expression
+            (reference_expression
+              (identifier))
+            (argument_list))))
+      (block))))
+
+================================================================================
+Compile-time if expression
+================================================================================
+$if macos {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (compile_time_if_expression
+      (reference_expression
+        (identifier))
+      (block))))
+
+================================================================================
+Compile-time if expression with else
+================================================================================
+$if macos {} $else {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (compile_time_if_expression
+      (reference_expression
+        (identifier))
+      (block)
+      (block))))
+
+================================================================================
+Compile-time if expression with else if
+================================================================================
+$if macos {} $else $if {} $else {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (compile_time_if_expression
+      (reference_expression
+        (identifier))
+      (block)
+      (compile_time_if_expression
+        (empty_literal_value)
+        (ERROR)
+        (block)))))
+================================================================================
+Compile-time if expression with ?
+================================================================================
+$if some_define ? {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (compile_time_if_expression
+      (reference_expression
+        (identifier))
+      (block))))

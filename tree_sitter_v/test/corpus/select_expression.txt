@@ -1,0 +1,180 @@
+================================================================================
+Simple select expression
+================================================================================
+select {
+    c <- x {
+        println(100)
+    }
+    _ := <-quit {
+        println(100)
+    }
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (select_expression
+      (select_arm
+        (select_arm_statement
+          (send_statement
+            (reference_expression
+              (identifier))
+            (reference_expression
+              (identifier))))
+        (block
+          (simple_statement
+            (call_expression
+              (reference_expression
+                (identifier))
+              (argument_list
+                (argument
+                  (literal
+                    (int_literal))))))))
+      (select_arm
+        (select_arm_statement
+          (var_declaration
+            (identifier_list
+              (identifier))
+            (expression_list
+              (unary_expression
+                (reference_expression
+                  (identifier))))))
+        (block
+          (simple_statement
+            (call_expression
+              (reference_expression
+                (identifier))
+              (argument_list
+                (argument
+                  (literal
+                    (int_literal)))))))))))
+
+================================================================================
+Simple select expression with timeout branch
+================================================================================
+select {
+    2 * time.second {
+        println(100)
+    }
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (select_expression
+      (select_arm
+        (select_arm_statement
+          (expression_list
+            (binary_expression
+              (literal
+                (int_literal))
+              (selector_expression
+                (reference_expression
+                  (identifier))
+                (reference_expression
+                  (identifier))))))
+        (block
+          (simple_statement
+            (call_expression
+              (reference_expression
+                (identifier))
+              (argument_list
+                (argument
+                  (literal
+                    (int_literal)))))))))))
+
+================================================================================
+Simple select expression with else branch
+================================================================================
+select {
+    c <- x {
+        println(100)
+    }
+    _ := <-quit {
+        println(200)
+    }
+    else {
+        println(300)
+    }
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (select_expression
+      (select_arm
+        (select_arm_statement
+          (send_statement
+            (reference_expression
+              (identifier))
+            (reference_expression
+              (identifier))))
+        (block
+          (simple_statement
+            (call_expression
+              (reference_expression
+                (identifier))
+              (argument_list
+                (argument
+                  (literal
+                    (int_literal))))))))
+      (select_arm
+        (select_arm_statement
+          (var_declaration
+            (identifier_list
+              (identifier))
+            (expression_list
+              (unary_expression
+                (reference_expression
+                  (identifier))))))
+        (block
+          (simple_statement
+            (call_expression
+              (reference_expression
+                (identifier))
+              (argument_list
+                (argument
+                  (literal
+                    (int_literal))))))))
+      (select_else_arn_clause
+        (block
+          (simple_statement
+            (call_expression
+              (reference_expression
+                (identifier))
+              (argument_list
+                (argument
+                  (literal
+                    (int_literal)))))))))))
+
+================================================================================
+Simple select expression as an expression
+================================================================================
+if select {
+    ch <- a {
+        // ...
+    }
+} {
+    // channel was open
+} else {
+    // channel is closed
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (if_expression
+      (select_expression
+        (select_arm
+          (select_arm_statement
+            (send_statement
+              (reference_expression
+                (identifier))
+              (reference_expression
+                (identifier))))
+          (block
+            (comment))))
+      (block
+        (comment))
+      (block
+        (comment)))))
