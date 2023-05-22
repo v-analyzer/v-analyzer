@@ -551,6 +551,7 @@ fn (left_point C.TSPoint) eq(right_point C.TSPoint) bool {
 
 [typedef]
 struct C.TSRange {
+pub:
 	start_point C.TSPoint
 	end_point   C.TSPoint
 	start_byte  u32
