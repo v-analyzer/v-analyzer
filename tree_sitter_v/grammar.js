@@ -112,7 +112,6 @@ module.exports = grammar({
     [$._binded_type, $._expression],
     [$.none, $.none_type],
     [$.reference_expression, $.type_reference_expression],
-    [$.reference_expression, $.type_reference_expression, $.qualified_type],
   ],
 
   rules: {

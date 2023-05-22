@@ -2,6 +2,7 @@ module tree_sitter_v
 
 import x.json2
 import os
+import tree_sitter
 
 #flag -I @VMODROOT/src
 #flag @VMODROOT/src/scanner.o
@@ -9,7 +10,7 @@ import os
 
 #include "@VMODROOT/bindings/v/bindings.h"
 
-fn C.tree_sitter_v() &C.TSLanguage
+fn C.tree_sitter_v() &tree_sitter.TSLanguage
 
 pub const language = unsafe { C.tree_sitter_v() }
 

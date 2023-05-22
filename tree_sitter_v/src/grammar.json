@@ -7790,11 +7790,6 @@
     [
       "reference_expression",
       "type_reference_expression"
-    ],
-    [
-      "reference_expression",
-      "type_reference_expression",
-      "qualified_type"
     ]
   ],
   "precedences": [],

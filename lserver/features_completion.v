@@ -135,7 +135,7 @@ pub fn (mut ls LanguageServer) completion(params lsp.CompletionParams, mut wr Re
 	// 	block.process_declarations(mut processor)
 	// }
 
-	res.tree.raw_tree.free()
+	unsafe { res.tree.free() }
 
 	return processor.result
 }

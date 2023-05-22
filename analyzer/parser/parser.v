@@ -96,7 +96,8 @@ pub fn parse_code(code string) ParseResult {
 // }
 pub fn parse_code_with_tree(code string, old_tree &tree_sitter.Tree[v.NodeType]) ParseResult {
 	rope := ropes.new(code)
-	mut parser := tree_sitter.new_parser[v.NodeType](v.language, v.type_factory)
+	mut parser := tree_sitter.new_parser[v.NodeType](v.type_factory)
+	parser.set_language(v.language)
 	raw_tree := if isnil(old_tree) { unsafe { nil } } else { old_tree.raw_tree }
 	tree := parser.parse_string(source: code, tree: raw_tree)
 	return ParseResult{

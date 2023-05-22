@@ -163,7 +163,7 @@ pub fn (mut _ IndexingRoot) index_file(path string) !FileIndex {
 	}
 	cache.stub_list = stub_list
 
-	res.tree.raw_tree.free()
+	unsafe { res.tree.free() }
 	return cache
 }
 
