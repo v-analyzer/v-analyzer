@@ -25,6 +25,7 @@ jobs:
       - name: Compile
         run: |
           cd spavn-analyzer
+          v install
           v ./cmd/spavn-analyzer -o spavn-analyzer
       - name: Create ZIP archive
         run: |
@@ -56,6 +57,7 @@ jobs:
       - name: Compile
         run: |
           cd spavn-analyzer
+          v install
           v ./cmd/spavn-analyzer -o spavn-analyzer
       - name: Create ZIP archive
         run: |
@@ -84,6 +86,7 @@ jobs:
       - name: Compile
         run: |
           cd spavn-analyzer
+          v install
           v ./cmd/spavn-analyzer -o spavn-analyzer.exe
       - name: Create ZIP archive
         shell: msys2 {0}

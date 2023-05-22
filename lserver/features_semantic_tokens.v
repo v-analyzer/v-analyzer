@@ -176,7 +176,7 @@ fn (mut f SemanticVisitor) visit_element_impl(element psi.PsiElement) bool {
 	}
 
 	if element.node.type_name == .unknown {
-		text := element.node.text(element.containing_file.source_text)
+		text := element.node.text(element.containing_file.source_text.to_string())
 		if text == 'mut' {
 			f.result << element_to_semantic(element.node, 'keyword')
 		}

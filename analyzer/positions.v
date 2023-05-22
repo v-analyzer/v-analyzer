@@ -3,7 +3,7 @@ module analyzer
 import analyzer.structures.ropes
 
 // compute_offset returns a byte offset from the given position
-pub fn compute_offset(src structures.ropes.Rope, line int, col int) int {
+pub fn compute_offset(src ropes.Rope, line int, col int) int {
 	mut offset := 0
 	mut src_line := 0
 	mut src_col := 0
