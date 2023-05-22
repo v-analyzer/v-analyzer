@@ -1,5 +1,7 @@
 # V tree-sitter
 
+[![Test](https://github.com/vlang-association/spavn-analyzer/actions/workflows/test_tree_sitter.yml/badge.svg)](https://github.com/vlang-association/spavn-analyzer/actions/workflows/test_tree_sitter.yml)
+
 V bindings for the
 [tree-sitter](https://github.com/tree-sitter/tree-sitter)
 parsing library.
