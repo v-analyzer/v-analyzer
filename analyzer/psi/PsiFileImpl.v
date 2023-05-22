@@ -1,9 +1,10 @@
 module psi
 
-import tree_sitter
+import time
 import tree_sitter_v as v
 import analyzer.parser
-import time
+import v_tree_sitter.tree_sitter
+import analyzer.structures.ropes
 
 [heap]
 pub struct PsiFileImpl {
@@ -11,11 +12,11 @@ pub:
 	path string
 pub mut:
 	tree        &tree_sitter.Tree[v.NodeType] = unsafe { nil }
-	source_text &tree_sitter.SourceText       = unsafe { nil }
+	source_text &ropes.Rope = unsafe { nil }
 	root        PsiElement
 }
 
-pub fn new_psi_file(path string, tree &tree_sitter.Tree[v.NodeType], source_text &tree_sitter.SourceText) &PsiFileImpl {
+pub fn new_psi_file(path string, tree &tree_sitter.Tree[v.NodeType], source_text &ropes.Rope) &PsiFileImpl {
 	mut file := &PsiFileImpl{
 		path: path
 		tree: unsafe { tree }
@@ -48,7 +49,7 @@ pub fn (p &PsiFileImpl) path() string {
 	return p.path
 }
 
-pub fn (p &PsiFileImpl) text() &tree_sitter.SourceText {
+pub fn (p &PsiFileImpl) text() &ropes.Rope {
 	return p.source_text
 }
 

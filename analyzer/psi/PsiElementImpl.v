@@ -227,7 +227,7 @@ pub fn (n PsiElementImpl) get_text() string {
 		}
 	}
 
-	return n.node.text(n.containing_file.source_text)
+	return n.node.text(n.containing_file.source_text.to_string())
 }
 
 pub fn (n PsiElementImpl) text_range() TextRange {

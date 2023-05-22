@@ -2,7 +2,7 @@ module tree_sitter_v
 
 import x.json2
 import os
-import tree_sitter
+import v_tree_sitter.tree_sitter
 
 #flag -I @VMODROOT/src
 #flag @VMODROOT/src/scanner.o
