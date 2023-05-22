@@ -104,13 +104,16 @@ static void ts_lexer__get_lookahead(Lexer *self) {
 
 static void ts_lexer_goto(Lexer *self, Length position) {
   self->current_position = position;
-  bool found_included_range = false;
 
   // Move to the first valid position at or after the given position.
+  bool found_included_range = false;
   for (unsigned i = 0; i < self->included_range_count; i++) {
     TSRange *included_range = &self->included_ranges[i];
-    if (included_range->end_byte > position.bytes) {
-      if (included_range->start_byte >= position.bytes) {
+    if (
+      included_range->end_byte > self->current_position.bytes &&
+      included_range->end_byte > included_range->start_byte
+    ) {
+      if (included_range->start_byte >= self->current_position.bytes) {
         self->current_position = (Length) {
           .bytes = included_range->start_byte,
           .extent = included_range->start_point,
@@ -127,8 +130,8 @@ static void ts_lexer_goto(Lexer *self, Length position) {
     // If the current position is outside of the current chunk of text,
     // then clear out the current chunk of text.
     if (self->chunk && (
-      position.bytes < self->chunk_start ||
-      position.bytes >= self->chunk_start + self->chunk_size
+      self->current_position.bytes < self->chunk_start ||
+      self->current_position.bytes >= self->chunk_start + self->chunk_size
     )) {
       ts_lexer__clear_chunk(self);
     }
@@ -164,27 +167,31 @@ static void ts_lexer__do_advance(Lexer *self, bool skip) {
     }
   }
 
-  const TSRange *current_range = NULL;
-  if (self->current_included_range_index < self->included_range_count) {
-    current_range = &self->included_ranges[self->current_included_range_index];
-    if (self->current_position.bytes == current_range->end_byte) {
-      self->current_included_range_index++;
-      if (self->current_included_range_index < self->included_range_count) {
-        current_range++;
-        self->current_position = (Length) {
-          current_range->start_byte,
-          current_range->start_point,
-        };
-      } else {
-        current_range = NULL;
-      }
+  const TSRange *current_range = &self->included_ranges[self->current_included_range_index];
+  while (
+    self->current_position.bytes >= current_range->end_byte ||
+    current_range->end_byte == current_range->start_byte
+  ) {
+    self->current_included_range_index++;
+    if (self->current_included_range_index < self->included_range_count) {
+      current_range++;
+      self->current_position = (Length) {
+        current_range->start_byte,
+        current_range->start_point,
+      };
+    } else {
+      current_range = NULL;
+      break;
     }
   }
 
   if (skip) self->token_start_position = self->current_position;
 
   if (current_range) {
-    if (self->current_position.bytes >= self->chunk_start + self->chunk_size) {
+    if (
+      self->current_position.bytes < self->chunk_start ||
+      self->current_position.bytes >= self->chunk_start + self->chunk_size
+    ) {
       ts_lexer__get_chunk(self);
     }
     ts_lexer__get_lookahead(self);
@@ -206,7 +213,7 @@ static void ts_lexer__advance(TSLexer *_self, bool skip) {
   } else {
     LOG("consume", self->data.lookahead);
   }
-  
+
   ts_lexer__do_advance(self, skip);
 }
 
@@ -238,9 +245,9 @@ static void ts_lexer__mark_end(TSLexer *_self) {
 
 static uint32_t ts_lexer__get_column(TSLexer *_self) {
   Lexer *self = (Lexer *)_self;
-  
+
   uint32_t goal_byte = self->current_position.bytes;
-  
+
   self->did_get_column = true;
   self->current_position.bytes -= self->current_position.extent.column;
   self->current_position.extent.column = 0;
@@ -250,10 +257,13 @@ static uint32_t ts_lexer__get_column(TSLexer *_self) {
   }
 
   uint32_t result = 0;
-  ts_lexer__get_lookahead(self);
-  while (self->current_position.bytes < goal_byte && !ts_lexer__eof(_self) && self->chunk) {
-    ts_lexer__do_advance(self, false);
-    result++;
+  if (!ts_lexer__eof(_self)) {
+    ts_lexer__get_lookahead(self);
+    while (self->current_position.bytes < goal_byte && self->chunk) {
+      result++;
+      ts_lexer__do_advance(self, false);
+      if (ts_lexer__eof(_self)) break;
+    }
   }
 
   return result;
@@ -337,6 +347,13 @@ void ts_lexer_start(Lexer *self) {
 void ts_lexer_finish(Lexer *self, uint32_t *lookahead_end_byte) {
   if (length_is_undefined(self->token_end_position)) {
     ts_lexer__mark_end(&self->data);
+  }
+
+  // If the token ended at an included range boundary, then its end position
+  // will have been reset to the end of the preceding range. Reset the start
+  // position to match.
+  if (self->token_end_position.bytes < self->token_start_position.bytes) {
+    self->token_start_position = self->token_end_position;
   }
 
   uint32_t current_lookahead_end_byte = self->current_position.bytes + 1;
