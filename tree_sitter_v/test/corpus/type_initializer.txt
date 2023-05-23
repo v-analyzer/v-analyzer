@@ -510,3 +510,31 @@ Qualified type initializer for pointer
               (type_reference_expression
                 (identifier))))))
       (type_initializer_body))))
+
+================================================================================
+Deep array initialization (TODO)
+================================================================================
+[][]u8{len: 20, cap: 20}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (index_expression
+      (empty_array_creation)
+      (reference_expression
+        (MISSING identifier))))
+  (simple_statement
+    (reference_expression
+      (identifier)))
+  (simple_statement
+    (map_init_expression
+      (map_keyed_element
+        (reference_expression
+          (identifier))
+        (literal
+          (int_literal)))
+      (map_keyed_element
+        (reference_expression
+          (identifier))
+        (literal
+          (int_literal))))))

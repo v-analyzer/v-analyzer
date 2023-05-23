@@ -6642,15 +6642,19 @@
           },
           {
             "type": "SYMBOL",
-            "name": "_binded_type"
-          },
-          {
-            "type": "SYMBOL",
             "name": "qualified_type"
           },
           {
             "type": "SYMBOL",
+            "name": "_binded_type"
+          },
+          {
+            "type": "SYMBOL",
             "name": "pointer_type"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "wrong_pointer_type"
           },
           {
             "type": "SYMBOL",
@@ -6683,12 +6687,46 @@
           {
             "type": "SYMBOL",
             "name": "thread_type"
-          },
-          {
-            "type": "SYMBOL",
-            "name": "none_type"
           }
         ]
+      }
+    },
+    "qualified_type": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "module",
+          "content": {
+            "type": "SYMBOL",
+            "name": "reference_expression"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "."
+        },
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "type_reference_expression"
+          }
+        }
+      ]
+    },
+    "_binded_type": {
+      "type": "PREC_RIGHT",
+      "value": 0,
+      "content": {
+        "type": "ALIAS",
+        "content": {
+          "type": "SYMBOL",
+          "name": "binded_identifier"
+        },
+        "named": true,
+        "value": "binded_type"
       }
     },
     "fixed_array_type": {
@@ -6710,7 +6748,7 @@
               },
               {
                 "type": "SYMBOL",
-                "name": "identifier"
+                "name": "reference_expression"
               }
             ]
           }
@@ -6776,6 +6814,23 @@
           {
             "type": "STRING",
             "value": "&"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "plain_type"
+          }
+        ]
+      }
+    },
+    "wrong_pointer_type": {
+      "type": "PREC",
+      "value": 9,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "*"
           },
           {
             "type": "SYMBOL",
@@ -6856,23 +6911,6 @@
         }
       ]
     },
-    "none_type": {
-      "type": "STRING",
-      "value": "none"
-    },
-    "_binded_type": {
-      "type": "PREC_RIGHT",
-      "value": 0,
-      "content": {
-        "type": "ALIAS",
-        "content": {
-          "type": "SYMBOL",
-          "name": "binded_identifier"
-        },
-        "named": true,
-        "value": "binded_type"
-      }
-    },
     "generic_type": {
       "type": "SEQ",
       "members": [
@@ -6892,31 +6930,6 @@
         {
           "type": "SYMBOL",
           "name": "type_parameters"
-        }
-      ]
-    },
-    "qualified_type": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "FIELD",
-          "name": "module",
-          "content": {
-            "type": "SYMBOL",
-            "name": "reference_expression"
-          }
-        },
-        {
-          "type": "STRING",
-          "value": "."
-        },
-        {
-          "type": "FIELD",
-          "name": "name",
-          "content": {
-            "type": "SYMBOL",
-            "name": "type_reference_expression"
-          }
         }
       ]
     },
@@ -8126,6 +8139,10 @@
       "plain_type"
     ],
     [
+      "fixed_array_type",
+      "_expression_without_blocks"
+    ],
+    [
       "qualified_type",
       "_expression_without_blocks"
     ],
@@ -8144,10 +8161,6 @@
     [
       "_binded_type",
       "_expression_without_blocks"
-    ],
-    [
-      "none",
-      "none_type"
     ],
     [
       "reference_expression",

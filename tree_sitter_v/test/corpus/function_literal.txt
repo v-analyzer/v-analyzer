@@ -396,7 +396,8 @@ fn test_with_value() {
                   (identifier)))
               (argument_list))
             (plain_type
-              (none_type)))
+              (type_reference_expression
+                (identifier))))
           (block
             (simple_statement
               (go_expression

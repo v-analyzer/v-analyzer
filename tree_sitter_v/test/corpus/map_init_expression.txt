@@ -50,3 +50,18 @@ Simple map init expression
             (int_literal)))
         (literal
           (int_literal))))))
+
+================================================================================
+Empty map initialization
+================================================================================
+foo({})
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (call_expression
+      (reference_expression
+        (identifier))
+      (argument_list
+        (argument
+          (empty_literal_value))))))

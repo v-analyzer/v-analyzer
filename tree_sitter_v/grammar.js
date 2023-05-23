@@ -108,12 +108,12 @@ module.exports = grammar({
 
   conflicts: ($) => [
     [$._expression, $.plain_type],
+    [$.fixed_array_type, $._expression_without_blocks],
     [$.qualified_type, $._expression_without_blocks],
     [$.fixed_array_type, $.literal],
     [$.fixed_array_type, $._expression],
     [$._binded_type, $._expression],
     [$._binded_type, $._expression_without_blocks],
-    [$.none, $.none_type],
     [$.reference_expression, $.type_reference_expression],
     [$.is_expression],
     [$.not_is_expression],
@@ -947,9 +947,10 @@ module.exports = grammar({
 
     plain_type: ($) => prec.right(PREC.primary, choice(
       $.type_reference_expression,
-      $._binded_type,
       $.qualified_type,
+      $._binded_type,
       $.pointer_type,
+      $.wrong_pointer_type,
       $.array_type,
       $.fixed_array_type,
       $.function_type,
@@ -958,12 +959,19 @@ module.exports = grammar({
       $.channel_type,
       $.shared_type,
       $.thread_type,
-      $.none_type,
     )),
+
+    qualified_type: ($) => seq(
+      field('module', $.reference_expression),
+      '.',
+      field('name', $.type_reference_expression),
+    ),
+
+    _binded_type: ($) => prec.right(alias($.binded_identifier, $.binded_type)),
 
     fixed_array_type: ($) => seq(
       '[',
-      field('size', choice($.int_literal, $.identifier)),
+      field('size', choice($.int_literal, $.reference_expression)),
       ']',
       field('element', $.plain_type),
     ),
@@ -976,37 +984,21 @@ module.exports = grammar({
 
     pointer_type: ($) => prec(PREC.match_arm_type, seq('&', $.plain_type)),
 
-    map_type: ($) =>
-      seq('map[', field('key', $.plain_type), ']', field('value', $._type)),
+    // In languages like Go, pointers use an asterisk, not an ampersand,
+    // so this rule is needed to properly parse and then give an error to the user.
+    wrong_pointer_type: ($) => prec(PREC.match_arm_type, seq('*', $.plain_type)),
 
-    channel_type: ($) => prec.right(PREC.primary,
-      seq('chan', $.plain_type),
-    ),
+    map_type: ($) => seq('map[', field('key', $.plain_type), ']', field('value', $._type)),
+
+    channel_type: ($) => prec.right(PREC.primary, seq('chan', $.plain_type)),
 
     shared_type: ($) => seq('shared', $.plain_type),
 
     thread_type: ($) => seq('thread', $.plain_type),
 
-    none_type: () => 'none',
+    generic_type: ($) => seq(choice($.qualified_type, $.type_reference_expression), $.type_parameters),
 
-    _binded_type: ($) => prec.right(alias($.binded_identifier, $.binded_type)),
-
-    generic_type: ($) =>
-      seq(choice($.qualified_type, $.type_reference_expression), $.type_parameters),
-
-    qualified_type: ($) => seq(
-      field('module', $.reference_expression),
-      '.',
-      field('name', $.type_reference_expression),
-    ),
-
-    function_type: ($) => prec.right(seq(
-      'fn',
-      field(
-        'signature',
-        $.signature,
-      ),
-    )),
+    function_type: ($) => prec.right(seq('fn', field('signature', $.signature))),
 
     // ==================== TYPES END ====================
 
@@ -1020,10 +1012,10 @@ module.exports = grammar({
         repeat(seq(terminator, $._statement)),
         optional(seq(
           terminator,
-          optional(alias($.empty_labeled_statement, $.labeled_statement))
-        ))
+          optional(alias($.empty_labeled_statement, $.labeled_statement)),
+        )),
       ),
-      alias($.empty_labeled_statement, $.labeled_statement)
+      alias($.empty_labeled_statement, $.labeled_statement),
     ),
 
     _statement: ($) => choice(
@@ -1093,18 +1085,6 @@ module.exports = grammar({
     block: ($) => seq(
       '{',
       optional($._statement_list),
-      // optional(choice(
-      //   $._statement_list,
-      //   alias($._expression_list_repeat1, $.expression_list),
-      //   alias($.empty_labeled_statement, $.labeled_statement),
-      //   seq(
-      //     $._statement_list,
-      //     choice(
-      //       alias($._expression_list_repeat1, $.expression_list),
-      //       alias($.empty_labeled_statement, $.labeled_statement),
-      //     ),
-      //   ),
-      // )),
       '}',
     ),
 

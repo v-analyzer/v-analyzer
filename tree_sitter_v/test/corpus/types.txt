@@ -1,0 +1,703 @@
+================================================================================
+Simple types
+================================================================================
+fn () int {}
+fn () string {}
+fn () f32 {}
+fn () f64 {}
+fn () Foo {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (function_literal
+      (signature
+        (parameter_list)
+        (plain_type
+          (type_reference_expression
+            (identifier))))
+      (block)))
+  (simple_statement
+    (function_literal
+      (signature
+        (parameter_list)
+        (plain_type
+          (type_reference_expression
+            (identifier))))
+      (block)))
+  (simple_statement
+    (function_literal
+      (signature
+        (parameter_list)
+        (plain_type
+          (type_reference_expression
+            (identifier))))
+      (block)))
+  (simple_statement
+    (function_literal
+      (signature
+        (parameter_list)
+        (plain_type
+          (type_reference_expression
+            (identifier))))
+      (block)))
+  (simple_statement
+    (function_literal
+      (signature
+        (parameter_list)
+        (plain_type
+          (type_reference_expression
+            (identifier))))
+      (block))))
+
+================================================================================
+Binded types
+================================================================================
+fn () C.int {}
+fn () C.Type {}
+fn () C.Foo {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (function_literal
+      (signature
+        (parameter_list)
+        (plain_type
+          (binded_type
+            (identifier))))
+      (block)))
+  (simple_statement
+    (function_literal
+      (signature
+        (parameter_list)
+        (plain_type
+          (binded_type
+            (identifier))))
+      (block)))
+  (simple_statement
+    (function_literal
+      (signature
+        (parameter_list)
+        (plain_type
+          (binded_type
+            (identifier))))
+      (block))))
+
+================================================================================
+Qualified types
+================================================================================
+fn () mod.Foo {}
+fn () mod.string {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (function_literal
+      (signature
+        (parameter_list)
+        (plain_type
+          (qualified_type
+            (reference_expression
+              (identifier))
+            (type_reference_expression
+              (identifier)))))
+      (block)))
+  (simple_statement
+    (function_literal
+      (signature
+        (parameter_list)
+        (plain_type
+          (qualified_type
+            (reference_expression
+              (identifier))
+            (type_reference_expression
+              (identifier)))))
+      (block))))
+
+================================================================================
+Pointer type
+================================================================================
+fn () &string {}
+fn () &&Foo {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (function_literal
+      (signature
+        (parameter_list)
+        (plain_type
+          (pointer_type
+            (plain_type
+              (type_reference_expression
+                (identifier))))))
+      (block)))
+  (simple_statement
+    (function_literal
+      (signature
+        (parameter_list)
+        (plain_type
+          (pointer_type
+            (plain_type
+              (pointer_type
+                (plain_type
+                  (type_reference_expression
+                    (identifier))))))))
+      (block))))
+
+================================================================================
+Wrong pointer type
+================================================================================
+fn () *string {}
+fn () **Foo {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (function_literal
+      (signature
+        (parameter_list)
+        (plain_type
+          (wrong_pointer_type
+            (plain_type
+              (type_reference_expression
+                (identifier))))))
+      (block)))
+  (simple_statement
+    (function_literal
+      (signature
+        (parameter_list)
+        (plain_type
+          (wrong_pointer_type
+            (plain_type
+              (wrong_pointer_type
+                (plain_type
+                  (type_reference_expression
+                    (identifier))))))))
+      (block))))
+
+================================================================================
+Array type
+================================================================================
+fn () []string {}
+fn () [][]Foo {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (function_literal
+      (signature
+        (parameter_list)
+        (plain_type
+          (array_type
+            (plain_type
+              (type_reference_expression
+                (identifier))))))
+      (block)))
+  (simple_statement
+    (function_literal
+      (signature
+        (parameter_list)
+        (plain_type
+          (array_type
+            (plain_type
+              (array_type
+                (plain_type
+                  (type_reference_expression
+                    (identifier))))))))
+      (block))))
+
+================================================================================
+Fixed array type
+================================================================================
+fn () [4]string {}
+fn () [2][5]Foo {}
+fn () [const_value][5]Foo {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (function_literal
+      (signature
+        (parameter_list)
+        (plain_type
+          (fixed_array_type
+            (int_literal)
+            (plain_type
+              (type_reference_expression
+                (identifier))))))
+      (block)))
+  (simple_statement
+    (function_literal
+      (signature
+        (parameter_list)
+        (plain_type
+          (fixed_array_type
+            (int_literal)
+            (plain_type
+              (fixed_array_type
+                (int_literal)
+                (plain_type
+                  (type_reference_expression
+                    (identifier))))))))
+      (block)))
+  (simple_statement
+    (function_literal
+      (signature
+        (parameter_list)
+        (plain_type
+          (fixed_array_type
+            (reference_expression
+              (identifier))
+            (plain_type
+              (fixed_array_type
+                (int_literal)
+                (plain_type
+                  (type_reference_expression
+                    (identifier))))))))
+      (block))))
+
+================================================================================
+Function type
+================================================================================
+fn () fn () {}
+fn () fn (string) {}
+fn () fn (int, bool) []string {}
+fn () fn (int, bool) fn (int, bool) []string {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (function_literal
+      (signature
+        (parameter_list)
+        (plain_type
+          (function_type
+            (signature
+              (parameter_list)))))
+      (block)))
+  (simple_statement
+    (function_literal
+      (signature
+        (parameter_list)
+        (plain_type
+          (function_type
+            (signature
+              (type_only_parameter_list
+                (type_only_parameter_declaration
+                  (plain_type
+                    (type_reference_expression
+                      (identifier)))))))))
+      (block)))
+  (simple_statement
+    (function_literal
+      (signature
+        (parameter_list)
+        (plain_type
+          (function_type
+            (signature
+              (type_only_parameter_list
+                (type_only_parameter_declaration
+                  (plain_type
+                    (type_reference_expression
+                      (identifier))))
+                (type_only_parameter_declaration
+                  (plain_type
+                    (type_reference_expression
+                      (identifier)))))
+              (plain_type
+                (array_type
+                  (plain_type
+                    (type_reference_expression
+                      (identifier)))))))))
+      (block)))
+  (simple_statement
+    (function_literal
+      (signature
+        (parameter_list)
+        (plain_type
+          (function_type
+            (signature
+              (type_only_parameter_list
+                (type_only_parameter_declaration
+                  (plain_type
+                    (type_reference_expression
+                      (identifier))))
+                (type_only_parameter_declaration
+                  (plain_type
+                    (type_reference_expression
+                      (identifier)))))
+              (plain_type
+                (function_type
+                  (signature
+                    (type_only_parameter_list
+                      (type_only_parameter_declaration
+                        (plain_type
+                          (type_reference_expression
+                            (identifier))))
+                      (type_only_parameter_declaration
+                        (plain_type
+                          (type_reference_expression
+                            (identifier)))))
+                    (plain_type
+                      (array_type
+                        (plain_type
+                          (type_reference_expression
+                            (identifier))))))))))))
+      (block))))
+
+================================================================================
+Generic type
+================================================================================
+fn () Foo[string] {}
+fn () mod.Bar[string, int] {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (function_literal
+      (signature
+        (parameter_list)
+        (plain_type
+          (generic_type
+            (type_reference_expression
+              (identifier))
+            (type_parameters
+              (plain_type
+                (type_reference_expression
+                  (identifier)))))))
+      (block)))
+  (simple_statement
+    (function_literal
+      (signature
+        (parameter_list)
+        (plain_type
+          (generic_type
+            (qualified_type
+              (reference_expression
+                (identifier))
+              (type_reference_expression
+                (identifier)))
+            (type_parameters
+              (plain_type
+                (type_reference_expression
+                  (identifier)))
+              (plain_type
+                (type_reference_expression
+                  (identifier)))))))
+      (block))))
+
+================================================================================
+Map type
+================================================================================
+fn () map[string]int {}
+fn () map[Foo][]int {}
+fn () map[[]Foo]map[Foo][]int {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (function_literal
+      (signature
+        (parameter_list)
+        (plain_type
+          (map_type
+            (plain_type
+              (type_reference_expression
+                (identifier)))
+            (plain_type
+              (type_reference_expression
+                (identifier))))))
+      (block)))
+  (simple_statement
+    (function_literal
+      (signature
+        (parameter_list)
+        (plain_type
+          (map_type
+            (plain_type
+              (type_reference_expression
+                (identifier)))
+            (plain_type
+              (array_type
+                (plain_type
+                  (type_reference_expression
+                    (identifier))))))))
+      (block)))
+  (simple_statement
+    (function_literal
+      (signature
+        (parameter_list)
+        (plain_type
+          (map_type
+            (plain_type
+              (array_type
+                (plain_type
+                  (type_reference_expression
+                    (identifier)))))
+            (plain_type
+              (map_type
+                (plain_type
+                  (type_reference_expression
+                    (identifier)))
+                (plain_type
+                  (array_type
+                    (plain_type
+                      (type_reference_expression
+                        (identifier))))))))))
+      (block))))
+
+================================================================================
+Channel type
+================================================================================
+fn () chan int {}
+fn () chan []string {}
+fn () chan map[Foo]string {}
+fn () chan chan string {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (function_literal
+      (signature
+        (parameter_list)
+        (plain_type
+          (channel_type
+            (plain_type
+              (type_reference_expression
+                (identifier))))))
+      (block)))
+  (simple_statement
+    (function_literal
+      (signature
+        (parameter_list)
+        (plain_type
+          (channel_type
+            (plain_type
+              (array_type
+                (plain_type
+                  (type_reference_expression
+                    (identifier))))))))
+      (block)))
+  (simple_statement
+    (function_literal
+      (signature
+        (parameter_list)
+        (plain_type
+          (channel_type
+            (plain_type
+              (map_type
+                (plain_type
+                  (type_reference_expression
+                    (identifier)))
+                (plain_type
+                  (type_reference_expression
+                    (identifier))))))))
+      (block)))
+  (simple_statement
+    (function_literal
+      (signature
+        (parameter_list)
+        (plain_type
+          (channel_type
+            (plain_type
+              (channel_type
+                (plain_type
+                  (type_reference_expression
+                    (identifier))))))))
+      (block))))
+
+================================================================================
+Shared type
+================================================================================
+fn () shared int {}
+fn () shared []string {}
+fn () shared map[Foo]string {}
+fn () shared chan string {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (function_literal
+      (signature
+        (parameter_list)
+        (plain_type
+          (shared_type
+            (plain_type
+              (type_reference_expression
+                (identifier))))))
+      (block)))
+  (simple_statement
+    (function_literal
+      (signature
+        (parameter_list)
+        (plain_type
+          (shared_type
+            (plain_type
+              (array_type
+                (plain_type
+                  (type_reference_expression
+                    (identifier))))))))
+      (block)))
+  (simple_statement
+    (function_literal
+      (signature
+        (parameter_list)
+        (plain_type
+          (shared_type
+            (plain_type
+              (map_type
+                (plain_type
+                  (type_reference_expression
+                    (identifier)))
+                (plain_type
+                  (type_reference_expression
+                    (identifier))))))))
+      (block)))
+  (simple_statement
+    (function_literal
+      (signature
+        (parameter_list)
+        (plain_type
+          (shared_type
+            (plain_type
+              (channel_type
+                (plain_type
+                  (type_reference_expression
+                    (identifier))))))))
+      (block))))
+
+================================================================================
+Thread type
+================================================================================
+fn () thread int {}
+fn () thread []string {}
+fn () thread map[Foo]string {}
+fn () thread thread string {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (function_literal
+      (signature
+        (parameter_list)
+        (plain_type
+          (thread_type
+            (plain_type
+              (type_reference_expression
+                (identifier))))))
+      (block)))
+  (simple_statement
+    (function_literal
+      (signature
+        (parameter_list)
+        (plain_type
+          (thread_type
+            (plain_type
+              (array_type
+                (plain_type
+                  (type_reference_expression
+                    (identifier))))))))
+      (block)))
+  (simple_statement
+    (function_literal
+      (signature
+        (parameter_list)
+        (plain_type
+          (thread_type
+            (plain_type
+              (map_type
+                (plain_type
+                  (type_reference_expression
+                    (identifier)))
+                (plain_type
+                  (type_reference_expression
+                    (identifier))))))))
+      (block)))
+  (simple_statement
+    (function_literal
+      (signature
+        (parameter_list)
+        (plain_type
+          (thread_type
+            (plain_type
+              (thread_type
+                (plain_type
+                  (type_reference_expression
+                    (identifier))))))))
+      (block))))
+
+================================================================================
+Option type
+================================================================================
+fn (p ?int) {}
+fn () ?int {}
+fn () ?(int, string) {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (function_literal
+      (signature
+        (parameter_list
+          (parameter_declaration
+            (identifier)
+            (option_type
+              (plain_type
+                (type_reference_expression
+                  (identifier)))))))
+      (block)))
+  (simple_statement
+    (function_literal
+      (signature
+        (parameter_list)
+        (option_type
+          (plain_type
+            (type_reference_expression
+              (identifier)))))
+      (block)))
+  (simple_statement
+    (function_literal
+      (signature
+        (parameter_list)
+        (option_type
+          (multi_return_type
+            (plain_type
+              (type_reference_expression
+                (identifier)))
+            (plain_type
+              (type_reference_expression
+                (identifier))))))
+      (block))))
+
+================================================================================
+Result type
+================================================================================
+fn () !int {}
+fn () !(int, string) {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (function_literal
+      (signature
+        (parameter_list)
+        (result_type
+          (plain_type
+            (type_reference_expression
+              (identifier)))))
+      (block)))
+  (simple_statement
+    (function_literal
+      (signature
+        (parameter_list)
+        (result_type
+          (multi_return_type
+            (plain_type
+              (type_reference_expression
+                (identifier)))
+            (plain_type
+              (type_reference_expression
+                (identifier))))))
+      (block))))
