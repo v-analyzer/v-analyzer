@@ -33,6 +33,56 @@ if a is []Any {
         (block)))))
 
 ================================================================================
+Is expression with mut
+================================================================================
+if mut run is Block {
+    println()
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (if_expression
+      (is_expression
+        (mutability_modifiers)
+        (reference_expression
+          (identifier))
+        (plain_type
+          (type_reference_expression
+            (identifier))))
+      (block
+        (simple_statement
+          (call_expression
+            (reference_expression
+              (identifier))
+            (argument_list)))))))
+
+================================================================================
+Not is expression with mut
+================================================================================
+if mut run !is Block {
+    println()
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (if_expression
+      (not_is_expression
+        (mutability_modifiers)
+        (reference_expression
+          (identifier))
+        (plain_type
+          (type_reference_expression
+            (identifier))))
+      (block
+        (simple_statement
+          (call_expression
+            (reference_expression
+              (identifier))
+            (argument_list)))))))
+
+================================================================================
 Is and as expressions
 ================================================================================
 

@@ -286,14 +286,16 @@ fn test_with_value() {
               (type_only_parameter_declaration
                 (plain_type
                   (qualified_type
-                    (identifier)
+                    (reference_expression
+                      (identifier))
                     (type_reference_expression
                       (identifier)))))
               (type_only_parameter_declaration
                 (mutability_modifiers)
                 (plain_type
                   (qualified_type
-                    (identifier)
+                    (reference_expression
+                      (identifier))
                     (type_reference_expression
                       (identifier))))))))))
     (struct_field_declaration
@@ -309,14 +311,16 @@ fn test_with_value() {
               (type_only_parameter_declaration
                 (plain_type
                   (qualified_type
-                    (identifier)
+                    (reference_expression
+                      (identifier))
                     (type_reference_expression
                       (identifier)))))
               (type_only_parameter_declaration
                 (mutability_modifiers)
                 (plain_type
                   (qualified_type
-                    (identifier)
+                    (reference_expression
+                      (identifier))
                     (type_reference_expression
                       (identifier)))))
               (type_only_parameter_declaration
@@ -410,7 +414,8 @@ fn test_with_value() {
                           (identifier)
                           (plain_type
                             (qualified_type
-                              (identifier)
+                              (reference_expression
+                                (identifier))
                               (type_reference_expression
                                 (identifier)))))))
                     (block
@@ -484,14 +489,16 @@ fn test_with_value() {
                     (identifier)
                     (plain_type
                       (qualified_type
-                        (identifier)
+                        (reference_expression
+                          (identifier))
                         (type_reference_expression
                           (identifier)))))
                   (parameter_declaration
                     (identifier)
                     (plain_type
                       (qualified_type
-                        (identifier)
+                        (reference_expression
+                          (identifier))
                         (type_reference_expression
                           (identifier))))))
                 (plain_type
@@ -554,16 +561,20 @@ fn test_with_value() {
             (reference_expression
               (identifier)))
           (expression_list
-            (unary_expression
-              (reference_expression
-                (identifier))))))
-      (simple_statement
-        (map_init_expression
-          (map_keyed_element
-            (reference_expression
-              (identifier))
-            (literal
-              (interpreted_string_literal)))))
+            (type_initializer
+              (plain_type
+                (pointer_type
+                  (plain_type
+                    (type_reference_expression
+                      (identifier)))))
+              (type_initializer_body
+                (element_list
+                  (keyed_element
+                    (field_name
+                      (reference_expression
+                        (identifier)))
+                    (literal
+                      (interpreted_string_literal)))))))))
       (simple_statement
         (var_declaration
           (expression_list

@@ -474,3 +474,39 @@ map[string]int{}
             (type_reference_expression
               (identifier)))))
       (type_initializer_body))))
+
+================================================================================
+Qualified type initializer
+================================================================================
+psi.StubIndexSink{}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (type_initializer
+      (plain_type
+        (qualified_type
+          (reference_expression
+            (identifier))
+          (type_reference_expression
+            (identifier))))
+      (type_initializer_body))))
+
+================================================================================
+Qualified type initializer for pointer
+================================================================================
+&psi.StubIndexSink{}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (type_initializer
+      (plain_type
+        (pointer_type
+          (plain_type
+            (qualified_type
+              (reference_expression
+                (identifier))
+              (type_reference_expression
+                (identifier))))))
+      (type_initializer_body))))

@@ -4,7 +4,9 @@ module psi
 __global psi_counter = 0
 
 pub fn create_element(node AstNode, containing_file &PsiFileImpl) PsiElement {
-	base_node := new_psi_node(psi_counter++, containing_file, node)
+	base_node := new_psi_node(psi_counter, containing_file, node)
+	psi_counter++
+
 	if node.type_name == .module_clause {
 		return ModuleClause{
 			PsiElementImpl: base_node

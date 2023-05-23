@@ -711,10 +711,6 @@
         {
           "type": "_statement",
           "named": true
-        },
-        {
-          "type": "expression_list",
-          "named": true
         }
       ]
     }
@@ -2087,11 +2083,15 @@
     "named": true,
     "fields": {
       "left": {
-        "multiple": false,
+        "multiple": true,
         "required": true,
         "types": [
           {
             "type": "_expression",
+            "named": true
+          },
+          {
+            "type": "mutability_modifiers",
             "named": true
           }
         ]
@@ -2597,11 +2597,15 @@
     "named": true,
     "fields": {
       "left": {
-        "multiple": false,
+        "multiple": true,
         "required": true,
         "types": [
           {
             "type": "_expression",
+            "named": true
+          },
+          {
+            "type": "mutability_modifiers",
             "named": true
           }
         ]
@@ -2839,7 +2843,7 @@
         "required": true,
         "types": [
           {
-            "type": "identifier",
+            "type": "reference_expression",
             "named": true
           }
         ]

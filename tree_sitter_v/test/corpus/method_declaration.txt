@@ -96,3 +96,51 @@ fn (f Foo) == (o Foo) {}
             (type_reference_expression
               (identifier))))))
     (block)))
+
+================================================================================
+Method with mutable receiver and parameters
+================================================================================
+fn (mut r ResolveProcessor) execute(element PsiElement) bool {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_declaration
+    (receiver
+      (mutability_modifiers)
+      (identifier)
+      (plain_type
+        (type_reference_expression
+          (identifier))))
+    (identifier)
+    (signature
+      (parameter_list
+        (parameter_declaration
+          (identifier)
+          (plain_type
+            (type_reference_expression
+              (identifier)))))
+      (plain_type
+        (type_reference_expression
+          (identifier))))
+    (block)))
+
+================================================================================
+Method with array parameter
+================================================================================
+pub fn new_stubs_index(sinks []StubIndexSink) {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_declaration
+    (visibility_modifiers)
+    (identifier)
+    (signature
+      (parameter_list
+        (parameter_declaration
+          (identifier)
+          (plain_type
+            (array_type
+              (plain_type
+                (type_reference_expression
+                  (identifier))))))))
+    (block)))
