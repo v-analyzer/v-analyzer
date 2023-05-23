@@ -830,11 +830,15 @@ module.exports = grammar({
     interpreted_string_literal: ($) => interpolated_quoted_string($, $._string_opening),
 
     string_interpolation: ($) => seq(
-      $._braced_interpolation_opening,
-      $._expression,
+      $.braced_interpolation_opening,
+      $.interpolated_expression,
       optional($.format_specifier),
-      $._interpolation_closing,
+      $.braced_interpolation_closing,
     ),
+
+    braced_interpolation_opening: ($) => $._braced_interpolation_opening,
+    interpolated_expression: ($) => $._expression,
+    braced_interpolation_closing: ($) => $._interpolation_closing,
 
     format_specifier: ($) => seq(
       token(':'),

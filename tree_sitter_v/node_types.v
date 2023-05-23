@@ -30,6 +30,8 @@ pub enum NodeType {
 	binded_identifier
 	binded_type
 	block
+	braced_interpolation_closing
+	braced_interpolation_opening
 	break_statement
 	c_string_literal
 	call_expression
@@ -86,6 +88,7 @@ pub enum NodeType {
 	index_expression
 	interface_declaration
 	interface_method_definition
+	interpolated_expression
 	interpreted_string_literal
 	is_expression
 	key_value_attribute
@@ -330,6 +333,8 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'binded_identifier' { NodeType.binded_identifier }
 		'binded_type' { NodeType.binded_type }
 		'block' { NodeType.block }
+		'braced_interpolation_closing' { NodeType.braced_interpolation_closing }
+		'braced_interpolation_opening' { NodeType.braced_interpolation_opening }
 		'break_statement' { NodeType.break_statement }
 		'c_string_literal' { NodeType.c_string_literal }
 		'call_expression' { NodeType.call_expression }
@@ -386,6 +391,7 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'index_expression' { NodeType.index_expression }
 		'interface_declaration' { NodeType.interface_declaration }
 		'interface_method_definition' { NodeType.interface_method_definition }
+		'interpolated_expression' { NodeType.interpolated_expression }
 		'interpreted_string_literal' { NodeType.interpreted_string_literal }
 		'is_expression' { NodeType.is_expression }
 		'key_value_attribute' { NodeType.key_value_attribute }

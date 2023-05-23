@@ -5911,11 +5911,11 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "_braced_interpolation_opening"
+          "name": "braced_interpolation_opening"
         },
         {
           "type": "SYMBOL",
-          "name": "_expression"
+          "name": "interpolated_expression"
         },
         {
           "type": "CHOICE",
@@ -5931,9 +5931,21 @@
         },
         {
           "type": "SYMBOL",
-          "name": "_interpolation_closing"
+          "name": "braced_interpolation_closing"
         }
       ]
+    },
+    "braced_interpolation_opening": {
+      "type": "SYMBOL",
+      "name": "_braced_interpolation_opening"
+    },
+    "interpolated_expression": {
+      "type": "SYMBOL",
+      "name": "_expression"
+    },
+    "braced_interpolation_closing": {
+      "type": "SYMBOL",
+      "name": "_interpolation_closing"
     },
     "format_specifier": {
       "type": "SEQ",

@@ -9,8 +9,11 @@ Simple string interpolation
     (literal
       (interpreted_string_literal
         (string_interpolation
-          (reference_expression
-            (identifier)))))))
+          (braced_interpolation_opening)
+          (interpolated_expression
+            (reference_expression
+              (identifier)))
+          (braced_interpolation_closing))))))
 
 ================================================================================
 String interpolation with complex expression
@@ -23,13 +26,16 @@ String interpolation with complex expression
     (literal
       (interpreted_string_literal
         (string_interpolation
-          (call_expression
-            (selector_expression
-              (reference_expression
-                (identifier))
-              (reference_expression
-                (identifier)))
-            (argument_list)))))))
+          (braced_interpolation_opening)
+          (interpolated_expression
+            (call_expression
+              (selector_expression
+                (reference_expression
+                  (identifier))
+                (reference_expression
+                  (identifier)))
+              (argument_list)))
+          (braced_interpolation_closing))))))
 
 ================================================================================
 String interpolation with complex expressions and format specifiers
@@ -64,41 +70,13 @@ println('[${10.0000:+.2f}]')
           (literal
             (interpreted_string_literal
               (string_interpolation
-                (reference_expression
-                  (identifier))
-                (format_specifier
-                  (int_literal)))))))))
-  (simple_statement
-    (call_expression
-      (reference_expression
-        (identifier))
-      (argument_list
-        (argument
-          (literal
-            (interpreted_string_literal
-              (string_interpolation
-                (reference_expression
-                  (identifier))
-                (format_specifier
-                  (int_literal)))))))))
-  (simple_statement
-    (call_expression
-      (reference_expression
-        (identifier))
-      (argument_list
-        (argument
-          (literal
-            (interpreted_string_literal
-              (string_interpolation
-                (call_expression
+                (braced_interpolation_opening)
+                (interpolated_expression
                   (reference_expression
-                    (identifier))
-                  (argument_list
-                    (argument
-                      (reference_expression
-                        (identifier)))))
+                    (identifier)))
                 (format_specifier
-                  (int_literal)))))))))
+                  (int_literal))
+                (braced_interpolation_closing))))))))
   (simple_statement
     (call_expression
       (reference_expression
@@ -108,15 +86,13 @@ println('[${10.0000:+.2f}]')
           (literal
             (interpreted_string_literal
               (string_interpolation
-                (call_expression
+                (braced_interpolation_opening)
+                (interpolated_expression
                   (reference_expression
-                    (identifier))
-                  (argument_list
-                    (argument
-                      (reference_expression
-                        (identifier)))))
+                    (identifier)))
                 (format_specifier
-                  (int_literal)))))))))
+                  (int_literal))
+                (braced_interpolation_closing))))))))
   (simple_statement
     (call_expression
       (reference_expression
@@ -126,61 +102,18 @@ println('[${10.0000:+.2f}]')
           (literal
             (interpreted_string_literal
               (string_interpolation
-                (call_expression
-                  (reference_expression
-                    (identifier))
-                  (argument_list
-                    (argument
-                      (reference_expression
-                        (identifier)))))
-                (format_specifier))))))))
-  (simple_statement
-    (call_expression
-      (reference_expression
-        (identifier))
-      (argument_list
-        (argument
-          (literal
-            (interpreted_string_literal
-              (string_interpolation
-                (call_expression
-                  (reference_expression
-                    (identifier))
-                  (argument_list
-                    (argument
-                      (reference_expression
-                        (identifier)))))
-                (format_specifier))))))))
-  (simple_statement
-    (call_expression
-      (reference_expression
-        (identifier))
-      (argument_list
-        (argument
-          (literal
-            (interpreted_string_literal
-              (string_interpolation
-                (call_expression
-                  (reference_expression
-                    (identifier))
-                  (argument_list
-                    (argument
-                      (reference_expression
-                        (identifier)))))
-                (format_specifier))))))))
-  (simple_statement
-    (call_expression
-      (reference_expression
-        (identifier))
-      (argument_list
-        (argument
-          (literal
-            (interpreted_string_literal
-              (string_interpolation
-                (literal
-                  (float_literal))
+                (braced_interpolation_opening)
+                (interpolated_expression
+                  (call_expression
+                    (reference_expression
+                      (identifier))
+                    (argument_list
+                      (argument
+                        (reference_expression
+                          (identifier))))))
                 (format_specifier
-                  (int_literal)))))))))
+                  (int_literal))
+                (braced_interpolation_closing))))))))
   (simple_statement
     (call_expression
       (reference_expression
@@ -190,10 +123,110 @@ println('[${10.0000:+.2f}]')
           (literal
             (interpreted_string_literal
               (string_interpolation
-                (literal
-                  (float_literal))
+                (braced_interpolation_opening)
+                (interpolated_expression
+                  (call_expression
+                    (reference_expression
+                      (identifier))
+                    (argument_list
+                      (argument
+                        (reference_expression
+                          (identifier))))))
                 (format_specifier
-                  (int_literal))))))))))
+                  (int_literal))
+                (braced_interpolation_closing))))))))
+  (simple_statement
+    (call_expression
+      (reference_expression
+        (identifier))
+      (argument_list
+        (argument
+          (literal
+            (interpreted_string_literal
+              (string_interpolation
+                (braced_interpolation_opening)
+                (interpolated_expression
+                  (call_expression
+                    (reference_expression
+                      (identifier))
+                    (argument_list
+                      (argument
+                        (reference_expression
+                          (identifier))))))
+                (format_specifier)
+                (braced_interpolation_closing))))))))
+  (simple_statement
+    (call_expression
+      (reference_expression
+        (identifier))
+      (argument_list
+        (argument
+          (literal
+            (interpreted_string_literal
+              (string_interpolation
+                (braced_interpolation_opening)
+                (interpolated_expression
+                  (call_expression
+                    (reference_expression
+                      (identifier))
+                    (argument_list
+                      (argument
+                        (reference_expression
+                          (identifier))))))
+                (format_specifier)
+                (braced_interpolation_closing))))))))
+  (simple_statement
+    (call_expression
+      (reference_expression
+        (identifier))
+      (argument_list
+        (argument
+          (literal
+            (interpreted_string_literal
+              (string_interpolation
+                (braced_interpolation_opening)
+                (interpolated_expression
+                  (call_expression
+                    (reference_expression
+                      (identifier))
+                    (argument_list
+                      (argument
+                        (reference_expression
+                          (identifier))))))
+                (format_specifier)
+                (braced_interpolation_closing))))))))
+  (simple_statement
+    (call_expression
+      (reference_expression
+        (identifier))
+      (argument_list
+        (argument
+          (literal
+            (interpreted_string_literal
+              (string_interpolation
+                (braced_interpolation_opening)
+                (interpolated_expression
+                  (literal
+                    (float_literal)))
+                (format_specifier
+                  (int_literal))
+                (braced_interpolation_closing))))))))
+  (simple_statement
+    (call_expression
+      (reference_expression
+        (identifier))
+      (argument_list
+        (argument
+          (literal
+            (interpreted_string_literal
+              (string_interpolation
+                (braced_interpolation_opening)
+                (interpolated_expression
+                  (literal
+                    (float_literal)))
+                (format_specifier
+                  (int_literal))
+                (braced_interpolation_closing)))))))))
 
 ================================================================================
 C string literal

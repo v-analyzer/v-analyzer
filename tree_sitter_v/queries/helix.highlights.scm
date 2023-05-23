@@ -40,7 +40,11 @@
 (function_declaration
  name: (identifier) @function)
 (function_declaration
+ name: (binded_identifier) @function) 
+(function_declaration
  receiver: (receiver)
+ name: (identifier) @function.method)
+(interface_method_definition
  name: (identifier) @function.method)
 
 (call_expression
@@ -62,6 +66,9 @@
 (interface_declaration
  name: (identifier) @type)
 
+(type_declaration
+ name: (identifier) @type)
+
 (struct_field_declaration
  name: (identifier) @variable.other.member)
 
@@ -81,13 +88,16 @@
  (rune_literal)
 ] @string
 
+(string_interpolation
+ (braced_interpolation_opening) @punctuation.bracket
+ (interpolated_expression) @none
+ (braced_interpolation_closing) @punctuation.bracket)
+
 (attribute) @attribute
 
 [
  (type_reference_expression) 
- (pointer_type)
- (array_type)
-] @type
+ ] @type
 
 [
  (true)
@@ -101,6 +111,7 @@
   "defer"
   "unsafe"
   "sql"
+  (nil)
   (none)
 ] @keyword
 

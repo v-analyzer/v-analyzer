@@ -720,6 +720,16 @@
     }
   },
   {
+    "type": "braced_interpolation_closing",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "braced_interpolation_opening",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "break_statement",
     "named": true,
     "fields": {},
@@ -2036,6 +2046,21 @@
           }
         ]
       }
+    }
+  },
+  {
+    "type": "interpolated_expression",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "_expression",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -3365,11 +3390,19 @@
       "required": true,
       "types": [
         {
-          "type": "_expression",
+          "type": "braced_interpolation_closing",
+          "named": true
+        },
+        {
+          "type": "braced_interpolation_opening",
           "named": true
         },
         {
           "type": "format_specifier",
+          "named": true
+        },
+        {
+          "type": "interpolated_expression",
           "named": true
         }
       ]
