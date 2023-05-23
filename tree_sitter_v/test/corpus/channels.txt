@@ -1,0 +1,99 @@
+================================================================================
+Receive expression
+================================================================================
+cache = <-cache_chan
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (assignment_statement
+      (expression_list
+        (reference_expression
+          (identifier)))
+      (expression_list
+        (receive_expression
+          (reference_expression
+            (identifier)))))))
+
+================================================================================
+Receive expression with propagation
+================================================================================
+cache = <-cache_chan!
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (assignment_statement
+      (expression_list
+        (reference_expression
+          (identifier)))
+      (expression_list
+        (receive_expression
+          (reference_expression
+            (identifier))
+          (error_propagate))))))
+
+================================================================================
+Receive expression with or block
+================================================================================
+cache = <-cache_chan or { return }
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (assignment_statement
+      (expression_list
+        (reference_expression
+          (identifier)))
+      (expression_list
+        (receive_expression
+          (reference_expression
+            (identifier))
+          (error_propagate
+            (or_block
+              (block
+                (return_statement)))))))))
+
+================================================================================
+Send statement
+================================================================================
+cache <- cache_chan
+--------------------------------------------------------------------------------
+
+(source_file
+  (send_statement
+    (reference_expression
+      (identifier))
+    (reference_expression
+      (identifier))))
+
+================================================================================
+Send statement with propagation
+================================================================================
+cache <- cache_chan!
+--------------------------------------------------------------------------------
+
+(source_file
+  (send_statement
+    (reference_expression
+      (identifier))
+    (reference_expression
+      (identifier))
+    (error_propagate)))
+
+================================================================================
+Send statement with or block
+================================================================================
+cache <- cache_chan or { return }
+--------------------------------------------------------------------------------
+
+(source_file
+  (send_statement
+    (reference_expression
+      (identifier))
+    (reference_expression
+      (identifier))
+    (error_propagate
+      (or_block
+        (block
+          (return_statement))))))

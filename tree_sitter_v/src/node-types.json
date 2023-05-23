@@ -80,6 +80,10 @@
         "named": true
       },
       {
+        "type": "receive_expression",
+        "named": true
+      },
+      {
         "type": "reference_expression",
         "named": true
       },
@@ -143,6 +147,10 @@
     "type": "_statement",
     "named": true,
     "subtypes": [
+      {
+        "type": "append_statement",
+        "named": true
+      },
       {
         "type": "asm_statement",
         "named": true
@@ -256,6 +264,32 @@
         "named": true
       }
     ]
+  },
+  {
+    "type": "append_statement",
+    "named": true,
+    "fields": {
+      "left": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_expression",
+            "named": true
+          }
+        ]
+      },
+      "right": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_expression",
+            "named": true
+          }
+        ]
+      }
+    }
   },
   {
     "type": "argument",
@@ -2926,6 +2960,42 @@
     "fields": {}
   },
   {
+    "type": "receive_expression",
+    "named": true,
+    "fields": {
+      "operand": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_expression",
+            "named": true
+          }
+        ]
+      },
+      "operator": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "<-",
+            "named": false
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "error_propagate",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "receiver",
     "named": true,
     "fields": {
@@ -2969,6 +3039,10 @@
       "multiple": false,
       "required": false,
       "types": [
+        {
+          "type": "compile_time_identifier",
+          "named": true
+        },
         {
           "type": "identifier",
           "named": true
@@ -3171,6 +3245,16 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "error_propagate",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -3784,10 +3868,6 @@
           },
           {
             "type": "-",
-            "named": false
-          },
-          {
-            "type": "<-",
             "named": false
           },
           {

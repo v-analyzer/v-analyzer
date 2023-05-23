@@ -36,7 +36,7 @@ select {
             (identifier_list
               (identifier))
             (expression_list
-              (unary_expression
+              (receive_expression
                 (reference_expression
                   (identifier))))))
         (block
@@ -124,7 +124,7 @@ select {
             (identifier_list
               (identifier))
             (expression_list
-              (unary_expression
+              (receive_expression
                 (reference_expression
                   (identifier))))))
         (block

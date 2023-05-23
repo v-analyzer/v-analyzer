@@ -1,0 +1,31 @@
+================================================================================
+Bitshift as expression
+================================================================================
+a := 10 << 2
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (var_declaration
+      (expression_list
+        (reference_expression
+          (identifier)))
+      (expression_list
+        (binary_expression
+          (literal
+            (int_literal))
+          (literal
+            (int_literal)))))))
+
+================================================================================
+Bitshift as append statement
+================================================================================
+arr << 100
+--------------------------------------------------------------------------------
+
+(source_file
+  (append_statement
+    (reference_expression
+      (identifier))
+    (literal
+      (int_literal))))

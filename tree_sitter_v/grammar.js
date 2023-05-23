@@ -11,6 +11,7 @@ const PREC = {
   or: 1,
   resolve: 1,
   composite_literal: -1,
+  empty_array: -2,
 };
 
 const multiplicative_operators = ['*', '/', '%', '<<', '>>', '>>>', '&', '&^'];
@@ -20,7 +21,7 @@ const assignment_operators = multiplicative_operators
   .concat(additive_operators)
   .map((operator) => operator + '=')
   .concat('=');
-const unary_operators = ['+', '-', '!', '~', '^', '*', '&', '<-'];
+const unary_operators = ['+', '-', '!', '~', '^', '*', '&'];
 const overridable_operators = [
   '+', '-', '*', '/', '%', '<', '>', '==', '!=', '<=', '>=',
 ].map((operator) => token(operator));
@@ -106,6 +107,7 @@ module.exports = grammar({
   ],
 
   conflicts: ($) => [
+    [$._expression, $.plain_type],
     [$.qualified_type, $._expression_without_blocks],
     [$.fixed_array_type, $.literal],
     [$.fixed_array_type, $._expression],
@@ -412,6 +414,7 @@ module.exports = grammar({
       $.empty_array_creation,
       $.fixed_array_creation,
       $.unary_expression,
+      $.receive_expression,
       $.binary_expression,
       $.is_expression,
       $.not_is_expression,
@@ -530,12 +533,18 @@ module.exports = grammar({
 
     capture: ($) => seq(optional($.mutability_modifiers), $.reference_expression),
 
-    reference_expression: ($) => prec.left($.identifier),
+    reference_expression: ($) => prec.left(choice($.identifier, $.compile_time_identifier)),
     type_reference_expression: ($) => prec.left($.identifier),
 
     unary_expression: ($) => prec(PREC.unary, seq(
       field('operator', choice(...unary_operators)),
       field('operand', $._expression),
+    )),
+
+    receive_expression: ($) => prec.right(PREC.unary, seq(
+      field('operator', '<-'),
+      field('operand', $._expression),
+      optional($.error_propagate),
     )),
 
     binary_expression: ($) => {
@@ -628,7 +637,7 @@ module.exports = grammar({
 
     array_creation: ($) => prec.right(PREC.multiplicative, $._non_empty_array),
 
-    empty_array_creation: () => prec(PREC.composite_literal, seq('[', ']')),
+    empty_array_creation: () => prec(PREC.empty_array, seq('[', ']')),
 
     fixed_array_creation: ($) => prec.right(PREC.multiplicative,
       seq($._non_empty_array, '!'),
@@ -959,7 +968,7 @@ module.exports = grammar({
       field('element', $.plain_type),
     ),
 
-    array_type: ($) => prec(PREC.resolve,
+    array_type: ($) => prec.right(PREC.resolve,
       seq('[', ']', field('element', $.plain_type)),
     ),
 
@@ -1032,6 +1041,7 @@ module.exports = grammar({
       $.send_statement,
       $.block,
       $.hash_statement,
+      $.append_statement,
     ),
 
     simple_statement: ($) => choice(
@@ -1048,10 +1058,17 @@ module.exports = grammar({
 
     assert_statement: ($) => seq('assert', $._expression),
 
-    send_statement: ($) => prec(PREC.unary, seq(
+    append_statement: ($) => prec(PREC.unary, seq(
+      field('left', $._expression),
+      '<<',
+      field('right', $._expression),
+    )),
+
+    send_statement: ($) => prec.right(PREC.primary, seq(
       field('channel', $._expression),
       '<-',
       field('value', $._expression),
+      optional($.error_propagate),
     )),
 
     var_declaration: ($) => prec.right(seq(

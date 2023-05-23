@@ -221,12 +221,11 @@ fn test_parse_compact_text() {
                   (reference_expression
                     (identifier)))
                 (block
-                  (simple_statement
-                    (binary_expression
-                      (reference_expression
-                        (identifier))
-                      (reference_expression
-                        (identifier))))))
+                  (append_statement
+                    (reference_expression
+                      (identifier))
+                    (reference_expression
+                      (identifier)))))
               (return_statement
                 (expression_list
                   (reference_expression
