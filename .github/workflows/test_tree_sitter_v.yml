@@ -1,0 +1,75 @@
+name: Test tree-sitter-v
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test-linux:
+    runs-on: ubuntu-20.04
+    env:
+      CC: gcc
+    steps:
+      - name: Install minimal stable Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+      - name: Install Tree-sitter
+        run: |
+          cargo install tree-sitter-cli
+      - name: Checkout spavn-analyzer
+        uses: actions/checkout@v3
+        with:
+          path: spavn-analyzer
+      - name: Run tests
+        run: |
+          cd spavn-analyzer/tree_sitter_v
+          tree-sitter test
+
+  test-macos:
+    runs-on: macos-latest
+    env:
+      CC: clang
+    steps:
+      - name: Install minimal stable Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+      - name: Install Tree-sitter
+        run: |
+          cargo install tree-sitter-cli
+      - name: Checkout spavn-analyzer
+        uses: actions/checkout@v3
+        with:
+          path: spavn-analyzer
+      - name: Run tests
+        run: |
+          cd spavn-analyzer/tree_sitter_v
+          tree-sitter test
+
+# TODO: some msvc error for Rust
+#  test-windows:
+#    runs-on: windows-latest
+#    env:
+#      CC: msvc
+#    steps:
+#      - uses: msys2/setup-msys2@v2
+#      - uses: ilammy/msvc-dev-cmd@v1.4.1
+#      - name: Install minimal stable Rust
+#        uses: actions-rs/toolchain@v1
+#        with:
+#          profile: minimal
+#          toolchain: stable
+#      - name: Install Tree-sitter
+#        run: |
+#          cargo install tree-sitter-cli
+#      - name: Checkout spavn-analyzer
+#        uses: actions/checkout@v3
+#        with:
+#          path: spavn-analyzer
+#      - name: Run tests
+#        run: |
+#          cd spavn-analyzer/tree_sitter_v
+#          tree-sitter test
