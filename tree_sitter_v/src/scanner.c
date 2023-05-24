@@ -385,11 +385,6 @@ bool scan_string_content(Scanner *scanner, TSLexer *lexer) {
 }
 
 bool scan_comment(Scanner *scanner, TSLexer *lexer) {
-    uint8_t got_top = stack_top(scanner->tokens);
-    if (is_type_string(got_top) || lexer->lookahead != '/') {
-        return false;
-    }
-
     advance(lexer);
     if (lexer->lookahead != '/' && lexer->lookahead != '*') {
         return false;
@@ -429,7 +424,7 @@ bool scan_comment(Scanner *scanner, TSLexer *lexer) {
             }
         }
 
-        if (!is_multiline && lexer->lookahead == '\r' || lexer->lookahead == '\n') {
+        if (!is_multiline && (lexer->lookahead == '\r' || lexer->lookahead == '\n')) {
             break;
         }
 
