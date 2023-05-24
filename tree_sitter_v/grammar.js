@@ -1149,7 +1149,7 @@ module.exports = grammar({
       field('end', optional($._expression)),
     )),
 
-    hash_statement: () => seq('#', token.immediate(repeat1(/.|\\\r?\n/)), terminator),
+    hash_statement: () => seq('#', token.immediate(repeat1(/[^\\\r\n]/))),
 
     asm_statement: ($) => seq('asm', $.identifier, $._content_block),
 

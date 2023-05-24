@@ -522,19 +522,15 @@ bool tree_sitter_v_external_scanner_scan(void *payload, TSLexer *lexer, const bo
     }
 
     if (is_stack_empty || top == BRACED_INTERPOLATION_OPENING) {
-        while (lexer->lookahead == ' ' || is_end_line(lexer->lookahead)) {
+        // a string might follow after some whitespace, so we can't lookahead
+        // until we get rid of it
+        while (iswspace(lexer->lookahead)) {
             skip(lexer);
         }
     }
 
     if (!is_type_string(top) && lexer->lookahead == '/' && valid_symbols[COMMENT]) {
         return scan_comment(scanner, lexer);
-    }
-
-    // a string might follow after some whitespace, so we can't lookahead
-    // until we get rid of it
-    while (iswspace(lexer->lookahead)) {
-        skip(lexer);
     }
 
     bool expect_c_string = valid_symbols[C_STRING_OPENING];
@@ -558,9 +554,9 @@ bool tree_sitter_v_external_scanner_scan(void *payload, TSLexer *lexer, const bo
         );
     }
 
-    while (iswspace(lexer->lookahead)) {
-        skip(lexer);
-    }
+//    while (iswspace(lexer->lookahead)) {
+//        skip(lexer);
+//    }
 
     if (lexer->lookahead == '}' && valid_symbols[INTERPOLATION_CLOSING]) {
         return scan_interpolation_closing(scanner, lexer);

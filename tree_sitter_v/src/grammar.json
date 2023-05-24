@@ -7830,26 +7830,9 @@
             "type": "REPEAT1",
             "content": {
               "type": "PATTERN",
-              "value": ".|\\\\\\r?\\n"
+              "value": "[^\\\\\\r\\n]"
             }
           }
-        },
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "STRING",
-              "value": "\n"
-            },
-            {
-              "type": "STRING",
-              "value": "\r"
-            },
-            {
-              "type": "STRING",
-              "value": "\r\n"
-            }
-          ]
         }
       ]
     },
