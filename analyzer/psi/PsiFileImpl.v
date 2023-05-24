@@ -12,15 +12,15 @@ pub:
 	path string
 pub mut:
 	tree        &tree_sitter.Tree[v.NodeType] = unsafe { nil }
-	source_text &ropes.Rope = unsafe { nil }
+	source_text string
 	root        PsiElement
 }
 
-pub fn new_psi_file(path string, tree &tree_sitter.Tree[v.NodeType], source_text &ropes.Rope) &PsiFileImpl {
+pub fn new_psi_file(path string, tree &tree_sitter.Tree[v.NodeType], source_text string) &PsiFileImpl {
 	mut file := &PsiFileImpl{
 		path: path
 		tree: unsafe { tree }
-		source_text: unsafe { source_text }
+		source_text: source_text
 	}
 	file.root = create_element(AstNode(tree.root_node()), file)
 	return file
@@ -49,7 +49,7 @@ pub fn (p &PsiFileImpl) path() string {
 	return p.path
 }
 
-pub fn (p &PsiFileImpl) text() &ropes.Rope {
+pub fn (p &PsiFileImpl) text() string {
 	return p.source_text
 }
 

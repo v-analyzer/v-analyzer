@@ -28,7 +28,15 @@ pub fn (s &StructDeclaration) attributes() []PsiElement {
 }
 
 pub fn (s StructDeclaration) identifier() ?PsiElement {
-	return s.find_child_by_type(.identifier)
+	if identifier := s.find_child_by_type(.identifier) {
+		return identifier
+	}
+
+	if binded_identifier := s.find_child_by_type(.binded_identifier) {
+		return binded_identifier
+	}
+
+	return none
 }
 
 pub fn (s StructDeclaration) identifier_text_range() TextRange {

@@ -3,13 +3,12 @@ module parser
 import tree_sitter_v as v
 import v_tree_sitter.tree_sitter
 import os
-import analyzer.structures.ropes
 
 // ParseResult represents the result of a parsing operation.
 pub struct ParseResult {
 pub:
 	tree        &tree_sitter.Tree[v.NodeType] // Resulting tree or nil if the source could not be parsed.
-	source_text &ropes.Rope // Rope corresponding to the source code.
+	source_text string // Source code.
 }
 
 // Source represent the possible types of V source code to parse.
@@ -95,13 +94,12 @@ pub fn parse_code(code string) ParseResult {
 //   println(res2.tree
 // }
 pub fn parse_code_with_tree(code string, old_tree &tree_sitter.Tree[v.NodeType]) ParseResult {
-	rope := ropes.new(code)
 	mut parser := tree_sitter.new_parser[v.NodeType](v.type_factory)
 	parser.set_language(v.language)
 	raw_tree := if isnil(old_tree) { unsafe { nil } } else { old_tree.raw_tree }
 	tree := parser.parse_string(source: code, tree: raw_tree)
 	return ParseResult{
 		tree: tree
-		source_text: rope
+		source_text: code
 	}
 }

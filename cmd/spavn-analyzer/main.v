@@ -7,6 +7,7 @@ import lserver
 import jsonrpc
 import lsp.log
 import analyzer
+import streams
 
 struct Analyzer {
 	id          int
@@ -43,7 +44,11 @@ fn main() {
 	analyzer_instance := analyzer.new()
 
 	// mut stream := new_stdio_stream()!
-	mut stream := if stdin { new_stdio_stream()! } else { new_socket_stream_server(5007, true)! }
+	mut stream := if stdin {
+		streams.new_stdio_stream()!
+	} else {
+		streams.new_socket_stream_server(5007, true)!
+	}
 
 	mut ls := lserver.new(analyzer_instance)
 	mut jrpc_server := &jsonrpc.Server{

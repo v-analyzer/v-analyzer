@@ -8,7 +8,7 @@ pub mut:
 	client_info            ClientInfo         [json: clientInfo]
 	root_uri               DocumentUri        [json: rootUri]
 	root_path              DocumentUri        [json: rootPath]
-	initialization_options string             [json: initializationOptions; skip]
+	initialization_options string             [json: initializationOptions]
 	capabilities           ClientCapabilities [skip]
 	trace                  string
 	workspace_folders      []WorkspaceFolder  [skip]

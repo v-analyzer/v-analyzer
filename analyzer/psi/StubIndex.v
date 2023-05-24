@@ -16,6 +16,14 @@ pub fn new_stubs_index(sinks []StubIndexSink, user_code_sinks []StubIndexSink) &
 	}
 }
 
+pub fn (s &StubIndex) get_all_elements_by_key(key StubIndexKey) []PsiElement {
+	mut elements := []PsiElement{cap: s.sinks.len * 10}
+	for sink in s.sinks {
+		elements << s.get_all_elements_from_sink_by_key(key, sink)
+	}
+	return elements
+}
+
 pub fn (s &StubIndex) get_all_elements_from_workspace() []PsiElement {
 	mut elements := []PsiElement{cap: s.user_code_sinks.len * 10}
 	for sink in s.user_code_sinks {

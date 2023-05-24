@@ -7,7 +7,7 @@ pub fn (mut ls LanguageServer) inlay_hints(params lsp.InlayHintParams, mut wr Re
 	uri := params.text_document.uri.normalize()
 	file := ls.get_file(uri) or { return none }
 
-	if file.psi_file.source_text.len() > 30000 {
+	if file.psi_file.source_text.len > 30000 {
 		return none
 	}
 

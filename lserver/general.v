@@ -24,14 +24,19 @@ pub fn (mut ls LanguageServer) initialize(params lsp.InitializeParams, mut wr Re
 	ls.setup_config_dir(mut wr)
 	ls.setup_stubs(mut wr)
 
-	if vlib_root := ls.vlib_root() {
-		ls.analyzer_instance.indexer.add_indexing_root(vlib_root, .standard_library)
-	}
-	if vmodules_root := ls.vmodules_root() {
-		ls.analyzer_instance.indexer.add_indexing_root(vmodules_root, .modules)
-	}
-	if stubs_root := ls.stubs_root() {
-		ls.analyzer_instance.indexer.add_indexing_root(stubs_root, .stubs)
+	// Used in tests to avoid indexing the standard library
+	need_index_stdlib := 'no-stdlib' !in params.initialization_options.fields()
+
+	if need_index_stdlib {
+		if vlib_root := ls.vlib_root() {
+			ls.analyzer_instance.indexer.add_indexing_root(vlib_root, .standard_library)
+		}
+		if vmodules_root := ls.vmodules_root() {
+			ls.analyzer_instance.indexer.add_indexing_root(vmodules_root, .modules)
+		}
+		if stubs_root := ls.stubs_root() {
+			ls.analyzer_instance.indexer.add_indexing_root(stubs_root, .stubs)
+		}
 	}
 
 	ls.analyzer_instance.indexer.add_indexing_root(ls.root_uri.path(), .user_code)

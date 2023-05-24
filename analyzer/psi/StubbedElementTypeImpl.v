@@ -165,7 +165,6 @@ pub fn (s &StubbedElementType) create_stub(psi PsiElement, parent_stub &StubElem
 			StubType.function_declaration
 		}
 		return new_stub_base(parent_stub, stub_type, psi.name(), text_range,
-			text: ''
 			comment: comment
 			receiver: receiver_type
 		)

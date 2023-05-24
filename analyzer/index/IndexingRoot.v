@@ -145,7 +145,7 @@ pub fn (mut _ IndexingRoot) index_file(path string) !FileIndex {
 	last_modified := os.file_last_mod_unix(path)
 	content := os.read_file(path)!
 	res := parser.parse_code(content)
-	psi_file := psi.new_psi_file(path, res.tree, res.source_text)
+	psi_file := psi.new_psi_file(path, res.tree, content)
 	mut cache := FileIndex{
 		filepath: path
 		file_last_modified: last_modified

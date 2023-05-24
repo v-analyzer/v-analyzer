@@ -1,4 +1,4 @@
-module main
+module streams
 
 import term
 import net
@@ -8,8 +8,7 @@ import io
 fn C._setmode(int, int)
 fn C.fgetc(stream &C.FILE) int
 
-// Stdin
-fn new_stdio_stream() !io.ReaderWriter {
+pub fn new_stdio_stream() !io.ReaderWriter {
 	stream := &StdioStream{}
 	$if windows {
 		// 0x8000 = _O_BINARY from <fcntl.h>
@@ -97,14 +96,13 @@ fn read_line(file &os.File, mut buf []u8) !int {
 	return len
 }
 
-// TCP Socket
 const base_ip = '127.0.0.1'
 
-fn new_socket_stream_server(port int, log bool) !io.ReaderWriter {
+pub fn new_socket_stream_server(port int, log bool) !io.ReaderWriter {
 	server_label := 'vls-server'
 
 	// Open the connection.
-	address := '${base_ip}:${port}'
+	address := '${streams.base_ip}:${port}'
 	mut listener := net.listen_tcp(.ip, address)!
 
 	if log {
@@ -133,7 +131,7 @@ fn new_socket_stream_server(port int, log bool) !io.ReaderWriter {
 
 fn new_socket_stream_client(port int) !io.ReaderWriter {
 	// Open the connection.
-	address := '${base_ip}:${port}'
+	address := '${streams.base_ip}:${port}'
 	mut conn := net.dial_tcp(address)!
 	mut reader := io.new_buffered_reader(reader: conn, cap: 1024 * 1024)
 	conn.set_blocking(true) or {}
@@ -186,7 +184,7 @@ pub fn (mut sck SocketStream) read(mut buf []u8) !int {
 		// read header line
 		got_header := sck.reader.read_line() or { return IError(io.Eof{}) }
 		buf << got_header.bytes()
-		buf << newlines
+		buf << streams.newlines
 		header_len = got_header.len + 2
 		// $if !test {
 		// 	println('[$sck.log_label] : ${term.green('Received data')} : $got_header')

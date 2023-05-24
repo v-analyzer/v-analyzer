@@ -20,7 +20,7 @@ pub struct IndexVersionMismatchError {
 // Index инкапсулирует логику хранения индекса.
 pub struct Index {
 pub:
-	version string = '5'
+	version string = '6'
 pub mut:
 	updated_at time.Time // время последнего обновления индекса
 	per_file   PerFileIndex

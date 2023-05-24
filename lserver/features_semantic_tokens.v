@@ -7,11 +7,13 @@ pub fn (mut ls LanguageServer) semantic_tokens_full(params lsp.SemanticTokensPar
 	uri := params.text_document.uri.normalize()
 	file := ls.get_file(uri) or { return none }
 
-	if file.psi_file.source_text.len() > 30000 {
+	if file.psi_file.source_text.len > 30000 {
 		return none
 	}
 
-	mut visitor := SemanticVisitor{}
+	mut visitor := SemanticVisitor{
+		fast_highlighting: file.psi_file.source_text.len > 10000
+	}
 	file.psi_file.root.accept_mut(mut visitor)
 	res := visitor.encode()
 
@@ -39,7 +41,8 @@ const sql_keywords = {
 
 struct SemanticVisitor {
 mut:
-	result []SemanticToken = []SemanticToken{cap: 100}
+	fast_highlighting bool
+	result            []SemanticToken = []SemanticToken{cap: 100}
 }
 
 fn (mut f SemanticVisitor) visit_element(element psi.PsiElement) {
@@ -107,44 +110,48 @@ fn (mut f SemanticVisitor) visit_element_impl(element psi.PsiElement) bool {
 		f.result << element_to_semantic(element.node, 'variable')
 	}
 
-	if element.node.type_name == .reference_expression
-		|| element.node.type_name == .type_reference_expression {
-		if element is psi.PsiElementImpl {
-			ref := psi.ReferenceExpression{
-				PsiElementImpl: element
-			}.reference()
-			if res := ref.resolve() {
-				if first_child := element.node.first_child() {
-					if res is psi.VarDefinition {
-						mut mods := []string{}
-						if res.is_mutable() {
-							mods << 'mutable'
+	if !f.fast_highlighting {
+		if element.node.type_name == .reference_expression
+			|| element.node.type_name == .type_reference_expression {
+			if element is psi.PsiElementImpl {
+				ref := psi.ReferenceExpression{
+					PsiElementImpl: element
+				}.reference()
+				if res := ref.resolve() {
+					if first_child := element.node.first_child() {
+						if res is psi.VarDefinition {
+							mut mods := []string{}
+							if res.is_mutable() {
+								mods << 'mutable'
+							}
+							f.result << element_to_semantic(first_child, 'variable', ...mods)
+						} else if res is psi.ConstantDefinition {
+							f.result << element_to_semantic(first_child, 'property')
+						} else if res is psi.StructDeclaration {
+							if res.name() != 'string' {
+								f.result << element_to_semantic(first_child, 'struct')
+							}
+						} else if res is psi.EnumDeclaration {
+							f.result << element_to_semantic(first_child, 'enum')
+						} else if res is psi.FieldDeclaration {
+							f.result << element_to_semantic(first_child, 'property')
+						} else if res is psi.EnumFieldDeclaration {
+							f.result << element_to_semantic(first_child, 'enumMember')
+						} else if res is psi.ParameterDeclaration {
+							mut mods := []string{}
+							if res.is_mutable() {
+								mods << 'mutable'
+							}
+							f.result << element_to_semantic(first_child, 'parameter',
+								...mods)
+						} else if res is psi.Receiver {
+							mut mods := []string{}
+							if res.is_mutable() {
+								mods << 'mutable'
+							}
+							f.result << element_to_semantic(first_child, 'parameter',
+								...mods)
 						}
-						f.result << element_to_semantic(first_child, 'variable', ...mods)
-					} else if res is psi.ConstantDefinition {
-						f.result << element_to_semantic(first_child, 'property')
-					} else if res is psi.StructDeclaration {
-						if res.name() != 'string' {
-							f.result << element_to_semantic(first_child, 'struct')
-						}
-					} else if res is psi.EnumDeclaration {
-						f.result << element_to_semantic(first_child, 'enum')
-					} else if res is psi.FieldDeclaration {
-						f.result << element_to_semantic(first_child, 'property')
-					} else if res is psi.EnumFieldDeclaration {
-						f.result << element_to_semantic(first_child, 'enumMember')
-					} else if res is psi.ParameterDeclaration {
-						mut mods := []string{}
-						if res.is_mutable() {
-							mods << 'mutable'
-						}
-						f.result << element_to_semantic(first_child, 'parameter', ...mods)
-					} else if res is psi.Receiver {
-						mut mods := []string{}
-						if res.is_mutable() {
-							mods << 'mutable'
-						}
-						f.result << element_to_semantic(first_child, 'parameter', ...mods)
 					}
 				}
 			}
@@ -167,7 +174,7 @@ fn (mut f SemanticVisitor) visit_element_impl(element psi.PsiElement) bool {
 		}
 	}
 
-	if element.node.type_name == .type_reference_expression {
+	if element.node.type_name == .reference_expression {
 		if parent := element.node.parent() {
 			if parent.type_name == .value_attribute || parent.type_name == .key_value_attribute {
 				f.result << element_to_semantic(element.node, 'decorator')
@@ -176,7 +183,7 @@ fn (mut f SemanticVisitor) visit_element_impl(element psi.PsiElement) bool {
 	}
 
 	if element.node.type_name == .unknown {
-		text := element.node.text(element.containing_file.source_text.to_string())
+		text := element.node.text(element.containing_file.source_text)
 		if text == 'mut' {
 			f.result << element_to_semantic(element.node, 'keyword')
 		}

@@ -96,10 +96,9 @@ pub fn (mut ls LanguageServer) completion(params lsp.CompletionParams, mut wr Re
 	offset := file.find_offset(params.position)
 
 	mut source := file.psi_file.source_text
-	source = source.insert(offset, 'spavnAnalyzerRulezzz')
+	source = insert_to_string(source, offset, 'spavnAnalyzerRulezzz')
 
-	patched_file_content := source.to_string()
-	res := parser.parse_code(patched_file_content)
+	res := parser.parse_code(source)
 	patched_psi_file := psi.new_psi_file(uri.path(), res.tree, res.source_text)
 
 	element := patched_psi_file.root().find_element_at(offset) or {
@@ -138,4 +137,8 @@ pub fn (mut ls LanguageServer) completion(params lsp.CompletionParams, mut wr Re
 	unsafe { res.tree.free() }
 
 	return processor.result
+}
+
+fn insert_to_string(str string, offset u32, insert string) string {
+	return str[..offset] + insert + str[offset..]
 }

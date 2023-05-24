@@ -1,1 +1,3 @@
-foo()
+match err {
+	None__ { 'name' }
+}

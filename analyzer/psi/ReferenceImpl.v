@@ -173,6 +173,15 @@ pub fn (r &SubResolver) process_unqualified_resolve(mut processor PsiScopeProces
 pub fn (r &SubResolver) walk_up(element PsiElement, mut processor PsiScopeProcessor) bool {
 	mut run := element
 	for {
+		if mut run is ForStatement {
+			vars := run.var_definitions()
+			for v in vars {
+				if !processor.execute(v) {
+					return false
+				}
+			}
+		}
+
 		if mut run is Block {
 			if !run.process_declarations(mut processor) {
 				return false
