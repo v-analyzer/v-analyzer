@@ -81,7 +81,6 @@ module.exports = grammar({
   externals: ($) => [
     $._automatic_separator,
     $._braced_interpolation_opening,
-    $._unbraced_interpolation_opening,
     $._interpolation_closing,
     $._c_string_opening,
     $._raw_string_opening,
@@ -1215,7 +1214,7 @@ function interpolated_quoted_string($, opening) {
     opening,
     $.escape_sequence,
     $.string_interpolation,
-    token.immediate('$'),
+    // token.immediate('$'),
   )
 }
 
@@ -1224,7 +1223,7 @@ function quoted_string($, opening, ...rules) {
     prec(1, opening),
     repeat(
       choice(
-        prec(1, $._string_content),
+        $._string_content,
         ...rules,
       ),
     ),

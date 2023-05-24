@@ -16,6 +16,74 @@ Simple string interpolation
           (braced_interpolation_closing))))))
 
 ================================================================================
+Several string interpolations
+================================================================================
+'Hello, ${name} and ${other}!'
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (literal
+      (interpreted_string_literal
+        (string_interpolation
+          (braced_interpolation_opening)
+          (interpolated_expression
+            (reference_expression
+              (identifier)))
+          (braced_interpolation_closing))
+        (string_interpolation
+          (braced_interpolation_opening)
+          (interpolated_expression
+            (reference_expression
+              (identifier)))
+          (braced_interpolation_closing))))))
+
+================================================================================
+Simple escaped string interpolation
+================================================================================
+'Hello, \${name}!'
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (literal
+      (interpreted_string_literal))))
+
+================================================================================
+String interpolation at start
+================================================================================
+'${name}!'
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (literal
+      (interpreted_string_literal
+        (string_interpolation
+          (braced_interpolation_opening)
+          (interpolated_expression
+            (reference_expression
+              (identifier)))
+          (braced_interpolation_closing))))))
+
+================================================================================
+String interpolation at end
+================================================================================
+'${name}'
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (literal
+      (interpreted_string_literal
+        (string_interpolation
+          (braced_interpolation_opening)
+          (interpolated_expression
+            (reference_expression
+              (identifier)))
+          (braced_interpolation_closing))))))
+
+================================================================================
 String interpolation with complex expression
 ================================================================================
 'Hello, ${name.foo()}!'
@@ -243,6 +311,17 @@ c'Hello, World!'
 Raw string literal
 ================================================================================
 r'Hello, World!'
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (literal
+      (raw_string_literal))))
+
+================================================================================
+Raw string literal with interpolation
+================================================================================
+r'Hello, ${name}!'
 --------------------------------------------------------------------------------
 
 (source_file

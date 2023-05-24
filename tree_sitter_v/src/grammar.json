@@ -5883,12 +5883,8 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "PREC",
-                "value": 1,
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "_string_content"
-                }
+                "type": "SYMBOL",
+                "name": "_string_content"
               },
               {
                 "type": "SYMBOL",
@@ -5897,13 +5893,6 @@
               {
                 "type": "SYMBOL",
                 "name": "string_interpolation"
-              },
-              {
-                "type": "IMMEDIATE_TOKEN",
-                "content": {
-                  "type": "STRING",
-                  "value": "$"
-                }
               }
             ]
           }
@@ -5931,12 +5920,8 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "PREC",
-                "value": 1,
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "_string_content"
-                }
+                "type": "SYMBOL",
+                "name": "_string_content"
               }
             ]
           }
@@ -5964,12 +5949,8 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "PREC",
-                "value": 1,
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "_string_content"
-                }
+                "type": "SYMBOL",
+                "name": "_string_content"
               },
               {
                 "type": "SYMBOL",
@@ -5978,13 +5959,6 @@
               {
                 "type": "SYMBOL",
                 "name": "string_interpolation"
-              },
-              {
-                "type": "IMMEDIATE_TOKEN",
-                "content": {
-                  "type": "STRING",
-                  "value": "$"
-                }
               }
             ]
           }
@@ -8182,10 +8156,6 @@
     {
       "type": "SYMBOL",
       "name": "_braced_interpolation_opening"
-    },
-    {
-      "type": "SYMBOL",
-      "name": "_unbraced_interpolation_opening"
     },
     {
       "type": "SYMBOL",
