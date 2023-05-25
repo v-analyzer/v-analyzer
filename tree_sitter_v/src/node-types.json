@@ -52,6 +52,10 @@
         "named": true
       },
       {
+        "type": "in_expression",
+        "named": true
+      },
+      {
         "type": "index_expression",
         "named": true
       },
@@ -65,6 +69,10 @@
       },
       {
         "type": "map_init_expression",
+        "named": true
+      },
+      {
+        "type": "not_in_expression",
         "named": true
       },
       {
@@ -577,10 +585,6 @@
             "named": false
           },
           {
-            "type": "!in",
-            "named": false
-          },
-          {
             "type": "%",
             "named": false
           },
@@ -646,10 +650,6 @@
           },
           {
             "type": "^",
-            "named": false
-          },
-          {
-            "type": "in",
             "named": false
           },
           {
@@ -1920,6 +1920,32 @@
     }
   },
   {
+    "type": "in_expression",
+    "named": true,
+    "fields": {
+      "left": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_expression",
+            "named": true
+          }
+        ]
+      },
+      "right": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_expression",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "inc_statement",
     "named": true,
     "fields": {},
@@ -2617,6 +2643,32 @@
     }
   },
   {
+    "type": "not_in_expression",
+    "named": true,
+    "fields": {
+      "left": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_expression",
+            "named": true
+          }
+        ]
+      },
+      "right": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_expression",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "not_is_expression",
     "named": true,
     "fields": {
@@ -2753,16 +2805,17 @@
   {
     "type": "parenthesized_expression",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "_expression",
-          "named": true
-        }
-      ]
+    "fields": {
+      "expression": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "_expression",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {

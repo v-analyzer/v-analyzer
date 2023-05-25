@@ -53,6 +53,7 @@ pub interface PsiElement {
 	// Если такой узел не найден, возвращается none.
 	find_child_by_type(typ v.NodeType) ?PsiElement
 	find_child_by_type_or_stub(typ v.NodeType) ?PsiElement
+	find_child_by_name(name string) ?PsiElement
 	// find_children_by_type возвращает все дочерние узлы с указанным типом.
 	// Если такие узлы не найдены, возвращается пустой массив.
 	find_children_by_type(typ v.NodeType) []PsiElement

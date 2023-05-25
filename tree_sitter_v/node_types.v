@@ -15,6 +15,7 @@ pub enum SuperType {
 pub enum NodeType {
 	unknown
 	error
+	append_statement
 	argument
 	argument_list
 	array_creation
@@ -84,6 +85,7 @@ pub enum NodeType {
 	import_list
 	import_path
 	import_spec
+	in_expression
 	inc_statement
 	index_expression
 	interface_declaration
@@ -113,8 +115,7 @@ pub enum NodeType {
 	mutability_modifiers
 	mutable_expression
 	mutable_identifier
-	none_
-	none_type
+	not_in_expression
 	not_is_expression
 	option_type
 	or_block
@@ -129,6 +130,7 @@ pub enum NodeType {
 	range
 	range_clause
 	raw_string_literal
+	receive_expression
 	receiver
 	reference_expression
 	result_type
@@ -169,12 +171,14 @@ pub enum NodeType {
 	var_declaration
 	var_definition
 	visibility_modifiers
+	wrong_pointer_type
 	escape_sequence
 	false_
 	float_literal
 	identifier
 	int_literal
 	nil_
+	none_
 	rune_literal
 	true_
 }
@@ -191,13 +195,16 @@ const supertype__expression_nodes = merge(supertype__expression_with_blocks_node
 	.fixed_array_creation,
 	.function_literal,
 	.go_expression,
+	.in_expression,
 	.index_expression,
 	.is_expression,
 	.literal,
 	.map_init_expression,
+	.not_in_expression,
 	.not_is_expression,
 	.parenthesized_expression,
 	.pseudo_compile_time_identifier,
+	.receive_expression,
 	.reference_expression,
 	.selector_expression,
 	.slice_expression,
@@ -217,7 +224,8 @@ const supertype__expression_with_blocks_nodes = [
 ]
 
 const supertype__statement_nodes = [
-	NodeType.asm_statement,
+	NodeType.append_statement,
+	.asm_statement,
 	.assert_statement,
 	.block,
 	.break_statement,
@@ -318,6 +326,7 @@ pub struct VNodeTypeFactory {}
 pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 	return match type_name {
 		'ERROR' { NodeType.error }
+		'append_statement' { NodeType.append_statement }
 		'argument' { NodeType.argument }
 		'argument_list' { NodeType.argument_list }
 		'array_creation' { NodeType.array_creation }
@@ -387,6 +396,7 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'import_list' { NodeType.import_list }
 		'import_path' { NodeType.import_path }
 		'import_spec' { NodeType.import_spec }
+		'in_expression' { NodeType.in_expression }
 		'inc_statement' { NodeType.inc_statement }
 		'index_expression' { NodeType.index_expression }
 		'interface_declaration' { NodeType.interface_declaration }
@@ -416,8 +426,7 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'mutability_modifiers' { NodeType.mutability_modifiers }
 		'mutable_expression' { NodeType.mutable_expression }
 		'mutable_identifier' { NodeType.mutable_identifier }
-		'none' { NodeType.none_ }
-		'none_type' { NodeType.none_type }
+		'not_in_expression' { NodeType.not_in_expression }
 		'not_is_expression' { NodeType.not_is_expression }
 		'option_type' { NodeType.option_type }
 		'or_block' { NodeType.or_block }
@@ -432,6 +441,7 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'range' { NodeType.range }
 		'range_clause' { NodeType.range_clause }
 		'raw_string_literal' { NodeType.raw_string_literal }
+		'receive_expression' { NodeType.receive_expression }
 		'receiver' { NodeType.receiver }
 		'reference_expression' { NodeType.reference_expression }
 		'result_type' { NodeType.result_type }
@@ -472,12 +482,14 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'var_declaration' { NodeType.var_declaration }
 		'var_definition' { NodeType.var_definition }
 		'visibility_modifiers' { NodeType.visibility_modifiers }
+		'wrong_pointer_type' { NodeType.wrong_pointer_type }
 		'escape_sequence' { NodeType.escape_sequence }
 		'false' { NodeType.false_ }
 		'float_literal' { NodeType.float_literal }
 		'identifier' { NodeType.identifier }
 		'int_literal' { NodeType.int_literal }
 		'nil' { NodeType.nil_ }
+		'none' { NodeType.none_ }
 		'rune_literal' { NodeType.rune_literal }
 		'true' { NodeType.true_ }
 		else { NodeType.unknown }

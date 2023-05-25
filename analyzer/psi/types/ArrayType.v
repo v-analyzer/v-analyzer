@@ -1,6 +1,7 @@
 module types
 
 pub struct ArrayType {
+pub:
 	inner Type
 }
 

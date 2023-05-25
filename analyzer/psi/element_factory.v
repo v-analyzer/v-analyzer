@@ -55,6 +55,12 @@ pub fn create_element(node AstNode, containing_file &PsiFileImpl) PsiElement {
 		}
 	}
 
+	if node.type_name == .index_expression {
+		return IndexExpression{
+			PsiElementImpl: base_node
+		}
+	}
+
 	var := node_to_var_definition(node, containing_file, base_node)
 	if !isnil(var) {
 		return var
@@ -236,6 +242,37 @@ pub fn create_element(node AstNode, containing_file &PsiFileImpl) PsiElement {
 
 	if node.type_name == .interpreted_string_literal {
 		return StringLiteral{
+			PsiElementImpl: base_node
+		}
+	}
+
+	if node.type_name == .unsafe_expression {
+		return UnsafeExpression{
+			PsiElementImpl: base_node
+		}
+	}
+
+	if node.type_name == .array_creation {
+		return ArrayCreation{
+			PsiElementImpl: base_node
+		}
+	}
+
+	if node.type_name == .fixed_array_creation {
+		return ArrayCreation{
+			PsiElementImpl: base_node
+			is_fixed: true
+		}
+	}
+
+	if node.type_name == .map_init_expression {
+		return MapInitExpression{
+			PsiElementImpl: base_node
+		}
+	}
+
+	if node.type_name == .map_keyed_element {
+		return MapKeyedElement{
 			PsiElementImpl: base_node
 		}
 	}

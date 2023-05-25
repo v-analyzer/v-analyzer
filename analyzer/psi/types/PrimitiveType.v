@@ -1,6 +1,7 @@
 module types
 
 pub struct PrimitiveType {
+pub:
 	name string
 }
 

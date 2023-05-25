@@ -1,0 +1,37 @@
+================================================================================
+Simple in expression
+================================================================================
+10 in [1, 2, 3]
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (in_expression
+      (literal
+        (int_literal))
+      (array_creation
+        (literal
+          (int_literal))
+        (literal
+          (int_literal))
+        (literal
+          (int_literal))))))
+
+================================================================================
+Simple not in expression
+================================================================================
+10 !in [1, 2, 3]
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (not_in_expression
+      (literal
+        (int_literal))
+      (array_creation
+        (literal
+          (int_literal))
+        (literal
+          (int_literal))
+        (literal
+          (int_literal))))))

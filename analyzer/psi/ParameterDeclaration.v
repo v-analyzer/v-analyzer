@@ -9,8 +9,11 @@ pub struct ParameterDeclaration {
 fn (p &ParameterDeclaration) stub() {}
 
 pub fn (p &ParameterDeclaration) get_type() types.Type {
-	inferer := TypeInferer{}
-	return inferer.infer_from_plain_type(p)
+	type_ := TypeInferer{}.infer_from_plain_type(p)
+	if _ := p.find_child_by_name('variadic') {
+		return types.new_array_type(type_)
+	}
+	return type_
 }
 
 pub fn (p &ParameterDeclaration) identifier() ?PsiElement {

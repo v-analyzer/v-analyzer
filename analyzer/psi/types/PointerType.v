@@ -1,6 +1,7 @@
 module types
 
 pub struct PointerType {
+pub:
 	inner Type
 }
 

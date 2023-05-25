@@ -70,7 +70,7 @@ pub fn (r &SubResolver) process_resolve_variants(mut processor PsiScopeProcessor
 
 pub fn (r &SubResolver) process_qualifier_expression(qualifier PsiElement, mut processor PsiScopeProcessor) bool {
 	if qualifier is PsiTypedElement {
-		typ := qualifier.get_type()
+		typ := TypeInferer{}.infer_type(qualifier as PsiElement)
 		if typ !is types.UnknownType {
 			r.process_type(typ, mut processor)
 		}
@@ -110,6 +110,9 @@ pub fn (r &SubResolver) process_type(typ types.Type, mut processor PsiScopeProce
 				}
 			}
 		}
+	}
+	if typ is types.PointerType {
+		return r.process_type(typ.inner, mut processor)
 	}
 	return true
 }
@@ -261,7 +264,7 @@ pub fn (r &SubResolver) process_file(mut processor PsiScopeProcessor) bool {
 pub fn (r &SubResolver) process_type_initializer_field(mut processor PsiScopeProcessor) bool {
 	init_expr := r.element().parent_of_type(.type_initializer) or { return true }
 	if init_expr is PsiTypedElement {
-		typ := init_expr.get_type()
+		typ := types.unwrap_pointer_type(TypeInferer{}.infer_type(init_expr as PsiElement))
 		if typ is types.StructType {
 			if struct_ := r.find_struct(stubs_index, typ.name()) {
 				fields := struct_.fields()

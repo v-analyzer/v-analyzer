@@ -16,7 +16,7 @@ const PREC = {
 
 const multiplicative_operators = ['*', '/', '%', '<<', '>>', '>>>', '&', '&^'];
 const additive_operators = ['+', '-', '|', '^'];
-const comparative_operators = ['==', '!=', '<', '<=', '>', '>=', 'in', '!in'];
+const comparative_operators = ['==', '!=', '<', '<=', '>', '>='];
 const assignment_operators = multiplicative_operators
   .concat(additive_operators)
   .map((operator) => operator + '=')
@@ -417,6 +417,8 @@ module.exports = grammar({
       $.binary_expression,
       $.is_expression,
       $.not_is_expression,
+      $.in_expression,
+      $.not_in_expression,
       $.index_expression,
       $.slice_expression,
       // $.type_cast_expression,
@@ -440,7 +442,7 @@ module.exports = grammar({
 
     spawn_expression: ($) => prec.left(PREC.composite_literal, seq('spawn', $._expression)),
 
-    parenthesized_expression: ($) => seq('(', $._expression, ')'),
+    parenthesized_expression: ($) => seq('(', field('expression', $._expression), ')'),
 
     call_expression: ($) => prec.right(PREC.primary, choice(
       seq(
@@ -712,6 +714,18 @@ module.exports = grammar({
       field('left', seq(optional($.mutability_modifiers), $._expression)),
       '!is',
       field('right', choice($.option_type, $.plain_type)),
+    )),
+
+    in_expression: ($) => prec.left(PREC.comparative, seq(
+      field('left', $._expression),
+      'in',
+      field('right', $._expression),
+    )),
+
+    not_in_expression: ($) => prec.left(PREC.comparative, seq(
+      field('left', $._expression),
+      '!in',
+      field('right', $._expression),
     )),
 
     enum_fetch: ($) => seq('.', $.identifier),

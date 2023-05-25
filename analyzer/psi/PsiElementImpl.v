@@ -239,6 +239,11 @@ pub fn (n PsiElementImpl) find_child_by_type_or_stub(typ v.NodeType) ?PsiElement
 	return create_element(ast_node, n.containing_file)
 }
 
+pub fn (n PsiElementImpl) find_child_by_name(name string) ?PsiElement {
+	ast_node := n.node.child_by_field_name(name) or { return none }
+	return create_element(ast_node, n.containing_file)
+}
+
 pub fn (n PsiElementImpl) find_children_by_type(typ v.NodeType) []PsiElement {
 	mut result := []PsiElement{}
 	mut child := n.node.first_child() or { return [] }
