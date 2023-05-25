@@ -14,8 +14,8 @@ pub enum ServerStatus {
 	shutdown
 }
 
-struct LanguageServer {
-mut:
+pub struct LanguageServer {
+pub mut:
 	status       ServerStatus = .off
 	root_uri     lsp.DocumentUri
 	capabilities lsp.ServerCapabilities

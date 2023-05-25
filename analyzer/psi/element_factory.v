@@ -228,6 +228,12 @@ pub fn create_element(node AstNode, containing_file &PsiFileImpl) PsiElement {
 		}
 	}
 
+	if node.type_name == .interpreted_string_literal {
+		return StringLiteral{
+			PsiElementImpl: base_node
+		}
+	}
+
 	return base_node
 }
 

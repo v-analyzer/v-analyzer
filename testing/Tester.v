@@ -1,5 +1,7 @@
 module testing
 
+import analyzer.psi
+
 pub struct Tester {
 mut:
 	tests        []&Test
@@ -47,6 +49,83 @@ pub fn (mut t Tester) test(name string, test_func fn (mut test Test, mut fixture
 	}
 	t.tests << test
 	test_func(mut test, mut fixture) or { println('Test failed: ${err}') }
+
+	test.print()
+}
+
+pub fn (mut t Tester) type_test(name string, filepath string) {
+	mut fixture := t.create_or_reuse_fixture()
+
+	mut test := &Test{
+		name: name
+	}
+	t.tests << test
+
+	fixture.configure_by_file(filepath) or {
+		println('Cannot configure fixture: ${err}')
+		return
+	}
+	file := fixture.ls.get_file(fixture.current_file.uri()) or {
+		println('File not found: ${fixture.current_file.uri()}')
+		return
+	}
+
+	mut expr_calls := []psi.CallExpression{}
+	mut expr_calls_ptr := &expr_calls
+
+	psi.inspect(file.psi_file.root, fn [mut expr_calls_ptr] (it psi.PsiElement) bool {
+		if it is psi.CallExpression {
+			expr := it.expression() or { return true }
+			text := expr.get_text()
+			if text != 'expr_type' {
+				return true
+			}
+
+			arguments := it.arguments()
+			if arguments.len != 2 {
+				return true
+			}
+
+			expr_calls_ptr << it
+			return false
+		}
+		return true
+	})
+
+	for call in expr_calls {
+		arguments := call.arguments()
+		if arguments.len != 2 {
+			continue
+		}
+
+		first := arguments[0]
+		second := arguments[1]
+
+		if first is psi.PsiTypedElement {
+			typ := first.get_type()
+			got_type_string := typ.readable_name()
+
+			if second is psi.Literal {
+				first_child := second.first_child() or { continue }
+				if first_child is psi.StringLiteral {
+					expected_type_string := first_child.content()
+
+					if expected_type_string != got_type_string {
+						test.state = .failed
+						test.message = '
+						In file ${call.containing_file.path}:${call.text_range().line}
+
+						Type mismatch.
+						Expected: ${expected_type_string}
+						Found: ${got_type_string}
+
+					'.trim_indent()
+						break
+					}
+				}
+			}
+		}
+	}
 
 	test.print()
 }

@@ -15,9 +15,14 @@ struct TestFile {
 	caret   lsp.Position
 }
 
+pub fn (t TestFile) uri() lsp.DocumentUri {
+	return 'file://${t.path}'
+}
+
 [noinit]
 pub struct Fixture {
 mut:
+	ls           &lserver.LanguageServer
 	stream       &client.TestStream
 	server       &jsonrpc.Server
 	test_client  client.TestClient
@@ -42,6 +47,7 @@ pub fn new_fixture() &Fixture {
 	}
 
 	return &Fixture{
+		ls: ls
 		stream: stream
 		server: server
 		test_client: test_client
