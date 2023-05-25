@@ -6,6 +6,7 @@ import os
 import project
 import metadata
 import time
+import lserver.semantic
 
 const (
 	analyzer_configs_path = os.expand_tilde_to_home('~/.spavn-analyzer')
@@ -73,8 +74,8 @@ pub fn (mut ls LanguageServer) initialize(params lsp.InitializeParams, mut wr Re
 			inlay_hint_provider: lsp.InlayHintOptions{}
 			semantic_tokens_provider: lsp.SemanticTokensOptions{
 				legend: lsp.SemanticTokensLegend{
-					token_types: semantic_types
-					token_modifiers: semantic_modifiers
+					token_types: semantic.semantic_types
+					token_modifiers: semantic.semantic_modifiers
 				}
 				range: false
 				full: true

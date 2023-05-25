@@ -1139,13 +1139,13 @@ module.exports = grammar({
 
     _definite_range: ($) => prec(PREC.multiplicative, seq(
       field('start', $._expression),
-      choice('..', '...'),
+      field('operator', choice('..', '...')),
       field('end', $._expression),
     )),
 
     range: ($) => prec(PREC.multiplicative, seq(
       field('start', optional($._expression)),
-      '..',
+      field('operator', '..'),
       field('end', optional($._expression)),
     )),
 

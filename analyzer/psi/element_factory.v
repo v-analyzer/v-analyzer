@@ -55,30 +55,12 @@ pub fn create_element(node AstNode, containing_file &PsiFileImpl) PsiElement {
 		}
 	}
 
-	if node.type_name == .var_definition {
-		return VarDefinition{
-			PsiElementImpl: base_node
-		}
+	var := node_to_var_definition(node, containing_file, base_node)
+	if !isnil(var) {
+		return var
 	}
 
 	if node.type_name == .reference_expression {
-		if grand := node.parent_nth(2) {
-			if grand.type_name == .var_declaration {
-				return VarDefinition{
-					PsiElementImpl: base_node
-				}
-			}
-		}
-		if grand_grand := node.parent_nth(3) {
-			if parent := node.parent_nth(1) {
-				if grand_grand.type_name == .var_declaration
-					&& parent.type_name == .mutable_expression {
-					return VarDefinition{
-						PsiElementImpl: base_node
-					}
-				}
-			}
-		}
 		return ReferenceExpression{
 			PsiElementImpl: base_node
 		}
@@ -247,4 +229,39 @@ pub fn create_element(node AstNode, containing_file &PsiFileImpl) PsiElement {
 	}
 
 	return base_node
+}
+
+[inline]
+pub fn node_to_var_definition(node AstNode, containing_file &PsiFileImpl, base_node ?PsiElementImpl) &VarDefinition {
+	if node.type_name == .var_definition {
+		return &VarDefinition{
+			PsiElementImpl: base_node or { new_psi_node(psi_counter, containing_file, node) }
+		}
+	}
+
+	if node.type_name == .reference_expression {
+		parent := node.parent() or { return unsafe { nil } }
+		if parent.type_name != .expression_list && parent.type_name != .mutable_expression {
+			return unsafe { nil }
+		}
+
+		grand := parent.parent() or { return unsafe { nil } }
+
+		if grand.type_name == .var_declaration {
+			return &VarDefinition{
+				PsiElementImpl: base_node or { new_psi_node(psi_counter, containing_file, node) }
+			}
+		}
+		if grand_grand := grand.parent() {
+			if grand_grand.type_name == .var_declaration && parent.type_name == .mutable_expression {
+				return &VarDefinition{
+					PsiElementImpl: base_node or {
+						new_psi_node(psi_counter, containing_file, node)
+					}
+				}
+			}
+		}
+	}
+
+	return unsafe { nil }
 }

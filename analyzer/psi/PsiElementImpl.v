@@ -12,7 +12,7 @@ pub:
 	stubs_list &StubList
 }
 
-fn new_psi_node(id ID, containing_file &PsiFileImpl, node AstNode) PsiElementImpl {
+pub fn new_psi_node(id ID, containing_file &PsiFileImpl, node AstNode) PsiElementImpl {
 	return PsiElementImpl{
 		id: id
 		node: node

@@ -69,6 +69,27 @@ pub fn (mut t Fixture) initialize() !lsp.InitializeResult {
 	return result
 }
 
+pub fn (mut t Fixture) configure_by_file(path string) ! {
+	rel_path := 'testdata/${path}'
+	content := os.read_file(rel_path)!
+	abs_path := os.join_path(testing.temp_path, path)
+	dir_path := os.dir(abs_path)
+	os.mkdir_all(dir_path)!
+	os.write_file(abs_path, content)!
+
+	if t.current_file.path == abs_path {
+		t.close_file(t.current_file.path)
+	}
+
+	t.current_file = TestFile{
+		path: abs_path
+		content: content.split_into_lines()
+		caret: t.caret_pos(content)
+	}
+
+	t.send_open_current_file_request()!
+}
+
 pub fn (mut t Fixture) configure_by_text(filename string, text string) ! {
 	content := text.replace('/*caret*/', '')
 	abs_path := os.join_path(testing.temp_path, filename)
@@ -84,15 +105,19 @@ pub fn (mut t Fixture) configure_by_text(filename string, text string) ! {
 		caret: t.caret_pos(text)
 	}
 
+	t.send_open_current_file_request()!
+}
+
+fn (mut t Fixture) send_open_current_file_request() ! {
 	t.test_client.send[lsp.DidOpenTextDocumentParams, jsonrpc.Null]('textDocument/didOpen',
 		lsp.DidOpenTextDocumentParams{
 		text_document: lsp.TextDocumentItem{
 			uri: 'file://${t.current_file.path}'
 			language_id: 'v'
 			version: 1
-			text: content
+			text: t.current_file.content.join('\n')
 		}
-	}) or { println('Failed to open document: ${err}') }
+	})!
 }
 
 pub fn (mut t Fixture) definition_at_cursor() []lsp.LocationLink {
@@ -128,6 +153,28 @@ pub fn (mut t Fixture) complete(pos lsp.Position) []lsp.CompletionItem {
 	}) or { []lsp.CompletionItem{} }
 
 	return items
+}
+
+pub fn (mut t Fixture) compute_inlay_hints() []lsp.InlayHint {
+	hints := t.test_client.send[lsp.InlayHintParams, []lsp.InlayHint]('textDocument/inlayHint',
+		lsp.InlayHintParams{
+		text_document: lsp.TextDocumentIdentifier{
+			uri: 'file://${t.current_file.path}'
+		}
+	}) or { []lsp.InlayHint{} }
+
+	return hints
+}
+
+pub fn (mut t Fixture) compute_semantic_tokens() lsp.SemanticTokens {
+	tokens := t.test_client.send[lsp.SemanticTokensParams, lsp.SemanticTokens]('textDocument/semanticTokens/full',
+		lsp.SemanticTokensParams{
+		text_document: lsp.TextDocumentIdentifier{
+			uri: 'file://${t.current_file.path}'
+		}
+	}) or { lsp.SemanticTokens{} }
+
+	return tokens
 }
 
 pub fn (mut t Fixture) close_file(path string) {
