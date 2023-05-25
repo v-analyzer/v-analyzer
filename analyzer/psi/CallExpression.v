@@ -1,18 +1,38 @@
 module psi
 
+import analyzer.psi.types
+
 pub struct CallExpression {
 	PsiElementImpl
 }
 
+fn (c &CallExpression) get_type() types.Type {
+	resolved := c.resolve() or { return types.unknown_type }
+	if resolved is PsiTypedElement {
+		typ := resolved.get_type()
+		if typ is types.FunctionType {
+			return typ.result or { return types.unknown_type }
+		}
+	}
+
+	return types.unknown_type
+}
+
 pub fn (c CallExpression) expression() ?PsiElement {
-	return c.find_child_by_type(.reference_expression)
+	return c.first_child()
 }
 
 pub fn (c CallExpression) resolve() ?PsiElement {
-	ref_expr := c.find_child_by_type(.reference_expression) or { return none }
+	expr := if selector_expr := c.find_child_by_type(.selector_expression) {
+		selector_expr as ReferenceExpressionBase
+	} else if ref_expr := c.find_child_by_type(.reference_expression) {
+		ref_expr as ReferenceExpressionBase
+	} else {
+		return none
+	}
 
-	if ref_expr is ReferenceExpression {
-		resolved := ref_expr.resolve() or { return none }
+	if expr is ReferenceExpressionBase {
+		resolved := expr.resolve() or { return none }
 		return resolved
 	}
 

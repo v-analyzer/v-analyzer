@@ -23,7 +23,7 @@ fn (v VarDeclaration) index_of(def VarDefinition) int {
 	return -1
 }
 
-fn (v VarDeclaration) initializer_of(def VarDefinition) ?Expression {
+fn (v VarDeclaration) initializer_of(def VarDefinition) ?PsiElement {
 	index := v.index_of(def)
 	if index == -1 {
 		return none
@@ -50,10 +50,7 @@ pub fn (v VarDeclaration) vars() []PsiElement {
 		})
 }
 
-fn (v VarDeclaration) expressions() []Expression {
+fn (v VarDeclaration) expressions() []PsiElement {
 	last_child := v.last_child() or { return [] }
-	return last_child
-		.children()
-		.filter(it is Expression)
-		.map(it as Expression)
+	return last_child.children()
 }

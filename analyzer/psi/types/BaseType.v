@@ -1,0 +1,4 @@
+module types
+
+struct BaseType {
+}

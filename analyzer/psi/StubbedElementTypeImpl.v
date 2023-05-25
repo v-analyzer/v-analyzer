@@ -1,6 +1,7 @@
 module psi
 
 import utils
+import tree_sitter_v
 
 pub enum StubType as u8 {
 	root
@@ -8,6 +9,9 @@ pub enum StubType as u8 {
 	method_declaration
 	receiver
 	signature
+	parameter_list
+	parameter_declaration
+	type_reference_expression
 	struct_declaration
 	enum_declaration
 	field_declaration
@@ -20,6 +24,30 @@ pub enum StubType as u8 {
 	attribute_expression
 	value_attribute
 	plain_type
+}
+
+pub fn node_type_to_stub_type(typ tree_sitter_v.NodeType) StubType {
+	return match typ {
+		.function_declaration { .function_declaration }
+		.receiver { .receiver }
+		.signature { .signature }
+		.parameter_list { .parameter_list }
+		.parameter_declaration { .parameter_declaration }
+		.type_reference_expression { .type_reference_expression }
+		.struct_declaration { .struct_declaration }
+		.struct_field_declaration { .field_declaration }
+		.const_definition { .constant_declaration }
+		.type_declaration { .type_alias_declaration }
+		.plain_type { .plain_type }
+		.enum_declaration { .enum_declaration }
+		.enum_field_definition { .enum_field_definition }
+		.struct_field_scope { .struct_field_scope }
+		.attributes { .attributes }
+		.attribute { .attribute }
+		.attribute_expression { .attribute_expression }
+		.value_attribute { .value_attribute }
+		else { .root }
+	}
 }
 
 pub struct StubbedElementType {}
@@ -75,6 +103,21 @@ pub fn (_ &StubbedElementType) create_psi(stub &StubBase) ?PsiElement {
 	}
 	if stub_type == .signature {
 		return Signature{
+			PsiElementImpl: base_psi
+		}
+	}
+	if stub_type == .parameter_list {
+		return ParameterList{
+			PsiElementImpl: base_psi
+		}
+	}
+	if stub_type == .parameter_declaration {
+		return ParameterDeclaration{
+			PsiElementImpl: base_psi
+		}
+	}
+	if stub_type == .type_reference_expression {
+		return TypeReferenceExpression{
 			PsiElementImpl: base_psi
 		}
 	}
@@ -183,6 +226,31 @@ pub fn (s &StubbedElementType) create_stub(psi PsiElement, parent_stub &StubElem
 
 	if psi is Signature {
 		return new_stub_base(parent_stub, .signature, '', psi.text_range(),
+			text: psi.get_text()
+		)
+	}
+
+	if psi is ParameterList {
+		return new_stub_base(parent_stub, .parameter_list, '', psi.text_range(),
+			text: psi.get_text()
+		)
+	}
+
+	if psi is ParameterDeclaration {
+		text_range := if identifier := psi.identifier() {
+			identifier.text_range()
+		} else {
+			psi.text_range()
+		}
+		return new_stub_base(parent_stub, .parameter_declaration, psi.name(), text_range,
+
+			text: psi.get_text()
+		)
+	}
+
+	if psi is TypeReferenceExpression {
+		return new_stub_base(parent_stub, .type_reference_expression, psi.name(), psi.text_range(),
+
 			text: psi.get_text()
 		)
 	}

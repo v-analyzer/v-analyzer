@@ -232,6 +232,10 @@ pub fn (_ &SubResolver) process_receiver(b Block, mut processor PsiScopeProcesso
 }
 
 pub fn (r &SubResolver) process_block(mut processor PsiScopeProcessor) bool {
+	if r.containing_file.is_stub_based() {
+		return true
+	}
+
 	// mut delegate := ResolveProcessor{
 	// 	...processor
 	// }
@@ -247,6 +251,10 @@ pub fn (r &SubResolver) process_block(mut processor PsiScopeProcessor) bool {
 }
 
 pub fn (r &SubResolver) process_file(mut processor PsiScopeProcessor) bool {
+	if r.containing_file.is_stub_based() {
+		return true
+	}
+
 	return r.containing_file.process_declarations(mut processor)
 }
 

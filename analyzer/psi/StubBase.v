@@ -80,6 +80,9 @@ pub fn (s &StubBase) element_type() v.NodeType {
 		.method_declaration { .function_declaration }
 		.receiver { .receiver }
 		.signature { .signature }
+		.parameter_list { .parameter_list }
+		.parameter_declaration { .parameter_declaration }
+		.type_reference_expression { .type_reference_expression }
 		.struct_declaration { .struct_declaration }
 		.field_declaration { .struct_field_declaration }
 		.constant_declaration { .const_definition }
@@ -188,6 +191,10 @@ fn (s &StubBase) children_stubs() []StubElement {
 
 fn (s &StubBase) first_child() ?&StubElement {
 	return s.stub_list.first_child(s.id)
+}
+
+fn (s &StubBase) last_child() ?&StubElement {
+	return s.stub_list.last_child(s.id)
 }
 
 fn (s &StubBase) is_valid() bool {

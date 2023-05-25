@@ -34,6 +34,10 @@ pub fn new_stub_psi_file(path string) &PsiFileImpl {
 	}
 }
 
+pub fn (p &PsiFileImpl) is_stub_based() bool {
+	return isnil(p.tree)
+}
+
 pub fn (mut p PsiFileImpl) reparse(new_code string) {
 	now := time.now()
 	// TODO: по каким то причинам если передавать старое дерево затем попытка получить

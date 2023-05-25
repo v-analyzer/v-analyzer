@@ -2,6 +2,8 @@ module testing
 
 import term
 import lsp
+import time
+import strings
 
 pub enum TestState {
 	passed
@@ -11,9 +13,10 @@ pub enum TestState {
 
 pub struct Test {
 mut:
-	name    string
-	state   TestState
-	message string
+	name     string
+	state    TestState
+	message  string
+	duration time.Duration
 }
 
 pub fn (mut t Test) fail(msg string) {
@@ -34,10 +37,19 @@ pub fn (mut t Test) assert_uri(left lsp.DocumentUri, right lsp.DocumentUri) {
 }
 
 pub fn (t Test) print() {
+	mut sb := strings.new_builder(100)
+	sb.write_string('${t.duration:10} ')
+
 	if t.state == .failed {
-		println(term.red('[FAILED]') + ' ${t.name}')
-		println('  ${t.message}')
+		sb.write_string(term.red('[FAILED] '))
+		sb.write_string(t.name)
+		sb.write_string('\n')
+		sb.write_string('  ${t.message}\n')
 	} else if t.state == .passed {
-		println(term.green('[PASSED]') + ' ${t.name}')
+		sb.write_string(term.green('[PASSED] '))
+		sb.write_string(t.name)
+		sb.write_string('\n')
 	}
+
+	print(sb.str())
 }

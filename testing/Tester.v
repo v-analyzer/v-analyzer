@@ -1,6 +1,7 @@
 module testing
 
 import analyzer.psi
+import time
 
 pub struct Tester {
 mut:
@@ -29,6 +30,8 @@ pub fn (mut t Tester) stats() {
 	mut skipped := 0
 
 	for test in t.tests {
+		test.print()
+
 		if test.state == .skipped {
 			skipped += 1
 		} else if test.state == .failed {
@@ -38,10 +41,11 @@ pub fn (mut t Tester) stats() {
 		}
 	}
 
-	println('Passed: ${passed}, Failed: ${failed}, Skipped: ${skipped}')
+	println('\nPassed: ${passed}, Failed: ${failed}, Skipped: ${skipped}')
 }
 
 pub fn (mut t Tester) test(name string, test_func fn (mut test Test, mut fixture Fixture) !) {
+	watch := time.new_stopwatch(auto_start: true)
 	mut fixture := t.create_or_reuse_fixture()
 
 	mut test := &Test{
@@ -50,10 +54,11 @@ pub fn (mut t Tester) test(name string, test_func fn (mut test Test, mut fixture
 	t.tests << test
 	test_func(mut test, mut fixture) or { println('Test failed: ${err}') }
 
-	test.print()
+	test.duration = watch.elapsed()
 }
 
 pub fn (mut t Tester) type_test(name string, filepath string) {
+	watch := time.new_stopwatch(auto_start: true)
 	mut fixture := t.create_or_reuse_fixture()
 
 	mut test := &Test{
@@ -113,11 +118,12 @@ pub fn (mut t Tester) type_test(name string, filepath string) {
 					if expected_type_string != got_type_string {
 						test.state = .failed
 						test.message = '
-						In file ${call.containing_file.path}:${call.text_range().line}
+						In file ${call.containing_file.path}:${
+							call.text_range().line + 1}
 
 						Type mismatch.
 						Expected: ${expected_type_string}
-						Found: ${got_type_string}
+						Found:    ${got_type_string}
 
 					'.trim_indent()
 						break
@@ -127,7 +133,7 @@ pub fn (mut t Tester) type_test(name string, filepath string) {
 		}
 	}
 
-	test.print()
+	test.duration = watch.elapsed()
 }
 
 pub fn (mut t Tester) scratch_test(name string, test_func fn (mut test Test, mut fixture Fixture) !) {

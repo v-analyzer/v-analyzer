@@ -6,6 +6,8 @@ pub struct ParameterDeclaration {
 	PsiElementImpl
 }
 
+fn (p &ParameterDeclaration) stub() {}
+
 pub fn (p &ParameterDeclaration) get_type() types.Type {
 	inferer := TypeInferer{}
 	return inferer.infer_from_plain_type(p)
@@ -16,11 +18,23 @@ pub fn (p &ParameterDeclaration) identifier() ?PsiElement {
 }
 
 pub fn (p &ParameterDeclaration) identifier_text_range() TextRange {
+	if p.stub_id != non_stubbed_element {
+		if stub := p.stubs_list.get_stub(p.stub_id) {
+			return stub.text_range
+		}
+	}
+
 	identifier := p.identifier() or { return TextRange{} }
 	return identifier.text_range()
 }
 
 pub fn (p &ParameterDeclaration) name() string {
+	if p.stub_id != non_stubbed_element {
+		if stub := p.stubs_list.get_stub(p.stub_id) {
+			return stub.name
+		}
+	}
+
 	identifier := p.identifier() or { return '' }
 	return identifier.get_text()
 }

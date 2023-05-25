@@ -168,6 +168,12 @@ pub fn create_element(node AstNode, containing_file &PsiFileImpl) PsiElement {
 		}
 	}
 
+	if node.type_name == .parameter_list {
+		return ParameterList{
+			PsiElementImpl: base_node
+		}
+	}
+
 	if node.type_name == .parameter_declaration {
 		return ParameterDeclaration{
 			PsiElementImpl: base_node

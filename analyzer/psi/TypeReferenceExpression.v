@@ -6,6 +6,8 @@ pub struct TypeReferenceExpression {
 	PsiElementImpl
 }
 
+fn (_ &TypeReferenceExpression) stub() {}
+
 // marker method for Expression
 fn (_ &TypeReferenceExpression) expr() {}
 
@@ -14,11 +16,23 @@ pub fn (r TypeReferenceExpression) identifier() ?PsiElement {
 }
 
 pub fn (r &TypeReferenceExpression) identifier_text_range() TextRange {
+	if r.stub_id != non_stubbed_element {
+		if stub := r.stubs_list.get_stub(r.stub_id) {
+			return stub.text_range
+		}
+	}
+
 	identifier := r.identifier() or { return TextRange{} }
 	return identifier.text_range()
 }
 
 pub fn (r TypeReferenceExpression) name() string {
+	if r.stub_id != non_stubbed_element {
+		if stub := r.stubs_list.get_stub(r.stub_id) {
+			return stub.name
+		}
+	}
+
 	identifier := r.identifier() or { return '' }
 	return identifier.get_text()
 }

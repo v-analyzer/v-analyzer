@@ -6,6 +6,25 @@ pub struct SelectorExpression {
 	PsiElementImpl
 }
 
+fn (n &SelectorExpression) name() string {
+	return ''
+}
+
+fn (n &SelectorExpression) qualifier() ?PsiElement {
+	return n.first_child()
+}
+
+fn (n &SelectorExpression) reference() PsiReference {
+	ref_expr := n.right()
+	return new_reference(n.containing_file, ref_expr as ReferenceExpressionBase, false)
+}
+
+fn (n &SelectorExpression) resolve() ?PsiElement {
+	return n.reference().resolve()
+}
+
+fn (n &SelectorExpression) expr() {}
+
 fn (n &SelectorExpression) get_type() types.Type {
 	right := n.right()
 	if right is ReferenceExpressionBase {

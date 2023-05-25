@@ -183,7 +183,31 @@ pub fn (n PsiElementImpl) first_child() ?PsiElement {
 	return create_element(child, n.containing_file)
 }
 
+pub fn (n PsiElementImpl) first_child_or_stub() ?PsiElement {
+	if n.stub_id != non_stubbed_element {
+		if stub := n.stubs_list.get_stub(n.stub_id) {
+			child := stub.first_child() or { return none }
+			return child.get_psi()
+		}
+	}
+
+	child := n.node.first_child() or { return none }
+	return create_element(child, n.containing_file)
+}
+
 pub fn (n PsiElementImpl) last_child() ?PsiElement {
+	child := n.node.last_child() or { return none }
+	return create_element(child, n.containing_file)
+}
+
+pub fn (n PsiElementImpl) last_child_or_stub() ?PsiElement {
+	if n.stub_id != non_stubbed_element {
+		if stub := n.stubs_list.get_stub(n.stub_id) {
+			child := stub.last_child() or { return none }
+			return child.get_psi()
+		}
+	}
+
 	child := n.node.last_child() or { return none }
 	return create_element(child, n.containing_file)
 }
@@ -203,7 +227,42 @@ pub fn (n PsiElementImpl) find_child_by_type(typ v.NodeType) ?PsiElement {
 	return create_element(ast_node, n.containing_file)
 }
 
+pub fn (n PsiElementImpl) find_child_by_type_or_stub(typ v.NodeType) ?PsiElement {
+	if n.stub_id != non_stubbed_element {
+		if stub := n.stubs_list.get_stub(n.stub_id) {
+			child := stub.get_child_by_type(node_type_to_stub_type(typ)) or { return none }
+			return child.get_psi()
+		}
+	}
+
+	ast_node := n.node.first_node_by_type(typ) or { return none }
+	return create_element(ast_node, n.containing_file)
+}
+
 pub fn (n PsiElementImpl) find_children_by_type(typ v.NodeType) []PsiElement {
+	mut result := []PsiElement{}
+	mut child := n.node.first_child() or { return [] }
+	for {
+		if child.type_name == typ {
+			result << create_element(child, n.containing_file)
+		}
+		child = child.next_sibling() or { break }
+	}
+	return result
+}
+
+pub fn (n PsiElementImpl) find_children_by_type_or_stub(typ v.NodeType) []PsiElement {
+	if n.stub_id != non_stubbed_element {
+		if stub := n.stubs_list.get_stub(n.stub_id) {
+			child := stub.get_children_by_type(node_type_to_stub_type(typ))
+			mut result := []PsiElement{cap: child.len}
+			for c in child {
+				result << c.get_psi() or { continue }
+			}
+			return result
+		}
+	}
+
 	mut result := []PsiElement{}
 	mut child := n.node.first_child() or { return [] }
 	for {

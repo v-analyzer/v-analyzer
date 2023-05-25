@@ -40,9 +40,11 @@ pub interface PsiElement {
 	// first_child возвращает первый дочерний узел.
 	// Если узел не имеет дочерних узлов, возвращается none.
 	first_child() ?PsiElement
+	first_child_or_stub() ?PsiElement
 	// last_child возвращает последний дочерний узел.
 	// Если узел не имеет дочерних узлов, возвращается none.
 	last_child() ?PsiElement
+	last_child_or_stub() ?PsiElement
 	// next_sibling возвращает следующий узел, находящийся на том же уровне вложенности.
 	// Если узел является последним дочерним узлом, возвращается none.
 	next_sibling() ?PsiElement
@@ -50,9 +52,11 @@ pub interface PsiElement {
 	// find_child_by_type возвращает первый дочерний узел с указанным типом.
 	// Если такой узел не найден, возвращается none.
 	find_child_by_type(typ v.NodeType) ?PsiElement
+	find_child_by_type_or_stub(typ v.NodeType) ?PsiElement
 	// find_children_by_type возвращает все дочерние узлы с указанным типом.
 	// Если такие узлы не найдены, возвращается пустой массив.
 	find_children_by_type(typ v.NodeType) []PsiElement
+	find_children_by_type_or_stub(typ v.NodeType) []PsiElement
 	// get_text возвращает текст узла.
 	get_text() string
 	// accept передает элемент в переданный visitor.

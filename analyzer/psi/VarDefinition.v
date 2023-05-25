@@ -40,7 +40,9 @@ pub fn (n &VarDefinition) get_type() types.Type {
 	decl := n.declaration() or { return types.unknown_type }
 
 	if init := decl.initializer_of(n) {
-		return init.get_type()
+		if init is PsiTypedElement {
+			return init.get_type()
+		}
 	}
 
 	return types.unknown_type

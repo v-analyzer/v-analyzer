@@ -125,8 +125,10 @@ pub fn (mut d IndexDeserializer) deserialize_stub_list() &psi.StubList {
 	for _, mut stub in list.index_map {
 		stub.stub_list = list
 
-		parent := list.index_map[stub.parent_id] or { continue }
-		stub.parent = parent
+		if stub.parent_id != -1 {
+			parent := list.index_map[stub.parent_id] or { continue }
+			stub.parent = parent
+		}
 	}
 
 	return list
