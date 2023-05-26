@@ -2982,15 +2982,11 @@
     "named": true,
     "fields": {
       "left": {
-        "multiple": true,
+        "multiple": false,
         "required": true,
         "types": [
           {
-            "type": ",",
-            "named": false
-          },
-          {
-            "type": "var_definition",
+            "type": "var_definition_list",
             "named": true
           }
         ]
@@ -4024,6 +4020,21 @@
           }
         ]
       }
+    }
+  },
+  {
+    "type": "var_definition_list",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "var_definition",
+          "named": true
+        }
+      ]
     }
   },
   {

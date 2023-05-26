@@ -83,6 +83,16 @@ pub fn (t &TypeInferer) infer_type(elem ?PsiElement) types.Type {
 		return t.infer_index_type(expr_type)
 	}
 
+	if element is SliceExpression {
+		expr := element.expression() or { return types.unknown_type }
+		expr_type := t.infer_type(expr)
+		if expr_type is types.FixedArrayType {
+			// [3]int -> []int
+			return types.new_array_type(expr_type.inner)
+		}
+		return expr_type
+	}
+
 	if element is Range {
 		if element.inclusive() {
 			left := element.left() or { return types.unknown_type }
@@ -90,6 +100,11 @@ pub fn (t &TypeInferer) infer_type(elem ?PsiElement) types.Type {
 		}
 
 		return types.new_array_type(types.new_primitive_type('int'))
+	}
+
+	if element is FunctionLiteral {
+		signature := element.signature() or { return types.unknown_type }
+		return t.process_signature(signature)
 	}
 
 	if element is ReferenceExpression {
@@ -103,8 +118,18 @@ pub fn (t &TypeInferer) infer_type(elem ?PsiElement) types.Type {
 	}
 
 	if element is UnsafeExpression {
-		last_expression := element.last_expression()
-		return t.infer_type(last_expression)
+		block := element.block()
+		return t.infer_type(block)
+	}
+
+	if element is IfExpression {
+		block := element.block()
+		block_type := t.infer_type(block)
+		if block_type is types.UnknownType {
+			else_branch := element.else_branch() or { return types.unknown_type }
+			return t.infer_type(else_branch)
+		}
+		return block_type
 	}
 
 	if element is ArrayCreation {
@@ -151,12 +176,100 @@ pub fn (t &TypeInferer) infer_type(elem ?PsiElement) types.Type {
 		return element.get_type()
 	}
 
+	if element is Signature {
+		return t.process_signature(element)
+	}
+
 	if element is VarDefinition {
-		return element.get_type()
+		parent := element.parent_nth(2) or { return types.unknown_type }
+		if parent.node.type_name == .range_clause {
+			return t.process_range_clause(element, parent)
+		}
+
+		decl := element.declaration() or { return types.unknown_type }
+		if init := decl.initializer_of(element) {
+			return t.infer_type(init)
+		}
+		return types.unknown_type
 	}
 
 	if element is ConstantDefinition {
 		return element.get_type()
+	}
+
+	if element is Block {
+		last_expression := element.last_expression() or { return types.unknown_type }
+		return t.infer_type(last_expression)
+	}
+
+	return types.unknown_type
+}
+
+pub fn (t &TypeInferer) process_signature(signature Signature) types.Type {
+	params := signature.parameters()
+	param_types := params.map(fn [t] (it PsiElement) types.Type {
+		// TODO: support fn (int, string) without names
+		if it is PsiTypedElement {
+			return it.get_type()
+		}
+		return types.unknown_type
+	})
+	result := signature.result()
+	result_type := t.convert_type(result)
+	return types.new_function_type(param_types, result_type, result == none)
+}
+
+pub fn (t &TypeInferer) process_range_clause(element PsiElement, range PsiElement) types.Type {
+	right := range.find_child_by_name('right') or { return types.unknown_type }
+	right_type := t.infer_type(right)
+	var_definition_list := range.find_child_by_name('left') or { return types.unknown_type }
+	var_definitions := var_definition_list.find_children_by_type(.var_definition)
+
+	if var_definitions.len == 1 {
+		if right_type is types.ArrayType {
+			return right_type.inner
+		}
+		if right_type is types.FixedArrayType {
+			return right_type.inner
+		}
+		if right_type is types.MapType {
+			return right_type.value
+		}
+		if right_type is types.StringType {
+			return types.new_primitive_type('u8')
+		}
+	}
+
+	mut define_index := 0
+	for index, def in var_definitions {
+		if def.is_equal(element) {
+			define_index = index
+			break
+		}
+	}
+
+	if define_index == 0 {
+		if right_type is types.MapType {
+			return right_type.key
+		}
+		return types.new_primitive_type('int')
+	}
+
+	if define_index == 1 {
+		if right_type is types.ArrayType {
+			return right_type.inner
+		}
+		if right_type is types.FixedArrayType {
+			return right_type.inner
+		}
+		if right_type is types.MapType {
+			return right_type.value
+		}
+		if right_type is types.StringType {
+			return types.new_primitive_type('u8')
+		}
+
+		return types.unknown_type
 	}
 
 	return types.unknown_type
@@ -166,7 +279,7 @@ pub fn (t &TypeInferer) infer_call_expr_type(element CallExpression) types.Type 
 	resolved := element.resolve() or { return types.unknown_type }
 	typ := t.infer_type(resolved)
 	if typ is types.FunctionType {
-		return typ.result or { return types.unknown_type }
+		return typ.result
 	}
 
 	return types.unknown_type
@@ -280,11 +393,12 @@ pub fn (t &TypeInferer) convert_type(plain_type ?PsiElement) types.Type {
 		return types.new_channel_type(t.convert_type(inner))
 	}
 
-	// if child.element_type() == .map_type {
-	// 	key := child.find_child_by_name('key')
-	// 	value := child.find_child_by_name('value')
-	// 	return types.new_map_type(t.convert_type(key), t.convert_type(value))
-	// }
+	if child.element_type() == .map_type {
+		// TODO: stubs
+		key := child.find_child_by_name('key')
+		value := child.find_child_by_name('value')
+		return types.new_map_type(t.convert_type(key), t.convert_type(value))
+	}
 
 	if child is TypeReferenceExpression {
 		text := child.get_text()

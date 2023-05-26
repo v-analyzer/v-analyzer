@@ -4,14 +4,16 @@ import strings
 
 pub struct FunctionType {
 pub:
-	params []Type
-	result ?Type
+	params    []Type
+	result    Type
+	no_result bool
 }
 
-pub fn new_function_type(params []Type, result ?Type) &FunctionType {
+pub fn new_function_type(params []Type, result Type, no_result bool) &FunctionType {
 	return &FunctionType{
 		params: params
 		result: result
+		no_result: no_result
 	}
 }
 
@@ -25,9 +27,9 @@ pub fn (s &FunctionType) name() string {
 		}
 	}
 	sb.write_string(')')
-	if result := s.result {
+	if !s.no_result {
 		sb.write_string(' ')
-		sb.write_string(result.name())
+		sb.write_string(s.result.name())
 	}
 
 	return sb.str()
@@ -43,9 +45,9 @@ pub fn (s &FunctionType) qualified_name() string {
 		}
 	}
 	sb.write_string(')')
-	if result := s.result {
+	if !s.no_result {
 		sb.write_string(' ')
-		sb.write_string(result.qualified_name())
+		sb.write_string(s.result.qualified_name())
 	}
 
 	return sb.str()
@@ -61,9 +63,9 @@ pub fn (s &FunctionType) readable_name() string {
 		}
 	}
 	sb.write_string(')')
-	if result := s.result {
+	if !s.no_result {
 		sb.write_string(' ')
-		sb.write_string(result.readable_name())
+		sb.write_string(s.result.readable_name())
 	}
 
 	return sb.str()

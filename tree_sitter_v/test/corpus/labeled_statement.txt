@@ -12,8 +12,9 @@ label: for i in 0 .. 10 {
       (identifier))
     (for_statement
       (range_clause
-        (var_definition
-          (identifier))
+        (var_definition_list
+          (var_definition
+            (identifier)))
         (range
           (literal
             (int_literal))
@@ -45,8 +46,9 @@ label: for i in 0 .. 10 {
       (identifier))
     (for_statement
       (range_clause
-        (var_definition
-          (identifier))
+        (var_definition_list
+          (var_definition
+            (identifier)))
         (range
           (literal
             (int_literal))

@@ -214,10 +214,11 @@ fn test_parse_compact_text() {
                       (type_initializer_body)))))
               (for_statement
                 (range_clause
-                  (var_definition
-                    (identifier))
-                  (var_definition
-                    (identifier))
+                  (var_definition_list
+                    (var_definition
+                      (identifier))
+                    (var_definition
+                      (identifier)))
                   (reference_expression
                     (identifier)))
                 (block

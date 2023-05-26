@@ -1082,7 +1082,7 @@ module.exports = grammar({
       field('expression_list', $.expression_list),
     )),
 
-    _var_definition_list: ($) => comma_sep1($.var_definition),
+    var_definition_list: ($) => comma_sep1($.var_definition),
 
     var_definition: ($) => prec(PREC.type_initializer, seq(
       field('modifiers', optional('mut')),
@@ -1132,7 +1132,7 @@ module.exports = grammar({
     ),
 
     range_clause: ($) => prec.left(PREC.primary, seq(
-      field('left', $._var_definition_list),
+      field('left', $.var_definition_list),
       'in',
       field(
         'right',

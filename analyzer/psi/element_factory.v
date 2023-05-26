@@ -277,6 +277,18 @@ pub fn create_element(node AstNode, containing_file &PsiFileImpl) PsiElement {
 		}
 	}
 
+	if node.type_name == .function_literal {
+		return FunctionLiteral{
+			PsiElementImpl: base_node
+		}
+	}
+
+	if node.type_name == .if_expression {
+		return IfExpression{
+			PsiElementImpl: base_node
+		}
+	}
+
 	return base_node
 }
 

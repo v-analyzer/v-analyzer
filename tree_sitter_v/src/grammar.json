@@ -7317,7 +7317,7 @@
         ]
       }
     },
-    "_var_definition_list": {
+    "var_definition_list": {
       "type": "SEQ",
       "members": [
         {
@@ -7699,7 +7699,7 @@
             "name": "left",
             "content": {
               "type": "SYMBOL",
-              "name": "_var_definition_list"
+              "name": "var_definition_list"
             }
           },
           {

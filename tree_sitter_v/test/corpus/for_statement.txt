@@ -8,10 +8,11 @@ for _, v in a {
 (source_file
   (for_statement
     (range_clause
-      (var_definition
-        (identifier))
-      (var_definition
-        (identifier))
+      (var_definition_list
+        (var_definition
+          (identifier))
+        (var_definition
+          (identifier)))
       (reference_expression
         (identifier)))
     (block)))
@@ -26,8 +27,9 @@ for v in a {
 (source_file
   (for_statement
     (range_clause
-      (var_definition
-        (identifier))
+      (var_definition_list
+        (var_definition
+          (identifier)))
       (reference_expression
         (identifier)))
     (block)))
@@ -42,8 +44,9 @@ for i in 0 .. 10 {
 (source_file
   (for_statement
     (range_clause
-      (var_definition
-        (identifier))
+      (var_definition_list
+        (var_definition
+          (identifier)))
       (range
         (literal
           (int_literal))
@@ -154,8 +157,9 @@ $for field in T.fields {
 (source_file
   (compile_time_for_statement
     (range_clause
-      (var_definition
-        (identifier))
+      (var_definition_list
+        (var_definition
+          (identifier)))
       (selector_expression
         (reference_expression
           (identifier))

@@ -7,16 +7,7 @@ pub struct Signature {
 }
 
 fn (s &Signature) get_type() types.Type {
-	params := s.parameters()
-	param_types := params.map(fn (it PsiElement) types.Type {
-		if it is PsiTypedElement {
-			return it.get_type()
-		}
-		return types.unknown_type
-	})
-	result := TypeInferer{}.convert_type(s.result())
-
-	return types.new_function_type(param_types, result)
+	return TypeInferer{}.infer_type(s)
 }
 
 pub fn (n Signature) parameters() []PsiElement {

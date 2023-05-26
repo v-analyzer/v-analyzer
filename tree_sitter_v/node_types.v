@@ -170,6 +170,7 @@ pub enum NodeType {
 	value_attribute
 	var_declaration
 	var_definition
+	var_definition_list
 	visibility_modifiers
 	wrong_pointer_type
 	escape_sequence
@@ -481,6 +482,7 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'value_attribute' { NodeType.value_attribute }
 		'var_declaration' { NodeType.var_declaration }
 		'var_definition' { NodeType.var_definition }
+		'var_definition_list' { NodeType.var_definition_list }
 		'visibility_modifiers' { NodeType.visibility_modifiers }
 		'wrong_pointer_type' { NodeType.wrong_pointer_type }
 		'escape_sequence' { NodeType.escape_sequence }

@@ -6,7 +6,10 @@ pub struct ForStatement {
 
 pub fn (n ForStatement) var_definitions() []PsiElement {
 	if range_clause := n.find_child_by_type(.range_clause) {
-		return range_clause.find_children_by_type(.var_definition)
+		var_definition_list := range_clause.find_child_by_type(.var_definition_list) or {
+			return []
+		}
+		return var_definition_list.find_children_by_type(.var_definition)
 	}
 
 	if for_clause := n.find_child_by_type(.for_clause) {
