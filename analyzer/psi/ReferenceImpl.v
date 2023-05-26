@@ -175,6 +175,7 @@ pub fn (r &SubResolver) process_unqualified_resolve(mut processor PsiScopeProces
 
 pub fn (r &SubResolver) walk_up(element PsiElement, mut processor PsiScopeProcessor) bool {
 	mut run := element
+	mut last_parent := element
 	for {
 		if mut run is ForStatement {
 			vars := run.var_definitions()
@@ -194,7 +195,7 @@ pub fn (r &SubResolver) walk_up(element PsiElement, mut processor PsiScopeProces
 		}
 
 		if mut run is Block {
-			if !run.process_declarations(mut processor) {
+			if !run.process_declarations(mut processor, last_parent) {
 				return false
 			}
 
@@ -207,6 +208,7 @@ pub fn (r &SubResolver) walk_up(element PsiElement, mut processor PsiScopeProces
 			}
 		}
 
+		last_parent = run
 		run = run.parent() or { break }
 	}
 	return true

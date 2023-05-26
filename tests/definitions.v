@@ -38,6 +38,20 @@ t.test('variable definition from outer scope', fn (mut t testing.Test, mut fixtu
 	t.assert_definition_name(first, 'name')
 })
 
+t.test('variable definition from outer scope after inner scope', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+	fixture.configure_by_text('1.v', '
+		fn main() {
+			if true {
+				println(na/*caret*/me)
+			}
+			name := 100
+		}
+	'.trim_indent())!
+
+	locations := fixture.definition_at_cursor()
+	t.assert_no_definition(locations)!
+})
+
 t.test('variable definition from for loop', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
 	fixture.configure_by_text('1.v', '
 		fn main() {

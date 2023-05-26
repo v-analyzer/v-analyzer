@@ -123,7 +123,7 @@ fn (mut t Fixture) send_open_current_file_request() ! {
 			version: 1
 			text: t.current_file.content.join('\n')
 		}
-	})!
+	}) or {}
 }
 
 pub fn (mut t Fixture) definition_at_cursor() []lsp.LocationLink {
@@ -189,7 +189,7 @@ pub fn (mut t Fixture) close_file(path string) {
 		text_document: lsp.TextDocumentIdentifier{
 			uri: 'file://${path}'
 		}
-	}) or { println('Failed to close document: ${err}') }
+	}) or {}
 }
 
 pub fn (mut t Fixture) current_file_uri() lsp.DocumentUri {

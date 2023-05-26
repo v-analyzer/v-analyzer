@@ -92,11 +92,11 @@ pub fn (p &PsiFileImpl) module_name() ?string {
 pub fn (p &PsiFileImpl) process_declarations(mut processor PsiScopeProcessor) bool {
 	children := p.root.children()
 	for child in children {
-		if child is PsiNamedElement {
-			if !processor.execute(child as PsiElement) {
-				return false
-			}
-		}
+		// if child is PsiNamedElement {
+		// 	if !processor.execute(child as PsiElement) {
+		// 		return false
+		// 	}
+		// }
 		if child is ConstantDeclaration {
 			for constant in child.constants() {
 				if constant is PsiNamedElement {

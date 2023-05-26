@@ -13,9 +13,13 @@ pub fn (b Block) last_expression() ?PsiElement {
 	return last_statement.first_child()
 }
 
-pub fn (b Block) process_declarations(mut processor PsiScopeProcessor) bool {
+pub fn (b Block) process_declarations(mut processor PsiScopeProcessor, last_parent PsiElement) bool {
 	statements := b.find_children_by_type(.simple_statement)
 	for statement in statements {
+		if statement.is_equal(last_parent) {
+			return true
+		}
+
 		first_child := statement.first_child() or { continue }
 
 		if first_child is VarDeclaration {
