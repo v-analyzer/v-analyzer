@@ -39,6 +39,8 @@ pub enum StubType as u8 {
 	multi_return_type
 	option_type
 	result_type
+	//
+	visibility_modifiers
 }
 
 pub fn node_type_to_stub_type(typ tree_sitter_v.NodeType) StubType {
@@ -76,6 +78,7 @@ pub fn node_type_to_stub_type(typ tree_sitter_v.NodeType) StubType {
 		.multi_return_type { .multi_return_type }
 		.option_type { .option_type }
 		.result_type { .result_type }
+		.visibility_modifiers { .visibility_modifiers }
 		else { .root }
 	}
 }
@@ -211,6 +214,11 @@ pub fn (_ &StubbedElementType) create_psi(stub &StubBase) ?PsiElement {
 			PsiElementImpl: base_psi
 		}
 	}
+	if stub_type == .visibility_modifiers {
+		return VisibilityModifiers{
+			PsiElementImpl: base_psi
+		}
+	}
 	return base_psi
 }
 
@@ -314,6 +322,10 @@ pub fn (s &StubbedElementType) create_stub(psi PsiElement, parent_stub &StubElem
 
 	if psi is ValueAttribute {
 		return text_based_stub(*psi, parent_stub, .value_attribute)
+	}
+
+	if psi is VisibilityModifiers {
+		return text_based_stub(*psi, parent_stub, .visibility_modifiers)
 	}
 
 	if node_is_type(psi) {

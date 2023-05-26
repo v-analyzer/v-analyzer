@@ -40,7 +40,7 @@ pub fn (a TypeAliasDeclaration) name() string {
 }
 
 pub fn (a TypeAliasDeclaration) visibility_modifiers() ?&VisibilityModifiers {
-	modifiers := a.find_child_by_type(.visibility_modifiers)?
+	modifiers := a.find_child_by_type_or_stub(.visibility_modifiers)?
 	if modifiers is VisibilityModifiers {
 		return modifiers
 	}

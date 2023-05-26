@@ -23,14 +23,14 @@ pub fn (mut s Serializer) write_string(str string) {
 pub fn (mut s Serializer) write_int(data int) {
 	s.write_u8(u8(BeginSymbols.int))
 	for i in 0 .. 4 {
-		s.write_u8(u8(data >> (i * 4)))
+		s.write_u8(u8(data >> (8 * (3 - i))) & 0xFF)
 	}
 }
 
 pub fn (mut s Serializer) write_i64(data i64) {
 	s.write_u8(u8(BeginSymbols.i64))
 	for i in 0 .. 8 {
-		s.write_u8(u8(data >> (i * 8)))
+		s.write_u8(u8(data >> (8 * (7 - i))) & 0xFF)
 	}
 }
 

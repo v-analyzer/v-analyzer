@@ -71,7 +71,7 @@ pub fn (s StructDeclaration) doc_comment() string {
 }
 
 pub fn (s StructDeclaration) visibility_modifiers() ?&VisibilityModifiers {
-	modifiers := s.find_child_by_type(.visibility_modifiers)?
+	modifiers := s.find_child_by_type_or_stub(.visibility_modifiers)?
 	if modifiers is VisibilityModifiers {
 		return modifiers
 	}

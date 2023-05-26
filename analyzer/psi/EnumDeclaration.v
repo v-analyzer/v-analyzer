@@ -46,7 +46,7 @@ pub fn (e EnumDeclaration) doc_comment() string {
 }
 
 pub fn (e EnumDeclaration) visibility_modifiers() ?&VisibilityModifiers {
-	modifiers := e.find_child_by_type(.visibility_modifiers)?
+	modifiers := e.find_child_by_type_or_stub(.visibility_modifiers)?
 	if modifiers is VisibilityModifiers {
 		return modifiers
 	}

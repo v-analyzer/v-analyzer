@@ -23,7 +23,7 @@ pub fn (s &FunctionType) name() string {
 	for index, param in s.params {
 		sb.write_string(param.name())
 		if index < s.params.len - 1 {
-			sb.write_string(',')
+			sb.write_string(', ')
 		}
 	}
 	sb.write_string(')')
@@ -41,7 +41,7 @@ pub fn (s &FunctionType) qualified_name() string {
 	for index, param in s.params {
 		sb.write_string(param.qualified_name())
 		if index < s.params.len - 1 {
-			sb.write_string(',')
+			sb.write_string(', ')
 		}
 	}
 	sb.write_string(')')
@@ -59,7 +59,7 @@ pub fn (s &FunctionType) readable_name() string {
 	for index, param in s.params {
 		sb.write_string(param.readable_name())
 		if index < s.params.len - 1 {
-			sb.write_string(',')
+			sb.write_string(', ')
 		}
 	}
 	sb.write_string(')')

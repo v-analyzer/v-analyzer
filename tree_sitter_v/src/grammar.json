@@ -2268,7 +2268,7 @@
                 "type": "FIELD",
                 "name": "function",
                 "content": {
-                  "type": "IMMEDIATE_TOKEN",
+                  "type": "TOKEN",
                   "content": {
                     "type": "STRING",
                     "value": "json.decode"

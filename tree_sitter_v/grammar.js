@@ -444,7 +444,7 @@ module.exports = grammar({
 
     call_expression: ($) => prec.right(PREC.primary, choice(
       seq(
-        field('function', token.immediate('json.decode')),
+        field('function', token('json.decode')),
         field('arguments', $.special_argument_list),
         optional($.error_propagate),
       ),

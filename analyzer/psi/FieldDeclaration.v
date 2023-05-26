@@ -47,8 +47,7 @@ pub fn (f &FieldDeclaration) name() string {
 }
 
 pub fn (f &FieldDeclaration) get_type() types.Type {
-	inferer := TypeInferer{}
-	return inferer.infer_from_plain_type(f)
+	return TypeInferer{}.infer_type(f)
 }
 
 pub fn (f &FieldDeclaration) owner() ?PsiElement {

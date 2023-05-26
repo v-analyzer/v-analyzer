@@ -52,3 +52,21 @@ fn main() {
 	}
 	expr_type(g, 'int')
 }
+
+fn get_opt() ?int {
+	return 100
+}
+
+fn get_res() !int {
+	return 100
+}
+
+fn unwrapping() {
+	if a := get_opt() {
+		expr_type(a, 'int')
+	}
+
+	if a := get_res() {
+		expr_type(a, 'int')
+	}
+}

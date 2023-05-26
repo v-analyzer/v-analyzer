@@ -4,6 +4,7 @@ import lsp
 import analyzer
 import analyzer.psi
 import analyzer.parser
+import analyzer.index
 
 pub fn (mut ls LanguageServer) did_open(params lsp.DidOpenTextDocumentParams, mut wr ResponseWriter) {
 	src := params.text_document.text

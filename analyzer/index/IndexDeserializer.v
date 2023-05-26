@@ -51,7 +51,7 @@ pub fn (mut d IndexDeserializer) deserialize_file_index() FileIndex {
 	module_name := d.d.read_string()
 	module_fqn := d.d.read_string()
 
-	stub_list := d.deserialize_stub_list()
+	stub_list := d.deserialize_stub_list(filepath)
 	stub_index_sink := d.deserialize_stub_index_sink(stub_list)
 
 	return FileIndex{
@@ -70,7 +70,7 @@ pub fn (mut d IndexDeserializer) deserialize_stub_index_sink(stub_list &psi.Stub
 		stub_list: stub_list
 	}
 	for _ in 0 .. len {
-		key := d.d.read_u8()
+		key := d.d.read_int()
 		mut sink_map := d.deserialize_stub_index_sink_map()
 		sink.data[key] = sink_map.move()
 	}
@@ -92,8 +92,7 @@ pub fn (mut d IndexDeserializer) deserialize_stub_index_sink_map() map[string][]
 	return sink_map
 }
 
-pub fn (mut d IndexDeserializer) deserialize_stub_list() &psi.StubList {
-	path := d.d.read_string()
+pub fn (mut d IndexDeserializer) deserialize_stub_list(filepath string) &psi.StubList {
 	mut child_map := map[psi.StubId][]int{}
 	len := d.d.read_int()
 	for _ in 0 .. len {
@@ -118,7 +117,7 @@ pub fn (mut d IndexDeserializer) deserialize_stub_list() &psi.StubList {
 	}
 
 	mut list := &psi.StubList{}
-	list.path = path
+	list.path = filepath
 	list.index_map = index_map.move()
 	list.child_map = child_map.move()
 
@@ -147,7 +146,7 @@ pub fn (mut d IndexDeserializer) deserialize_stub() &psi.StubBase {
 
 	parent_id := d.d.read_int()
 	stub_type := unsafe { psi.StubType(d.d.read_u8()) }
-	id := d.d.read_u8()
+	id := d.d.read_int()
 
 	return &psi.StubBase{
 		text: text

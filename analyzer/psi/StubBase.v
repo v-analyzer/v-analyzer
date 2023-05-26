@@ -110,6 +110,8 @@ pub fn (s &StubBase) element_type() v.NodeType {
 		.multi_return_type { .multi_return_type }
 		.option_type { .option_type }
 		.result_type { .result_type }
+		//
+		.visibility_modifiers { .visibility_modifiers }
 	}
 }
 

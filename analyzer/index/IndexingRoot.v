@@ -37,6 +37,7 @@ pub mut:
 	updated_at time.Time // время последнего обновления индекса
 	index      Index     // кэш по файлам
 	cache_file string    // путь к файлу с кэшем
+	need_save  bool      // нужно ли сохранять кэш при следующем вызове save_index
 }
 
 // new_indexing_root создает новый IndexingRoot для переданного пути.
@@ -72,6 +73,11 @@ pub fn (mut i IndexingRoot) load_index() ! {
 }
 
 pub fn (mut i IndexingRoot) save_index() ! {
+	if !i.need_save {
+		return
+	}
+	i.need_save = false
+
 	data := i.index.encode()
 	os.write_file_array(i.cache_file, data) or {
 		println('Failed to write index.json')
@@ -135,6 +141,7 @@ pub fn (mut i IndexingRoot) index() BuiltIndexStatus {
 	}
 
 	i.updated_at = time.now()
+	i.need_save = true
 
 	println('Indexing finished')
 	println('Indexing took ${time.since(now)}')
@@ -221,7 +228,10 @@ pub fn (mut i IndexingRoot) ensure_indexed() {
 		i.index.per_file.data[cache.filepath] = cache
 	}
 
-	i.index.updated_at = time.now()
+	if caches.len > 0 {
+		i.index.updated_at = time.now()
+		i.need_save = true
+	}
 
 	println('Reindexing finished')
 	println('Reindexing took ${time.since(now)}')

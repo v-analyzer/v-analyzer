@@ -2,6 +2,9 @@ module psi
 
 pub fn extract_doc_comment(el PsiElement) string {
 	mut comment := el.prev_sibling() or { return '' }
+	if comment !is Comment {
+		comment = comment.prev_sibling() or { return '' }
+	}
 
 	mut comments := []PsiElement{}
 

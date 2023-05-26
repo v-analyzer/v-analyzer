@@ -76,7 +76,7 @@ pub fn (f FunctionOrMethodDeclaration) receiver() ?&Receiver {
 }
 
 pub fn (f FunctionOrMethodDeclaration) visibility_modifiers() ?&VisibilityModifiers {
-	modifiers := f.find_child_by_type(.visibility_modifiers)?
+	modifiers := f.find_child_by_type_or_stub(.visibility_modifiers)?
 	if modifiers is VisibilityModifiers {
 		return modifiers
 	}

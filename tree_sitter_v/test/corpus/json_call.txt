@@ -1,0 +1,80 @@
+================================================================================
+Simple json.decode call expression
+================================================================================
+a := json.decode([]Foo, data)
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (var_declaration
+      (expression_list
+        (reference_expression
+          (identifier)))
+      (expression_list
+        (call_expression
+          (special_argument_list
+            (plain_type
+              (array_type
+                (plain_type
+                  (type_reference_expression
+                    (identifier)))))
+            (reference_expression
+              (identifier))))))))
+
+================================================================================
+Simple json.decode call expression with array
+================================================================================
+json.decode([]Foo, data)
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (call_expression
+      (special_argument_list
+        (plain_type
+          (array_type
+            (plain_type
+              (type_reference_expression
+                (identifier)))))
+        (reference_expression
+          (identifier))))))
+
+================================================================================
+Simple json.decode call expression with map
+================================================================================
+json.decode(map[string]Foo, data)
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (call_expression
+      (special_argument_list
+        (plain_type
+          (map_type
+            (plain_type
+              (type_reference_expression
+                (identifier)))
+            (plain_type
+              (type_reference_expression
+                (identifier)))))
+        (reference_expression
+          (identifier))))))
+
+================================================================================
+Simple json.encode call expression
+================================================================================
+json.encode(data)
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (call_expression
+      (selector_expression
+        (reference_expression
+          (identifier))
+        (reference_expression
+          (identifier)))
+      (argument_list
+        (argument
+          (reference_expression
+            (identifier)))))))

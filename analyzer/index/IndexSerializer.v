@@ -34,7 +34,7 @@ pub fn (mut s IndexSerializer) serialize_file_index(index FileIndex) {
 pub fn (mut s IndexSerializer) serialize_stub_index_sink(sink &psi.StubIndexSink) {
 	s.s.write_int(sink.data.len)
 	for key, datum in sink.data {
-		s.s.write_u8(u8(key))
+		s.s.write_int(key)
 		s.serialize_stub_index_sink_map(datum)
 	}
 }
@@ -51,7 +51,6 @@ pub fn (mut s IndexSerializer) serialize_stub_index_sink_map(sink_map map[string
 }
 
 pub fn (mut s IndexSerializer) serialize_stub_list(list psi.StubList) {
-	s.s.write_string(list.path)
 	s.s.write_int(list.child_map.len)
 	for id, children in list.child_map {
 		s.s.write_int(id)
@@ -81,5 +80,5 @@ pub fn (mut s IndexSerializer) serialize_stub(stub psi.StubBase) {
 
 	s.s.write_int(stub.parent_id)
 	s.s.write_u8(u8(stub.stub_type))
-	s.s.write_u8(stub.id)
+	s.s.write_int(stub.id)
 }

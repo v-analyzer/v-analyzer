@@ -13,7 +13,7 @@ pub enum IndexingRootsStatus {
 // и предоставляет интерфейс для работы с индексом.
 pub struct Indexer {
 pub mut:
-	roots []index.IndexingRoot
+	roots []&index.IndexingRoot
 }
 
 pub fn new_indexer() &Indexer {

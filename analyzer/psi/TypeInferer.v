@@ -194,10 +194,6 @@ pub fn (t &TypeInferer) infer_type(elem ?PsiElement) types.Type {
 		return t.infer_literal_type(element)
 	}
 
-	if element is ParameterDeclaration {
-		return element.get_type()
-	}
-
 	if element is Signature {
 		return t.process_signature(element)
 	}
@@ -210,13 +206,36 @@ pub fn (t &TypeInferer) infer_type(elem ?PsiElement) types.Type {
 
 		decl := element.declaration() or { return types.unknown_type }
 		if init := decl.initializer_of(element) {
-			return t.infer_type(init)
+			typ := t.infer_type(init)
+			if decl_parent := decl.parent() {
+				if decl_parent is IfExpression {
+					return types.unwrap_result_pr_option_type(typ)
+				}
+			}
+
+			return typ
 		}
 		return types.unknown_type
 	}
 
 	if element is ConstantDefinition {
 		return element.get_type()
+	}
+
+	if element is FieldDeclaration {
+		return t.infer_from_plain_type(element)
+	}
+
+	if element is Receiver {
+		return t.infer_from_plain_type(element)
+	}
+
+	if element is ParameterDeclaration {
+		type_ := t.infer_from_plain_type(element)
+		if _ := element.find_child_by_name('variadic') {
+			return types.new_array_type(type_)
+		}
+		return type_
 	}
 
 	if element is Block {
@@ -303,6 +322,10 @@ pub fn (t &TypeInferer) process_range_clause(element PsiElement, range PsiElemen
 }
 
 pub fn (t &TypeInferer) infer_call_expr_type(element CallExpression) types.Type {
+	if element.is_json_decode() {
+		return types.new_result_type(element.get_json_decode_type(), false)
+	}
+
 	resolved := element.resolve() or { return types.unknown_type }
 	typ := t.infer_type(resolved)
 	if typ is types.FunctionType {
@@ -371,21 +394,6 @@ pub fn (t &TypeInferer) infer_index_type(typ types.Type) types.Type {
 	return types.unknown_type
 }
 
-pub fn (t &TypeInferer) infer_from_plain_type(element PsiElement) types.Type {
-	if element.stub_id != non_stubbed_element {
-		stub := element.stub_list().get_stub(element.stub_id) or { return types.unknown_type }
-		type_stub := stub.get_child_by_type(.plain_type) or { return types.unknown_type }
-		psi := type_stub.get_psi() or { return types.unknown_type }
-		return t.convert_type(psi)
-	}
-
-	if plain_typ := element.find_child_by_type(.plain_type) {
-		return t.convert_type(plain_typ)
-	}
-
-	return types.unknown_type
-}
-
 pub fn (t &TypeInferer) convert_type(plain_type ?PsiElement) types.Type {
 	typ := plain_type or { return types.unknown_type }
 	if plain_type !is PlainType {
@@ -447,6 +455,15 @@ pub fn (t &TypeInferer) convert_type(plain_type ?PsiElement) types.Type {
 		return types.new_map_type(t.convert_type(key), t.convert_type(value))
 	}
 
+	if child.element_type() == .function_type {
+		signature := child.find_child_by_type_or_stub(.signature) or { return types.unknown_type }
+		if signature is Signature {
+			return t.process_signature(signature)
+		}
+
+		return types.unknown_type
+	}
+
 	if child is TypeReferenceExpression {
 		text := child.get_text()
 		if types.is_primitive_type(text) {
@@ -468,6 +485,21 @@ pub fn (t &TypeInferer) convert_type(plain_type ?PsiElement) types.Type {
 		}
 
 		return types.unknown_type
+	}
+
+	return types.unknown_type
+}
+
+fn (t &TypeInferer) infer_from_plain_type(element PsiElement) types.Type {
+	if element.stub_id != non_stubbed_element {
+		stub := element.stub_list().get_stub(element.stub_id) or { return types.unknown_type }
+		type_stub := stub.get_child_by_type(.plain_type) or { return types.unknown_type }
+		psi := type_stub.get_psi() or { return types.unknown_type }
+		return t.convert_type(psi)
+	}
+
+	if plain_typ := element.find_child_by_type(.plain_type) {
+		return t.convert_type(plain_typ)
 	}
 
 	return types.unknown_type
