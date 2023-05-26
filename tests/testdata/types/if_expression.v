@@ -44,4 +44,11 @@ fn main() {
 		200
 	}
 	expr_type(f, 'int')
+
+	g := $if macos {
+		1
+	} $else {
+		2
+	}
+	expr_type(g, 'int')
 }

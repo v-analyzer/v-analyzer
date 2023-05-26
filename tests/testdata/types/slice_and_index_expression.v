@@ -8,4 +8,8 @@ fn main() {
 	fixed_arr := [1, 2, 3]!
 	expr_type(fixed_arr[0], 'int')
 	expr_type(fixed_arr[0..2], '[]int')
+
+	s := 'string'
+	expr_type(s[0], 'u8')
+	expr_type(s[0..2], 'string')
 }

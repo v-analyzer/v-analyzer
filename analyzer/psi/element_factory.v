@@ -289,6 +289,18 @@ pub fn create_element(node AstNode, containing_file &PsiFileImpl) PsiElement {
 		}
 	}
 
+	if node.type_name == .compile_time_if_expression {
+		return CompileTimeIfExpression{
+			PsiElementImpl: base_node
+		}
+	}
+
+	if node.type_name == .match_expression {
+		return MatchExpression{
+			PsiElementImpl: base_node
+		}
+	}
+
 	return base_node
 }
 

@@ -11,6 +11,7 @@ pub fn (t &TypeInferer) infer_type(elem ?PsiElement) types.Type {
 		.not_is_expression] {
 		return types.new_primitive_type('bool')
 	}
+
 	if element.node.type_name == .binary_expression {
 		operator_element := element.find_child_by_name('operator') or { return types.unknown_type }
 		operator := operator_element.get_text()
@@ -24,7 +25,7 @@ pub fn (t &TypeInferer) infer_type(elem ?PsiElement) types.Type {
 			else {}
 		}
 
-		if operator == '+' {
+		if operator in ['+', '-', '|', '^'] {
 			left := element.first_child() or { return types.unknown_type }
 			return t.infer_type(left)
 		}
@@ -38,6 +39,7 @@ pub fn (t &TypeInferer) infer_type(elem ?PsiElement) types.Type {
 			return t.infer_type(right)
 		}
 	}
+
 	if element.node.type_name == .select_expression {
 		return types.new_primitive_type('bool')
 	}
@@ -130,6 +132,26 @@ pub fn (t &TypeInferer) infer_type(elem ?PsiElement) types.Type {
 			return t.infer_type(else_branch)
 		}
 		return block_type
+	}
+
+	if element is CompileTimeIfExpression {
+		block := element.block()
+		block_type := t.infer_type(block)
+		if block_type is types.UnknownType {
+			else_branch := element.else_branch() or { return types.unknown_type }
+			return t.infer_type(else_branch)
+		}
+		return block_type
+	}
+
+	if element is MatchExpression {
+		arms := element.arms()
+		if arms.len == 0 {
+			return types.unknown_type
+		}
+		first := arms.first()
+		block := first.find_child_by_name('block') or { return types.unknown_type }
+		return t.infer_type(block)
 	}
 
 	if element is ArrayCreation {

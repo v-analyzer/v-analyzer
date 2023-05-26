@@ -15,5 +15,8 @@ t.type_test('pointers', 'types/pointers.v')
 t.type_test('bool operators', 'types/bool_operators.v')
 t.type_test('unsafe expression', 'types/unsafe_expression.v')
 t.type_test('if expression', 'types/if_expression.v')
+t.type_test('match expression', 'types/match_expression.v')
+t.type_test('map init expression', 'types/map_init_expression.v')
+t.type_test('chan type', 'types/chan_type.v')
 
 t.stats()
