@@ -91,7 +91,6 @@ module.exports = grammar({
   ],
 
   inline: ($) => [
-    $._type,
     $._string_literal,
     $._top_level_declaration,
     $._non_empty_array,
@@ -99,7 +98,6 @@ module.exports = grammar({
 
   supertypes: ($) => [
     $._expression,
-    $._type,
     $._statement,
     $._top_level_declaration,
     $._expression_with_blocks,
@@ -205,7 +203,7 @@ module.exports = grammar({
     global_var_definition: ($) => seq(
       field('name', $.identifier),
       choice(
-        $._type,
+        $.plain_type,
         $._global_var_value,
       ),
     ),
@@ -245,7 +243,7 @@ module.exports = grammar({
       seq(
         field('mutability', optional($.mutability_modifiers)),
         field('name', $.identifier),
-        field('type', $.plain_type),
+        field('type', alias($._plain_type_without_option, $.plain_type)),
       ),
       ')',
     )),
@@ -255,7 +253,7 @@ module.exports = grammar({
         'parameters',
         choice($.parameter_list, $.type_only_parameter_list),
       ),
-      field('result', optional($._type)),
+      field('result', optional($.plain_type)),
     )),
 
     parameter_list: ($) =>
@@ -265,17 +263,17 @@ module.exports = grammar({
       field('mutability', optional($.mutability_modifiers)),
       field('name', $.identifier),
       optional(field('variadic', '...')),
-      field('type', choice($.plain_type, $.option_type)),
+      field('type', $.plain_type),
     ),
 
     type_only_parameter_list: ($) =>
       seq('(', comma_sep($.type_only_parameter_declaration), ')'),
 
-    type_only_parameter_declaration: ($) => seq(
+    type_only_parameter_declaration: ($) => prec(PREC.primary, seq(
       optional($.mutability_modifiers),
       optional(field('variadic', '...')),
-      field('type', choice($.plain_type, $.option_type)),
-    ),
+      field('type', $.plain_type),
+    )),
 
     // fn foo[T, T2]() {}
     //       ^^^^^^^
@@ -331,7 +329,7 @@ module.exports = grammar({
 
     _struct_field_definition: ($) => prec.right(PREC.type_initializer, seq(
       field('name', $.identifier),
-      field('type', choice($.plain_type, $.option_type)),
+      field('type', $.plain_type),
       field('attributes', optional($.attribute)),
       optional(seq('=', field('default_value', $._expression))),
     )),
@@ -483,7 +481,7 @@ module.exports = grammar({
 
     special_argument_list: ($) => seq(
       '(',
-      choice($.plain_type, $.option_type),
+      alias($._plain_type_without_option, $.plain_type),
       optional(seq(',', $._expression)),
       ')',
     ),
@@ -707,13 +705,13 @@ module.exports = grammar({
     is_expression: ($) => prec.left(PREC.comparative, seq(
       field('left', seq(optional($.mutability_modifiers), $._expression)),
       'is',
-      field('right', choice($.option_type, $.plain_type)),
+      field('right', $.plain_type),
     )),
 
     not_is_expression: ($) => prec.left(PREC.comparative, seq(
       field('left', seq(optional($.mutability_modifiers), $._expression)),
       '!is',
-      field('right', choice($.option_type, $.plain_type)),
+      field('right', $.plain_type),
     )),
 
     in_expression: ($) => prec.left(PREC.comparative, seq(
@@ -946,19 +944,13 @@ module.exports = grammar({
 
     // ==================== TYPES ====================
 
-    _type: ($) => choice($.plain_type, $.option_type, $.result_type, $.multi_return_type),
-
-    option_type: ($) => prec.right(
-      seq('?', optional($._type)),
-    ),
-
-    result_type: ($) => prec.right(
-      seq('!', optional($._type)),
-    ),
-
-    multi_return_type: ($) => seq('(', comma_sep1($._type), optional(','), ')'),
-
     plain_type: ($) => prec.right(PREC.primary, choice(
+      $._plain_type_without_option,
+      $.option_type,
+      $.result_type,
+    )),
+
+    _plain_type_without_option: ($) => prec.right(PREC.primary, choice(
       $.type_reference_expression,
       $.qualified_type,
       $._binded_type,
@@ -972,7 +964,18 @@ module.exports = grammar({
       $.channel_type,
       $.shared_type,
       $.thread_type,
+      $.multi_return_type,
     )),
+
+    multi_return_type: ($) => seq('(', comma_sep1($.plain_type), optional(','), ')'),
+
+    result_type: ($) => prec.right(
+      seq('!', optional($.plain_type)),
+    ),
+
+    option_type: ($) => prec.right(
+      seq('?', optional($.plain_type)),
+    ),
 
     qualified_type: ($) => seq(
       field('module', $.reference_expression),
@@ -1001,7 +1004,7 @@ module.exports = grammar({
     // so this rule is needed to properly parse and then give an error to the user.
     wrong_pointer_type: ($) => prec(PREC.match_arm_type, seq('*', $.plain_type)),
 
-    map_type: ($) => seq('map[', field('key', $.plain_type), ']', field('value', $._type)),
+    map_type: ($) => seq('map[', field('key', $.plain_type), ']', field('value', $.plain_type)),
 
     channel_type: ($) => prec.right(PREC.primary, seq('chan', $.plain_type)),
 
@@ -1016,8 +1019,6 @@ module.exports = grammar({
     // ==================== TYPES END ====================
 
     // ==================== STATEMENTS ====================
-
-    // _statement_list: ($) => repeat1(seq($._statement, optional($._automatic_separator))),
 
     _statement_list: $ => choice(
       seq(

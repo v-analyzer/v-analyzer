@@ -9,7 +9,6 @@ pub enum SuperType {
 	expression_with_blocks
 	statement
 	top_level_declaration
-	type_
 }
 
 pub enum NodeType {
@@ -252,18 +251,9 @@ const supertype__top_level_declaration_nodes = [
 	.type_declaration,
 ]
 
-const supertype__type_nodes = [
-	NodeType.multi_return_type,
-	.option_type,
-	.plain_type,
-	.result_type,
-]
-
 pub fn (typ NodeType) group() SuperType {
 	return if typ in tree_sitter_v.supertype__top_level_declaration_nodes {
 		SuperType.top_level_declaration
-	} else if typ in tree_sitter_v.supertype__type_nodes {
-		SuperType.type_
 	} else if typ in tree_sitter_v.supertype__expression_nodes {
 		SuperType.expression
 	} else if typ in tree_sitter_v.supertype__expression_with_blocks_nodes {

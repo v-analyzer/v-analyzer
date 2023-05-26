@@ -77,10 +77,11 @@ interface Foo {
             (plain_type
               (type_reference_expression
                 (identifier)))))
-        (option_type
-          (plain_type
-            (type_reference_expression
-              (identifier))))))))
+        (plain_type
+          (option_type
+            (plain_type
+              (type_reference_expression
+                (identifier)))))))))
 
 ================================================================================
 Simple interface with scopes

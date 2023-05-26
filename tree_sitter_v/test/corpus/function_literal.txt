@@ -190,7 +190,8 @@ app.handle(fn (req &Req, res Res) ? {
                   (plain_type
                     (type_reference_expression
                       (identifier)))))
-              (option_type))
+              (plain_type
+                (option_type)))
             (block
               (return_statement))))))))
 

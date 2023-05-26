@@ -26,6 +26,25 @@ __global g_var int
           (identifier))))))
 
 ================================================================================
+Simple global variable with complex type
+================================================================================
+__global g_var map[string]int
+--------------------------------------------------------------------------------
+
+(source_file
+  (global_var_declaration
+    (global_var_definition
+      (identifier)
+      (plain_type
+        (map_type
+          (plain_type
+            (type_reference_expression
+              (identifier)))
+          (plain_type
+            (type_reference_expression
+              (identifier))))))))
+
+================================================================================
 Multiline global variable
 ================================================================================
 __global (

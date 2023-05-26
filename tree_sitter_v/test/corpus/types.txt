@@ -643,32 +643,36 @@ fn () ?(int, string) {}
         (parameter_list
           (parameter_declaration
             (identifier)
-            (option_type
-              (plain_type
-                (type_reference_expression
-                  (identifier)))))))
-      (block)))
-  (simple_statement
-    (function_literal
-      (signature
-        (parameter_list)
-        (option_type
-          (plain_type
-            (type_reference_expression
-              (identifier)))))
-      (block)))
-  (simple_statement
-    (function_literal
-      (signature
-        (parameter_list)
-        (option_type
-          (multi_return_type
             (plain_type
-              (type_reference_expression
-                (identifier)))
+              (option_type
+                (plain_type
+                  (type_reference_expression
+                    (identifier))))))))
+      (block)))
+  (simple_statement
+    (function_literal
+      (signature
+        (parameter_list)
+        (plain_type
+          (option_type
             (plain_type
               (type_reference_expression
                 (identifier))))))
+      (block)))
+  (simple_statement
+    (function_literal
+      (signature
+        (parameter_list)
+        (plain_type
+          (option_type
+            (plain_type
+              (multi_return_type
+                (plain_type
+                  (type_reference_expression
+                    (identifier)))
+                (plain_type
+                  (type_reference_expression
+                    (identifier))))))))
       (block))))
 
 ================================================================================
@@ -683,21 +687,24 @@ fn () !(int, string) {}
     (function_literal
       (signature
         (parameter_list)
-        (result_type
-          (plain_type
-            (type_reference_expression
-              (identifier)))))
+        (plain_type
+          (result_type
+            (plain_type
+              (type_reference_expression
+                (identifier))))))
       (block)))
   (simple_statement
     (function_literal
       (signature
         (parameter_list)
-        (result_type
-          (multi_return_type
+        (plain_type
+          (result_type
             (plain_type
-              (type_reference_expression
-                (identifier)))
-            (plain_type
-              (type_reference_expression
-                (identifier))))))
+              (multi_return_type
+                (plain_type
+                  (type_reference_expression
+                    (identifier)))
+                (plain_type
+                  (type_reference_expression
+                    (identifier))))))))
       (block))))

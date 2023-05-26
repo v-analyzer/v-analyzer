@@ -252,28 +252,6 @@
     ]
   },
   {
-    "type": "_type",
-    "named": true,
-    "subtypes": [
-      {
-        "type": "multi_return_type",
-        "named": true
-      },
-      {
-        "type": "option_type",
-        "named": true
-      },
-      {
-        "type": "plain_type",
-        "named": true
-      },
-      {
-        "type": "result_type",
-        "named": true
-      }
-    ]
-  },
-  {
     "type": "append_statement",
     "named": true,
     "fields": {
@@ -1711,7 +1689,7 @@
       "required": false,
       "types": [
         {
-          "type": "_type",
+          "type": "plain_type",
           "named": true
         }
       ]
@@ -2161,10 +2139,6 @@
         "required": true,
         "types": [
           {
-            "type": "option_type",
-            "named": true
-          },
-          {
             "type": "plain_type",
             "named": true
           }
@@ -2429,7 +2403,7 @@
         "required": true,
         "types": [
           {
-            "type": "_type",
+            "type": "plain_type",
             "named": true
           }
         ]
@@ -2593,7 +2567,7 @@
       "required": true,
       "types": [
         {
-          "type": "_type",
+          "type": "plain_type",
           "named": true
         }
       ]
@@ -2691,10 +2665,6 @@
         "required": true,
         "types": [
           {
-            "type": "option_type",
-            "named": true
-          },
-          {
             "type": "plain_type",
             "named": true
           }
@@ -2711,7 +2681,7 @@
       "required": false,
       "types": [
         {
-          "type": "_type",
+          "type": "plain_type",
           "named": true
         }
       ]
@@ -2765,10 +2735,6 @@
         "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "option_type",
-            "named": true
-          },
           {
             "type": "plain_type",
             "named": true
@@ -2855,11 +2821,23 @@
           "named": true
         },
         {
+          "type": "multi_return_type",
+          "named": true
+        },
+        {
+          "type": "option_type",
+          "named": true
+        },
+        {
           "type": "pointer_type",
           "named": true
         },
         {
           "type": "qualified_type",
+          "named": true
+        },
+        {
+          "type": "result_type",
           "named": true
         },
         {
@@ -3112,7 +3090,7 @@
       "required": false,
       "types": [
         {
-          "type": "_type",
+          "type": "plain_type",
           "named": true
         }
       ]
@@ -3363,7 +3341,7 @@
         "required": false,
         "types": [
           {
-            "type": "_type",
+            "type": "plain_type",
             "named": true
           }
         ]
@@ -3479,10 +3457,6 @@
       "types": [
         {
           "type": "_expression",
-          "named": true
-        },
-        {
-          "type": "option_type",
           "named": true
         },
         {
@@ -3646,10 +3620,6 @@
         "required": false,
         "types": [
           {
-            "type": "option_type",
-            "named": true
-          },
-          {
             "type": "plain_type",
             "named": true
           }
@@ -3793,10 +3763,6 @@
         "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "option_type",
-            "named": true
-          },
           {
             "type": "plain_type",
             "named": true

@@ -170,10 +170,11 @@ fn foo(mut param int) !string {}
           (plain_type
             (type_reference_expression
               (identifier)))))
-      (result_type
-        (plain_type
-          (type_reference_expression
-            (identifier)))))
+      (plain_type
+        (result_type
+          (plain_type
+            (type_reference_expression
+              (identifier))))))
     (block)))
 
 ================================================================================
@@ -193,10 +194,11 @@ fn foo(mut param int) ?string {}
           (plain_type
             (type_reference_expression
               (identifier)))))
-      (option_type
-        (plain_type
-          (type_reference_expression
-            (identifier)))))
+      (plain_type
+        (option_type
+          (plain_type
+            (type_reference_expression
+              (identifier))))))
     (block)))
 
 ================================================================================
@@ -216,13 +218,14 @@ fn foo(mut param int) (string, int) {}
           (plain_type
             (type_reference_expression
               (identifier)))))
-      (multi_return_type
-        (plain_type
-          (type_reference_expression
-            (identifier)))
-        (plain_type
-          (type_reference_expression
-            (identifier)))))
+      (plain_type
+        (multi_return_type
+          (plain_type
+            (type_reference_expression
+              (identifier)))
+          (plain_type
+            (type_reference_expression
+              (identifier))))))
     (block)))
 
 ================================================================================
@@ -242,13 +245,14 @@ fn foo(mut param int) (string, int,) {}
           (plain_type
             (type_reference_expression
               (identifier)))))
-      (multi_return_type
-        (plain_type
-          (type_reference_expression
-            (identifier)))
-        (plain_type
-          (type_reference_expression
-            (identifier)))))
+      (plain_type
+        (multi_return_type
+          (plain_type
+            (type_reference_expression
+              (identifier)))
+          (plain_type
+            (type_reference_expression
+              (identifier))))))
     (block)))
 
 ================================================================================
@@ -268,10 +272,11 @@ fn foo(mut param int) () {}
           (plain_type
             (type_reference_expression
               (identifier)))))
-      (multi_return_type
-        (plain_type
-          (type_reference_expression
-            (MISSING identifier)))))
+      (plain_type
+        (multi_return_type
+          (plain_type
+            (type_reference_expression
+              (MISSING identifier))))))
     (block)))
 
 ================================================================================
@@ -291,14 +296,16 @@ fn foo(mut param int) !(string, int) {}
           (plain_type
             (type_reference_expression
               (identifier)))))
-      (result_type
-        (multi_return_type
+      (plain_type
+        (result_type
           (plain_type
-            (type_reference_expression
-              (identifier)))
-          (plain_type
-            (type_reference_expression
-              (identifier))))))
+            (multi_return_type
+              (plain_type
+                (type_reference_expression
+                  (identifier)))
+              (plain_type
+                (type_reference_expression
+                  (identifier))))))))
     (block)))
 
 ================================================================================
@@ -318,14 +325,16 @@ fn foo(mut param int) ?(string, int) {}
           (plain_type
             (type_reference_expression
               (identifier)))))
-      (option_type
-        (multi_return_type
+      (plain_type
+        (option_type
           (plain_type
-            (type_reference_expression
-              (identifier)))
-          (plain_type
-            (type_reference_expression
-              (identifier))))))
+            (multi_return_type
+              (plain_type
+                (type_reference_expression
+                  (identifier)))
+              (plain_type
+                (type_reference_expression
+                  (identifier))))))))
     (block)))
 
 ================================================================================
@@ -559,12 +568,14 @@ pub fn C.foo[T, U, ](foo string, age ...int) !(int, string, ) {}
           (plain_type
             (type_reference_expression
               (identifier)))))
-      (result_type
-        (multi_return_type
+      (plain_type
+        (result_type
           (plain_type
-            (type_reference_expression
-              (identifier)))
-          (plain_type
-            (type_reference_expression
-              (identifier))))))
+            (multi_return_type
+              (plain_type
+                (type_reference_expression
+                  (identifier)))
+              (plain_type
+                (type_reference_expression
+                  (identifier))))))))
     (block)))

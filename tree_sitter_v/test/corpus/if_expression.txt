@@ -107,7 +107,13 @@ $if macos {} $else {}
 ================================================================================
 Compile-time if expression with else if
 ================================================================================
-$if macos {} $else $if {} $else {}
+$if macos {
+    println(1)
+} $else $if linux {
+    println(1)
+} $else {
+    println(1)
+}
 --------------------------------------------------------------------------------
 
 (source_file
@@ -115,11 +121,36 @@ $if macos {} $else $if {} $else {}
     (compile_time_if_expression
       (reference_expression
         (identifier))
-      (block)
+      (block
+        (simple_statement
+          (call_expression
+            (reference_expression
+              (identifier))
+            (argument_list
+              (argument
+                (literal
+                  (int_literal)))))))
       (compile_time_if_expression
-        (empty_literal_value)
-        (ERROR)
-        (block)))))
+        (reference_expression
+          (identifier))
+        (block
+          (simple_statement
+            (call_expression
+              (reference_expression
+                (identifier))
+              (argument_list
+                (argument
+                  (literal
+                    (int_literal)))))))
+        (block
+          (simple_statement
+            (call_expression
+              (reference_expression
+                (identifier))
+              (argument_list
+                (argument
+                  (literal
+                    (int_literal)))))))))))
 
 ================================================================================
 Compile-time if expression with ?
