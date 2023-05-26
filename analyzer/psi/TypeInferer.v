@@ -420,10 +420,30 @@ pub fn (t &TypeInferer) convert_type(plain_type ?PsiElement) types.Type {
 		return types.new_channel_type(t.convert_type(inner))
 	}
 
+	if child.element_type() == .option_type {
+		inner := child.last_child_or_stub()
+		return types.new_option_type(t.convert_type(inner), inner == none)
+	}
+
+	if child.element_type() == .result_type {
+		inner := child.last_child_or_stub()
+		return types.new_result_type(t.convert_type(inner), inner == none)
+	}
+
+	if child.element_type() == .multi_return_type {
+		inner_type_elements := child.find_children_by_type_or_stub(.plain_type)
+		inner_types := inner_type_elements.map(t.convert_type(it))
+		return types.new_multi_return_type(inner_types)
+	}
+
 	if child.element_type() == .map_type {
-		// TODO: stubs
-		key := child.find_child_by_name('key')
-		value := child.find_child_by_name('value')
+		types_inner := child.find_children_by_type_or_stub(.plain_type)
+		if types_inner.len != 2 {
+			return types.new_map_type(types.unknown_type, types.unknown_type)
+		}
+
+		key := types_inner[0]
+		value := types_inner[1]
 		return types.new_map_type(t.convert_type(key), t.convert_type(value))
 	}
 
