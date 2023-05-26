@@ -29,7 +29,7 @@ pub fn (r &TypeReferenceExpression) identifier_text_range() TextRange {
 pub fn (r TypeReferenceExpression) name() string {
 	if r.stub_id != non_stubbed_element {
 		if stub := r.stubs_list.get_stub(r.stub_id) {
-			return stub.name
+			return stub.text
 		}
 	}
 

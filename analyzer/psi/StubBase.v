@@ -82,12 +82,10 @@ pub fn (s &StubBase) element_type() v.NodeType {
 		.signature { .signature }
 		.parameter_list { .parameter_list }
 		.parameter_declaration { .parameter_declaration }
-		.type_reference_expression { .type_reference_expression }
 		.struct_declaration { .struct_declaration }
 		.field_declaration { .struct_field_declaration }
 		.constant_declaration { .const_definition }
 		.type_alias_declaration { .type_declaration }
-		.plain_type { .plain_type }
 		.enum_declaration { .enum_declaration }
 		.enum_field_definition { .enum_field_definition }
 		.struct_field_scope { .struct_field_scope }
@@ -95,6 +93,23 @@ pub fn (s &StubBase) element_type() v.NodeType {
 		.attribute { .attribute }
 		.attribute_expression { .attribute_expression }
 		.value_attribute { .value_attribute }
+		// types
+		.plain_type { .plain_type }
+		.type_reference_expression { .type_reference_expression }
+		.qualified_type { .qualified_type }
+		.pointer_type { .pointer_type }
+		.wrong_pointer_type { .wrong_pointer_type }
+		.array_type { .array_type }
+		.fixed_array_type { .fixed_array_type }
+		.function_type { .function_type }
+		.generic_type { .generic_type }
+		.map_type { .map_type }
+		.channel_type { .channel_type }
+		.shared_type { .shared_type }
+		.thread_type { .thread_type }
+		.multi_return_type { .multi_return_type }
+		.option_type { .option_type }
+		.result_type { .result_type }
 	}
 }
 
@@ -185,7 +200,7 @@ fn (s &StubBase) prev_sibling() ?&StubElement {
 	return s.stub_list.prev_sibling(s.id)
 }
 
-fn (s &StubBase) children_stubs() []StubElement {
+pub fn (s &StubBase) children_stubs() []StubElement {
 	return s.stub_list.get_children_stubs(s.id)
 }
 

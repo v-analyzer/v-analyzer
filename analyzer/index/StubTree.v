@@ -18,6 +18,20 @@ pub struct StubTree {
 	root &psi.StubBase
 }
 
+pub fn (tree &StubTree) print() {
+	tree.print_stub(tree.root, 0)
+}
+
+pub fn (tree &StubTree) print_stub(stub psi.StubElement, indent int) {
+	for i := 0; i < indent; i++ {
+		print('  ')
+	}
+	println(stub.stub_type().str() + ' (text: ' + stub.text() + ')')
+	for child in stub.children_stubs() {
+		tree.print_stub(child, indent + 1)
+	}
+}
+
 pub fn build_stub_tree(file &psi.PsiFileImpl) &StubTree {
 	root := file.root()
 	stub_root := psi.new_root_stub(file.path())
@@ -32,7 +46,7 @@ pub fn build_stub_tree(file &psi.PsiFileImpl) &StubTree {
 pub fn build_stub_tree_for_node(node psi.PsiElement, parent psi.StubBase) {
 	element_type := psi.StubbedElementType{}
 
-	if node is psi.StubBasedPsiElement {
+	if node is psi.StubBasedPsiElement || psi.node_is_type(node) {
 		if stub := element_type.create_stub(node as psi.PsiElement, parent) {
 			for child in (node as psi.PsiElement).children() {
 				build_stub_tree_for_node(child, stub)

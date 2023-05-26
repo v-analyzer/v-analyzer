@@ -224,6 +224,11 @@ pub fn (t &TypeInferer) infer_type(elem ?PsiElement) types.Type {
 		return t.infer_type(last_expression)
 	}
 
+	if element is FunctionOrMethodDeclaration {
+		signature := element.signature() or { return types.unknown_type }
+		return t.process_signature(signature)
+	}
+
 	return types.unknown_type
 }
 

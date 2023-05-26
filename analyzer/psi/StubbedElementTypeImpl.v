@@ -11,7 +11,6 @@ pub enum StubType as u8 {
 	signature
 	parameter_list
 	parameter_declaration
-	type_reference_expression
 	struct_declaration
 	enum_declaration
 	field_declaration
@@ -23,7 +22,23 @@ pub enum StubType as u8 {
 	attribute
 	attribute_expression
 	value_attribute
+	// types
 	plain_type
+	type_reference_expression
+	qualified_type
+	pointer_type
+	wrong_pointer_type
+	array_type
+	fixed_array_type
+	function_type
+	generic_type
+	map_type
+	channel_type
+	shared_type
+	thread_type
+	multi_return_type
+	option_type
+	result_type
 }
 
 pub fn node_type_to_stub_type(typ tree_sitter_v.NodeType) StubType {
@@ -33,12 +48,10 @@ pub fn node_type_to_stub_type(typ tree_sitter_v.NodeType) StubType {
 		.signature { .signature }
 		.parameter_list { .parameter_list }
 		.parameter_declaration { .parameter_declaration }
-		.type_reference_expression { .type_reference_expression }
 		.struct_declaration { .struct_declaration }
 		.struct_field_declaration { .field_declaration }
 		.const_definition { .constant_declaration }
 		.type_declaration { .type_alias_declaration }
-		.plain_type { .plain_type }
 		.enum_declaration { .enum_declaration }
 		.enum_field_definition { .enum_field_definition }
 		.struct_field_scope { .struct_field_scope }
@@ -46,6 +59,23 @@ pub fn node_type_to_stub_type(typ tree_sitter_v.NodeType) StubType {
 		.attribute { .attribute }
 		.attribute_expression { .attribute_expression }
 		.value_attribute { .value_attribute }
+		// types
+		.plain_type { .plain_type }
+		.type_reference_expression { .type_reference_expression }
+		.qualified_type { .qualified_type }
+		.pointer_type { .pointer_type }
+		.wrong_pointer_type { .wrong_pointer_type }
+		.array_type { .array_type }
+		.fixed_array_type { .fixed_array_type }
+		.function_type { .function_type }
+		.generic_type { .generic_type }
+		.map_type { .map_type }
+		.channel_type { .channel_type }
+		.shared_type { .shared_type }
+		.thread_type { .thread_type }
+		.multi_return_type { .multi_return_type }
+		.option_type { .option_type }
+		.result_type { .result_type }
 		else { .root }
 	}
 }
@@ -213,48 +243,6 @@ pub fn (s &StubbedElementType) create_stub(psi PsiElement, parent_stub &StubElem
 		)
 	}
 
-	if psi is Receiver {
-		text_range := if identifier := psi.identifier() {
-			identifier.text_range()
-		} else {
-			psi.text_range()
-		}
-		return new_stub_base(parent_stub, .receiver, psi.name(), text_range,
-			text: psi.get_text()
-		)
-	}
-
-	if psi is Signature {
-		return new_stub_base(parent_stub, .signature, '', psi.text_range(),
-			text: psi.get_text()
-		)
-	}
-
-	if psi is ParameterList {
-		return new_stub_base(parent_stub, .parameter_list, '', psi.text_range(),
-			text: psi.get_text()
-		)
-	}
-
-	if psi is ParameterDeclaration {
-		text_range := if identifier := psi.identifier() {
-			identifier.text_range()
-		} else {
-			psi.text_range()
-		}
-		return new_stub_base(parent_stub, .parameter_declaration, psi.name(), text_range,
-
-			text: psi.get_text()
-		)
-	}
-
-	if psi is TypeReferenceExpression {
-		return new_stub_base(parent_stub, .type_reference_expression, psi.name(), psi.text_range(),
-
-			text: psi.get_text()
-		)
-	}
-
 	if psi is StructDeclaration {
 		text_range := if identifier := psi.identifier() {
 			identifier.text_range()
@@ -268,82 +256,48 @@ pub fn (s &StubbedElementType) create_stub(psi PsiElement, parent_stub &StubElem
 			psi.name()
 		}
 		return new_stub_base(parent_stub, .struct_declaration, name, text_range,
-			text: ''
 			comment: comment
 		)
+	}
+
+	if psi is Receiver {
+		return declaration_stub(*psi, parent_stub, .receiver, include_text: true)
+	}
+
+	if psi is Signature {
+		return text_based_stub(*psi, parent_stub, .signature)
+	}
+
+	if psi is ParameterList {
+		return text_based_stub(*psi, parent_stub, .parameter_list)
+	}
+
+	if psi is ParameterDeclaration {
+		return declaration_stub(*psi, parent_stub, .parameter_declaration)
 	}
 
 	if psi is EnumDeclaration {
-		text_range := if identifier := psi.identifier() {
-			identifier.text_range()
-		} else {
-			psi.text_range()
-		}
-		comment := psi.doc_comment()
-		return new_stub_base(parent_stub, .enum_declaration, psi.name(), text_range,
-			text: ''
-			comment: comment
-		)
+		return declaration_stub(*psi, parent_stub, .enum_declaration)
 	}
 
 	if psi is EnumFieldDeclaration {
-		text_range := if identifier := psi.identifier() {
-			identifier.text_range()
-		} else {
-			psi.text_range()
-		}
-		comment := psi.doc_comment()
-		return new_stub_base(parent_stub, .enum_field_definition, psi.name(), text_range,
-
-			text: psi.get_text()
-			comment: comment
-		)
+		return declaration_stub(*psi, parent_stub, .enum_field_definition)
 	}
 
 	if psi is FieldDeclaration {
-		text_range := if identifier := psi.identifier() {
-			identifier.text_range()
-		} else {
-			psi.text_range()
-		}
-		comment := psi.doc_comment()
-		return new_stub_base(parent_stub, .field_declaration, psi.name(), text_range,
-
-			text: psi.get_text()
-			comment: comment
-		)
-	}
-
-	if psi is StructFieldScope {
-		return new_stub_base(parent_stub, .struct_field_scope, '', psi.text_range(),
-			text: psi.get_text()
-		)
+		return declaration_stub(*psi, parent_stub, .field_declaration)
 	}
 
 	if psi is ConstantDefinition {
-		text_range := if identifier := psi.identifier() {
-			identifier.text_range()
-		} else {
-			psi.text_range()
-		}
-		comment := psi.doc_comment()
-		return new_stub_base(parent_stub, .constant_declaration, psi.name(), text_range,
-
-			comment: comment
-		)
+		return declaration_stub(*psi, parent_stub, .constant_declaration)
 	}
 
 	if psi is TypeAliasDeclaration {
-		text_range := if identifier := psi.identifier() {
-			identifier.text_range()
-		} else {
-			psi.text_range()
-		}
-		comment := psi.doc_comment()
-		return new_stub_base(parent_stub, .type_alias_declaration, psi.name(), text_range,
+		return declaration_stub(*psi, parent_stub, .type_alias_declaration)
+	}
 
-			comment: comment
-		)
+	if psi is StructFieldScope {
+		return text_based_stub(*psi, parent_stub, .struct_field_scope)
 	}
 
 	if psi is Attributes {
@@ -351,24 +305,68 @@ pub fn (s &StubbedElementType) create_stub(psi PsiElement, parent_stub &StubElem
 	}
 
 	if psi is Attribute {
-		return new_stub_base(parent_stub, .attribute, '', psi.text_range())
+		return text_based_stub(*psi, parent_stub, .attribute)
 	}
 
 	if psi is AttributeExpression {
-		return new_stub_base(parent_stub, .attribute_expression, '', psi.text_range())
+		return text_based_stub(*psi, parent_stub, .attribute_expression)
 	}
 
 	if psi is ValueAttribute {
-		return new_stub_base(parent_stub, .value_attribute, '', psi.text_range(),
-			text: psi.get_text()
-		)
+		return text_based_stub(*psi, parent_stub, .value_attribute)
 	}
 
-	if psi is PlainType {
-		return new_stub_base(parent_stub, .plain_type, '', psi.text_range(),
-			text: psi.get_text()
-		)
+	if node_is_type(psi) {
+		stub_type := node_type_to_stub_type(psi.node.type_name)
+		return text_based_stub(psi, parent_stub, stub_type)
 	}
 
 	return none
+}
+
+[params]
+struct StubParams {
+	include_text bool
+}
+
+[inline]
+pub fn declaration_stub(psi PsiNamedElement, parent_stub &StubElement, stub_type StubType, params StubParams) ?&StubBase {
+	text_range := if identifier := psi.identifier() {
+		identifier.text_range()
+	} else {
+		(psi as PsiElement).text_range()
+	}
+	return new_stub_base(parent_stub, stub_type, psi.name(), text_range,
+		comment: if psi is PsiDocCommentOwner { psi.doc_comment() } else { '' }
+		text: if params.include_text { (psi as PsiElement).get_text() } else { '' }
+	)
+}
+
+[inline]
+pub fn text_based_stub(psi PsiElement, parent_stub &StubElement, stub_type StubType) ?&StubBase {
+	return new_stub_base(parent_stub, stub_type, '', psi.text_range(),
+		text: psi.get_text()
+	)
+}
+
+[inline]
+pub fn node_is_type(psi PsiElement) bool {
+	return psi.node.type_name in [
+		.plain_type,
+		.type_reference_expression,
+		.qualified_type,
+		.pointer_type,
+		.wrong_pointer_type,
+		.array_type,
+		.fixed_array_type,
+		.function_type,
+		.generic_type,
+		.map_type,
+		.channel_type,
+		.shared_type,
+		.thread_type,
+		.multi_return_type,
+		.option_type,
+		.result_type,
+	]
 }
