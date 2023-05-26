@@ -13,6 +13,7 @@ pub enum TestState {
 
 pub struct Test {
 mut:
+	fixture  &Fixture
 	name     string
 	state    TestState
 	message  string
@@ -27,6 +28,27 @@ pub fn (mut t Test) fail(msg string) {
 pub fn (mut t Test) assert_eq[T](left T, right T) {
 	if left != right {
 		t.fail('expected ${left}, but got ${right}')
+	}
+}
+
+pub fn (mut t Test) assert_definition_name(location lsp.LocationLink, name string) {
+	link_text := t.fixture.text_at_range(location.target_selection_range)
+	if link_text != name {
+		t.fail('expected definition "${name}", but got "${link_text}"')
+	}
+}
+
+pub fn (mut t Test) assert_no_definition(locations []lsp.LocationLink) ! {
+	if locations.len != 0 {
+		t.fail('expected no definition, but got ${locations.len}')
+		return error('expected no definition, but got ${locations.len}')
+	}
+}
+
+pub fn (mut t Test) assert_has_definition(locations []lsp.LocationLink) ! {
+	if locations.len == 0 {
+		t.fail('no definition found')
+		return error('no definition found')
 	}
 }
 

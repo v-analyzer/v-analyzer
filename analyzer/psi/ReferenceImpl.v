@@ -185,6 +185,14 @@ pub fn (r &SubResolver) walk_up(element PsiElement, mut processor PsiScopeProces
 			}
 		}
 
+		if mut run is IfExpression {
+			if def := run.var_definition() {
+				if !processor.execute(def) {
+					return false
+				}
+			}
+		}
+
 		if mut run is Block {
 			if !run.process_declarations(mut processor) {
 				return false

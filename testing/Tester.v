@@ -28,6 +28,7 @@ pub fn (mut t Tester) stats() {
 	mut passed := 0
 	mut failed := 0
 	mut skipped := 0
+	mut duration := 0
 
 	for test in t.tests {
 		test.print()
@@ -39,9 +40,16 @@ pub fn (mut t Tester) stats() {
 		} else {
 			passed += 1
 		}
+
+		duration += test.duration
 	}
 
 	println('\nPassed: ${passed}, Failed: ${failed}, Skipped: ${skipped}')
+	println('Duration: ${time.Duration(duration)}')
+
+	if failed > 0 {
+		exit(1)
+	}
 }
 
 pub fn (mut t Tester) test(name string, test_func fn (mut test Test, mut fixture Fixture) !) {
@@ -49,6 +57,7 @@ pub fn (mut t Tester) test(name string, test_func fn (mut test Test, mut fixture
 	mut fixture := t.create_or_reuse_fixture()
 
 	mut test := &Test{
+		fixture: fixture
 		name: name
 	}
 	t.tests << test
@@ -62,6 +71,7 @@ pub fn (mut t Tester) type_test(name string, filepath string) {
 	mut fixture := t.create_or_reuse_fixture()
 
 	mut test := &Test{
+		fixture: fixture
 		name: name
 	}
 	t.tests << test
