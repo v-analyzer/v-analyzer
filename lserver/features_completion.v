@@ -3,109 +3,8 @@ module lserver
 import lsp
 import analyzer.psi
 import analyzer.parser
-
-struct CompletionProcessor {
-	file       &psi.PsiFileImpl
-	module_fqn string
-mut:
-	result []lsp.CompletionItem
-}
-
-fn (mut c CompletionProcessor) execute(element psi.PsiElement) bool {
-	if element is psi.VarDefinition {
-		c.result << lsp.CompletionItem{
-			label: element.name()
-			kind: .variable
-			detail: element.get_type().readable_name()
-			documentation: ''
-			insert_text: element.name()
-			insert_text_format: .plain_text
-		}
-	}
-
-	if element is psi.FunctionOrMethodDeclaration {
-		is_public := element.is_public()
-		local_resolve := c.module_fqn == element.containing_file.module_fqn()
-
-		if !is_public && !local_resolve {
-			return true
-		}
-
-		receiver_text := if receiver := element.receiver() {
-			receiver.get_text() + ' '
-		} else {
-			''
-		}
-
-		signature := element.signature() or { return true }
-		c.result << lsp.CompletionItem{
-			label: element.name() + '()'
-			kind: if receiver_text == '' { .function } else { .method }
-			detail: 'fn ${receiver_text}${element.name()}${signature.get_text()}'
-			documentation: element.doc_comment()
-			insert_text: element.name() + '($1)$0'
-			insert_text_format: .snippet
-		}
-	}
-
-	if element is psi.StructDeclaration {
-		c.result << lsp.CompletionItem{
-			label: element.name()
-			kind: .struct_
-			detail: ''
-			documentation: element.doc_comment()
-			insert_text: element.name() + '{$1}$0'
-			insert_text_format: .snippet
-		}
-	}
-
-	if element is psi.ConstantDefinition {
-		c.result << lsp.CompletionItem{
-			label: element.name()
-			kind: .constant
-			detail: element.get_type().readable_name()
-			documentation: element.doc_comment()
-			insert_text: element.name()
-			insert_text_format: .plain_text
-		}
-	}
-
-	if element is psi.FieldDeclaration {
-		c.result << lsp.CompletionItem{
-			label: element.name()
-			kind: .field
-			detail: element.get_type().readable_name()
-			documentation: ''
-			insert_text: element.name()
-			insert_text_format: .plain_text
-		}
-	}
-
-	if element is psi.InterfaceMethodDeclaration {
-		signature := element.signature() or { return true }
-		c.result << lsp.CompletionItem{
-			label: element.name() + '()'
-			kind: .method
-			detail: 'fn ${element.name()}${signature.get_text()}'
-			documentation: element.doc_comment()
-			insert_text: element.name() + '($1)$0'
-			insert_text_format: .snippet
-		}
-	}
-
-	if element is psi.EnumFieldDeclaration {
-		c.result << lsp.CompletionItem{
-			label: element.name()
-			kind: .enum_member
-			detail: ''
-			documentation: ''
-			insert_text: element.name()
-			insert_text_format: .plain_text
-		}
-	}
-
-	return true
-}
+import lserver.completion
+import lserver.completion.providers
 
 pub fn (mut ls LanguageServer) completion(params lsp.CompletionParams, mut wr ResponseWriter) ![]lsp.CompletionItem {
 	uri := params.text_document.uri.normalize()
@@ -127,40 +26,43 @@ pub fn (mut ls LanguageServer) completion(params lsp.CompletionParams, mut wr Re
 		return []
 	}
 
-	mut processor := CompletionProcessor{
+	ctx := completion.CompletionContext{
+		element: element
+		position: params.position
+		offset: offset
+		trigger_kind: params.context.trigger_kind
+	}
+
+	mut result_set := &completion.CompletionResultSet{}
+
+	mut processor := &providers.ReferenceCompletionProcessor{
 		file: file.psi_file
 		module_fqn: file.psi_file.module_fqn()
 	}
 
-	if parent := element.parent() {
-		if parent is psi.TypeReferenceExpression {
-			sub := psi.SubResolver{
-				containing_file: parent.containing_file
-				element: parent
-				for_types: false
-			}
+	mut completion_providers := []completion.CompletionProvider{}
+	completion_providers << providers.ReferenceCompletionProvider{
+		processor: processor
+	}
+	completion_providers << providers.ModulesImportProvider{}
+	completion_providers << providers.ReturnCompletionProvider{}
+	completion_providers << providers.CompileTimeConstantCompletionProvider{}
+	completion_providers << providers.InitsCompletionProvider{}
 
-			sub.process_resolve_variants(mut processor)
+	for mut provider in completion_providers {
+		if !provider.is_available(element) {
+			continue
 		}
-		if parent is psi.ReferenceExpression {
-			sub := psi.SubResolver{
-				containing_file: parent.containing_file
-				element: parent
-				for_types: false
-			}
-
-			sub.process_resolve_variants(mut processor)
-		}
+		provider.add_completion(ctx, mut result_set)
 	}
 
-	// block := element.parent_of_type_or_self(.block) or { return [] }
-	// if block is psi.Block {
-	// 	block.process_declarations(mut processor)
-	// }
+	for el in processor.elements() {
+		result_set.add_element(el)
+	}
 
 	unsafe { res.tree.free() }
 
-	return processor.result
+	return result_set.elements()
 }
 
 fn insert_to_string(str string, offset u32, insert string) string {

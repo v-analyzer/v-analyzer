@@ -912,21 +912,6 @@
     }
   },
   {
-    "type": "compile_time_identifier",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "identifier",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "compile_time_if_expression",
     "named": true,
     "fields": {
@@ -3086,10 +3071,6 @@
       "required": false,
       "types": [
         {
-          "type": "compile_time_identifier",
-          "named": true
-        },
-        {
           "type": "identifier",
           "named": true
         }
@@ -3238,10 +3219,6 @@
         "required": true,
         "types": [
           {
-            "type": "compile_time_identifier",
-            "named": true
-          },
-          {
             "type": "compile_time_selector_expression",
             "named": true
           },
@@ -3257,10 +3234,6 @@
         "types": [
           {
             "type": "_expression",
-            "named": true
-          },
-          {
-            "type": "compile_time_identifier",
             "named": true
           }
         ]

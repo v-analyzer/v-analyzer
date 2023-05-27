@@ -25,7 +25,7 @@ fn (n &ImportSpec) name() string {
 	return n.import_name()
 }
 
-fn (n &ImportSpec) qualified_name() string {
+pub fn (n &ImportSpec) qualified_name() string {
 	path := n.path() or { return '' }
 	return path.get_text()
 }
@@ -65,4 +65,13 @@ pub fn (n ImportSpec) alias_name() string {
 	}
 
 	return ''
+}
+
+pub fn (n ImportSpec) resolve_directory() string {
+	fqn := n.qualified_name()
+	if fqn == '' {
+		return ''
+	}
+
+	return stubs_index.get_module_root(fqn)
 }

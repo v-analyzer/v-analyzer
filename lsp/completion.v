@@ -50,20 +50,59 @@ pub enum InsertTextFormat {
 	snippet = 2
 }
 
+pub struct CompletionItemLabelDetails {
+pub:
+	// An optional string which is rendered less prominently directly after
+	// {@link CompletionItem.label label}, without any spacing. Should be
+	// used for function signatures or type annotations.
+	detail string [omitempty]
+
+	// An optional string which is rendered less prominently after
+	// {@link CompletionItemLabelDetails.detail}. Should be used for fully qualified
+	// names or file path.
+	description string
+}
+
 pub struct CompletionItem {
 pub mut:
+	// The label of this completion item.
+	//
+	// The label property is also by default the text that
+	// is inserted when selecting this completion.
+	//
+	// If label details are provided the label itself should
+	// be an unqualified name of the completion item.
 	label string
-	kind  CompletionItemKind
-	// TODO: comment the unnecessary fields for now to avoid any errors
+	// Additional details for the label
+	label_details CompletionItemLabelDetails [json: 'labelDetails']
+	// The kind of this completion item. Based of the kind
+	// an icon is chosen by the editor. The standardized set
+	// of available values is defined in `CompletionItemKind`.
+	kind CompletionItemKind
+	// A human-readable string with additional information
+	// about this item, like type or symbol information.
 	detail string
-	// documentation string | MarkupContent
+	// A human-readable string that represents a doc-comment.
 	documentation string
-	// deprecated    bool
-	// preselect bool
-	// sort_text string [json:sortText]
-	// filter_text string [json:filterText]
-	insert_text        string           [json: insertText]
-	insert_text_format InsertTextFormat [json: insertTextFormat] = .plain_text
+	// A string that should be inserted into a document when selecting
+	// this completion. When omitted the label is used as the insert text
+	// for this item.
+	//
+	// The `insertText` is subject to interpretation by the client side.
+	// Some tools might not take the string literally. For example
+	// VS Code when code complete is requested in this example
+	// `con<cursor position>` and a completion item with an `insertText` of
+	// `console` is provided it will only insert `sole`. Therefore it is
+	// recommended to use `textEdit` instead since it avoids additional client
+	// side interpretation.
+	insert_text string [json: 'insertText']
+	// The format of the insert text. The format applies to both the
+	// `insertText` property and the `newText` property of a provided
+	// `textEdit`. If omitted defaults to `InsertTextFormat.PlainText`.
+	//
+	// Please note that the insertTextFormat doesn't apply to
+	// `additionalTextEdits`.
+	insert_text_format InsertTextFormat [json: 'insertTextFormat'] = .plain_text
 	// text_edit TextEdit [json:textEdit]
 	// additional_text_edits []TextEdit [json:additionalTextEdits]
 	// commit_characters []string [json:commitCharacters]

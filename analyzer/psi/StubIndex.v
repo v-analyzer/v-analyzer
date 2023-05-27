@@ -1,6 +1,8 @@
 [translated]
 module psi
 
+import os
+
 __global stubs_index = StubIndex{}
 
 pub struct StubIndex {
@@ -128,4 +130,23 @@ pub fn (s &StubIndex) get_module_qualified_name(file string) string {
 		return sink.stub_list.module_name
 	}
 	return ''
+}
+
+pub fn (s &StubIndex) get_module_root(name string) string {
+	for sink in s.sinks {
+		if sink.stub_list.module_name != name {
+			continue
+		}
+
+		return os.dir(sink.stub_list.path)
+	}
+	return ''
+}
+
+pub fn get_all_modules() []string {
+	mut modules := map[string]bool{}
+	for sink in stubs_index.sinks {
+		modules[sink.stub_list.module_name] = true
+	}
+	return modules.keys()
 }

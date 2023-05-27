@@ -2,6 +2,7 @@ module documentation
 
 import analyzer.psi
 import strings
+import os
 
 pub struct Provider {
 mut:
@@ -83,11 +84,31 @@ pub fn (mut p Provider) documentation(element psi.PsiElement) ?string {
 }
 
 fn (mut p Provider) import_spec_documentation(element psi.ImportSpec) ? {
+	module_fqn := element.qualified_name()
+
 	p.sb.write_string('```v\n')
-	p.sb.write_string('import ')
-	p.sb.write_string(element.get_text())
+	p.sb.write_string('module ${module_fqn}')
 	p.sb.write_string('\n')
 	p.sb.write_string('```')
+
+	dir := element.resolve_directory()
+	readme_path := os.join_path(dir, 'README.md')
+	if os.exists(readme_path) {
+		p.write_separator()
+		mut content := os.read_file(readme_path) or { return }
+		mut lines := content.split_into_lines()
+		if lines.len > 0 && lines.first().contains('Description') {
+			lines = lines[1..]
+			content = lines.join('\n')
+		}
+		content = content.replace('# ', '### ')
+		p.sb.write_string(content)
+	}
+
+	p.write_separator()
+
+	p.sb.write_string('---\n')
+	p.sb.write_string('${dir}\n')
 }
 
 fn (mut p Provider) module_documentation(element psi.ModuleClause) ? {
@@ -357,6 +378,22 @@ pub fn (mut p Provider) find_documentation_element(element psi.PsiElement) ?psi.
 
 		if parent is psi.PsiNamedElement {
 			return parent as psi.PsiElement
+		}
+
+		if parent is psi.ImportName {
+			if import_spec := parent.parent_nth(2) {
+				if import_spec is psi.ImportSpec {
+					return import_spec
+				}
+			}
+		}
+
+		if parent is psi.ImportAlias {
+			if import_spec := parent.parent() {
+				if import_spec is psi.ImportSpec {
+					return import_spec
+				}
+			}
 		}
 	}
 

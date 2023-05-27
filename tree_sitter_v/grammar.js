@@ -532,7 +532,7 @@ module.exports = grammar({
 
     capture: ($) => seq(optional($.mutability_modifiers), $.reference_expression),
 
-    reference_expression: ($) => prec.left(choice($.identifier, $.compile_time_identifier)),
+    reference_expression: ($) => prec.left($.identifier),
     type_reference_expression: ($) => prec.left($.identifier),
 
     unary_expression: ($) => prec(PREC.unary, seq(
@@ -573,8 +573,6 @@ module.exports = grammar({
       field('operand', $._expression),
       ')',
     ),
-
-    compile_time_identifier: ($) => comp_time($.identifier),
 
     compile_time_selector_expression: ($) =>
       comp_time(seq('(', $.selector_expression, ')')),
@@ -646,16 +644,12 @@ module.exports = grammar({
       seq('[', repeat1(seq($._expression, optional(','))), ']'),
 
     selector_expression: ($) => prec(PREC.primary, seq(
-      field('operand', choice(
-        $._expression,
-        $.compile_time_identifier,
-      )),
+      field('operand', $._expression),
       '.',
       field(
         'field',
         choice(
           $.reference_expression,
-          $.compile_time_identifier,
           $.compile_time_selector_expression,
         ),
       ))),
@@ -881,6 +875,7 @@ module.exports = grammar({
       token(
         seq(
           optional('@'),
+          optional('$'),
           choice(unicode_letter, '_'),
           repeat(choice(letter, unicode_digit)),
         ),

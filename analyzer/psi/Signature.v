@@ -6,7 +6,7 @@ pub struct Signature {
 	PsiElementImpl
 }
 
-fn (s &Signature) get_type() types.Type {
+pub fn (s &Signature) get_type() types.Type {
 	return TypeInferer{}.infer_type(s)
 }
 

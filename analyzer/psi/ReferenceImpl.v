@@ -188,6 +188,13 @@ pub fn (r &SubResolver) process_unqualified_resolve(mut processor PsiScopeProces
 		}
 	}
 
+	stubs_elements := stubs_index.get_all_declarations_from_module('stubs')
+	for element in stubs_elements {
+		if !processor.execute(element) {
+			return false
+		}
+	}
+
 	module_name := stubs_index.get_module_qualified_name(r.containing_file.path)
 
 	element := r.element()

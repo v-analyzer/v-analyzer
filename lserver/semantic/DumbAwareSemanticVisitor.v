@@ -64,6 +64,20 @@ fn (_ DumbAwareSemanticVisitor) highlight_node(node psi.AstNode, root psi.PsiEle
 				}
 			}
 		}
+		if text == 'chan' {
+			if parent := node.parent() {
+				if parent.type_name == .channel_type {
+					result << element_to_semantic(node, .keyword)
+				}
+			}
+		}
+		if text == 'thread' {
+			if parent := node.parent() {
+				if parent.type_name == .thread_type {
+					result << element_to_semantic(node, .keyword)
+				}
+			}
+		}
 	} else if node.type_name == .enum_declaration {
 		identifier := node.child_by_field_name('name') or { return }
 		result << element_to_semantic(identifier, .enum_)
@@ -87,5 +101,13 @@ fn (_ DumbAwareSemanticVisitor) highlight_node(node psi.AstNode, root psi.PsiEle
 		if !isnil(def) {
 			result << element_to_semantic(node, .variable)
 		}
+
+		first_char := node.first_char(root.containing_file.source_text)
+		if first_char == `@` || first_char == `$` {
+			result << element_to_semantic(node, .property) // not a best variant...
+		}
+	} else if node.type_name == .const_definition {
+		name := node.child_by_field_name('name') or { return }
+		result << element_to_semantic(name, .property) // not a best variant...
 	}
 }
