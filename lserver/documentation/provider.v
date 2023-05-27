@@ -24,6 +24,16 @@ pub fn (mut p Provider) documentation(element psi.PsiElement) ?string {
 		return p.sb.str()
 	}
 
+	if element is psi.InterfaceDeclaration {
+		p.interface_documentation(element)?
+		return p.sb.str()
+	}
+
+	if element is psi.InterfaceMethodDeclaration {
+		p.interface_method_declaration_documentation(element)?
+		return p.sb.str()
+	}
+
 	if element is psi.EnumDeclaration {
 		p.enum_documentation(element)?
 		return p.sb.str()
@@ -118,6 +128,42 @@ fn (mut p Provider) struct_documentation(element psi.StructDeclaration) ? {
 	}
 	p.sb.write_string('struct ')
 	p.sb.write_string(element.name())
+	p.sb.write_string('\n')
+	p.sb.write_string('```')
+	p.write_separator()
+	p.sb.write_string(element.doc_comment())
+}
+
+fn (mut p Provider) interface_documentation(element psi.InterfaceDeclaration) ? {
+	p.write_module_name(element.containing_file)
+	p.sb.write_string('```v\n')
+	if modifiers := element.visibility_modifiers() {
+		p.write_visibility_modifiers(modifiers)
+		p.sb.write_string(' ')
+	}
+	p.sb.write_string('interface ')
+	p.sb.write_string(element.name())
+	p.sb.write_string('\n')
+	p.sb.write_string('```')
+	p.write_separator()
+	p.sb.write_string(element.doc_comment())
+}
+
+fn (mut p Provider) interface_method_declaration_documentation(element psi.InterfaceMethodDeclaration) ? {
+	p.write_module_name(element.containing_file)
+	signature := element.signature()?
+	p.sb.write_string('```v\n')
+	p.sb.write_string('pub fn ')
+
+	if owner := element.owner() {
+		if owner is psi.PsiNamedElement {
+			p.sb.write_string(owner.name())
+			p.sb.write_string('.')
+		}
+	}
+
+	p.sb.write_string(element.name())
+	p.write_signature(signature)
 	p.sb.write_string('\n')
 	p.sb.write_string('```')
 	p.write_separator()
@@ -297,4 +343,22 @@ fn (mut p Provider) write_attributes(element psi.PsiElement) {
 		p.sb.write_string(attr.get_text())
 		p.sb.write_string('\n')
 	}
+}
+
+pub fn (mut p Provider) find_documentation_element(element psi.PsiElement) ?psi.PsiElement {
+	if element is psi.Identifier {
+		parent := element.parent()?
+		if parent is psi.ReferenceExpressionBase {
+			return parent.resolve() or {
+				println('cannot resolve reference ' + parent.name())
+				return element
+			}
+		}
+
+		if parent is psi.PsiNamedElement {
+			return parent as psi.PsiElement
+		}
+	}
+
+	return element
 }

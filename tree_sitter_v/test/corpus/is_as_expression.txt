@@ -83,6 +83,29 @@ if mut run !is Block {
             (argument_list)))))))
 
 ================================================================================
+Is expression with selector expression (TODO)
+================================================================================
+if element is psi.StructDeclaration {
+    return
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (if_expression
+      (selector_expression
+        (is_expression
+          (reference_expression
+            (identifier))
+          (plain_type
+            (type_reference_expression
+              (identifier))))
+        (reference_expression
+          (identifier)))
+      (block
+        (return_statement)))))
+
+================================================================================
 Is and as expressions
 ================================================================================
 

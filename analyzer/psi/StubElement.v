@@ -15,5 +15,11 @@ pub interface StubElement {
 	prev_sibling() ?&StubElement
 	parent_of_type(typ StubType) ?StubElement
 	get_psi() ?PsiElement
-	is_valid() bool
+}
+
+pub fn is_valid_stub(s StubElement) bool {
+	if s is StubBase {
+		return !isnil(s) && !isnil(s.stub_list)
+	}
+	return !isnil(s)
 }

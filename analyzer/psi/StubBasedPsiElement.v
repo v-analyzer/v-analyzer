@@ -9,6 +9,7 @@ pub enum StubIndexKey as u8 {
 	functions
 	methods
 	structs
+	interfaces
 	constants
 	type_aliases
 	enums

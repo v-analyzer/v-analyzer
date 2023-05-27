@@ -49,6 +49,7 @@ pub interface PsiElement {
 	// Если узел является последним дочерним узлом, возвращается none.
 	next_sibling() ?PsiElement
 	prev_sibling() ?PsiElement
+	prev_sibling_or_stub() ?PsiElement
 	// find_child_by_type возвращает первый дочерний узел с указанным типом.
 	// Если такой узел не найден, возвращается none.
 	find_child_by_type(typ v.NodeType) ?PsiElement

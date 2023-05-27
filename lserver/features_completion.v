@@ -30,8 +30,8 @@ fn (mut c CompletionProcessor) execute(element psi.PsiElement) bool {
 
 		signature := element.signature() or { return true }
 		c.result << lsp.CompletionItem{
-			label: element.name()
-			kind: .function
+			label: element.name() + '()'
+			kind: if receiver_text == '' { .function } else { .method }
 			detail: 'fn ${receiver_text}${element.name()}${signature.get_text()}'
 			documentation: element.doc_comment()
 			insert_text: element.name() + '($1)$0'
@@ -69,6 +69,18 @@ fn (mut c CompletionProcessor) execute(element psi.PsiElement) bool {
 			documentation: ''
 			insert_text: element.name()
 			insert_text_format: .plain_text
+		}
+	}
+
+	if element is psi.InterfaceMethodDeclaration {
+		signature := element.signature() or { return true }
+		c.result << lsp.CompletionItem{
+			label: element.name() + '()'
+			kind: .method
+			detail: 'fn ${element.name()}${signature.get_text()}'
+			documentation: element.doc_comment()
+			insert_text: element.name() + '($1)$0'
+			insert_text_format: .snippet
 		}
 	}
 

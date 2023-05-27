@@ -12,6 +12,8 @@ pub enum StubType as u8 {
 	parameter_list
 	parameter_declaration
 	struct_declaration
+	interface_declaration
+	interface_method_declaration
 	enum_declaration
 	field_declaration
 	struct_field_scope
@@ -58,6 +60,8 @@ pub fn node_type_to_stub_type(typ tree_sitter_v.NodeType) StubType {
 		.parameter_list { .parameter_list }
 		.parameter_declaration { .parameter_declaration }
 		.struct_declaration { .struct_declaration }
+		.interface_declaration { .interface_declaration }
+		.interface_method_definition { .interface_method_declaration }
 		.struct_field_declaration { .field_declaration }
 		.const_definition { .constant_declaration }
 		.type_declaration { .type_alias_declaration }
@@ -122,6 +126,10 @@ pub fn (_ &StubbedElementType) index_stub(stub &StubBase, mut sink IndexSink) {
 		sink.occurrence(StubIndexKey.structs, name)
 	}
 
+	if stub.stub_type == .interface_declaration {
+		sink.occurrence(StubIndexKey.interfaces, stub.name())
+	}
+
 	if stub.stub_type == .enum_declaration {
 		sink.occurrence(StubIndexKey.enums, stub.name())
 	}
@@ -171,6 +179,16 @@ pub fn (_ &StubbedElementType) create_psi(stub &StubBase) ?PsiElement {
 	}
 	if stub_type == .struct_declaration {
 		return StructDeclaration{
+			PsiElementImpl: base_psi
+		}
+	}
+	if stub_type == .interface_declaration {
+		return InterfaceDeclaration{
+			PsiElementImpl: base_psi
+		}
+	}
+	if stub_type == .interface_method_declaration {
+		return InterfaceMethodDeclaration{
 			PsiElementImpl: base_psi
 		}
 	}
@@ -316,6 +334,14 @@ pub fn (s &StubbedElementType) create_stub(psi PsiElement, parent_stub &StubElem
 		return new_stub_base(parent_stub, .struct_declaration, name, text_range,
 			comment: comment
 		)
+	}
+
+	if psi is InterfaceDeclaration {
+		return declaration_stub(*psi, parent_stub, .interface_declaration)
+	}
+
+	if psi is InterfaceMethodDeclaration {
+		return declaration_stub(*psi, parent_stub, .interface_method_declaration)
 	}
 
 	if psi is Receiver {

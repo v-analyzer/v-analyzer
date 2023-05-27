@@ -58,7 +58,7 @@ pub fn (f &EnumFieldDeclaration) owner() ?PsiElement {
 	if f.stub_id != non_stubbed_element {
 		if stub := f.stubs_list.get_stub(f.stub_id) {
 			if parent := stub.parent_of_type(.enum_declaration) {
-				if parent.is_valid() {
+				if is_valid_stub(parent) {
 					return parent.get_psi()
 				}
 			}

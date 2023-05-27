@@ -108,6 +108,18 @@ pub fn create_element(node AstNode, containing_file &PsiFileImpl) PsiElement {
 		}
 	}
 
+	if node.type_name == .interface_declaration {
+		return InterfaceDeclaration{
+			PsiElementImpl: base_node
+		}
+	}
+
+	if node.type_name == .interface_method_definition {
+		return InterfaceMethodDeclaration{
+			PsiElementImpl: base_node
+		}
+	}
+
 	if node.type_name == .enum_declaration {
 		return EnumDeclaration{
 			PsiElementImpl: base_node

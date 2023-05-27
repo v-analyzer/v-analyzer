@@ -2,19 +2,19 @@ module psi
 
 import analyzer.psi.types
 
-pub struct StructDeclaration {
+pub struct InterfaceDeclaration {
 	PsiElementImpl
 }
 
-pub fn (s &StructDeclaration) module_name() string {
+pub fn (s &InterfaceDeclaration) module_name() string {
 	return stubs_index.get_module_qualified_name(s.containing_file.path)
 }
 
-pub fn (s &StructDeclaration) get_type() types.Type {
-	return types.new_struct_type(s.name(), s.module_name())
+pub fn (s &InterfaceDeclaration) get_type() types.Type {
+	return types.new_interface_type(s.name(), s.module_name())
 }
 
-pub fn (s &StructDeclaration) attributes() []PsiElement {
+pub fn (s &InterfaceDeclaration) attributes() []PsiElement {
 	attributes := s.find_child_by_type(.attributes) or { return [] }
 	if attributes is Attributes {
 		return attributes.attributes()
@@ -23,7 +23,7 @@ pub fn (s &StructDeclaration) attributes() []PsiElement {
 	return []
 }
 
-pub fn (s StructDeclaration) identifier() ?PsiElement {
+pub fn (s InterfaceDeclaration) identifier() ?PsiElement {
 	if identifier := s.find_child_by_type(.identifier) {
 		return identifier
 	}
@@ -35,7 +35,7 @@ pub fn (s StructDeclaration) identifier() ?PsiElement {
 	return none
 }
 
-pub fn (s StructDeclaration) identifier_text_range() TextRange {
+pub fn (s InterfaceDeclaration) identifier_text_range() TextRange {
 	if s.stub_id != non_stubbed_element {
 		if stub := s.stubs_list.get_stub(s.stub_id) {
 			return stub.text_range
@@ -46,7 +46,7 @@ pub fn (s StructDeclaration) identifier_text_range() TextRange {
 	return identifier.text_range()
 }
 
-pub fn (s StructDeclaration) name() string {
+pub fn (s InterfaceDeclaration) name() string {
 	if s.stub_id != non_stubbed_element {
 		if stub := s.stubs_list.get_stub(s.stub_id) {
 			return stub.name
@@ -57,7 +57,7 @@ pub fn (s StructDeclaration) name() string {
 	return identifier.get_text()
 }
 
-pub fn (s StructDeclaration) doc_comment() string {
+pub fn (s InterfaceDeclaration) doc_comment() string {
 	if s.stub_id != non_stubbed_element {
 		if stub := s.stubs_list.get_stub(s.stub_id) {
 			return stub.comment
@@ -66,7 +66,7 @@ pub fn (s StructDeclaration) doc_comment() string {
 	return extract_doc_comment(s)
 }
 
-pub fn (s StructDeclaration) visibility_modifiers() ?&VisibilityModifiers {
+pub fn (s InterfaceDeclaration) visibility_modifiers() ?&VisibilityModifiers {
 	modifiers := s.find_child_by_type_or_stub(.visibility_modifiers)?
 	if modifiers is VisibilityModifiers {
 		return modifiers
@@ -74,22 +74,12 @@ pub fn (s StructDeclaration) visibility_modifiers() ?&VisibilityModifiers {
 	return none
 }
 
-pub fn (s StructDeclaration) fields() []PsiElement {
+pub fn (s InterfaceDeclaration) fields() []PsiElement {
 	return s.find_children_by_type_or_stub(.struct_field_declaration)
 }
 
-pub fn (s &StructDeclaration) is_attribute() bool {
-	attrs := s.attributes()
-	if attrs.len == 0 {
-		return false
-	}
-	attr := attrs.first()
-	if attr is Attribute {
-		keys := attr.keys()
-		return 'attribute' in keys
-	}
-
-	return false
+pub fn (s InterfaceDeclaration) methods() []PsiElement {
+	return s.find_children_by_type_or_stub(.interface_method_definition)
 }
 
-pub fn (_ StructDeclaration) stub() {}
+pub fn (_ InterfaceDeclaration) stub() {}

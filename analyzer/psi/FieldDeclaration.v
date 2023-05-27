@@ -51,36 +51,13 @@ pub fn (f &FieldDeclaration) get_type() types.Type {
 }
 
 pub fn (f &FieldDeclaration) owner() ?PsiElement {
-	if f.stub_id != non_stubbed_element {
-		if stub := f.stubs_list.get_stub(f.stub_id) {
-			if parent := stub.parent_of_type(.struct_declaration) {
-				if parent.is_valid() {
-					return parent.get_psi()
-				}
-			}
-			return none
-		}
+	if struct_ := f.parent_of_type(.struct_declaration) {
+		return struct_
 	}
-
-	return f.parent_of_type(.struct_declaration)
+	return f.parent_of_type(.interface_declaration)
 }
 
 pub fn (f &FieldDeclaration) scope() ?&StructFieldScope {
-	if f.stub_id != non_stubbed_element {
-		if stub := f.stubs_list.get_stub(f.stub_id) {
-			if parent := stub.sibling_of_type_backward(.struct_field_scope) {
-				if parent.is_valid() {
-					element := parent.get_psi()?
-					if element is StructFieldScope {
-						return element
-					}
-					return none
-				}
-			}
-			return none
-		}
-	}
-
 	element := f.sibling_of_type_backward(.struct_field_scope)?
 	if element is StructFieldScope {
 		return element

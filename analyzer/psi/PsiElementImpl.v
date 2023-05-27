@@ -102,7 +102,7 @@ pub fn (n PsiElementImpl) parent() ?PsiElement {
 	if n.stub_id != non_stubbed_element {
 		if stub := n.stubs_list.get_stub(n.stub_id) {
 			parent := stub.parent_stub() or { return none }
-			if parent.is_valid() {
+			if is_valid_stub(parent) {
 				return parent.get_psi()
 			}
 			return none
@@ -122,7 +122,7 @@ pub fn (n PsiElementImpl) parent_of_type(typ v.NodeType) ?PsiElement {
 	mut res := PsiElement(n)
 	for {
 		res = res.parent() or { return none }
-		if res.node.type_name == typ {
+		if res.element_type() == typ {
 			return res
 		}
 	}
@@ -133,8 +133,8 @@ pub fn (n PsiElementImpl) parent_of_type(typ v.NodeType) ?PsiElement {
 pub fn (n PsiElementImpl) sibling_of_type_backward(typ v.NodeType) ?PsiElement {
 	mut res := PsiElement(n)
 	for {
-		res = res.prev_sibling() or { return none }
-		if res.node.type_name == typ {
+		res = res.prev_sibling_or_stub() or { return none }
+		if res.element_type() == typ {
 			return res
 		}
 	}
@@ -147,13 +147,13 @@ pub fn (n PsiElementImpl) parent_of_type_or_self(typ v.NodeType) ?PsiElement {
 		return create_element(n.node, n.containing_file)
 	}
 	mut parent := n.parent() or { return none }
-	if parent.node.type_name == typ {
+	if parent.element_type() == typ {
 		return parent
 	}
 
 	for {
 		parent = parent.parent() or { return none }
-		if parent.node.type_name == typ {
+		if parent.element_type() == typ {
 			return parent
 		}
 	}
@@ -224,6 +224,20 @@ pub fn (n PsiElementImpl) next_sibling() ?PsiElement {
 pub fn (n PsiElementImpl) prev_sibling() ?PsiElement {
 	sibling := n.node.prev_sibling() or { return none }
 	return create_element(sibling, n.containing_file)
+}
+
+pub fn (n PsiElementImpl) prev_sibling_or_stub() ?PsiElement {
+	if n.stub_id != non_stubbed_element {
+		if stub := n.stubs_list.get_stub(n.stub_id) {
+			sibling := stub.prev_sibling() or { return none }
+			if is_valid_stub(sibling) {
+				return sibling.get_psi()
+			}
+			return none
+		}
+	}
+
+	return n.prev_sibling()
 }
 
 pub fn (n PsiElementImpl) find_child_by_type(typ v.NodeType) ?PsiElement {

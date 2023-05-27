@@ -114,6 +114,24 @@ pub fn (r &SubResolver) process_type(typ types.Type, mut processor PsiScopeProce
 			}
 		}
 	}
+
+	if typ is types.InterfaceType {
+		if interface_ := r.find_interface(stubs_index, typ.qualified_name()) {
+			for field in interface_.fields() {
+				if !processor.execute(field) {
+					return false
+				}
+			}
+
+			methods := interface_.methods()
+			for method in methods {
+				if !processor.execute(method) {
+					return false
+				}
+			}
+		}
+	}
+
 	if typ is types.EnumType {
 		if enum_ := r.find_enum(stubs_index, typ.qualified_name()) {
 			for field in enum_.fields() {
@@ -188,6 +206,12 @@ pub fn (r &SubResolver) process_unqualified_resolve(mut processor PsiScopeProces
 
 		if struct_ := r.find_struct(stubs_index, fqn) {
 			if !processor.execute(struct_) {
+				return false
+			}
+		}
+
+		if interface_ := r.find_interface(stubs_index, fqn) {
+			if !processor.execute(interface_) {
 				return false
 			}
 		}
@@ -352,6 +376,17 @@ pub fn (_ &SubResolver) find_struct(stubs_index StubIndex, name string) ?&Struct
 	if found.len != 0 {
 		first := found.first()
 		if first is StructDeclaration {
+			return first
+		}
+	}
+	return none
+}
+
+pub fn (_ &SubResolver) find_interface(stubs_index StubIndex, name string) ?&InterfaceDeclaration {
+	found := stubs_index.get_elements_by_name(.interfaces, name)
+	if found.len != 0 {
+		first := found.first()
+		if first is InterfaceDeclaration {
 			return first
 		}
 	}

@@ -109,6 +109,11 @@ pub fn (t &TypeInferer) infer_type(elem ?PsiElement) types.Type {
 		return t.process_signature(signature)
 	}
 
+	if element is SelectorExpression {
+		resolved := element.resolve() or { return types.unknown_type }
+		return t.infer_type(resolved)
+	}
+
 	if element is ReferenceExpression {
 		resolved := element.resolve() or { return types.unknown_type }
 		return t.infer_type(resolved)
@@ -495,6 +500,10 @@ fn (t &TypeInferer) infer_type_reference_type(element TypeReferenceExpression) t
 		return resolved.get_type()
 	}
 
+	if resolved is InterfaceDeclaration {
+		return resolved.get_type()
+	}
+
 	if resolved is EnumDeclaration {
 		return resolved.get_type()
 	}
@@ -512,16 +521,6 @@ fn (t &TypeInferer) infer_type_reference_type(element TypeReferenceExpression) t
 }
 
 fn (t &TypeInferer) infer_from_plain_type(element PsiElement) types.Type {
-	if element.stub_id != non_stubbed_element {
-		stub := element.stub_list().get_stub(element.stub_id) or { return types.unknown_type }
-		type_stub := stub.get_child_by_type(.plain_type) or { return types.unknown_type }
-		psi := type_stub.get_psi() or { return types.unknown_type }
-		return t.convert_type(psi)
-	}
-
-	if plain_typ := element.find_child_by_type(.plain_type) {
-		return t.convert_type(plain_typ)
-	}
-
-	return types.unknown_type
+	plain_typ := element.find_child_by_type_or_stub(.plain_type) or { return types.unknown_type }
+	return t.convert_type(plain_typ)
 }

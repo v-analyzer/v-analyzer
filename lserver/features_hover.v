@@ -1,10 +1,11 @@
 module lserver
 
 import lsp
-import analyzer.psi
 import lserver.documentation
+import time
 
 pub fn (mut ls LanguageServer) hover(params lsp.HoverParams, mut wr ResponseWriter) ?lsp.Hover {
+	watch := time.new_stopwatch(auto_start: true)
 	uri := params.text_document.uri.normalize()
 	file := ls.get_file(uri) or { return none }
 
@@ -17,9 +18,9 @@ pub fn (mut ls LanguageServer) hover(params lsp.HoverParams, mut wr ResponseWrit
 	}
 
 	mut provider := documentation.Provider{}
-	doc_element := ls.find_documentation_element(element)?
-
+	doc_element := provider.find_documentation_element(element)?
 	if content := provider.documentation(doc_element) {
+		println('Time to hover: ' + watch.elapsed().str())
 		return lsp.Hover{
 			contents: lsp.hover_markdown_string(content)
 			range: lsp.Range{}
@@ -43,22 +44,4 @@ pub fn (mut ls LanguageServer) hover(params lsp.HoverParams, mut wr ResponseWrit
 			element.node.type_name.str())
 		range: text_range_to_lsp_range(element.text_range())
 	}
-}
-
-fn (mut ls LanguageServer) find_documentation_element(element psi.PsiElement) ?psi.PsiElement {
-	if element is psi.Identifier {
-		parent := element.parent()?
-		if parent is psi.ReferenceExpressionBase {
-			return parent.resolve() or {
-				println('cannot resolve reference ' + parent.name())
-				return element
-			}
-		}
-
-		if parent is psi.PsiNamedElement {
-			return parent as psi.PsiElement
-		}
-	}
-
-	return element
 }
