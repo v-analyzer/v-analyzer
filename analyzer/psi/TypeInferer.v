@@ -464,27 +464,48 @@ pub fn (t &TypeInferer) convert_type(plain_type ?PsiElement) types.Type {
 		return types.unknown_type
 	}
 
+	if child is QualifiedType {
+		if ref := child.right() {
+			if ref is TypeReferenceExpression {
+				return t.infer_type_reference_type(ref)
+			}
+		}
+	}
+
 	if child is TypeReferenceExpression {
-		text := child.get_text()
-		if types.is_primitive_type(text) {
-			// fast path
-			return types.new_primitive_type(text)
-		}
+		return t.infer_type_reference_type(child)
+	}
 
-		if text == 'string' {
-			return types.string_type
-		}
+	return types.unknown_type
+}
 
-		resolved := child.resolve() or { return types.unknown_type }
-		if resolved is StructDeclaration {
-			return types.new_struct_type(resolved.name())
-		}
+fn (t &TypeInferer) infer_type_reference_type(element TypeReferenceExpression) types.Type {
+	text := element.get_text()
+	if types.is_primitive_type(text) {
+		// fast path
+		return types.new_primitive_type(text)
+	}
 
-		if resolved is EnumDeclaration {
-			return types.new_enum_type(resolved.name())
-		}
+	if text == 'string' {
+		return types.string_type
+	}
 
-		return types.unknown_type
+	resolved := element.resolve() or { return types.unknown_type }
+	if resolved is StructDeclaration {
+		return resolved.get_type()
+	}
+
+	if resolved is EnumDeclaration {
+		return resolved.get_type()
+	}
+
+	if resolved is TypeAliasDeclaration {
+		types_list := resolved.types()
+		if types_list.len == 0 {
+			return types.unknown_type
+		}
+		first := types_list.first()
+		return types.new_alias_type(resolved.name(), resolved.module_name(), t.convert_type(first))
 	}
 
 	return types.unknown_type

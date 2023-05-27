@@ -23,7 +23,7 @@ pub fn extract_doc_comment(el PsiElement) string {
 	comments.reverse_in_place()
 
 	return comments
-		.map(it.get_text().trim_string_left('//')
+		.map(it.get_text().trim_string_left('//').trim_string_left(' ')
 			.trim_right(' \t'))
 		.map(process_line)
 		.join('\n')

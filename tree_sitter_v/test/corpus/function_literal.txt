@@ -256,21 +256,27 @@ fn test_with_value() {
     (import_declaration
       (import_spec
         (import_path
-          (identifier)
-          (identifier)
-          (identifier))))
+          (import_name
+            (identifier))
+          (import_name
+            (identifier))
+          (import_name
+            (identifier)))))
     (import_declaration
       (import_spec
         (import_path
-          (identifier))))
+          (import_name
+            (identifier)))))
     (import_declaration
       (import_spec
         (import_path
-          (identifier))))
+          (import_name
+            (identifier)))))
     (import_declaration
       (import_spec
         (import_path
-          (identifier)))))
+          (import_name
+            (identifier))))))
   (struct_declaration
     (visibility_modifiers)
     (identifier)

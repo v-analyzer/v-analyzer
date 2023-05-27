@@ -76,6 +76,18 @@ pub fn (r &SubResolver) process_qualifier_expression(qualifier PsiElement, mut p
 		}
 	}
 
+	if qualifier is ReferenceExpressionBase {
+		resolved := qualifier.resolve() or { return true }
+		if resolved is ImportSpec {
+			elements := stubs_index.get_all_elements_from_module(resolved.qualified_name())
+			for element in elements {
+				if !processor.execute(element) {
+					return false
+				}
+			}
+		}
+	}
+
 	return true
 }
 
@@ -87,7 +99,7 @@ pub fn (_ &SubResolver) calc_methods(typ types.Type) []PsiElement {
 
 pub fn (r &SubResolver) process_type(typ types.Type, mut processor PsiScopeProcessor) bool {
 	if typ is types.StructType {
-		if struct_ := r.find_struct(stubs_index, typ.name()) {
+		if struct_ := r.find_struct(stubs_index, typ.qualified_name()) {
 			for field in struct_.fields() {
 				if !processor.execute(field) {
 					return false
@@ -103,7 +115,7 @@ pub fn (r &SubResolver) process_type(typ types.Type, mut processor PsiScopeProce
 		}
 	}
 	if typ is types.EnumType {
-		if enum_ := r.find_enum(stubs_index, typ.name()) {
+		if enum_ := r.find_enum(stubs_index, typ.qualified_name()) {
 			for field in enum_.fields() {
 				if !processor.execute(field) {
 					return false
@@ -111,9 +123,22 @@ pub fn (r &SubResolver) process_type(typ types.Type, mut processor PsiScopeProce
 			}
 		}
 	}
+
 	if typ is types.PointerType {
 		return r.process_type(typ.inner, mut processor)
 	}
+
+	if typ is types.AliasType {
+		methods := r.calc_methods(typ)
+		for method in methods {
+			if !processor.execute(method) {
+				return false
+			}
+		}
+
+		return r.process_type(typ.inner, mut processor)
+	}
+
 	return true
 }
 
@@ -134,36 +159,46 @@ pub fn (r &SubResolver) process_unqualified_resolve(mut processor PsiScopeProces
 	if !r.process_file(mut processor) {
 		return false
 	}
+	if !r.process_imported_modules(mut processor) {
+		return false
+	}
 
 	element := r.element()
 	if element is PsiNamedElement {
+		module_name := stubs_index.get_module_qualified_name(r.containing_file.path)
+		fqn := if module_name.len != 0 {
+			module_name + '.' + element.name()
+		} else {
+			element.name()
+		}
+
 		if !r.for_types {
-			if func := r.find_function(stubs_index, element.name()) {
+			if func := r.find_function(stubs_index, fqn) {
 				if !processor.execute(func) {
 					return false
 				}
 			}
 
-			if constant := r.find_constant(stubs_index, element.name()) {
+			if constant := r.find_constant(stubs_index, fqn) {
 				if !processor.execute(constant) {
 					return false
 				}
 			}
 		}
 
-		if struct_ := r.find_struct(stubs_index, element.name()) {
+		if struct_ := r.find_struct(stubs_index, fqn) {
 			if !processor.execute(struct_) {
 				return false
 			}
 		}
 
-		if enum_ := r.find_enum(stubs_index, element.name()) {
+		if enum_ := r.find_enum(stubs_index, fqn) {
 			if !processor.execute(enum_) {
 				return false
 			}
 		}
 
-		if struct_ := r.find_type_alias(stubs_index, element.name()) {
+		if struct_ := r.find_type_alias(stubs_index, fqn) {
 			if !processor.execute(struct_) {
 				return false
 			}
@@ -271,12 +306,23 @@ pub fn (r &SubResolver) process_file(mut processor PsiScopeProcessor) bool {
 	return r.containing_file.process_declarations(mut processor)
 }
 
+pub fn (r &SubResolver) process_imported_modules(mut processor PsiScopeProcessor) bool {
+	search_name := r.element().get_text()
+	import_spec := r.containing_file.resolve_import_spec(search_name) or { return true }
+
+	if !processor.execute(import_spec) {
+		return false
+	}
+
+	return true
+}
+
 pub fn (r &SubResolver) process_type_initializer_field(mut processor PsiScopeProcessor) bool {
 	init_expr := r.element().parent_of_type(.type_initializer) or { return true }
 	if init_expr is PsiTypedElement {
 		typ := types.unwrap_pointer_type(TypeInferer{}.infer_type(init_expr as PsiElement))
 		if typ is types.StructType {
-			if struct_ := r.find_struct(stubs_index, typ.name()) {
+			if struct_ := r.find_struct(stubs_index, typ.qualified_name()) {
 				fields := struct_.fields()
 				for field in fields {
 					if !processor.execute(field) {

@@ -64,7 +64,20 @@ pub fn (mut p Provider) documentation(element psi.PsiElement) ?string {
 		return p.sb.str()
 	}
 
+	if element is psi.ImportSpec {
+		p.import_spec_documentation(element)?
+		return p.sb.str()
+	}
+
 	return none
+}
+
+fn (mut p Provider) import_spec_documentation(element psi.ImportSpec) ? {
+	p.sb.write_string('```v\n')
+	p.sb.write_string('import ')
+	p.sb.write_string(element.get_text())
+	p.sb.write_string('\n')
+	p.sb.write_string('```')
 }
 
 fn (mut p Provider) module_documentation(element psi.ModuleClause) ? {
@@ -76,6 +89,7 @@ fn (mut p Provider) module_documentation(element psi.ModuleClause) ? {
 }
 
 fn (mut p Provider) function_documentation(element psi.FunctionOrMethodDeclaration) ? {
+	p.write_module_name(element.containing_file)
 	signature := element.signature()?
 	p.sb.write_string('```v\n')
 	if modifiers := element.visibility_modifiers() {
@@ -96,6 +110,7 @@ fn (mut p Provider) function_documentation(element psi.FunctionOrMethodDeclarati
 }
 
 fn (mut p Provider) struct_documentation(element psi.StructDeclaration) ? {
+	p.write_module_name(element.containing_file)
 	p.sb.write_string('```v\n')
 	if modifiers := element.visibility_modifiers() {
 		p.write_visibility_modifiers(modifiers)
@@ -110,6 +125,7 @@ fn (mut p Provider) struct_documentation(element psi.StructDeclaration) ? {
 }
 
 fn (mut p Provider) enum_documentation(element psi.EnumDeclaration) ? {
+	p.write_module_name(element.containing_file)
 	p.sb.write_string('```v\n')
 	if modifiers := element.visibility_modifiers() {
 		p.write_visibility_modifiers(modifiers)
@@ -124,6 +140,7 @@ fn (mut p Provider) enum_documentation(element psi.EnumDeclaration) ? {
 }
 
 fn (mut p Provider) const_documentation(element psi.ConstantDefinition) ? {
+	p.write_module_name(element.containing_file)
 	p.sb.write_string('```v\n')
 	if modifiers := element.visibility_modifiers() {
 		p.write_visibility_modifiers(modifiers)
@@ -254,4 +271,30 @@ fn (mut p Provider) write_mutability_modifiers(modifiers psi.MutabilityModifiers
 
 fn (mut p Provider) write_visibility_modifiers(modifiers psi.VisibilityModifiers) {
 	p.sb.write_string(modifiers.get_text())
+}
+
+fn (mut p Provider) write_module_name(file &psi.PsiFileImpl) {
+	fqn := file.module_fqn()
+	name := if fqn.len == 0 {
+		file.module_name() or { '' }
+	} else {
+		fqn
+	}
+
+	p.sb.write_string('<small>Module: **')
+	p.sb.write_string(name)
+	p.sb.write_string('**</small>\n')
+}
+
+fn (mut p Provider) write_attributes(element psi.PsiElement) {
+	attributes := element.find_child_by_type_or_stub(.attributes) or { return }
+	attribute_list := attributes.find_children_by_type_or_stub(.attribute)
+	if attribute_list.len == 0 {
+		return
+	}
+
+	for attr in attribute_list {
+		p.sb.write_string(attr.get_text())
+		p.sb.write_string('\n')
+	}
 }

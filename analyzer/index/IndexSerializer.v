@@ -51,6 +51,7 @@ pub fn (mut s IndexSerializer) serialize_stub_index_sink_map(sink_map map[string
 }
 
 pub fn (mut s IndexSerializer) serialize_stub_list(list psi.StubList) {
+	s.s.write_string(list.module_name)
 	s.s.write_int(list.child_map.len)
 	for id, children in list.child_map {
 		s.s.write_int(id)

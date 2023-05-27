@@ -1,7 +1,17 @@
 module psi
 
+import analyzer.psi.types
+
 pub struct StructDeclaration {
 	PsiElementImpl
+}
+
+pub fn (s &StructDeclaration) module_name() string {
+	return stubs_index.get_module_qualified_name(s.containing_file.path)
+}
+
+pub fn (s &StructDeclaration) get_type() types.Type {
+	return types.new_struct_type(s.name(), s.module_name())
 }
 
 pub fn (s &StructDeclaration) attributes() []PsiElement {

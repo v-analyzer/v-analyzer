@@ -67,26 +67,33 @@ import foo.bar.baz as fbb { Foo, Bar }
     (import_declaration
       (import_spec
         (import_path
-          (identifier))))
+          (import_name
+            (identifier)))))
     (import_declaration
       (import_spec
         (import_path
-          (identifier))
+          (import_name
+            (identifier)))
         (import_alias
           (identifier))))
     (import_declaration
       (import_spec
         (import_path
-          (identifier)
-          (identifier))
+          (import_name
+            (identifier))
+          (import_name
+            (identifier)))
         (import_alias
           (identifier))))
     (import_declaration
       (import_spec
         (import_path
-          (identifier)
-          (identifier)
-          (identifier))
+          (import_name
+            (identifier))
+          (import_name
+            (identifier))
+          (import_name
+            (identifier)))
         (import_alias
           (identifier))
         (selective_import_list

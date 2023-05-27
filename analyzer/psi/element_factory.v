@@ -31,12 +31,6 @@ pub fn create_element(node AstNode, containing_file &PsiFileImpl) PsiElement {
 		}
 	}
 
-	// if node.type_name == .type_selector_expression {
-	// 	return TypeSelectorExpression{
-	// 		PsiElementImpl: base_node
-	// 	}
-	// }
-
 	if node.type_name == .for_statement {
 		return ForStatement{
 			PsiElementImpl: base_node
@@ -297,6 +291,48 @@ pub fn create_element(node AstNode, containing_file &PsiFileImpl) PsiElement {
 
 	if node.type_name == .match_expression {
 		return MatchExpression{
+			PsiElementImpl: base_node
+		}
+	}
+
+	if node.type_name == .import_spec {
+		return ImportSpec{
+			PsiElementImpl: base_node
+		}
+	}
+
+	if node.type_name == .qualified_type {
+		return QualifiedType{
+			PsiElementImpl: base_node
+		}
+	}
+
+	if node.type_name == .import_list {
+		return ImportList{
+			PsiElementImpl: base_node
+		}
+	}
+
+	if node.type_name == .import_declaration {
+		return ImportDeclaration{
+			PsiElementImpl: base_node
+		}
+	}
+
+	if node.type_name == .import_path {
+		return ImportPath{
+			PsiElementImpl: base_node
+		}
+	}
+
+	if node.type_name == .import_name {
+		return ImportName{
+			PsiElementImpl: base_node
+		}
+	}
+
+	if node.type_name == .import_alias {
+		return ImportAlias{
 			PsiElementImpl: base_node
 		}
 	}

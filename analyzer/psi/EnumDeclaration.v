@@ -7,7 +7,8 @@ pub struct EnumDeclaration {
 }
 
 pub fn (e &EnumDeclaration) get_type() types.Type {
-	return types.new_enum_type(e.name())
+	module_fqn := stubs_index.get_module_qualified_name(e.containing_file.path)
+	return types.new_enum_type(e.name(), module_fqn)
 }
 
 pub fn (e EnumDeclaration) identifier() ?PsiElement {

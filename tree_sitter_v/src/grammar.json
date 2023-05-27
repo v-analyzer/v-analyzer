@@ -220,7 +220,7 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "_import_name"
+          "name": "import_name"
         },
         {
           "type": "REPEAT",
@@ -233,14 +233,14 @@
               },
               {
                 "type": "SYMBOL",
-                "name": "_import_name"
+                "name": "import_name"
               }
             ]
           }
         }
       ]
     },
-    "_import_name": {
+    "import_name": {
       "type": "SYMBOL",
       "name": "identifier"
     },
@@ -704,12 +704,12 @@
           "name": "types",
           "content": {
             "type": "SYMBOL",
-            "name": "type_union_list"
+            "name": "_type_union_list"
           }
         }
       ]
     },
-    "type_union_list": {
+    "_type_union_list": {
       "type": "SEQ",
       "members": [
         {

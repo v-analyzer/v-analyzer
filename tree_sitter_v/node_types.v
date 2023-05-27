@@ -82,6 +82,7 @@ pub enum NodeType {
 	import_alias
 	import_declaration
 	import_list
+	import_name
 	import_path
 	import_spec
 	in_expression
@@ -163,7 +164,6 @@ pub enum NodeType {
 	type_only_parameter_list
 	type_parameters
 	type_reference_expression
-	type_union_list
 	unary_expression
 	unsafe_expression
 	value_attribute
@@ -385,6 +385,7 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'import_alias' { NodeType.import_alias }
 		'import_declaration' { NodeType.import_declaration }
 		'import_list' { NodeType.import_list }
+		'import_name' { NodeType.import_name }
 		'import_path' { NodeType.import_path }
 		'import_spec' { NodeType.import_spec }
 		'in_expression' { NodeType.in_expression }
@@ -466,7 +467,6 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'type_only_parameter_list' { NodeType.type_only_parameter_list }
 		'type_parameters' { NodeType.type_parameters }
 		'type_reference_expression' { NodeType.type_reference_expression }
-		'type_union_list' { NodeType.type_union_list }
 		'unary_expression' { NodeType.unary_expression }
 		'unsafe_expression' { NodeType.unsafe_expression }
 		'value_attribute' { NodeType.value_attribute }

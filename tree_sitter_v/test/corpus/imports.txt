@@ -10,7 +10,8 @@ import foo
     (import_declaration
       (import_spec
         (import_path
-          (identifier))))))
+          (import_name
+            (identifier)))))))
 
 ================================================================================
 Simple import list
@@ -26,15 +27,18 @@ import baz
     (import_declaration
       (import_spec
         (import_path
-          (identifier))))
+          (import_name
+            (identifier)))))
     (import_declaration
       (import_spec
         (import_path
-          (identifier))))
+          (import_name
+            (identifier)))))
     (import_declaration
       (import_spec
         (import_path
-          (identifier))))))
+          (import_name
+            (identifier)))))))
 
 ================================================================================
 Import with alias
@@ -48,7 +52,8 @@ import foo as bar
     (import_declaration
       (import_spec
         (import_path
-          (identifier))
+          (import_name
+            (identifier)))
         (import_alias
           (identifier))))))
 
@@ -65,13 +70,15 @@ import baz as qux
     (import_declaration
       (import_spec
         (import_path
-          (identifier))
+          (import_name
+            (identifier)))
         (import_alias
           (identifier))))
     (import_declaration
       (import_spec
         (import_path
-          (identifier))
+          (import_name
+            (identifier)))
         (import_alias
           (identifier))))))
 
@@ -89,17 +96,20 @@ import qux as quux
     (import_declaration
       (import_spec
         (import_path
-          (identifier))
+          (import_name
+            (identifier)))
         (import_alias
           (identifier))))
     (import_declaration
       (import_spec
         (import_path
-          (identifier))))
+          (import_name
+            (identifier)))))
     (import_declaration
       (import_spec
         (import_path
-          (identifier))
+          (import_name
+            (identifier)))
         (import_alias
           (identifier))))))
 
@@ -115,9 +125,12 @@ import foo.bar.baz
     (import_declaration
       (import_spec
         (import_path
-          (identifier)
-          (identifier)
-          (identifier))))))
+          (import_name
+            (identifier))
+          (import_name
+            (identifier))
+          (import_name
+            (identifier)))))))
 
 ================================================================================
 Import with fqn and alias
@@ -131,9 +144,12 @@ import foo.bar.baz as qux
     (import_declaration
       (import_spec
         (import_path
-          (identifier)
-          (identifier)
-          (identifier))
+          (import_name
+            (identifier))
+          (import_name
+            (identifier))
+          (import_name
+            (identifier)))
         (import_alias
           (identifier))))))
 
@@ -149,7 +165,8 @@ import foo { bar }
     (import_declaration
       (import_spec
         (import_path
-          (identifier))
+          (import_name
+            (identifier)))
         (selective_import_list
           (reference_expression
             (identifier)))))))
@@ -166,7 +183,8 @@ import foo { Bar, baz, qux }
     (import_declaration
       (import_spec
         (import_path
-          (identifier))
+          (import_name
+            (identifier)))
         (selective_import_list
           (reference_expression
             (identifier))
@@ -187,7 +205,8 @@ import foo { bar, baz, qux, }
     (import_declaration
       (import_spec
         (import_path
-          (identifier))
+          (import_name
+            (identifier)))
         (selective_import_list
           (reference_expression
             (identifier))
@@ -212,7 +231,8 @@ import foo {
     (import_declaration
       (import_spec
         (import_path
-          (identifier))
+          (import_name
+            (identifier)))
         (selective_import_list
           (reference_expression
             (identifier))
@@ -237,7 +257,8 @@ import foo {
     (import_declaration
       (import_spec
         (import_path
-          (identifier))
+          (import_name
+            (identifier)))
         (selective_import_list
           (reference_expression
             (identifier))
@@ -258,7 +279,8 @@ import foo as bar { bar, Baz, qux, }
     (import_declaration
       (import_spec
         (import_path
-          (identifier))
+          (import_name
+            (identifier)))
         (import_alias
           (identifier))
         (selective_import_list

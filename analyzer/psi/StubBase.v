@@ -112,11 +112,26 @@ pub fn (s &StubBase) element_type() v.NodeType {
 		.result_type { .result_type }
 		//
 		.visibility_modifiers { .visibility_modifiers }
+		.import_list { .import_list }
+		.import_declaration { .import_declaration }
+		.import_spec { .import_spec }
+		.import_path { .import_path }
+		.import_name { .import_name }
+		.import_alias { .import_alias }
+		.module_clause { .module_clause }
 	}
 }
 
 pub fn (s StubBase) name() string {
 	return s.name
+}
+
+pub fn (s &StubBase) qualified_name() string {
+	module_name := s.stub_list.module_name
+	if module_name == '' {
+		return s.name
+	}
+	return module_name + '.' + s.name
 }
 
 pub fn (s StubBase) text() string {

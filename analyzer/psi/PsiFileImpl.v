@@ -4,12 +4,12 @@ import time
 import tree_sitter_v as v
 import analyzer.parser
 import v_tree_sitter.tree_sitter
-import analyzer.structures.ropes
 
 [heap]
 pub struct PsiFileImpl {
 pub:
-	path string
+	path      string
+	stub_list &StubList
 pub mut:
 	tree        &tree_sitter.Tree[v.NodeType] = unsafe { nil }
 	source_text string
@@ -26,11 +26,12 @@ pub fn new_psi_file(path string, tree &tree_sitter.Tree[v.NodeType], source_text
 	return file
 }
 
-pub fn new_stub_psi_file(path string) &PsiFileImpl {
+pub fn new_stub_psi_file(path string, stub_list &StubList) &PsiFileImpl {
 	return &PsiFileImpl{
 		path: path
 		tree: unsafe { nil }
 		source_text: unsafe { nil }
+		stub_list: stub_list
 	}
 }
 
@@ -58,6 +59,10 @@ pub fn (p &PsiFileImpl) text() string {
 }
 
 pub fn (p &PsiFileImpl) root() PsiElement {
+	if p.is_stub_based() {
+		return p.stub_list.root().get_psi() or { return p.root }
+	}
+
 	return p.root
 }
 
@@ -79,11 +84,43 @@ pub fn (p &PsiFileImpl) find_reference_at(offset u32) ?ReferenceExpressionBase {
 	return none
 }
 
+pub fn (p &PsiFileImpl) module_fqn() string {
+	return stubs_index.get_module_qualified_name(p.path)
+}
+
 pub fn (p &PsiFileImpl) module_name() ?string {
-	module_clause := p.root().find_child_by_type(.module_clause)?
+	module_clause := p.root().find_child_by_type_or_stub(.module_clause)?
 
 	if module_clause is ModuleClause {
 		return module_clause.name()
+	}
+
+	return none
+}
+
+pub fn (p &PsiFileImpl) get_imports() []ImportSpec {
+	import_list := p.root().find_child_by_type_or_stub(.import_list) or { return [] }
+	declarations := import_list.find_children_by_type_or_stub(.import_declaration)
+	mut import_specs := []ImportSpec{cap: declarations.len}
+	for declaration in declarations {
+		spec := declaration.find_child_by_type_or_stub(.import_spec) or { continue }
+		if spec is ImportSpec {
+			import_specs << spec
+		}
+	}
+	return import_specs
+}
+
+pub fn (p &PsiFileImpl) resolve_import_spec(name string) ?ImportSpec {
+	imports := p.get_imports()
+	if imports.len == 0 {
+		return none
+	}
+
+	for imp in imports {
+		if imp.import_name() == name {
+			return imp
+		}
 	}
 
 	return none

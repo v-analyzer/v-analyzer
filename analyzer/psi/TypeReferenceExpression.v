@@ -40,8 +40,8 @@ pub fn (r TypeReferenceExpression) name() string {
 pub fn (r TypeReferenceExpression) qualifier() ?PsiElement {
 	parent := r.parent() or { return none }
 
-	if parent is TypeSelectorExpression {
-		left := parent.left()
+	if parent is QualifiedType {
+		left := parent.left() or { return none }
 		if left.is_equal(r) {
 			return none
 		}

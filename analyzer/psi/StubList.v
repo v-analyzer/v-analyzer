@@ -6,9 +6,14 @@ module psi
 [heap]
 pub struct StubList {
 pub mut:
-	path      string
-	index_map map[StubId]&StubBase
-	child_map map[StubId][]int
+	module_name string
+	path        string
+	index_map   map[StubId]&StubBase
+	child_map   map[StubId][]int
+}
+
+fn (s StubList) root() &StubBase {
+	return s.index_map[0]
 }
 
 fn (mut s StubList) add_stub(mut stub StubBase, parent &StubElement) {

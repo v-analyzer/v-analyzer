@@ -41,6 +41,13 @@ pub enum StubType as u8 {
 	result_type
 	//
 	visibility_modifiers
+	import_list
+	import_declaration
+	import_spec
+	import_path
+	import_name
+	import_alias
+	module_clause
 }
 
 pub fn node_type_to_stub_type(typ tree_sitter_v.NodeType) StubType {
@@ -78,7 +85,15 @@ pub fn node_type_to_stub_type(typ tree_sitter_v.NodeType) StubType {
 		.multi_return_type { .multi_return_type }
 		.option_type { .option_type }
 		.result_type { .result_type }
+		// types end
 		.visibility_modifiers { .visibility_modifiers }
+		.import_list { .import_list }
+		.import_declaration { .import_declaration }
+		.import_spec { .import_spec }
+		.import_path { .import_path }
+		.import_name { .import_name }
+		.import_alias { .import_alias }
+		.module_clause { .module_clause }
 		else { .root }
 	}
 }
@@ -214,8 +229,43 @@ pub fn (_ &StubbedElementType) create_psi(stub &StubBase) ?PsiElement {
 			PsiElementImpl: base_psi
 		}
 	}
+	if stub_type == .qualified_type {
+		return QualifiedType{
+			PsiElementImpl: base_psi
+		}
+	}
 	if stub_type == .visibility_modifiers {
 		return VisibilityModifiers{
+			PsiElementImpl: base_psi
+		}
+	}
+	if stub_type == .import_list {
+		return ImportList{
+			PsiElementImpl: base_psi
+		}
+	}
+	if stub_type == .import_declaration {
+		return ImportDeclaration{
+			PsiElementImpl: base_psi
+		}
+	}
+	if stub_type == .import_spec {
+		return ImportSpec{
+			PsiElementImpl: base_psi
+		}
+	}
+	if stub_type == .import_path {
+		return ImportPath{
+			PsiElementImpl: base_psi
+		}
+	}
+	if stub_type == .import_alias {
+		return ImportAlias{
+			PsiElementImpl: base_psi
+		}
+	}
+	if stub_type == .module_clause {
+		return ModuleClause{
 			PsiElementImpl: base_psi
 		}
 	}
@@ -328,9 +378,28 @@ pub fn (s &StubbedElementType) create_stub(psi PsiElement, parent_stub &StubElem
 		return text_based_stub(*psi, parent_stub, .visibility_modifiers)
 	}
 
+	if psi is ModuleClause {
+		return declaration_stub(*psi, parent_stub, .module_clause)
+	}
+
 	if node_is_type(psi) {
 		stub_type := node_type_to_stub_type(psi.node.type_name)
 		return text_based_stub(psi, parent_stub, stub_type)
+	}
+
+	if psi is ImportSpec {
+		return declaration_stub(*psi, parent_stub, .import_spec, include_text: true)
+	}
+
+	if psi.node.type_name in [.import_list, .import_declaration, .import_path, .import_name,
+		.import_alias] {
+		stub_type := node_type_to_stub_type(psi.node.type_name)
+		return text_based_stub(psi, parent_stub, stub_type,
+			include_text: psi.node.type_name !in [
+				.import_list,
+				.import_declaration,
+			]
+		)
 	}
 
 	return none
@@ -354,10 +423,15 @@ pub fn declaration_stub(psi PsiNamedElement, parent_stub &StubElement, stub_type
 	)
 }
 
+[params]
+struct TestStubParams {
+	include_text bool = true
+}
+
 [inline]
-pub fn text_based_stub(psi PsiElement, parent_stub &StubElement, stub_type StubType) ?&StubBase {
+pub fn text_based_stub(psi PsiElement, parent_stub &StubElement, stub_type StubType, params TestStubParams) ?&StubBase {
 	return new_stub_base(parent_stub, stub_type, '', psi.text_range(),
-		text: psi.get_text()
+		text: if params.include_text { psi.get_text() } else { '' }
 	)
 }
 

@@ -148,7 +148,7 @@ pub fn (mut i IndexingRoot) index() BuiltIndexStatus {
 	return .from_scratch
 }
 
-pub fn (mut _ IndexingRoot) index_file(path string) !FileIndex {
+pub fn (mut r IndexingRoot) index_file(path string) !FileIndex {
 	last_modified := os.file_last_mod_unix(path)
 	content := os.read_file(path)!
 	res := parser.parse_code(content)
@@ -156,12 +156,17 @@ pub fn (mut _ IndexingRoot) index_file(path string) !FileIndex {
 	mut cache := FileIndex{
 		filepath: path
 		file_last_modified: last_modified
+		module_name: psi_file.module_name() or { '' }
+		module_fqn: r.module_qualified_name(psi_file)
 		sink: &psi.StubIndexSink{}
 	}
 	stub_tree := build_stub_tree(psi_file)
 
 	stub_type := psi.StubbedElementType{}
-	stub_list := stub_tree.root.stub_list
+	mut stub_list := stub_tree.root.stub_list
+	stub_list.module_name = cache.module_fqn
+	cache.sink.module_name = cache.module_fqn
+
 	stubs := stub_list.index_map.values()
 	for stub in stubs {
 		cache.sink.stub_id = stub.id
@@ -172,6 +177,49 @@ pub fn (mut _ IndexingRoot) index_file(path string) !FileIndex {
 
 	unsafe { res.tree.free() }
 	return cache
+}
+
+pub fn (mut r IndexingRoot) module_qualified_name(file &psi.PsiFileImpl) string {
+	module_name := file.module_name() or { '' }
+	if module_name == 'main' {
+		return module_name
+	}
+	if module_name == 'builtin' {
+		return ''
+	}
+
+	root_dirs := [r.root]
+
+	containing_dir := os.dir(file.path)
+
+	mut module_names := []string{}
+
+	mut dir := containing_dir
+	for dir != '' && dir !in root_dirs {
+		module_names << os.file_name(dir)
+		dir = os.dir(dir)
+	}
+
+	module_names.reverse_in_place()
+
+	if module_names.len == 0 {
+		return module_name
+	}
+
+	if module_names.first() == 'builtin' {
+		module_names = module_names[1..]
+	}
+
+	if module_names.len != 0 && module_names.last() == module_name {
+		module_names = module_names[..module_names.len - 1]
+	}
+
+	qualifier := module_names.join('.')
+	if qualifier == '' {
+		return module_name
+	}
+
+	return qualifier + '.' + module_name
 }
 
 pub fn (mut i IndexingRoot) spawn_indexing_workers(cache_chan chan FileIndex, file_chan chan string) {

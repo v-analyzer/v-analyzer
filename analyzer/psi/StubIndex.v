@@ -56,6 +56,20 @@ pub fn (s &StubIndex) get_all_elements_from_file(file string) []PsiElement {
 	return elements
 }
 
+pub fn (s &StubIndex) get_all_elements_from_module(name string) []PsiElement {
+	mut elements := []PsiElement{cap: s.sinks.len * 10}
+	for sink in s.sinks {
+		if sink.stub_list.module_name != name {
+			continue
+		}
+
+		$for key in StubIndexKey.values {
+			elements << s.get_all_elements_from_sink_by_key(key.value, sink)
+		}
+	}
+	return elements
+}
+
 pub fn (s &StubIndex) get_all_elements_from_file_by_key(key StubIndexKey, file string) []PsiElement {
 	mut elements := []PsiElement{}
 	for sink in s.sinks {
@@ -101,4 +115,15 @@ fn (_ &StubIndex) get_all_elements_from_sink_by_key(key StubIndexKey, sink StubI
 	}
 
 	return elements
+}
+
+pub fn (s &StubIndex) get_module_qualified_name(file string) string {
+	for sink in s.sinks {
+		if sink.stub_list.path != file {
+			continue
+		}
+
+		return sink.stub_list.module_name
+	}
+	return ''
 }

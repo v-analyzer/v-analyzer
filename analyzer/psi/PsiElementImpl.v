@@ -23,7 +23,7 @@ pub fn new_psi_node(id ID, containing_file &PsiFileImpl, node AstNode) PsiElemen
 fn new_psi_node_from_stub(id StubId, stubs_list &StubList) PsiElementImpl {
 	return PsiElementImpl{
 		node: AstNode{}
-		containing_file: new_stub_psi_file(stubs_list.path)
+		containing_file: new_stub_psi_file(stubs_list.path, stubs_list)
 		stub_id: id
 		stubs_list: stubs_list
 	}
@@ -56,13 +56,17 @@ pub fn (n PsiElementImpl) element_type() v.NodeType {
 pub fn (n PsiElementImpl) containing_file() &PsiFileImpl {
 	if n.stub_id != non_stubbed_element {
 		path := n.stubs_list.path
-		return new_stub_psi_file(path)
+		return new_stub_psi_file(path, n.stubs_list)
 	}
 
 	return n.containing_file
 }
 
 pub fn (n PsiElementImpl) is_equal(other PsiElement) bool {
+	if n.stub_id != non_stubbed_element {
+		return n.stub_id == other.stub_id
+	}
+
 	return n.get_text() == other.get_text()
 }
 

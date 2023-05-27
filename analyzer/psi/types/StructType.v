@@ -1,23 +1,12 @@
 module types
 
 pub struct StructType {
-	name string
+	BaseNamedType
 }
 
-pub fn new_struct_type(name string) &StructType {
+pub fn new_struct_type(name string, module_name string) &StructType {
 	return &StructType{
 		name: name
+		module_name: module_name
 	}
-}
-
-pub fn (s &StructType) name() string {
-	return s.name
-}
-
-pub fn (s &StructType) qualified_name() string {
-	return s.name
-}
-
-pub fn (s &StructType) readable_name() string {
-	return s.name
 }

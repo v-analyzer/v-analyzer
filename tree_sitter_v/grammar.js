@@ -148,10 +148,10 @@ module.exports = grammar({
     ),
 
     // foo.bar.baz
-    import_path: ($) => seq($._import_name, repeat(seq('.', $._import_name))),
+    import_path: ($) => seq($.import_name, repeat(seq('.', $.import_name))),
 
     // foo
-    _import_name: ($) => $.identifier,
+    import_name: ($) => $.identifier,
 
     // foo as bar
     //     ^^^^^^
@@ -216,11 +216,11 @@ module.exports = grammar({
       field('name', $.identifier),
       field('generic_parameters', optional($.generic_parameters)),
       '=',
-      field('types', $.type_union_list),
+      field('types', $._type_union_list),
     ),
 
     // int | string | Foo
-    type_union_list: ($) => seq($.plain_type, repeat(seq('|', $.plain_type))),
+    _type_union_list: ($) => seq($.plain_type, repeat(seq('|', $.plain_type))),
 
     function_declaration: ($) => prec.right(PREC.resolve,
       seq(

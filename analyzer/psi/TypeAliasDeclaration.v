@@ -4,6 +4,10 @@ pub struct TypeAliasDeclaration {
 	PsiElementImpl
 }
 
+pub fn (a &TypeAliasDeclaration) module_name() string {
+	return stubs_index.get_module_qualified_name(a.containing_file.path)
+}
+
 pub fn (a TypeAliasDeclaration) doc_comment() string {
 	if a.stub_id != non_stubbed_element {
 		if stub := a.stubs_list.get_stub(a.stub_id) {
@@ -11,6 +15,17 @@ pub fn (a TypeAliasDeclaration) doc_comment() string {
 		}
 	}
 	return extract_doc_comment(a)
+}
+
+pub fn (a &TypeAliasDeclaration) types() []PlainType {
+	types := a.find_children_by_type_or_stub(.plain_type)
+	mut result := []PlainType{cap: types.len}
+	for type_ in types {
+		if type_ is PlainType {
+			result << type_
+		}
+	}
+	return result
 }
 
 pub fn (a TypeAliasDeclaration) identifier() ?PsiElement {

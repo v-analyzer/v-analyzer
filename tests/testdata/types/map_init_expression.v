@@ -18,6 +18,6 @@ fn main() {
 	mp3 := {
 		0: Foo{}
 	}
-	expr_type(mp3, 'map[int]Foo')
-	expr_type(mp3[0], 'Foo')
+	expr_type(mp3, 'map[int]types.Foo')
+	expr_type(mp3[0], 'types.Foo')
 }
