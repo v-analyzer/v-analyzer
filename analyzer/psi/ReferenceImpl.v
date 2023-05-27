@@ -79,7 +79,7 @@ pub fn (r &SubResolver) process_qualifier_expression(qualifier PsiElement, mut p
 	if qualifier is ReferenceExpressionBase {
 		resolved := qualifier.resolve() or { return true }
 		if resolved is ImportSpec {
-			elements := stubs_index.get_all_elements_from_module(resolved.qualified_name())
+			elements := stubs_index.get_all_declarations_from_module(resolved.qualified_name())
 			for element in elements {
 				if !processor.execute(element) {
 					return false
@@ -181,9 +181,17 @@ pub fn (r &SubResolver) process_unqualified_resolve(mut processor PsiScopeProces
 		return false
 	}
 
+	builtin_elements := stubs_index.get_all_declarations_from_module('')
+	for element in builtin_elements {
+		if !processor.execute(element) {
+			return false
+		}
+	}
+
+	module_name := stubs_index.get_module_qualified_name(r.containing_file.path)
+
 	element := r.element()
 	if element is PsiNamedElement {
-		module_name := stubs_index.get_module_qualified_name(r.containing_file.path)
 		fqn := if module_name.len != 0 {
 			module_name + '.' + element.name()
 		} else {
@@ -226,6 +234,13 @@ pub fn (r &SubResolver) process_unqualified_resolve(mut processor PsiScopeProces
 			if !processor.execute(struct_) {
 				return false
 			}
+		}
+	}
+
+	current_module_elements := stubs_index.get_all_declarations_from_module(module_name)
+	for elem in current_module_elements {
+		if !processor.execute(elem) {
+			return false
 		}
 	}
 

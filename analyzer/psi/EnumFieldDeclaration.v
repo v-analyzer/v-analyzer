@@ -6,6 +6,10 @@ pub struct EnumFieldDeclaration {
 	PsiElementImpl
 }
 
+pub fn (_ &EnumFieldDeclaration) is_public() bool {
+	return true
+}
+
 pub fn (f &EnumFieldDeclaration) doc_comment() string {
 	if f.stub_id != non_stubbed_element {
 		if stub := f.stubs_list.get_stub(f.stub_id) {

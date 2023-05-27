@@ -4,7 +4,11 @@ pub struct ModuleClause {
 	PsiElementImpl
 }
 
-fn (n &ModuleClause) stub() {}
+fn (_ &ModuleClause) stub() {}
+
+pub fn (_ &ModuleClause) is_public() bool {
+	return true
+}
 
 fn (n &ModuleClause) identifier() ?PsiElement {
 	return n.find_child_by_type(.identifier)

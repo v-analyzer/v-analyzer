@@ -6,6 +6,11 @@ pub struct EnumDeclaration {
 	PsiElementImpl
 }
 
+pub fn (e &EnumDeclaration) is_public() bool {
+	modifiers := e.visibility_modifiers() or { return false }
+	return modifiers.is_public()
+}
+
 pub fn (e &EnumDeclaration) get_type() types.Type {
 	module_fqn := stubs_index.get_module_qualified_name(e.containing_file.path)
 	return types.new_enum_type(e.name(), module_fqn)

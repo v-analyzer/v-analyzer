@@ -6,6 +6,11 @@ pub struct ConstantDefinition {
 	PsiElementImpl
 }
 
+pub fn (c &ConstantDefinition) is_public() bool {
+	modifiers := c.visibility_modifiers() or { return false }
+	return modifiers.is_public()
+}
+
 pub fn (c &ConstantDefinition) get_type() types.Type {
 	expr := c.expression() or { return types.unknown_type }
 

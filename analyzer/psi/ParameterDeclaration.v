@@ -8,6 +8,10 @@ pub struct ParameterDeclaration {
 
 fn (p &ParameterDeclaration) stub() {}
 
+pub fn (_ &ParameterDeclaration) is_public() bool {
+	return true
+}
+
 pub fn (p &ParameterDeclaration) get_type() types.Type {
 	return TypeInferer{}.infer_type(p)
 }

@@ -5,6 +5,8 @@ import analyzer.psi
 import analyzer.parser
 
 struct CompletionProcessor {
+	file       &psi.PsiFileImpl
+	module_fqn string
 mut:
 	result []lsp.CompletionItem
 }
@@ -22,6 +24,13 @@ fn (mut c CompletionProcessor) execute(element psi.PsiElement) bool {
 	}
 
 	if element is psi.FunctionOrMethodDeclaration {
+		is_public := element.is_public()
+		local_resolve := c.module_fqn == element.containing_file.module_fqn()
+
+		if !is_public && !local_resolve {
+			return true
+		}
+
 		receiver_text := if receiver := element.receiver() {
 			receiver.get_text() + ' '
 		} else {
@@ -118,7 +127,10 @@ pub fn (mut ls LanguageServer) completion(params lsp.CompletionParams, mut wr Re
 		return []
 	}
 
-	mut processor := CompletionProcessor{}
+	mut processor := CompletionProcessor{
+		file: file.psi_file
+		module_fqn: file.psi_file.module_fqn()
+	}
 
 	if parent := element.parent() {
 		if parent is psi.TypeReferenceExpression {

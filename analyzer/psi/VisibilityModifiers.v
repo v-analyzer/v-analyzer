@@ -5,8 +5,7 @@ pub struct VisibilityModifiers {
 }
 
 pub fn (n VisibilityModifiers) is_public() bool {
-	children := n.children()
-	return children.any(it.get_text() == 'pub')
+	return n.get_text() == 'pub'
 }
 
 fn (n &VisibilityModifiers) stub() {}

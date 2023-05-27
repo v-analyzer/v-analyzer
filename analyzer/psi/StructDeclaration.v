@@ -6,6 +6,11 @@ pub struct StructDeclaration {
 	PsiElementImpl
 }
 
+pub fn (s &StructDeclaration) is_public() bool {
+	modifiers := s.visibility_modifiers() or { return false }
+	return modifiers.is_public()
+}
+
 pub fn (s &StructDeclaration) module_name() string {
 	return stubs_index.get_module_qualified_name(s.containing_file.path)
 }

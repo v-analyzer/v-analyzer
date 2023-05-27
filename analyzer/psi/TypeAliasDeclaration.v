@@ -4,6 +4,11 @@ pub struct TypeAliasDeclaration {
 	PsiElementImpl
 }
 
+pub fn (a &TypeAliasDeclaration) is_public() bool {
+	modifiers := a.visibility_modifiers() or { return false }
+	return modifiers.is_public()
+}
+
 pub fn (a &TypeAliasDeclaration) module_name() string {
 	return stubs_index.get_module_qualified_name(a.containing_file.path)
 }

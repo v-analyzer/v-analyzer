@@ -6,6 +6,10 @@ pub struct Receiver {
 	PsiElementImpl
 }
 
+pub fn (r &Receiver) is_public() bool {
+	return true
+}
+
 fn (r &Receiver) identifier_text_range() TextRange {
 	if r.stub_id != non_stubbed_element {
 		if stub := r.stubs_list.get_stub(r.stub_id) {

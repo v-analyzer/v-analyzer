@@ -6,6 +6,11 @@ pub struct FunctionOrMethodDeclaration {
 	PsiElementImpl
 }
 
+pub fn (f &FunctionOrMethodDeclaration) is_public() bool {
+	modifiers := f.visibility_modifiers() or { return false }
+	return modifiers.is_public()
+}
+
 fn (f &FunctionOrMethodDeclaration) get_type() types.Type {
 	signature := f.signature() or { return types.unknown_type }
 	return signature.get_type()

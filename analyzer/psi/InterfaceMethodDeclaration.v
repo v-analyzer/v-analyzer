@@ -4,6 +4,10 @@ pub struct InterfaceMethodDeclaration {
 	PsiElementImpl
 }
 
+pub fn (m InterfaceMethodDeclaration) is_public() bool {
+	return true
+}
+
 pub fn (m InterfaceMethodDeclaration) identifier() ?PsiElement {
 	return m.find_child_by_type(.identifier) or { return none }
 }

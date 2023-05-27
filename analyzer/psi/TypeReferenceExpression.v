@@ -11,6 +11,10 @@ fn (_ &TypeReferenceExpression) stub() {}
 // marker method for Expression
 fn (_ &TypeReferenceExpression) expr() {}
 
+pub fn (r TypeReferenceExpression) is_public() bool {
+	return true
+}
+
 pub fn (r TypeReferenceExpression) identifier() ?PsiElement {
 	return r.first_child()
 }

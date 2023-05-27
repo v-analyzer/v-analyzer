@@ -9,6 +9,10 @@ pub struct ReferenceExpression {
 // marker method for Expression
 fn (_ &ReferenceExpression) expr() {}
 
+pub fn (r &ReferenceExpression) is_public() bool {
+	return true
+}
+
 pub fn (r ReferenceExpression) identifier() ?PsiElement {
 	return r.first_child()
 }

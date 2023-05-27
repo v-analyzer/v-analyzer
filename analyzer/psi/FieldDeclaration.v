@@ -6,6 +6,11 @@ pub struct FieldDeclaration {
 	PsiElementImpl
 }
 
+pub fn (f &FieldDeclaration) is_public() bool {
+	_, is_pub := f.is_mutable_public()
+	return is_pub
+}
+
 pub fn (f &FieldDeclaration) doc_comment() string {
 	if f.stub_id != non_stubbed_element {
 		if stub := f.stubs_list.get_stub(f.stub_id) {

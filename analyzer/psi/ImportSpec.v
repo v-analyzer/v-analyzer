@@ -4,6 +4,10 @@ pub struct ImportSpec {
 	PsiElementImpl
 }
 
+pub fn (_ &ImportSpec) is_public() bool {
+	return true
+}
+
 fn (n &ImportSpec) identifier_text_range() TextRange {
 	identifier := n.identifier() or { return TextRange{} }
 	return identifier.text_range()

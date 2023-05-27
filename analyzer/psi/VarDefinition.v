@@ -8,6 +8,10 @@ pub struct VarDefinition {
 
 fn (_ &VarDefinition) expr() {}
 
+pub fn (_ &VarDefinition) is_public() bool {
+	return true
+}
+
 pub fn (n &VarDefinition) identifier() ?PsiElement {
 	return n.find_child_by_type(.identifier)
 }

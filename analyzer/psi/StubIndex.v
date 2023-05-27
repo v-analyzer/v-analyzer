@@ -56,7 +56,7 @@ pub fn (s &StubIndex) get_all_elements_from_file(file string) []PsiElement {
 	return elements
 }
 
-pub fn (s &StubIndex) get_all_elements_from_module(name string) []PsiElement {
+pub fn (s &StubIndex) get_all_declarations_from_module(name string) []PsiElement {
 	mut elements := []PsiElement{cap: s.sinks.len * 10}
 	for sink in s.sinks {
 		if sink.stub_list.module_name != name {
@@ -64,7 +64,9 @@ pub fn (s &StubIndex) get_all_elements_from_module(name string) []PsiElement {
 		}
 
 		$for key in StubIndexKey.values {
-			elements << s.get_all_elements_from_sink_by_key(key.value, sink)
+			if key.value !in [.methods, .attributes] {
+				elements << s.get_all_elements_from_sink_by_key(key.value, sink)
+			}
 		}
 	}
 	return elements
