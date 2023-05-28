@@ -27,7 +27,8 @@ fn (_ &CompileTimeConstantCompletionProvider) is_available(context psi.PsiElemen
 	if parent.node.type_name != .reference_expression {
 		return false
 	}
-	return true
+	grand := parent.parent() or { return false }
+	return grand !is psi.ValueAttribute
 }
 
 fn (mut _ CompileTimeConstantCompletionProvider) add_completion(ctx completion.CompletionContext, mut result completion.CompletionResultSet) {

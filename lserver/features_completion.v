@@ -48,6 +48,18 @@ pub fn (mut ls LanguageServer) completion(params lsp.CompletionParams, mut wr Re
 	completion_providers << providers.ReturnCompletionProvider{}
 	completion_providers << providers.CompileTimeConstantCompletionProvider{}
 	completion_providers << providers.InitsCompletionProvider{}
+	completion_providers << providers.KeywordsCompletionProvider{}
+	completion_providers << providers.TopLevelCompletionProvider{}
+	completion_providers << providers.LoopKeywordsCompletionProvider{}
+	completion_providers << providers.PureBlockExpressionCompletionProvider{}
+	completion_providers << providers.PureBlockStatementCompletionProvider{}
+	completion_providers << providers.OrBlockExpressionCompletionProvider{}
+	completion_providers << providers.FunctionLikeCompletionProvider{}
+	completion_providers << providers.AssertCompletionProvider{}
+	completion_providers << providers.ModuleNameCompletionProvider{}
+	completion_providers << providers.NilKeywordCompletionProvider{}
+	completion_providers << providers.JsonAttributeCompletionProvider{}
+	completion_providers << providers.AttributesCompletionProvider{}
 
 	for mut provider in completion_providers {
 		if !provider.is_available(element) {

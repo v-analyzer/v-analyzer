@@ -57,12 +57,6 @@ pub fn (r TypeReferenceExpression) qualifier() ?PsiElement {
 }
 
 pub fn (r TypeReferenceExpression) reference() PsiReference {
-	if parent := r.parent() {
-		if parent is ValueAttribute {
-			return new_attribute_reference(r.containing_file, r)
-		}
-	}
-
 	return new_reference(r.containing_file, r, true)
 }
 

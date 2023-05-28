@@ -22,7 +22,9 @@ fn (_ DumbAwareSemanticVisitor) highlight_node(node psi.AstNode, root psi.PsiEle
 	if node.type_name == .var_definition {
 		result << element_to_semantic(node, .variable)
 	} else if node.type_name == .enum_field_definition {
-		result << element_to_semantic(node, .enum_member)
+		if first_child := node.first_child() {
+			result << element_to_semantic(first_child, .enum_member)
+		}
 	} else if node.type_name == .field_name {
 		result << element_to_semantic(node, .property)
 	} else if node.type_name == .struct_field_declaration {
@@ -109,5 +111,7 @@ fn (_ DumbAwareSemanticVisitor) highlight_node(node psi.AstNode, root psi.PsiEle
 	} else if node.type_name == .const_definition {
 		name := node.child_by_field_name('name') or { return }
 		result << element_to_semantic(name, .property) // not a best variant...
+	} else if node.type_name == .nil_ {
+		result << element_to_semantic(node, .keyword)
 	}
 }

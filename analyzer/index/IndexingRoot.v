@@ -97,7 +97,7 @@ fn (mut _ IndexingRoot) need_index(path string) bool {
 		return false
 	}
 
-	return !path.ends_with('_test.v') && !path.contains('/tests/') && !path.contains('/slow_tests/')
+	return !path.contains('/tests/') && !path.contains('/slow_tests/')
 		&& !path.contains('/.vmodules/cache/')
 		&& !path.contains('/builtin/wasm/') // TODO: индексировать и эту папку
 		&& !path.contains('/builtin/js/') // TODO: индексировать и эту папку

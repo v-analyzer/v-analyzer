@@ -11,7 +11,8 @@ fn (_ &InitsCompletionProvider) is_available(context psi.PsiElement) bool {
 	if parent.node.type_name != .reference_expression {
 		return false
 	}
-	return true
+	grand := parent.parent() or { return false }
+	return grand !is psi.ValueAttribute
 }
 
 fn (mut _ InitsCompletionProvider) add_completion(ctx completion.CompletionContext, mut result completion.CompletionResultSet) {

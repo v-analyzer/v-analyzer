@@ -103,11 +103,24 @@ pub mut:
 	// Please note that the insertTextFormat doesn't apply to
 	// `additionalTextEdits`.
 	insert_text_format InsertTextFormat [json: 'insertTextFormat'] = .plain_text
+	// How whitespace and indentation is handled during completion
+	// item insertion. If not provided the client's default value depends on
+	// the `textDocument.completion.insertTextMode` client capability.
+	//
+	// @since 3.16.0
+	// @since 3.17.0 - support for `textDocument.completion.insertTextMode`
+	insert_text_mode InsertTextMode [json: 'insertTextMode']
 	// text_edit TextEdit [json:textEdit]
 	// additional_text_edits []TextEdit [json:additionalTextEdits]
 	// commit_characters []string [json:commitCharacters]
 	// command Command
 	// data string [raw]
+}
+
+[json_as_number]
+pub enum InsertTextMode {
+	as_is = 1
+	adjust_indentation = 2
 }
 
 [json_as_number]

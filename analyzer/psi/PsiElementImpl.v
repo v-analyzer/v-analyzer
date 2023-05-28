@@ -130,6 +130,18 @@ pub fn (n PsiElementImpl) parent_of_type(typ v.NodeType) ?PsiElement {
 	return none
 }
 
+pub fn (n PsiElementImpl) inside(typ v.NodeType) bool {
+	mut res := PsiElement(n)
+	for {
+		res = res.parent() or { return false }
+		if res.element_type() == typ {
+			return true
+		}
+	}
+
+	return false
+}
+
 pub fn (n PsiElementImpl) sibling_of_type_backward(typ v.NodeType) ?PsiElement {
 	mut res := PsiElement(n)
 	for {
