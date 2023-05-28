@@ -1,6 +1,5 @@
 module providers
 
-import analyzer.psi
 import lserver.completion
 import lsp
 
@@ -14,16 +13,11 @@ pub const function_like_keywords = [
 
 pub struct FunctionLikeCompletionProvider {}
 
-fn (k &FunctionLikeCompletionProvider) is_available(context psi.PsiElement) bool {
-	parent := context.parent() or { return false }
-	if parent.node.type_name != .reference_expression {
-		return false
-	}
-	grand := parent.parent() or { return false }
-	return grand !is psi.ValueAttribute
+fn (k &FunctionLikeCompletionProvider) is_available(ctx &completion.CompletionContext) bool {
+	return ctx.is_expression
 }
 
-fn (mut k FunctionLikeCompletionProvider) add_completion(ctx completion.CompletionContext, mut result completion.CompletionResultSet) {
+fn (mut k FunctionLikeCompletionProvider) add_completion(ctx &completion.CompletionContext, mut result completion.CompletionResultSet) {
 	for keyword in providers.function_like_keywords {
 		result.add_element(lsp.CompletionItem{
 			label: '${keyword}()'

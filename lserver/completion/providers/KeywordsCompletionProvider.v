@@ -1,21 +1,15 @@
 module providers
 
-import analyzer.psi
 import lserver.completion
 import lsp
 
 pub struct KeywordsCompletionProvider {}
 
-fn (k &KeywordsCompletionProvider) is_available(context psi.PsiElement) bool {
-	parent := context.parent() or { return false }
-	if parent.node.type_name != .reference_expression {
-		return false
-	}
-	grand := parent.parent() or { return false }
-	return grand !is psi.ValueAttribute
+fn (k &KeywordsCompletionProvider) is_available(ctx &completion.CompletionContext) bool {
+	return ctx.is_expression
 }
 
-fn (mut k KeywordsCompletionProvider) add_completion(ctx completion.CompletionContext, mut result completion.CompletionResultSet) {
+fn (mut k KeywordsCompletionProvider) add_completion(ctx &completion.CompletionContext, mut result completion.CompletionResultSet) {
 	k.no_space_keywords([
 		'none',
 		'true',

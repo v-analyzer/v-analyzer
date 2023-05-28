@@ -26,12 +26,13 @@ pub fn (mut ls LanguageServer) completion(params lsp.CompletionParams, mut wr Re
 		return []
 	}
 
-	ctx := completion.CompletionContext{
+	mut ctx := &completion.CompletionContext{
 		element: element
 		position: params.position
 		offset: offset
 		trigger_kind: params.context.trigger_kind
 	}
+	ctx.compute()
 
 	mut result_set := &completion.CompletionResultSet{}
 
@@ -62,7 +63,7 @@ pub fn (mut ls LanguageServer) completion(params lsp.CompletionParams, mut wr Re
 	completion_providers << providers.AttributesCompletionProvider{}
 
 	for mut provider in completion_providers {
-		if !provider.is_available(element) {
+		if !provider.is_available(ctx) {
 			continue
 		}
 		provider.add_completion(ctx, mut result_set)

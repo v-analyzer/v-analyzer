@@ -54,7 +54,7 @@ pub fn (mut tc TestClient) send[T, U](method string, params T) !U {
 	if raw_json_content.len == 0 || raw_json_content == 'null' {
 		return IError(io.Eof{})
 	}
-	println(raw_json_content)
+	// println(raw_json_content)
 	return json.decode(U, raw_json_content)!
 }
 

@@ -1,25 +1,21 @@
 module providers
 
-import analyzer.psi
 import lserver.completion
 import lsp
 import os
 
 pub struct ModuleNameCompletionProvider {}
 
-fn (_ &ModuleNameCompletionProvider) is_available(context psi.PsiElement) bool {
-	line := context.text_range().line
-	if line > 2 {
-		return false
+fn (_ &ModuleNameCompletionProvider) is_available(ctx &completion.CompletionContext) bool {
+	no_module_clause := if _ := ctx.element.containing_file.module_name() {
+		false
+	} else {
+		true
 	}
-	parent := context.parent_nth(3) or { return false }
-	if parent.node.type_name != .source_file {
-		return false
-	}
-	return true
+	return ctx.is_start_of_file && ctx.is_top_level && no_module_clause
 }
 
-fn (mut p ModuleNameCompletionProvider) add_completion(ctx completion.CompletionContext, mut result completion.CompletionResultSet) {
+fn (mut p ModuleNameCompletionProvider) add_completion(ctx &completion.CompletionContext, mut result completion.CompletionResultSet) {
 	dir := os.dir(ctx.element.containing_file.path)
 	dir_name := p.transform_module_name(os.file_name(dir))
 

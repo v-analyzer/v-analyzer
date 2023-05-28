@@ -1,0 +1,40 @@
+================================================================================
+Simple assert statement
+================================================================================
+assert 100
+--------------------------------------------------------------------------------
+
+(source_file
+  (assert_statement
+    (literal
+      (int_literal))))
+
+================================================================================
+Simple assert statement with condition
+================================================================================
+assert a > b
+--------------------------------------------------------------------------------
+
+(source_file
+  (assert_statement
+    (binary_expression
+      (reference_expression
+        (identifier))
+      (reference_expression
+        (identifier)))))
+
+================================================================================
+Assert statement with message
+================================================================================
+assert a > b, 'a should be greater than b'
+--------------------------------------------------------------------------------
+
+(source_file
+  (assert_statement
+    (binary_expression
+      (reference_expression
+        (identifier))
+      (reference_expression
+        (identifier)))
+    (literal
+      (interpreted_string_literal))))

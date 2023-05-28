@@ -8,16 +8,11 @@ pub mut:
 	processor &ReferenceCompletionProcessor
 }
 
-fn (r &ReferenceCompletionProvider) is_available(context psi.PsiElement) bool {
-	parent := context.parent() or { return false }
-	if parent !is psi.ReferenceExpression && parent !is psi.TypeReferenceExpression {
-		return false
-	}
-	grand := parent.parent() or { return false }
-	return grand !is psi.ValueAttribute
+fn (r &ReferenceCompletionProvider) is_available(ctx &completion.CompletionContext) bool {
+	return ctx.is_expression || ctx.is_type_reference
 }
 
-fn (mut r ReferenceCompletionProvider) add_completion(ctx completion.CompletionContext, mut result completion.CompletionResultSet) {
+fn (mut r ReferenceCompletionProvider) add_completion(ctx &completion.CompletionContext, mut result completion.CompletionResultSet) {
 	element := ctx.element
 	text := element.get_text()
 	if text.starts_with('@') {

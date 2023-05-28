@@ -1,21 +1,15 @@
 module providers
 
-import analyzer.psi
 import lserver.completion
 import lsp
 
 pub struct PureBlockExpressionCompletionProvider {}
 
-fn (k &PureBlockExpressionCompletionProvider) is_available(context psi.PsiElement) bool {
-	parent := context.parent() or { return false }
-	if parent.node.type_name != .reference_expression {
-		return false
-	}
-	grand := parent.parent() or { return false }
-	return grand !is psi.ValueAttribute
+fn (k &PureBlockExpressionCompletionProvider) is_available(ctx &completion.CompletionContext) bool {
+	return ctx.is_expression
 }
 
-fn (mut k PureBlockExpressionCompletionProvider) add_completion(ctx completion.CompletionContext, mut result completion.CompletionResultSet) {
+fn (mut k PureBlockExpressionCompletionProvider) add_completion(ctx &completion.CompletionContext, mut result completion.CompletionResultSet) {
 	one_line := if parent := ctx.element.parent_nth(2) {
 		if parent.node.type_name == .simple_statement {
 			false

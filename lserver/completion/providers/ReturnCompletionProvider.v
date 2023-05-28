@@ -7,15 +7,11 @@ import lsp
 
 pub struct ReturnCompletionProvider {}
 
-fn (_ &ReturnCompletionProvider) is_available(context psi.PsiElement) bool {
-	parent := context.parent_nth(2) or { return false }
-	if parent.node.type_name != .simple_statement {
-		return false
-	}
-	return true
+fn (_ &ReturnCompletionProvider) is_available(ctx &completion.CompletionContext) bool {
+	return ctx.is_statement
 }
 
-fn (mut _ ReturnCompletionProvider) add_completion(ctx completion.CompletionContext, mut result completion.CompletionResultSet) {
+fn (mut _ ReturnCompletionProvider) add_completion(ctx &completion.CompletionContext, mut result completion.CompletionResultSet) {
 	element := ctx.element
 
 	parent_function := element.parent_of_type(.function_declaration) or { return }

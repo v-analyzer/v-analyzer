@@ -1057,7 +1057,7 @@ module.exports = grammar({
 
     dec_statement: ($) => seq($._expression, '--'),
 
-    assert_statement: ($) => seq('assert', $._expression),
+    assert_statement: ($) => prec.right(seq('assert', $._expression, optional(seq(',', $.literal)))),
 
     append_statement: ($) => prec(PREC.unary, seq(
       field('left', $._expression),

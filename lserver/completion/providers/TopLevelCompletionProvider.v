@@ -1,6 +1,5 @@
 module providers
 
-import analyzer.psi
 import lserver.completion
 import lsp
 
@@ -9,7 +8,7 @@ struct TopLevelVariant {
 	insert_text string
 }
 
-const top_level_map = {
+pub const top_level_map = {
 	'fn name() { ... }':       TopLevelVariant{'fn', 'fn \${1:name}($2) {\n\t$0\n}'}
 	'struct Name { ... }':     TopLevelVariant{'struct', 'struct \${1:Name} {\n\t$0\n}'}
 	'interface IName { ... }': TopLevelVariant{'interface', 'interface \${1:IName} {\n\t$0\n}'}
@@ -20,15 +19,11 @@ const top_level_map = {
 
 pub struct TopLevelCompletionProvider {}
 
-fn (k &TopLevelCompletionProvider) is_available(context psi.PsiElement) bool {
-	parent := context.parent_nth(3) or { return false }
-	if parent.node.type_name != .source_file {
-		return false
-	}
-	return true
+fn (k &TopLevelCompletionProvider) is_available(ctx &completion.CompletionContext) bool {
+	return ctx.is_top_level
 }
 
-fn (mut k TopLevelCompletionProvider) add_completion(ctx completion.CompletionContext, mut result completion.CompletionResultSet) {
+fn (mut k TopLevelCompletionProvider) add_completion(ctx &completion.CompletionContext, mut result completion.CompletionResultSet) {
 	k.pub_keyword(mut result)
 }
 

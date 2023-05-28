@@ -1,20 +1,15 @@
 module providers
 
-import analyzer.psi
 import lserver.completion
 import lsp
 
 pub struct PureBlockStatementCompletionProvider {}
 
-fn (k &PureBlockStatementCompletionProvider) is_available(context psi.PsiElement) bool {
-	parent := context.parent_nth(2) or { return false }
-	if parent.node.type_name != .simple_statement {
-		return false
-	}
-	return true
+fn (k &PureBlockStatementCompletionProvider) is_available(ctx &completion.CompletionContext) bool {
+	return ctx.is_statement
 }
 
-fn (mut k PureBlockStatementCompletionProvider) add_completion(ctx completion.CompletionContext, mut result completion.CompletionResultSet) {
+fn (mut k PureBlockStatementCompletionProvider) add_completion(ctx &completion.CompletionContext, mut result completion.CompletionResultSet) {
 	result.add_element(lsp.CompletionItem{
 		label: 'defer { ... }'
 		kind: .keyword

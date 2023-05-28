@@ -1,6 +1,5 @@
 module providers
 
-import analyzer.psi
 import lserver.completion
 import lsp
 
@@ -38,15 +37,11 @@ const attributes_with_colon = [
 
 pub struct AttributesCompletionProvider {}
 
-fn (k &AttributesCompletionProvider) is_available(context psi.PsiElement) bool {
-	parent := context.parent_nth(2) or { return false }
-	if parent.node.type_name != .value_attribute {
-		return false
-	}
-	return true
+fn (k &AttributesCompletionProvider) is_available(ctx &completion.CompletionContext) bool {
+	return ctx.is_attribute
 }
 
-fn (mut k AttributesCompletionProvider) add_completion(ctx completion.CompletionContext, mut result completion.CompletionResultSet) {
+fn (mut k AttributesCompletionProvider) add_completion(ctx &completion.CompletionContext, mut result completion.CompletionResultSet) {
 	for attribute in providers.attributes {
 		result.add_element(lsp.CompletionItem{
 			label: attribute

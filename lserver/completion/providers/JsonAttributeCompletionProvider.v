@@ -7,15 +7,14 @@ import utils
 
 pub struct JsonAttributeCompletionProvider {}
 
-fn (k &JsonAttributeCompletionProvider) is_available(context psi.PsiElement) bool {
-	parent := context.parent_nth(2) or { return false }
-	if parent.node.type_name != .value_attribute {
+fn (k &JsonAttributeCompletionProvider) is_available(ctx &completion.CompletionContext) bool {
+	if !ctx.is_attribute {
 		return false
 	}
-	return parent.inside(.struct_field_declaration)
+	return ctx.element.inside(.struct_field_declaration)
 }
 
-fn (mut k JsonAttributeCompletionProvider) add_completion(ctx completion.CompletionContext, mut result completion.CompletionResultSet) {
+fn (mut k JsonAttributeCompletionProvider) add_completion(ctx &completion.CompletionContext, mut result completion.CompletionResultSet) {
 	field_declaration := ctx.element.parent_of_type(.struct_field_declaration) or { return }
 	name := if field_declaration is psi.FieldDeclaration {
 		field_declaration.name()

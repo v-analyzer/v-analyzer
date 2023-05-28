@@ -1,9 +1,7 @@
 module completion
 
-import analyzer.psi
-
 pub interface CompletionProvider {
-	is_available(context psi.PsiElement) bool
+	is_available(ctx &CompletionContext) bool
 mut:
-	add_completion(ctx CompletionContext, mut result CompletionResultSet)
+	add_completion(ctx &CompletionContext, mut result CompletionResultSet)
 }

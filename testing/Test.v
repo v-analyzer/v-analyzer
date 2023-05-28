@@ -52,6 +52,37 @@ pub fn (mut t Test) assert_has_definition(locations []lsp.LocationLink) ! {
 	}
 }
 
+pub fn (mut t Test) assert_has_completion_with_label(items []lsp.CompletionItem, name string) ! {
+	for item in items {
+		if item.label == name {
+			return
+		}
+	}
+
+	t.fail('expected completion "${name}" not found')
+	return error('expected completion "${name}" not found')
+}
+
+pub fn (mut t Test) assert_has_completion_with_insert_test(items []lsp.CompletionItem, name string) ! {
+	for item in items {
+		if item.insert_text == name {
+			return
+		}
+	}
+
+	t.fail('expected completion "${name}" not found')
+	return error('expected completion "${name}" not found')
+}
+
+pub fn (mut t Test) assert_no_completion_with_label(items []lsp.CompletionItem, name string) ! {
+	for item in items {
+		if item.label == name {
+			t.fail('unexpected completion "${name}" found')
+			return error('unexpected completion "${name}" found')
+		}
+	}
+}
+
 pub fn (mut t Test) assert_uri(left lsp.DocumentUri, right lsp.DocumentUri) {
 	if left.compare(right) != 0 {
 		t.fail('expected ${left}, but got ${right}')
