@@ -62,6 +62,12 @@ pub fn (p &PsiFileImpl) text() string {
 	return p.source_text
 }
 
+pub fn (p &PsiFileImpl) symbol_at(range TextRange) u8 {
+	lines := p.source_text.split_into_lines()
+	line := lines[range.line] or { return 0 }
+	return line[range.column - 1] or { return 0 }
+}
+
 pub fn (p &PsiFileImpl) root() PsiElement {
 	if p.is_stub_based() {
 		return p.stub_list.root().get_psi() or { return p.root }

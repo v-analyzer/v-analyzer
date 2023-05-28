@@ -14,7 +14,7 @@ pub const function_like_keywords = [
 pub struct FunctionLikeCompletionProvider {}
 
 fn (k &FunctionLikeCompletionProvider) is_available(ctx &completion.CompletionContext) bool {
-	return ctx.is_expression
+	return ctx.is_expression && !ctx.after_dot
 }
 
 fn (mut k FunctionLikeCompletionProvider) add_completion(ctx &completion.CompletionContext, mut result completion.CompletionResultSet) {

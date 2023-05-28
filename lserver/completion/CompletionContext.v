@@ -20,14 +20,20 @@ pub mut:
 	is_attribute        bool
 	is_assert_statement bool
 	inside_loop         bool
+	after_dot           bool
 }
 
 pub fn (mut c CompletionContext) compute() {
-	c.is_test_file = c.element.containing_file.is_test_file()
+	containing_file := c.element.containing_file
+	c.is_test_file = containing_file.is_test_file()
 
-	line := c.element.text_range().line
+	range := c.element.text_range()
+	line := range.line
 	if line < 3 {
 		c.is_start_of_file = true
+	}
+	if containing_file.symbol_at(range) == `.` {
+		c.after_dot = true
 	}
 
 	parent := c.element.parent() or { return }

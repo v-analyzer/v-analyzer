@@ -322,7 +322,7 @@ t.test('top level completion', fn (mut t testing.Test, mut fixture testing.Fixtu
 	}
 })
 
-t.test('тщ top level completion', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+t.test('no top level completion', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
 	fixture.configure_by_text('1.v', '
 		fn main() {
 			/*caret*/
@@ -335,6 +335,26 @@ t.test('тщ top level completion', fn (mut t testing.Test, mut fixture testing.
 		t.assert_no_completion_with_label(items, label)!
 		t.assert_no_completion_with_label(items, 'pub ${label}')!
 	}
+})
+
+t.test('imported modules completion', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+	fixture.configure_by_text('1.v', '
+		import arrays
+		import net.http
+		import foo as bar
+		import bar.baz as qux
+
+		/*caret*/
+	'.trim_indent())!
+
+	items := fixture.complete_at_cursor()
+
+	t.assert_has_completion_with_label(items, 'arrays')!
+	t.assert_has_completion_with_label(items, 'http')!
+	t.assert_no_completion_with_label(items, 'foo')!
+	t.assert_has_completion_with_label(items, 'bar')!
+	t.assert_no_completion_with_label(items, 'baz')!
+	t.assert_has_completion_with_label(items, 'qux')!
 })
 
 t.stats()

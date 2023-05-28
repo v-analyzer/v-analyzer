@@ -61,6 +61,7 @@ pub fn (mut ls LanguageServer) completion(params lsp.CompletionParams, mut wr Re
 	completion_providers << providers.NilKeywordCompletionProvider{}
 	completion_providers << providers.JsonAttributeCompletionProvider{}
 	completion_providers << providers.AttributesCompletionProvider{}
+	completion_providers << providers.ImportsCompletionProvider{}
 
 	for mut provider in completion_providers {
 		if !provider.is_available(ctx) {

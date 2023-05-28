@@ -70,8 +70,14 @@ fn (mut c ReferenceCompletionProcessor) execute(element psi.PsiElement) bool {
 	}
 
 	if element is psi.StructDeclaration {
+		name := element.name()
+		if name == 'map' || name == 'array' {
+			// создавать напрямую эти структуры не имеет смысла
+			return true
+		}
+
 		c.result << lsp.CompletionItem{
-			label: element.name()
+			label: name
 			kind: .struct_
 			detail: ''
 			documentation: element.doc_comment()

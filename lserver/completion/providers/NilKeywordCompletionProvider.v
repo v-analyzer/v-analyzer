@@ -6,7 +6,7 @@ import lsp
 pub struct NilKeywordCompletionProvider {}
 
 fn (k &NilKeywordCompletionProvider) is_available(ctx &completion.CompletionContext) bool {
-	return ctx.is_expression
+	return ctx.is_expression && !ctx.after_dot
 }
 
 fn (mut k NilKeywordCompletionProvider) add_completion(ctx &completion.CompletionContext, mut result completion.CompletionResultSet) {
