@@ -62,6 +62,7 @@ pub interface PsiElement {
 	find_children_by_type_or_stub(typ v.NodeType) []PsiElement
 	// get_text возвращает текст узла.
 	get_text() string
+	text_matches(value string) bool
 	// accept передает элемент в переданный visitor.
 	accept(visitor PsiElementVisitor)
 	// accept_mut передает элемент в переданный visitor.

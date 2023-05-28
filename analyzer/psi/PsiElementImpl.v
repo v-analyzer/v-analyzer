@@ -324,6 +324,16 @@ pub fn (n PsiElementImpl) get_text() string {
 	return n.node.text(n.containing_file.source_text)
 }
 
+pub fn (n PsiElementImpl) text_matches(value string) bool {
+	if n.stub_id != non_stubbed_element {
+		if stub := n.stubs_list.get_stub(n.stub_id) {
+			return stub.text == value
+		}
+	}
+
+	return n.node.text_matches(n.containing_file.source_text, value)
+}
+
 pub fn (n PsiElementImpl) text_range() TextRange {
 	if n.stub_id != non_stubbed_element {
 		if stub := n.stubs_list.get_stub(n.stub_id) {

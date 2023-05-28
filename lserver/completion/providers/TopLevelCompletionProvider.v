@@ -4,13 +4,18 @@ import analyzer.psi
 import lserver.completion
 import lsp
 
+struct TopLevelVariant {
+	search_text string
+	insert_text string
+}
+
 const top_level_map = {
-	'fn name() { ... }':       'fn \${1:name}($2) {\n\t$0\n}'
-	'struct Name { ... }':     'struct \${1:Name} {\n\t$0\n}'
-	'interface IName { ... }': 'interface \${1:IName} {\n\t$0\n}'
-	'enum Colors { ... }':     'enum \${1:Colors} {\n\t$0\n}'
-	'type MyString = string':  'type \${1:MyString} = \${2:string}$0'
-	'сonst secret = 100':      'const \${1:secret} = \${2:100}$0'
+	'fn name() { ... }':       TopLevelVariant{'fn', 'fn \${1:name}($2) {\n\t$0\n}'}
+	'struct Name { ... }':     TopLevelVariant{'struct', 'struct \${1:Name} {\n\t$0\n}'}
+	'interface IName { ... }': TopLevelVariant{'interface', 'interface \${1:IName} {\n\t$0\n}'}
+	'enum Colors { ... }':     TopLevelVariant{'enum', 'enum \${1:Colors} {\n\t$0\n}'}
+	'type MyString = string':  TopLevelVariant{'type', 'type \${1:MyString} = \${2:string}$0'}
+	'сonst secret = 100':      TopLevelVariant{'const', 'const \${1:secret} = \${2:100}$0'}
 }
 
 pub struct TopLevelCompletionProvider {}
@@ -28,20 +33,22 @@ fn (mut k TopLevelCompletionProvider) add_completion(ctx completion.CompletionCo
 }
 
 fn (mut k TopLevelCompletionProvider) pub_keyword(mut result completion.CompletionResultSet) {
-	for label, insert_text in providers.top_level_map {
+	for label, variant in providers.top_level_map {
 		result.add_element(lsp.CompletionItem{
 			label: label
 			kind: .keyword
-			insert_text: insert_text
+			filter_text: variant.search_text
+			insert_text: variant.insert_text
 			insert_text_format: .snippet
 		})
 	}
 
-	for label, insert_text in providers.top_level_map {
+	for label, variant in providers.top_level_map {
 		result.add_element(lsp.CompletionItem{
 			label: 'pub ${label}'
 			kind: .keyword
-			insert_text: 'pub ${insert_text}'
+			filter_text: 'pub ${variant.search_text}'
+			insert_text: 'pub ${variant.insert_text}'
 			insert_text_format: .snippet
 		})
 	}

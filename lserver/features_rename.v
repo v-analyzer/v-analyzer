@@ -2,6 +2,7 @@ module lserver
 
 import lsp
 import analyzer.psi
+import analyzer.psi.search
 
 pub fn (mut ls LanguageServer) rename(params lsp.RenameParams, mut wr ResponseWriter) !lsp.WorkspaceEdit {
 	uri := params.text_document.uri.normalize()
@@ -13,28 +14,14 @@ pub fn (mut ls LanguageServer) rename(params lsp.RenameParams, mut wr ResponseWr
 		return error('cannot find element at ' + offset.str())
 	}
 
-	element_to_find := resolve_identifier(element)
-	if element_to_find !is psi.VarDefinition {
-		return error('cannot rename non-variable element')
-	}
+	elems := search.references(element)
 
-	if element_to_find is psi.PsiNamedElement {
-		mut visit := FindReferencesVisitor{
-			element_to_find: element_to_find
-		}
-		file.psi_file.root().accept_mut(mut visit)
-		elements := visit.elements()
-
-		edits := elements_to_text_edits(elements, params.new_name)
-		println('edits: ${edits}')
-		return lsp.WorkspaceEdit{
-			changes: {
-				uri: edits
-			}
+	edits := elements_to_text_edits(elems, params.new_name)
+	return lsp.WorkspaceEdit{
+		changes: {
+			uri: edits
 		}
 	}
-
-	return error('')
 }
 
 fn elements_to_text_edits(elements []psi.PsiElement, new_name string) []lsp.TextEdit {

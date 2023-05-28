@@ -84,6 +84,9 @@ pub mut:
 	detail string
 	// A human-readable string that represents a doc-comment.
 	documentation string
+	// A string that should be used when filtering a set of
+	// completion items. When `falsy` the label is used.
+	filter_text string [json: 'filterText']
 	// A string that should be inserted into a document when selecting
 	// this completion. When omitted the label is used as the insert text
 	// for this item.
