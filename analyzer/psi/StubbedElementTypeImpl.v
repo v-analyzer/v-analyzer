@@ -106,7 +106,12 @@ pub struct StubbedElementType {}
 
 pub fn (_ &StubbedElementType) index_stub(stub &StubBase, mut sink IndexSink) {
 	if stub.stub_type == .function_declaration {
-		sink.occurrence(StubIndexKey.functions, stub.name())
+		name := stub.name()
+		if name == 'main' || name.starts_with('test_') {
+			return
+		}
+
+		sink.occurrence(StubIndexKey.functions, name)
 	}
 
 	if stub.stub_type == .method_declaration {
@@ -357,7 +362,7 @@ pub fn (s &StubbedElementType) create_stub(psi PsiElement, parent_stub &StubElem
 	}
 
 	if psi is ParameterDeclaration {
-		return declaration_stub(*psi, parent_stub, .parameter_declaration)
+		return declaration_stub(*psi, parent_stub, .parameter_declaration, include_text: true)
 	}
 
 	if psi is EnumDeclaration {

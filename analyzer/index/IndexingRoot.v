@@ -187,6 +187,9 @@ pub fn (mut r IndexingRoot) module_qualified_name(file &psi.PsiFileImpl) string 
 	if module_name == 'builtin' {
 		return ''
 	}
+	if module_name == '' && file.is_test_file() {
+		return ''
+	}
 
 	root_dirs := [r.root]
 
@@ -217,6 +220,10 @@ pub fn (mut r IndexingRoot) module_qualified_name(file &psi.PsiFileImpl) string 
 	qualifier := module_names.join('.')
 	if qualifier == '' {
 		return module_name
+	}
+
+	if module_name == '' {
+		return qualifier
 	}
 
 	return qualifier + '.' + module_name

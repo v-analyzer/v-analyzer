@@ -47,4 +47,10 @@ fn (mut k TopLevelCompletionProvider) pub_keyword(mut result completion.Completi
 			insert_text_format: .snippet
 		})
 	}
+
+	result.add_element(lsp.CompletionItem{
+		label: 'import'
+		kind: .keyword
+		insert_text: 'import '
+	})
 }

@@ -7,6 +7,7 @@ import strings
 pub struct ReferenceCompletionProcessor {
 	file       &psi.PsiFileImpl
 	module_fqn string
+	root       string
 mut:
 	result []lsp.CompletionItem
 }
@@ -15,7 +16,28 @@ pub fn (mut c ReferenceCompletionProcessor) elements() []lsp.CompletionItem {
 	return c.result
 }
 
+fn (mut c ReferenceCompletionProcessor) is_local_resolve(element psi.PsiElement) bool {
+	equal := c.module_fqn == element.containing_file.module_fqn()
+	if equal && c.module_fqn == 'main' {
+		// Мы проверяем что модуль совпадает, но если это main, то надо проверить что
+		// файл находится в workspace.
+		return element.containing_file.path.starts_with(c.root)
+	}
+	return equal
+}
+
 fn (mut c ReferenceCompletionProcessor) execute(element psi.PsiElement) bool {
+	is_public := if element is psi.PsiNamedElement {
+		element.is_public()
+	} else {
+		true
+	}
+	local_resolve := c.is_local_resolve(element)
+
+	if !is_public && !local_resolve {
+		return true
+	}
+
 	if element is psi.VarDefinition {
 		c.result << lsp.CompletionItem{
 			label: element.name()
@@ -28,13 +50,6 @@ fn (mut c ReferenceCompletionProcessor) execute(element psi.PsiElement) bool {
 	}
 
 	if element is psi.FunctionOrMethodDeclaration {
-		is_public := element.is_public()
-		local_resolve := c.module_fqn == element.containing_file.module_fqn()
-
-		if !is_public && !local_resolve {
-			return true
-		}
-
 		receiver_text := if receiver := element.receiver() {
 			receiver.get_text() + ' '
 		} else {
