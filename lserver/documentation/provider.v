@@ -226,6 +226,7 @@ fn (mut p Provider) const_documentation(element psi.ConstantDefinition) ? {
 }
 
 fn (mut p Provider) variable_documentation(element psi.VarDefinition) ? {
+	p.sb.write_string('Local **variable**\n')
 	p.sb.write_string('```v\n')
 	if modifiers := element.mutability_modifiers() {
 		p.write_mutability_modifiers(modifiers)
@@ -239,6 +240,7 @@ fn (mut p Provider) variable_documentation(element psi.VarDefinition) ? {
 }
 
 fn (mut p Provider) parameter_documentation(element psi.ParameterDeclaration) ? {
+	p.sb.write_string('Function **parameter**\n')
 	p.sb.write_string('```v\n')
 	if modifiers := element.mutability_modifiers() {
 		p.write_mutability_modifiers(modifiers)
@@ -297,12 +299,12 @@ fn (mut p Provider) enum_field_documentation(element psi.EnumFieldDeclaration) ?
 }
 
 fn (mut p Provider) receiver_documentation(element psi.Receiver) ? {
+	p.sb.write_string('Method **receiver**\n')
 	p.sb.write_string('```v\n')
 	if modifiers := element.mutability_modifiers() {
 		p.write_mutability_modifiers(modifiers)
 		p.sb.write_string(' ')
 	}
-	p.sb.write_string('receiver ')
 	p.sb.write_string(element.name())
 	p.sb.write_string(' ')
 	p.sb.write_string(element.get_type().readable_name())
@@ -311,6 +313,7 @@ fn (mut p Provider) receiver_documentation(element psi.Receiver) ? {
 }
 
 fn (mut p Provider) type_alias_documentation(element psi.TypeAliasDeclaration) ? {
+	p.write_module_name(element.containing_file)
 	p.sb.write_string('```v\n')
 	if modifiers := element.visibility_modifiers() {
 		p.write_visibility_modifiers(modifiers)

@@ -63,7 +63,12 @@ pub fn (mut t Test) assert_has_completion_with_label(items []lsp.CompletionItem,
 	return error('expected completion "${name}" not found')
 }
 
-pub fn (mut t Test) assert_has_completion_with_insert_test(items []lsp.CompletionItem, name string) ! {
+pub fn (mut t Test) assert_has_completion_with_insert_text(items []lsp.CompletionItem, name string) ! {
+	if items.len == 0 {
+		t.fail('no completions found')
+		return error('no completions found')
+	}
+
 	for item in items {
 		if item.insert_text == name {
 			return
@@ -72,6 +77,15 @@ pub fn (mut t Test) assert_has_completion_with_insert_test(items []lsp.Completio
 
 	t.fail('expected completion "${name}" not found')
 	return error('expected completion "${name}" not found')
+}
+
+pub fn (mut t Test) assert_no_completion_with_insert_text(items []lsp.CompletionItem, name string) ! {
+	for item in items {
+		if item.insert_text == name {
+			t.fail('unexpected completion "${name}" found')
+			return error('unexpected completion "${name}" found')
+		}
+	}
 }
 
 pub fn (mut t Test) assert_no_completion_with_label(items []lsp.CompletionItem, name string) ! {

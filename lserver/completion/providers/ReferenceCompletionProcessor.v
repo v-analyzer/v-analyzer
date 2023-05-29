@@ -3,11 +3,13 @@ module providers
 import analyzer.psi
 import lsp
 import strings
+import lserver.completion
 
 pub struct ReferenceCompletionProcessor {
 	file       &psi.PsiFileImpl
 	module_fqn string
 	root       string
+	ctx        &completion.CompletionContext
 mut:
 	result []lsp.CompletionItem
 }
@@ -27,10 +29,10 @@ fn (mut c ReferenceCompletionProcessor) is_local_resolve(element psi.PsiElement)
 }
 
 fn (mut c ReferenceCompletionProcessor) execute(element psi.PsiElement) bool {
-	is_public := if element is psi.PsiNamedElement {
-		element.is_public()
+	is_public, name := if element is psi.PsiNamedElement {
+		element.is_public(), element.name()
 	} else {
-		true
+		true, ''
 	}
 	local_resolve := c.is_local_resolve(element)
 
@@ -39,6 +41,30 @@ fn (mut c ReferenceCompletionProcessor) execute(element psi.PsiElement) bool {
 	}
 
 	if element is psi.VarDefinition {
+		c.result << lsp.CompletionItem{
+			label: name
+			kind: .variable
+			detail: element.get_type().readable_name()
+			documentation: ''
+			insert_text: name
+			insert_text_format: .plain_text
+			sort_text: '0${name}' // чтобы переменные шли первыми
+		}
+	}
+
+	if element is psi.ParameterDeclaration {
+		c.result << lsp.CompletionItem{
+			label: name
+			kind: .variable
+			detail: element.get_type().readable_name()
+			documentation: ''
+			insert_text: name
+			insert_text_format: .plain_text
+			sort_text: '0${name}' // чтобы параметры шли первыми
+		}
+	}
+
+	if element is psi.Receiver {
 		c.result << lsp.CompletionItem{
 			label: element.name()
 			kind: .variable
@@ -56,7 +82,6 @@ fn (mut c ReferenceCompletionProcessor) execute(element psi.PsiElement) bool {
 			''
 		}
 
-		name := element.name()
 		mut insert_name := element.name()
 		if name.starts_with('$') {
 			insert_name = insert_name[1..]
@@ -81,14 +106,20 @@ fn (mut c ReferenceCompletionProcessor) execute(element psi.PsiElement) bool {
 			documentation: element.doc_comment()
 			insert_text: insert_text_builder.str()
 			insert_text_format: .snippet
+			sort_text: '1${name}' // чтобы функции шли вторыми
 		}
 	}
 
 	if element is psi.StructDeclaration {
-		name := element.name()
 		if name == 'map' || name == 'array' {
 			// создавать напрямую эти структуры не имеет смысла
 			return true
+		}
+
+		insert_text := if c.ctx.is_type_reference {
+			name // если это ссылка на тип, то вставляем только имя
+		} else {
+			name + '{$1}$0'
 		}
 
 		c.result << lsp.CompletionItem{
@@ -96,7 +127,7 @@ fn (mut c ReferenceCompletionProcessor) execute(element psi.PsiElement) bool {
 			kind: .struct_
 			detail: ''
 			documentation: element.doc_comment()
-			insert_text: element.name() + '{$1}$0'
+			insert_text: insert_text
 			insert_text_format: .snippet
 		}
 	}

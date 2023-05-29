@@ -99,6 +99,8 @@ pub fn (mut t Fixture) configure_by_file(path string) ! {
 pub fn (mut t Fixture) configure_by_text(filename string, text string) ! {
 	content := text.replace('/*caret*/', '')
 	abs_path := os.join_path(testing.temp_path, filename)
+	abs_path_without_name := os.dir(abs_path)
+	os.mkdir_all(abs_path_without_name)!
 	os.write_file(abs_path, content)!
 
 	if t.current_file.path == abs_path {

@@ -40,6 +40,7 @@ pub fn (mut ls LanguageServer) completion(params lsp.CompletionParams, mut wr Re
 		file: file.psi_file
 		module_fqn: file.psi_file.module_fqn()
 		root: ls.root_uri
+		ctx: ctx
 	}
 
 	mut completion_providers := []completion.CompletionProvider{}

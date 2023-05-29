@@ -74,7 +74,7 @@ pub mut:
 	// be an unqualified name of the completion item.
 	label string
 	// Additional details for the label
-	label_details CompletionItemLabelDetails [json: 'labelDetails']
+	label_details CompletionItemLabelDetails [json: 'labelDetails'; omitempty]
 	// The kind of this completion item. Based of the kind
 	// an icon is chosen by the editor. The standardized set
 	// of available values is defined in `CompletionItemKind`.
@@ -113,6 +113,10 @@ pub mut:
 	// @since 3.16.0
 	// @since 3.17.0 - support for `textDocument.completion.insertTextMode`
 	insert_text_mode InsertTextMode [json: 'insertTextMode']
+	// A string that should be used when comparing this item
+	// with other items. When omitted the label is used
+	// as the sort text for this item.
+	sort_text string [json: 'sortText']
 	// text_edit TextEdit [json:textEdit]
 	// additional_text_edits []TextEdit [json:additionalTextEdits]
 	// commit_characters []string [json:commitCharacters]

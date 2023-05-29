@@ -113,5 +113,13 @@ fn (_ DumbAwareSemanticVisitor) highlight_node(node psi.AstNode, root psi.PsiEle
 		result << element_to_semantic(name, .property) // not a best variant...
 	} else if node.type_name == .nil_ {
 		result << element_to_semantic(node, .keyword)
+	} else if node.type_name == .import_alias {
+		if last_child := node.last_child() {
+			result << element_to_semantic(last_child, .namespace)
+		}
+	} else if node.type_name == .import_path {
+		if last_part := node.last_child() {
+			result << element_to_semantic(last_part, .namespace)
+		}
 	}
 }

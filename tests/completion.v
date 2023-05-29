@@ -215,7 +215,7 @@ t.test('nil keyword completion outside unsafe', fn (mut t testing.Test, mut fixt
 
 	items := fixture.complete_at_cursor()
 
-	t.assert_has_completion_with_insert_test(items, 'unsafe { nil }')!
+	t.assert_has_completion_with_insert_text(items, 'unsafe { nil }')!
 })
 
 t.test('nil keyword completion inside unsafe', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
@@ -227,7 +227,7 @@ t.test('nil keyword completion inside unsafe', fn (mut t testing.Test, mut fixtu
 
 	items := fixture.complete_at_cursor()
 
-	t.assert_has_completion_with_insert_test(items, 'nil')!
+	t.assert_has_completion_with_insert_text(items, 'nil')!
 })
 
 t.test('or block completion', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
@@ -248,7 +248,7 @@ t.test('unsafe block completion as expression', fn (mut t testing.Test, mut fixt
 
 	items := fixture.complete_at_cursor()
 
-	t.assert_has_completion_with_insert_test(items, 'unsafe { $0 }')!
+	t.assert_has_completion_with_insert_text(items, 'unsafe { $0 }')!
 })
 
 t.test('unsafe block completion as statements', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
@@ -258,7 +258,7 @@ t.test('unsafe block completion as statements', fn (mut t testing.Test, mut fixt
 
 	items := fixture.complete_at_cursor()
 
-	t.assert_has_completion_with_insert_test(items, 'unsafe {\n\t$0\n}')!
+	t.assert_has_completion_with_insert_text(items, 'unsafe {\n\t$0\n}')!
 })
 
 t.test('defer block completion', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
@@ -335,6 +335,75 @@ t.test('no top level completion', fn (mut t testing.Test, mut fixture testing.Fi
 		t.assert_no_completion_with_label(items, label)!
 		t.assert_no_completion_with_label(items, 'pub ${label}')!
 	}
+})
+
+t.test('parameters completion', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+	fixture.configure_by_text('1.v', '
+		fn foo(param_name_1 int, param_name_2 string) {
+			/*caret*/
+		}
+	'.trim_indent())!
+
+	items := fixture.complete_at_cursor()
+
+	t.assert_has_completion_with_label(items, 'param_name_1')!
+	t.assert_has_completion_with_label(items, 'param_name_2')!
+})
+
+t.test('receiver name completion', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+	fixture.configure_by_text('1.v', '
+		struct Foo {}
+
+		fn (foo_receiver Foo) bar() {
+			/*caret*/
+		}
+	'.trim_indent())!
+
+	items := fixture.complete_at_cursor()
+
+	t.assert_has_completion_with_label(items, 'foo_receiver')!
+})
+
+t.test('struct as type completion', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+	fixture.configure_by_text('foo/foo.v', '
+		module foo
+
+		pub struct StructAsTypeFoo {}
+	'.trim_indent())!
+
+	fixture.configure_by_text('1.v', '
+		import foo
+
+		fn bar() foo./*caret*/ {
+
+		}
+	'.trim_indent())!
+
+	items := fixture.complete_at_cursor()
+
+	t.assert_has_completion_with_insert_text(items, 'StructAsTypeFoo')!
+	t.assert_no_completion_with_insert_text(items, 'StructAsTypeFoo{$1}$0')!
+})
+
+t.test('struct as expression completion', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+	fixture.configure_by_text('foo/foo.v', '
+		module foo
+
+		pub struct StructAsTypeFoo {}
+	'.trim_indent())!
+
+	fixture.configure_by_text('1.v', '
+		import foo
+
+		fn bar() {
+			foo./*caret*/
+		}
+	'.trim_indent())!
+
+	items := fixture.complete_at_cursor()
+
+	t.assert_has_completion_with_insert_text(items, 'StructAsTypeFoo{$1}$0')!
+	t.assert_no_completion_with_insert_text(items, 'StructAsTypeFoo')!
 })
 
 t.test('imported modules completion', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
