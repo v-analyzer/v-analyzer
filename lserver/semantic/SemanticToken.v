@@ -29,7 +29,7 @@ enum SemanticTypes as u32 {
 	decorator
 }
 
-struct SemanticToken {
+pub struct SemanticToken {
 	line  u32
 	start u32
 	len   u32

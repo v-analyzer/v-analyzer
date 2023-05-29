@@ -41,6 +41,7 @@ pub enum StubType as u8 {
 	multi_return_type
 	option_type
 	result_type
+	type_parameters
 	//
 	visibility_modifiers
 	import_list
@@ -50,6 +51,7 @@ pub enum StubType as u8 {
 	import_name
 	import_alias
 	module_clause
+	reference_expression
 }
 
 pub fn node_type_to_stub_type(typ tree_sitter_v.NodeType) StubType {
@@ -89,6 +91,7 @@ pub fn node_type_to_stub_type(typ tree_sitter_v.NodeType) StubType {
 		.multi_return_type { .multi_return_type }
 		.option_type { .option_type }
 		.result_type { .result_type }
+		.type_parameters { .type_parameters }
 		// types end
 		.visibility_modifiers { .visibility_modifiers }
 		.import_list { .import_list }
@@ -98,6 +101,7 @@ pub fn node_type_to_stub_type(typ tree_sitter_v.NodeType) StubType {
 		.import_name { .import_name }
 		.import_alias { .import_alias }
 		.module_clause { .module_clause }
+		.reference_expression { .reference_expression }
 		else { .root }
 	}
 }
@@ -292,6 +296,11 @@ pub fn (_ &StubbedElementType) create_psi(stub &StubBase) ?PsiElement {
 			PsiElementImpl: base_psi
 		}
 	}
+	if stub_type == .reference_expression {
+		return ReferenceExpression{
+			PsiElementImpl: base_psi
+		}
+	}
 	return base_psi
 }
 
@@ -433,6 +442,10 @@ pub fn (s &StubbedElementType) create_stub(psi PsiElement, parent_stub &StubElem
 		)
 	}
 
+	if psi is ReferenceExpression {
+		return text_based_stub(*psi, parent_stub, .reference_expression)
+	}
+
 	return none
 }
 
@@ -485,5 +498,6 @@ pub fn node_is_type(psi PsiElement) bool {
 		.multi_return_type,
 		.option_type,
 		.result_type,
+		.type_parameters,
 	]
 }

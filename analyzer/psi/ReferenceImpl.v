@@ -157,6 +157,10 @@ pub fn (r &SubResolver) process_type(typ types.Type, mut processor PsiScopeProce
 		return r.process_type(typ.inner, mut processor)
 	}
 
+	if typ is types.GenericInstantiationType {
+		return r.process_type(typ.inner, mut processor)
+	}
+
 	return true
 }
 

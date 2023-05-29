@@ -4,6 +4,8 @@ pub struct ImportSpec {
 	PsiElementImpl
 }
 
+fn (_ &ImportSpec) stub() {}
+
 pub fn (_ &ImportSpec) is_public() bool {
 	return true
 }

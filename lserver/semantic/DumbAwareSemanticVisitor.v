@@ -19,9 +19,7 @@ pub fn (v DumbAwareSemanticVisitor) accept(root psi.PsiElement) []SemanticToken 
 
 [inline]
 fn (_ DumbAwareSemanticVisitor) highlight_node(node psi.AstNode, root psi.PsiElement, mut result []SemanticToken) {
-	if node.type_name == .var_definition {
-		result << element_to_semantic(node, .variable)
-	} else if node.type_name == .enum_field_definition {
+	if node.type_name == .enum_field_definition {
 		if first_child := node.first_child() {
 			result << element_to_semantic(first_child, .enum_member)
 		}
@@ -96,12 +94,16 @@ fn (_ DumbAwareSemanticVisitor) highlight_node(node psi.AstNode, root psi.PsiEle
 			mods << 'mutable'
 		}
 		result << element_to_semantic(identifier, .parameter, ...mods)
-	} else if node.type_name == .var_definition {
-		result << element_to_semantic(node, .variable)
 	} else if node.type_name == .reference_expression {
 		def := psi.node_to_var_definition(node, root.containing_file, none)
 		if !isnil(def) {
-			result << element_to_semantic(node, .variable)
+			mods := if def.is_mutable() {
+				['mutable']
+			} else {
+				[]string{}
+			}
+
+			result << element_to_semantic(node, .variable, ...mods)
 		}
 
 		first_char := node.first_char(root.containing_file.source_text)
@@ -113,10 +115,6 @@ fn (_ DumbAwareSemanticVisitor) highlight_node(node psi.AstNode, root psi.PsiEle
 		result << element_to_semantic(name, .property) // not a best variant...
 	} else if node.type_name == .nil_ {
 		result << element_to_semantic(node, .keyword)
-	} else if node.type_name == .import_alias {
-		if last_child := node.last_child() {
-			result << element_to_semantic(last_child, .namespace)
-		}
 	} else if node.type_name == .import_path {
 		if last_part := node.last_child() {
 			result << element_to_semantic(last_part, .namespace)

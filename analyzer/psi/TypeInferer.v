@@ -406,51 +406,54 @@ pub fn (t &TypeInferer) convert_type(plain_type ?PsiElement) types.Type {
 	}
 
 	child := typ.first_child_or_stub() or { return types.unknown_type }
+	return t.convert_type_inner(child)
+}
 
-	if child.element_type() == .pointer_type {
-		inner := child.last_child_or_stub()
+pub fn (t &TypeInferer) convert_type_inner(element PsiElement) types.Type {
+	if element.element_type() == .pointer_type {
+		inner := element.last_child_or_stub()
 		return types.new_pointer_type(t.convert_type(inner))
 	}
 
-	if child.element_type() == .array_type {
-		inner := child.last_child_or_stub()
+	if element.element_type() == .array_type {
+		inner := element.last_child_or_stub()
 		return types.new_array_type(t.convert_type(inner))
 	}
 
-	if child.element_type() == .fixed_array_type {
+	if element.element_type() == .fixed_array_type {
 		// TODO: parse size
-		inner := child.last_child_or_stub()
+		inner := element.last_child_or_stub()
 		return types.new_array_type(t.convert_type(inner))
 	}
 
-	if child.element_type() == .thread_type {
-		inner := child.last_child_or_stub()
+	if element.element_type() == .thread_type {
+		inner := element.last_child_or_stub()
 		return types.new_thread_type(t.convert_type(inner))
 	}
 
-	if child.element_type() == .channel_type {
-		inner := child.last_child_or_stub()
+	if element.element_type() == .channel_type {
+		inner := element.last_child_or_stub()
 		return types.new_channel_type(t.convert_type(inner))
 	}
 
-	if child.element_type() == .option_type {
-		inner := child.last_child_or_stub()
+	if element.element_type() == .option_type {
+		inner := element.last_child_or_stub()
 		return types.new_option_type(t.convert_type(inner), inner == none)
 	}
 
-	if child.element_type() == .result_type {
-		inner := child.last_child_or_stub()
+	if element.element_type() == .result_type {
+		inner := element.last_child_or_stub()
 		return types.new_result_type(t.convert_type(inner), inner == none)
 	}
 
-	if child.element_type() == .multi_return_type {
-		inner_type_elements := child.find_children_by_type_or_stub(.plain_type)
+	if element.element_type() == .multi_return_type {
+		inner_type_elements := element.find_children_by_type_or_stub(.plain_type)
 		inner_types := inner_type_elements.map(t.convert_type(it))
 		return types.new_multi_return_type(inner_types)
 	}
 
-	if child.element_type() == .map_type {
-		types_inner := child.find_children_by_type_or_stub(.plain_type)
+	if element.element_type() == .map_type {
+		types_inner := element.find_children_by_type_or_stub(.plain_type)
 		if types_inner.len != 2 {
 			return types.new_map_type(types.unknown_type, types.unknown_type)
 		}
@@ -460,8 +463,8 @@ pub fn (t &TypeInferer) convert_type(plain_type ?PsiElement) types.Type {
 		return types.new_map_type(t.convert_type(key), t.convert_type(value))
 	}
 
-	if child.element_type() == .function_type {
-		signature := child.find_child_by_type_or_stub(.signature) or { return types.unknown_type }
+	if element.element_type() == .function_type {
+		signature := element.find_child_by_type_or_stub(.signature) or { return types.unknown_type }
 		if signature is Signature {
 			return t.process_signature(signature)
 		}
@@ -469,16 +472,37 @@ pub fn (t &TypeInferer) convert_type(plain_type ?PsiElement) types.Type {
 		return types.unknown_type
 	}
 
-	if child is QualifiedType {
-		if ref := child.right() {
+	if element.element_type() == .generic_type {
+		inner_type := if inner := element.find_child_by_type_or_stub(.type_reference_expression) {
+			if inner is TypeReferenceExpression {
+				t.infer_type_reference_type(inner)
+			} else {
+				return types.unknown_type
+			}
+		} else if inner_qualified := element.find_child_by_type_or_stub(.qualified_type) {
+			t.convert_type_inner(inner_qualified)
+		} else {
+			return types.unknown_type
+		}
+
+		type_parameters := element.find_child_by_type_or_stub(.type_parameters) or {
+			return inner_type
+		}
+		type_parameters_list := type_parameters.find_children_by_type_or_stub(.plain_type)
+
+		return types.new_generic_instantiation_type(inner_type, type_parameters_list.map(t.convert_type(it)))
+	}
+
+	if element is QualifiedType {
+		if ref := element.right() {
 			if ref is TypeReferenceExpression {
 				return t.infer_type_reference_type(ref)
 			}
 		}
 	}
 
-	if child is TypeReferenceExpression {
-		return t.infer_type_reference_type(child)
+	if element is TypeReferenceExpression {
+		return t.infer_type_reference_type(element)
 	}
 
 	return types.unknown_type

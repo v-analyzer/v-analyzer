@@ -36,27 +36,28 @@ pub fn build_stub_tree(file &psi.PsiFileImpl) &StubTree {
 	root := file.root()
 	stub_root := psi.new_root_stub(file.path())
 
-	build_stub_tree_for_node(root, stub_root)
+	build_stub_tree_for_node(root, stub_root, false)
 
 	return &StubTree{
 		root: stub_root
 	}
 }
 
-pub fn build_stub_tree_for_node(node psi.PsiElement, parent psi.StubBase) {
+pub fn build_stub_tree_for_node(node psi.PsiElement, parent psi.StubBase, build_for_all_children bool) {
 	element_type := psi.StubbedElementType{}
 
-	if node is psi.StubBasedPsiElement || psi.node_is_type(node) {
+	if node is psi.StubBasedPsiElement || psi.node_is_type(node) || build_for_all_children {
 		if stub := element_type.create_stub(node as psi.PsiElement, parent) {
+			is_qualified_type := node is psi.QualifiedType
 			for child in (node as psi.PsiElement).children() {
-				build_stub_tree_for_node(child, stub)
+				build_stub_tree_for_node(child, stub, build_for_all_children || is_qualified_type)
 			}
 		}
 		return
 	}
 
 	for child in node.children() {
-		build_stub_tree_for_node(child, parent)
+		build_stub_tree_for_node(child, parent, false)
 	}
 }
 

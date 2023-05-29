@@ -18,11 +18,23 @@ pub fn (r ReferenceExpression) identifier() ?PsiElement {
 }
 
 pub fn (r &ReferenceExpression) identifier_text_range() TextRange {
+	if r.stub_id != non_stubbed_element {
+		if stub := r.stubs_list.get_stub(r.stub_id) {
+			return stub.text_range
+		}
+	}
+
 	identifier := r.identifier() or { return TextRange{} }
 	return identifier.text_range()
 }
 
 pub fn (r &ReferenceExpression) name() string {
+	if r.stub_id != non_stubbed_element {
+		if stub := r.stubs_list.get_stub(r.stub_id) {
+			return stub.text
+		}
+	}
+
 	identifier := r.identifier() or { return '' }
 	return identifier.get_text()
 }

@@ -50,6 +50,11 @@ pub fn (mut p Provider) documentation(element psi.PsiElement) ?string {
 		return p.sb.str()
 	}
 
+	if element is psi.GlobalVarDefinition {
+		p.global_variable_documentation(element)?
+		return p.sb.str()
+	}
+
 	if element is psi.ParameterDeclaration {
 		p.parameter_documentation(element)?
 		return p.sb.str()
@@ -239,6 +244,15 @@ fn (mut p Provider) variable_documentation(element psi.VarDefinition) ? {
 	p.sb.write_string('```')
 }
 
+fn (mut p Provider) global_variable_documentation(element psi.GlobalVarDefinition) ? {
+	p.sb.write_string('Global **variable**\n')
+	p.sb.write_string('```v\n')
+	p.sb.write_string('__global ')
+	p.sb.write_string(element.name())
+	p.sb.write_string('\n')
+	p.sb.write_string('```')
+}
+
 fn (mut p Provider) parameter_documentation(element psi.ParameterDeclaration) ? {
 	p.sb.write_string('Function **parameter**\n')
 	p.sb.write_string('```v\n')
@@ -321,6 +335,16 @@ fn (mut p Provider) type_alias_documentation(element psi.TypeAliasDeclaration) ?
 	}
 	p.sb.write_string('type ')
 	p.sb.write_string(element.name())
+	p.sb.write_string(' = ')
+
+	inferer := psi.TypeInferer{}
+	for index, type_ in element.types() {
+		p.sb.write_string(inferer.convert_type(type_).readable_name())
+		if index < element.types().len - 1 {
+			p.sb.write_string(' | ')
+		}
+	}
+
 	p.sb.write_string('\n')
 	p.sb.write_string('```')
 	p.write_separator()

@@ -112,6 +112,7 @@ pub fn (s &StubBase) element_type() v.NodeType {
 		.multi_return_type { .multi_return_type }
 		.option_type { .option_type }
 		.result_type { .result_type }
+		.type_parameters { .type_parameters }
 		//
 		.visibility_modifiers { .visibility_modifiers }
 		.import_list { .import_list }
@@ -121,6 +122,7 @@ pub fn (s &StubBase) element_type() v.NodeType {
 		.import_name { .import_name }
 		.import_alias { .import_alias }
 		.module_clause { .module_clause }
+		.reference_expression { .reference_expression }
 	}
 }
 

@@ -1,5 +1,6 @@
 module psi
 
+[heap]
 pub struct PlainType {
 	PsiElementImpl
 }
