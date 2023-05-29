@@ -70,7 +70,7 @@ pub fn (r &SubResolver) process_resolve_variants(mut processor PsiScopeProcessor
 
 pub fn (r &SubResolver) process_qualifier_expression(qualifier PsiElement, mut processor PsiScopeProcessor) bool {
 	if qualifier is PsiTypedElement {
-		typ := TypeInferer{}.infer_type(qualifier as PsiElement)
+		typ := infer_type(qualifier as PsiElement)
 		if typ !is types.UnknownType {
 			r.process_type(typ, mut processor)
 		}
@@ -82,6 +82,16 @@ pub fn (r &SubResolver) process_qualifier_expression(qualifier PsiElement, mut p
 			elements := stubs_index.get_all_declarations_from_module(resolved.qualified_name())
 			for element in elements {
 				if !processor.execute(element) {
+					return false
+				}
+			}
+		}
+
+		if resolved is ModuleClause {
+			module_name := stubs_index.get_module_qualified_name(r.containing_file.path)
+			current_module_elements := stubs_index.get_all_declarations_from_module(module_name)
+			for elem in current_module_elements {
+				if !processor.execute(elem) {
 					return false
 				}
 			}
@@ -194,6 +204,9 @@ pub fn (r &SubResolver) process_unqualified_resolve(mut processor PsiScopeProces
 		return false
 	}
 	if !r.process_imported_modules(mut processor) {
+		return false
+	}
+	if !r.process_module_clause(mut processor) {
 		return false
 	}
 
@@ -368,6 +381,11 @@ pub fn (r &SubResolver) process_file(mut processor PsiScopeProcessor) bool {
 	return r.containing_file.process_declarations(mut processor)
 }
 
+pub fn (r &SubResolver) process_module_clause(mut processor PsiScopeProcessor) bool {
+	mod := r.containing_file.module_clause() or { return true }
+	return processor.execute(mod)
+}
+
 pub fn (r &SubResolver) process_imported_modules(mut processor PsiScopeProcessor) bool {
 	search_name := r.element().get_text()
 	import_spec := r.containing_file.resolve_import_spec(search_name) or { return true }
@@ -387,7 +405,7 @@ pub fn (r &SubResolver) process_enum_fetch(parent PsiElement, mut processor PsiS
 pub fn (r &SubResolver) process_type_initializer_field(mut processor PsiScopeProcessor) bool {
 	init_expr := r.element().parent_of_type(.type_initializer) or { return true }
 	if init_expr is PsiTypedElement {
-		typ := types.unwrap_pointer_type(TypeInferer{}.infer_type(init_expr as PsiElement))
+		typ := types.unwrap_pointer_type(infer_type(init_expr as PsiElement))
 		if typ is types.StructType {
 			if struct_ := r.find_struct(stubs_index, typ.qualified_name()) {
 				fields := struct_.fields()

@@ -553,8 +553,7 @@ struct C.Foo {
           (value_attribute
             (reference_expression
               (identifier))))))
-    (binded_identifier
-      (identifier))
+    (identifier)
     (struct_field_declaration
       (identifier)
       (plain_type
@@ -578,8 +577,7 @@ struct JS.Foo {
           (value_attribute
             (reference_expression
               (identifier))))))
-    (binded_identifier
-      (identifier))
+    (identifier)
     (struct_field_declaration
       (identifier)
       (plain_type

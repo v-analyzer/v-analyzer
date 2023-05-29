@@ -64,5 +64,7 @@ fn (_ ResolveSemanticVisitor) highlight_node(node psi.PsiElement, root psi.PsiEl
 		result << element_to_semantic(first_child, .parameter, ...mods)
 	} else if res is psi.ImportSpec {
 		result << element_to_semantic(first_child, .namespace)
+	} else if res is psi.ModuleClause {
+		result << element_to_semantic(first_child, .namespace)
 	}
 }

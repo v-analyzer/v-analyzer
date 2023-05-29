@@ -108,6 +108,16 @@ pub fn (p &PsiFileImpl) module_name() ?string {
 	return none
 }
 
+pub fn (p &PsiFileImpl) module_clause() ?&ModuleClause {
+	module_clause := p.root().find_child_by_type_or_stub(.module_clause)?
+
+	if module_clause is ModuleClause {
+		return module_clause
+	}
+
+	return none
+}
+
 pub fn (p &PsiFileImpl) get_imports() []ImportSpec {
 	import_list := p.root().find_child_by_type_or_stub(.import_list) or { return [] }
 	declarations := import_list.find_children_by_type_or_stub(.import_declaration)

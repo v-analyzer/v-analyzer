@@ -9,5 +9,5 @@ pub struct TypeInitializer {
 fn (_ &TypeInitializer) expr() {}
 
 fn (n &TypeInitializer) get_type() types.Type {
-	return TypeInferer{}.infer_type(n)
+	return infer_type(n)
 }

@@ -7,7 +7,7 @@ pub struct CallExpression {
 }
 
 fn (c &CallExpression) get_type() types.Type {
-	return TypeInferer{}.infer_type(c)
+	return infer_type(c)
 }
 
 pub fn (c CallExpression) error_propagation() ?PsiElement {

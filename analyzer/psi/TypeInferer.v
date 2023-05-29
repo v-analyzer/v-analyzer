@@ -2,13 +2,20 @@ module psi
 
 import analyzer.psi.types
 
-pub struct TypeInferer {
+pub fn infer_type(elem ?PsiElement) types.Type {
+	return TypeInferer{}.infer_type(elem)
 }
+
+pub struct TypeInferer {}
 
 pub fn (t &TypeInferer) infer_type(elem ?PsiElement) types.Type {
 	element := elem or { return types.unknown_type }
-	if element.node.type_name in [.in_expression, .not_in_expression, .is_expression,
-		.not_is_expression] {
+	if element.node.type_name in [
+		.in_expression,
+		.not_in_expression,
+		.is_expression,
+		.not_is_expression,
+	] {
 		return types.new_primitive_type('bool')
 	}
 

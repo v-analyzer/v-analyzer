@@ -64,7 +64,7 @@ fn () C.Foo {}
       (signature
         (parameter_list)
         (plain_type
-          (binded_type
+          (type_reference_expression
             (identifier))))
       (block)))
   (simple_statement
@@ -72,7 +72,7 @@ fn () C.Foo {}
       (signature
         (parameter_list)
         (plain_type
-          (binded_type
+          (type_reference_expression
             (identifier))))
       (block)))
   (simple_statement
@@ -80,7 +80,7 @@ fn () C.Foo {}
       (signature
         (parameter_list)
         (plain_type
-          (binded_type
+          (type_reference_expression
             (identifier))))
       (block))))
 

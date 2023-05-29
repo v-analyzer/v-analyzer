@@ -13,7 +13,7 @@ pub fn (_ &ParameterDeclaration) is_public() bool {
 }
 
 pub fn (p &ParameterDeclaration) get_type() types.Type {
-	return TypeInferer{}.infer_type(p)
+	return infer_type(p)
 }
 
 pub fn (p &ParameterDeclaration) identifier() ?PsiElement {

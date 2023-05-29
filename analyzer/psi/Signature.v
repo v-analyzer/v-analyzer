@@ -7,7 +7,7 @@ pub struct Signature {
 }
 
 pub fn (s &Signature) get_type() types.Type {
-	return TypeInferer{}.infer_type(s)
+	return infer_type(s)
 }
 
 pub fn (n Signature) parameters() []PsiElement {

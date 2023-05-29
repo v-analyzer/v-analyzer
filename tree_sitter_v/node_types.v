@@ -27,8 +27,6 @@ pub enum NodeType {
 	attribute_expression
 	attributes
 	binary_expression
-	binded_identifier
-	binded_type
 	block
 	braced_interpolation_closing
 	braced_interpolation_opening
@@ -40,7 +38,6 @@ pub enum NodeType {
 	channel_type
 	comment
 	compile_time_for_statement
-	compile_time_identifier
 	compile_time_if_expression
 	compile_time_selector_expression
 	const_declaration
@@ -187,7 +184,6 @@ const supertype__expression_nodes = merge(supertype__expression_with_blocks_node
 	NodeType.array_creation,
 	.as_type_cast_expression,
 	.binary_expression,
-	.binded_identifier,
 	.call_expression,
 	.empty_array_creation,
 	.empty_literal_value,
@@ -281,9 +277,7 @@ const declaration_node_types = [
 ]
 
 const identifier_node_types = [
-	NodeType.binded_identifier,
-	.compile_time_identifier,
-	.mutable_identifier,
+	NodeType.mutable_identifier,
 	.pseudo_compile_time_identifier,
 	.identifier,
 ]
@@ -330,8 +324,6 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'attribute_expression' { NodeType.attribute_expression }
 		'attributes' { NodeType.attributes }
 		'binary_expression' { NodeType.binary_expression }
-		'binded_identifier' { NodeType.binded_identifier }
-		'binded_type' { NodeType.binded_type }
 		'block' { NodeType.block }
 		'braced_interpolation_closing' { NodeType.braced_interpolation_closing }
 		'braced_interpolation_opening' { NodeType.braced_interpolation_opening }
@@ -343,7 +335,6 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'channel_type' { NodeType.channel_type }
 		'comment' { NodeType.comment }
 		'compile_time_for_statement' { NodeType.compile_time_for_statement }
-		'compile_time_identifier' { NodeType.compile_time_identifier }
 		'compile_time_if_expression' { NodeType.compile_time_if_expression }
 		'compile_time_selector_expression' { NodeType.compile_time_selector_expression }
 		'const_declaration' { NodeType.const_declaration }

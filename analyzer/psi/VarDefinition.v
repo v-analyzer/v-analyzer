@@ -41,7 +41,7 @@ pub fn (n &VarDefinition) declaration() ?&VarDeclaration {
 }
 
 pub fn (n &VarDefinition) get_type() types.Type {
-	return TypeInferer{}.infer_type(n)
+	return infer_type(n)
 }
 
 pub fn (n &VarDefinition) mutability_modifiers() ?&MutabilityModifiers {

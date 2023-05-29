@@ -39,5 +39,5 @@ pub fn (n &GlobalVarDefinition) name() string {
 }
 
 pub fn (n &GlobalVarDefinition) get_type() types.Type {
-	return TypeInferer{}.infer_type(n)
+	return infer_type(n)
 }

@@ -53,7 +53,7 @@ pub fn (r &Receiver) type_element() ?PsiElement {
 }
 
 pub fn (r &Receiver) get_type() types.Type {
-	return TypeInferer{}.infer_type(r)
+	return infer_type(r)
 }
 
 pub fn (r &Receiver) mutability_modifiers() ?&MutabilityModifiers {

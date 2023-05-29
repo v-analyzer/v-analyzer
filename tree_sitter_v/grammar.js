@@ -109,8 +109,6 @@ module.exports = grammar({
     [$.qualified_type, $._expression_without_blocks],
     [$.fixed_array_type, $.literal],
     [$.fixed_array_type, $._expression],
-    [$._binded_type, $._expression],
-    [$._binded_type, $._expression_without_blocks],
     [$.reference_expression, $.type_reference_expression],
     [$.is_expression],
     [$.not_is_expression],
@@ -234,7 +232,7 @@ module.exports = grammar({
         field('body', optional($.block)),
       )),
 
-    _function_name: ($) => choice($.binded_identifier, $.identifier, $.overridable_operator),
+    _function_name: ($) => choice($.identifier, $.overridable_operator),
 
     overridable_operator: () => choice(...overridable_operators),
 
@@ -291,7 +289,7 @@ module.exports = grammar({
       field('attributes', optional($.attributes)),
       optional($.visibility_modifiers),
       choice('struct', 'union'),
-      field('name', choice($.identifier, $.binded_identifier)),
+      field('name', $.identifier),
       field('generic_parameters', optional($.generic_parameters)),
       $._struct_body,
     ),
@@ -365,7 +363,7 @@ module.exports = grammar({
       field('attributes', optional($.attributes)),
       optional($.visibility_modifiers),
       'interface',
-      field('name', choice($.identifier, $.binded_identifier)),
+      field('name', $.identifier),
       field('generic_parameters', optional($.generic_parameters)),
       $._interface_body,
     ),
@@ -403,7 +401,6 @@ module.exports = grammar({
       $.call_expression,
       $.function_literal,
       $.empty_literal_value,
-      $.binded_identifier,
       $.reference_expression,
       $._max_group,
       $.map_init_expression,
@@ -871,15 +868,14 @@ module.exports = grammar({
     pseudo_compile_time_identifier: ($) =>
       seq('@', alias(/[A-Z][A-Z0-9_]+/, $.identifier)),
 
-    identifier: () =>
-      token(
-        seq(
-          optional('@'),
-          optional('$'),
-          choice(unicode_letter, '_'),
-          repeat(choice(letter, unicode_digit)),
-        ),
-      ),
+    identifier: ($) => token(seq(
+      optional('@'),
+      optional('$'),
+      optional('C.'),
+      optional('JS.'),
+      choice(unicode_letter, '_'),
+      repeat(choice(letter, unicode_digit)),
+    )),
 
     visibility_modifiers: () => prec.left(choice(
       'pub',
@@ -900,12 +896,6 @@ module.exports = grammar({
       $.mutability_modifiers,
       $._expression,
     )),
-
-    binded_identifier: ($) => seq(
-      field('language', choice('C', 'JS')),
-      token.immediate('.'),
-      field('name', $.identifier),
-    ),
 
     identifier_list: ($) =>
       prec(PREC.and, comma_sep1(choice($.mutable_identifier, $.identifier))),
@@ -948,7 +938,6 @@ module.exports = grammar({
     _plain_type_without_option: ($) => prec.right(PREC.primary, choice(
       $.type_reference_expression,
       $.qualified_type,
-      $._binded_type,
       $.pointer_type,
       $.wrong_pointer_type,
       $.array_type,
@@ -977,8 +966,6 @@ module.exports = grammar({
       '.',
       field('name', $.type_reference_expression),
     ),
-
-    _binded_type: ($) => prec.right(alias($.binded_identifier, $.binded_type)),
 
     fixed_array_type: ($) => seq(
       '[',
@@ -1224,7 +1211,7 @@ function interpolated_quoted_string($, opening) {
     opening,
     $.escape_sequence,
     $.string_interpolation,
-    // token.immediate('$'),
+    token.immediate('$'),
   )
 }
 

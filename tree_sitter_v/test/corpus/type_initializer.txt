@@ -423,7 +423,7 @@ C.Foo{
   (simple_statement
     (type_initializer
       (plain_type
-        (binded_type
+        (type_reference_expression
           (identifier)))
       (type_initializer_body
         (element_list

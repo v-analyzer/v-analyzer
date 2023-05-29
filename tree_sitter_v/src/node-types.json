@@ -20,10 +20,6 @@
         "named": true
       },
       {
-        "type": "binded_identifier",
-        "named": true
-      },
-      {
         "type": "call_expression",
         "named": true
       },
@@ -646,66 +642,6 @@
         "types": [
           {
             "type": "_expression",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
-    "type": "binded_identifier",
-    "named": true,
-    "fields": {
-      "language": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "C",
-            "named": false
-          },
-          {
-            "type": "JS",
-            "named": false
-          }
-        ]
-      },
-      "name": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
-    "type": "binded_type",
-    "named": true,
-    "fields": {
-      "language": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "C",
-            "named": false
-          },
-          {
-            "type": "JS",
-            "named": false
-          }
-        ]
-      },
-      "name": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "identifier",
             "named": true
           }
         ]
@@ -1458,10 +1394,6 @@
         "required": true,
         "types": [
           {
-            "type": "binded_identifier",
-            "named": true
-          },
-          {
             "type": "identifier",
             "named": true
           },
@@ -2002,10 +1934,6 @@
         "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "binded_identifier",
-            "named": true
-          },
           {
             "type": "identifier",
             "named": true
@@ -2797,10 +2725,6 @@
           "named": true
         },
         {
-          "type": "binded_type",
-          "named": true
-        },
-        {
           "type": "channel_type",
           "named": true
         },
@@ -3540,10 +3464,6 @@
         "required": true,
         "types": [
           {
-            "type": "binded_identifier",
-            "named": true
-          },
-          {
             "type": "identifier",
             "named": true
           }
@@ -4210,14 +4130,6 @@
   },
   {
     "type": "@",
-    "named": false
-  },
-  {
-    "type": "C",
-    "named": false
-  },
-  {
-    "type": "JS",
     "named": false
   },
   {

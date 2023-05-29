@@ -79,5 +79,5 @@ pub fn (r ReferenceExpression) resolve() ?PsiElement {
 }
 
 pub fn (r ReferenceExpression) get_type() types.Type {
-	return TypeInferer{}.infer_type(r)
+	return infer_type(r)
 }

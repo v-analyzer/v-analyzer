@@ -357,8 +357,7 @@ fn C.foo()
 
 (source_file
   (function_declaration
-    (binded_identifier
-      (identifier))
+    (identifier)
     (signature
       (parameter_list))))
 
@@ -370,8 +369,7 @@ fn JS.foo()
 
 (source_file
   (function_declaration
-    (binded_identifier
-      (identifier))
+    (identifier)
     (signature
       (parameter_list))))
 
@@ -549,8 +547,7 @@ pub fn C.foo[T, U, ](foo string, age ...int) !(int, string, ) {}
             (reference_expression
               (identifier))))))
     (visibility_modifiers)
-    (binded_identifier
-      (identifier))
+    (identifier)
     (generic_parameters
       (generic_parameter
         (identifier))
