@@ -101,6 +101,10 @@ pub fn (n PsiElementImpl) find_reference_at(offset u32) ?PsiElement {
 pub fn (n PsiElementImpl) parent() ?PsiElement {
 	if n.stub_id != non_stubbed_element {
 		if stub := n.stubs_list.get_stub(n.stub_id) {
+			if isnil(stub) {
+				return none
+			}
+
 			parent := stub.parent_stub() or { return none }
 			if is_valid_stub(parent) {
 				return parent.get_psi()

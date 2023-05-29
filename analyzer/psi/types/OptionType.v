@@ -1,6 +1,7 @@
 module types
 
 pub struct OptionType {
+pub:
 	inner    Type
 	no_inner bool
 }

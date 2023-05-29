@@ -58,6 +58,11 @@ pub fn (n &VarDefinition) mutability_modifiers() ?&MutabilityModifiers {
 }
 
 pub fn (n &VarDefinition) is_mutable() bool {
-	mods := n.mutability_modifiers() or { return false }
+	mods := n.mutability_modifiers() or {
+		if first_child := n.first_child() {
+			return first_child.text_matches('mut')
+		}
+		return false
+	}
 	return mods.is_mutable()
 }

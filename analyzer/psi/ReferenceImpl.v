@@ -146,6 +146,14 @@ pub fn (r &SubResolver) process_type(typ types.Type, mut processor PsiScopeProce
 		return r.process_type(typ.inner, mut processor)
 	}
 
+	if typ is types.OptionType {
+		return r.process_type(typ.inner, mut processor)
+	}
+
+	if typ is types.ResultType {
+		return r.process_type(typ.inner, mut processor)
+	}
+
 	if typ is types.AliasType {
 		methods := r.calc_methods(typ)
 		for method in methods {
@@ -172,6 +180,10 @@ pub fn (r &SubResolver) process_unqualified_resolve(mut processor PsiScopeProces
 	if parent := r.element().parent() {
 		if parent is FieldName {
 			return r.process_type_initializer_field(mut processor)
+		}
+
+		if parent.element_type() == .enum_fetch {
+			return r.process_enum_fetch(parent, mut processor)
 		}
 	}
 
@@ -365,6 +377,11 @@ pub fn (r &SubResolver) process_imported_modules(mut processor PsiScopeProcessor
 	}
 
 	return true
+}
+
+pub fn (r &SubResolver) process_enum_fetch(parent PsiElement, mut processor PsiScopeProcessor) bool {
+	context_type := TypeInferer{}.infer_context_type(parent)
+	return r.process_type(context_type, mut processor)
 }
 
 pub fn (r &SubResolver) process_type_initializer_field(mut processor PsiScopeProcessor) bool {

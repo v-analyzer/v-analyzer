@@ -15,4 +15,5 @@ $embed_file('stubs/arrays.v', .zlib)
             (interpreted_string_literal)))
         (argument
           (enum_fetch
-            (identifier)))))))
+            (reference_expression
+              (identifier))))))))

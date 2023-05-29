@@ -119,5 +119,8 @@ fn (_ DumbAwareSemanticVisitor) highlight_node(node psi.AstNode, root psi.PsiEle
 		if last_part := node.last_child() {
 			result << element_to_semantic(last_part, .namespace)
 		}
+	} else if node.type_name == .braced_interpolation_opening
+		|| node.type_name == .braced_interpolation_closing {
+		result << element_to_semantic(node, .keyword)
 	}
 }

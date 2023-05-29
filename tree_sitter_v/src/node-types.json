@@ -1198,7 +1198,7 @@
       "required": true,
       "types": [
         {
-          "type": "identifier",
+          "type": "reference_expression",
           "named": true
         }
       ]
@@ -1808,7 +1808,7 @@
       "required": true,
       "types": [
         {
-          "type": "identifier",
+          "type": "import_name",
           "named": true
         }
       ]

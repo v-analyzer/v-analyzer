@@ -109,6 +109,10 @@ pub fn node_type_to_stub_type(typ tree_sitter_v.NodeType) StubType {
 pub struct StubbedElementType {}
 
 pub fn (_ &StubbedElementType) index_stub(stub &StubBase, mut sink IndexSink) {
+	if stub.stub_list.path.ends_with('_test.v') {
+		return
+	}
+
 	if stub.stub_type == .function_declaration {
 		name := stub.name()
 		if name == 'main' || name.starts_with('test_') {

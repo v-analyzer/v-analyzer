@@ -39,7 +39,8 @@ Simple map init expression
           (int_literal)))
       (map_keyed_element
         (enum_fetch
-          (identifier))
+          (reference_expression
+            (identifier)))
         (literal
           (int_literal)))
       (map_keyed_element

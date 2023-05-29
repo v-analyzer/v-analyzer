@@ -14,12 +14,19 @@ pub fn unwrap_channel_type(typ Type) Type {
 	return typ
 }
 
-pub fn unwrap_result_pr_option_type(typ Type) Type {
+pub fn unwrap_result_or_option_type(typ Type) Type {
 	if typ is ResultType {
 		return typ.inner
 	}
 	if typ is OptionType {
 		return typ.inner
+	}
+	return typ
+}
+
+pub fn unwrap_result_or_option_type_if(typ Type, condition bool) Type {
+	if condition {
+		return unwrap_result_or_option_type(typ)
 	}
 	return typ
 }

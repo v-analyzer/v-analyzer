@@ -253,7 +253,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "identifier"
+          "name": "import_name"
         }
       ]
     },
@@ -4160,7 +4160,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "identifier"
+          "name": "reference_expression"
         }
       ]
     },

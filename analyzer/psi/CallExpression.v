@@ -10,6 +10,10 @@ fn (c &CallExpression) get_type() types.Type {
 	return TypeInferer{}.infer_type(c)
 }
 
+pub fn (c CallExpression) error_propagation() ?PsiElement {
+	return c.find_child_by_type(.error_propagate)
+}
+
 pub fn (c CallExpression) expression() ?PsiElement {
 	return c.first_child()
 }

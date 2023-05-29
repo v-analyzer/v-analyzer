@@ -214,7 +214,7 @@ pub fn (t &TypeInferer) infer_type(elem ?PsiElement) types.Type {
 			typ := t.infer_type(init)
 			if decl_parent := decl.parent() {
 				if decl_parent is IfExpression {
-					return types.unwrap_result_pr_option_type(typ)
+					return types.unwrap_result_or_option_type(typ)
 				}
 			}
 
@@ -251,6 +251,14 @@ pub fn (t &TypeInferer) infer_type(elem ?PsiElement) types.Type {
 	if element is FunctionOrMethodDeclaration {
 		signature := element.signature() or { return types.unknown_type }
 		return t.process_signature(signature)
+	}
+
+	if element is EnumDeclaration {
+		return element.get_type()
+	}
+
+	if element is EnumFieldDeclaration {
+		return element.get_type()
 	}
 
 	return types.unknown_type
@@ -331,10 +339,12 @@ pub fn (t &TypeInferer) infer_call_expr_type(element CallExpression) types.Type 
 		return types.new_result_type(element.get_json_decode_type(), false)
 	}
 
+	need_unwrap := if _ := element.error_propagation() { true } else { false }
+
 	resolved := element.resolve() or { return types.unknown_type }
 	typ := t.infer_type(resolved)
 	if typ is types.FunctionType {
-		return typ.result
+		return types.unwrap_result_or_option_type_if(typ.result, need_unwrap)
 	}
 
 	return types.unknown_type
@@ -547,4 +557,47 @@ fn (t &TypeInferer) infer_type_reference_type(element TypeReferenceExpression) t
 fn (t &TypeInferer) infer_from_plain_type(element PsiElement) types.Type {
 	plain_typ := element.find_child_by_type_or_stub(.plain_type) or { return types.unknown_type }
 	return t.convert_type(plain_typ)
+}
+
+pub fn (t &TypeInferer) infer_context_type(elem ?PsiElement) types.Type {
+	element := elem or { return types.unknown_type }
+	parent := element.parent() or { return types.unknown_type }
+
+	if parent.element_type() == .binary_expression {
+		right := parent.last_child_or_stub() or { return types.unknown_type }
+		if right.is_equal(element) {
+			left := parent.first_child_or_stub() or { return types.unknown_type }
+			return t.infer_type(left)
+		}
+	}
+
+	if parent.element_type() == .expression_list {
+		grand := parent.parent() or { return types.unknown_type }
+		if grand.element_type() == .assignment_statement {
+			// TODO: support multiple assignments
+			right_list := grand.last_child_or_stub() or { return types.unknown_type }
+			right := right_list.first_child_or_stub() or { return types.unknown_type }
+			if right.is_equal(element) {
+				left_list := grand.first_child_or_stub() or { return types.unknown_type }
+				left := left_list.first_child_or_stub() or { return types.unknown_type }
+				return t.infer_type(left)
+			}
+		}
+	}
+
+	if parent.element_type() == .match_expression_list {
+		match_expr := parent.parent_of_type(.match_expression) or { return types.unknown_type }
+		if match_expr is MatchExpression {
+			return t.infer_type(match_expr.expression())
+		}
+	}
+
+	if parent is KeyedElement {
+		field := parent.field() or { return types.unknown_type }
+		ref := field.reference_expression() or { return types.unknown_type }
+		resolved := ref.resolve() or { return types.unknown_type }
+		return t.infer_from_plain_type(resolved)
+	}
+
+	return types.unknown_type
 }

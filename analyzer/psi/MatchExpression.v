@@ -4,6 +4,10 @@ pub struct MatchExpression {
 	PsiElementImpl
 }
 
+pub fn (n MatchExpression) expression() ?PsiElement {
+	return n.find_child_by_name('condition')
+}
+
 pub fn (n MatchExpression) arms() []PsiElement {
 	arms := n.find_child_by_type(.match_arms) or { return [] }
 	mut arm_list := arms.find_children_by_type(.match_arm)

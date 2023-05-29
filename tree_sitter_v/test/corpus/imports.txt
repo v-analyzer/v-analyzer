@@ -55,7 +55,8 @@ import foo as bar
           (import_name
             (identifier)))
         (import_alias
-          (identifier))))))
+          (import_name
+            (identifier)))))))
 
 ================================================================================
 Import list with alias
@@ -73,14 +74,16 @@ import baz as qux
           (import_name
             (identifier)))
         (import_alias
-          (identifier))))
+          (import_name
+            (identifier)))))
     (import_declaration
       (import_spec
         (import_path
           (import_name
             (identifier)))
         (import_alias
-          (identifier))))))
+          (import_name
+            (identifier)))))))
 
 ================================================================================
 Import list with alias and no alias
@@ -99,7 +102,8 @@ import qux as quux
           (import_name
             (identifier)))
         (import_alias
-          (identifier))))
+          (import_name
+            (identifier)))))
     (import_declaration
       (import_spec
         (import_path
@@ -111,7 +115,8 @@ import qux as quux
           (import_name
             (identifier)))
         (import_alias
-          (identifier))))))
+          (import_name
+            (identifier)))))))
 
 ================================================================================
 Import with fqn
@@ -151,7 +156,8 @@ import foo.bar.baz as qux
           (import_name
             (identifier)))
         (import_alias
-          (identifier))))))
+          (import_name
+            (identifier)))))))
 
 ================================================================================
 Simple selective import
@@ -282,7 +288,8 @@ import foo as bar { bar, Baz, qux, }
           (import_name
             (identifier)))
         (import_alias
-          (identifier))
+          (import_name
+            (identifier)))
         (selective_import_list
           (reference_expression
             (identifier))

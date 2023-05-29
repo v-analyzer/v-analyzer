@@ -155,7 +155,7 @@ module.exports = grammar({
 
     // foo as bar
     //     ^^^^^^
-    import_alias: ($) => seq('as', $.identifier),
+    import_alias: ($) => seq('as', $.import_name),
 
     // { foo, bar }
     selective_import_list: ($) => seq('{', $._import_symbols_list, '}'),
@@ -720,7 +720,7 @@ module.exports = grammar({
       field('right', $._expression),
     )),
 
-    enum_fetch: ($) => seq('.', $.identifier),
+    enum_fetch: ($) => seq('.', $.reference_expression),
 
     match_expression: ($) => seq(
       'match',
