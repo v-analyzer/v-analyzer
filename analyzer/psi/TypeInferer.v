@@ -305,6 +305,8 @@ pub fn (t &TypeInferer) process_range_clause(element PsiElement, range PsiElemen
 			if right_type.name() == 'string' {
 				return types.new_primitive_type('u8')
 			}
+
+			return t.infer_iterator_struct(right_type)
 		}
 	}
 
@@ -337,9 +339,24 @@ pub fn (t &TypeInferer) process_range_clause(element PsiElement, range PsiElemen
 			if right_type.name() == 'string' {
 				return types.new_primitive_type('u8')
 			}
+
+			return t.infer_iterator_struct(right_type)
 		}
 
 		return types.unknown_type
+	}
+
+	return types.unknown_type
+}
+
+pub fn (_ &TypeInferer) infer_iterator_struct(typ types.Type) types.Type {
+	method := find_method(typ, 'next') or { return types.unknown_type }
+	if method is FunctionOrMethodDeclaration {
+		signature := method.signature() or { return types.unknown_type }
+		func_type := signature.get_type()
+		if func_type is types.FunctionType {
+			return types.unwrap_result_or_option_type(func_type.result)
+		}
 	}
 
 	return types.unknown_type

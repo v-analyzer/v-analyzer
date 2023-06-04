@@ -101,12 +101,6 @@ pub fn (r &SubResolver) process_qualifier_expression(qualifier PsiElement, mut p
 	return true
 }
 
-pub fn (_ &SubResolver) calc_methods(typ types.Type) []PsiElement {
-	name := typ.qualified_name()
-	methods := stubs_index.get_elements_by_name(.methods, name)
-	return methods
-}
-
 pub fn (r &SubResolver) process_elements(elements []PsiElement, mut processor PsiScopeProcessor) bool {
 	for element in elements {
 		if !processor.execute(element) {
@@ -124,7 +118,7 @@ pub fn (r &SubResolver) process_type(typ types.Type, mut processor PsiScopeProce
 			// If it is a call, then most likely it is a method call, but it
 			// could be a function call that is stored in a structure field.
 			if is_method_ref {
-				if !r.process_elements(r.calc_methods(typ), mut processor) {
+				if !r.process_elements(methods_list(typ), mut processor) {
 					return false
 				}
 				if !r.process_elements(struct_.fields(), mut processor) {
@@ -134,7 +128,7 @@ pub fn (r &SubResolver) process_type(typ types.Type, mut processor PsiScopeProce
 				if !r.process_elements(struct_.fields(), mut processor) {
 					return false
 				}
-				if !r.process_elements(r.calc_methods(typ), mut processor) {
+				if !r.process_elements(methods_list(typ), mut processor) {
 					return false
 				}
 			}
@@ -143,7 +137,7 @@ pub fn (r &SubResolver) process_type(typ types.Type, mut processor PsiScopeProce
 
 	if typ is types.InterfaceType {
 		if interface_ := r.find_interface(stubs_index, typ.qualified_name()) {
-			if !r.process_elements(r.calc_methods(typ), mut processor) {
+			if !r.process_elements(methods_list(typ), mut processor) {
 				return false
 			}
 			if !r.process_elements(interface_.fields(), mut processor) {
@@ -184,7 +178,7 @@ pub fn (r &SubResolver) process_type(typ types.Type, mut processor PsiScopeProce
 	}
 
 	if typ is types.AliasType {
-		if !r.process_elements(r.calc_methods(typ), mut processor) {
+		if !r.process_elements(methods_list(typ), mut processor) {
 			return false
 		}
 
