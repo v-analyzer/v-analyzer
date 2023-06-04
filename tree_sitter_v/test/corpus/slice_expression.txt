@@ -80,3 +80,20 @@ name[10 + 4..20 + 10]
             (int_literal))
           (literal
             (int_literal)))))))
+
+================================================================================
+Safe slice expression
+================================================================================
+name#[0..10]
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (slice_expression
+      (reference_expression
+        (identifier))
+      (range
+        (literal
+          (int_literal))
+        (literal
+          (int_literal))))))

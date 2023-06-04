@@ -296,14 +296,14 @@ module.exports = grammar({
 
     _struct_body: ($) => seq(
       '{',
-      repeat(
-        choice(
-          seq($.struct_field_scope, optional(terminator)),
-          seq($.struct_field_declaration, optional(terminator)),
-        ),
-      ),
+      optional($._struct_fields),
       '}',
     ),
+
+    _struct_fields: ($) => repeat1(choice(
+      seq($.struct_field_scope, optional(terminator)),
+      seq($.struct_field_declaration, optional(terminator)),
+    )),
 
     // pub:
     // mut:
@@ -424,6 +424,7 @@ module.exports = grammar({
 
     _expression_with_blocks: ($) => choice(
       $.type_initializer,
+      $.anon_struct_value_expression,
       $.if_expression,
       $.match_expression,
       $.select_expression,
@@ -431,6 +432,16 @@ module.exports = grammar({
       $.lock_expression,
       $.unsafe_expression,
       $.compile_time_if_expression,
+    ),
+
+    anon_struct_value_expression: ($) => seq(
+      'struct', '{',
+      choice(
+        field('element_list', $.element_list),
+        // For short struct init syntax
+        field('short_element_list', $.short_element_list),
+      ),
+      '}',
     ),
 
     go_expression: ($) => prec.left(PREC.composite_literal, seq('go', $._expression)),
@@ -572,7 +583,7 @@ module.exports = grammar({
     ),
 
     compile_time_selector_expression: ($) =>
-      comp_time(seq('(', $.selector_expression, ')')),
+      comp_time(seq('(', choice($.reference_expression, $.selector_expression), ')')),
 
     error_propagate: ($) => prec.right(choice('?', '!', $.or_block)),
 
@@ -642,7 +653,7 @@ module.exports = grammar({
 
     selector_expression: ($) => prec(PREC.primary, seq(
       field('operand', $._expression),
-      '.',
+      choice('.', '?.'),
       field(
         'field',
         choice(
@@ -653,14 +664,14 @@ module.exports = grammar({
 
     index_expression: ($) => prec.right(PREC.primary, seq(
       field('operand', $._expression),
-      choice('[', token.immediate('[')),
+      choice('[', token.immediate('['), token('#[')),
       field('index', $._expression),
       ']',
       optional($.error_propagate),
     )),
 
     slice_expression: ($) => prec(PREC.primary,
-      seq(field('operand', $._expression), choice('[', token.immediate('[')), $.range, ']'),
+      seq(field('operand', $._expression), choice('[', token.immediate('['), token('#[')), $.range, ']'),
     ),
 
     if_expression: ($) => seq(
@@ -948,8 +959,12 @@ module.exports = grammar({
       $.channel_type,
       $.shared_type,
       $.thread_type,
+      $.atomic_type,
       $.multi_return_type,
+      $.anon_struct_type,
     )),
+
+    anon_struct_type: ($) => seq('struct', '{', optional($._struct_fields), '}'),
 
     multi_return_type: ($) => seq('(', comma_sep1($.plain_type), optional(','), ')'),
 
@@ -969,7 +984,7 @@ module.exports = grammar({
 
     fixed_array_type: ($) => seq(
       '[',
-      field('size', choice($.int_literal, $.reference_expression)),
+      field('size', choice($.int_literal, $.reference_expression, $.selector_expression)),
       ']',
       field('element', $.plain_type),
     ),
@@ -993,6 +1008,8 @@ module.exports = grammar({
     shared_type: ($) => seq('shared', $.plain_type),
 
     thread_type: ($) => seq('thread', $.plain_type),
+
+    atomic_type: ($) => seq('atomic', $.plain_type),
 
     generic_type: ($) => seq(choice($.qualified_type, $.type_reference_expression), $.type_parameters),
 

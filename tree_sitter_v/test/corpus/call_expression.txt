@@ -534,3 +534,20 @@ bar.name().foo()
         (reference_expression
           (identifier)))
       (argument_list))))
+
+================================================================================
+Call expression with ...
+================================================================================
+foo(...name)
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (call_expression
+      (reference_expression
+        (identifier))
+      (argument_list
+        (argument
+          (spread_expression
+            (reference_expression
+              (identifier))))))))

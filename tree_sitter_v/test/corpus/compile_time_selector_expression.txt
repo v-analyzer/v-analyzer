@@ -1,0 +1,25 @@
+================================================================================
+Simple compile time selector
+================================================================================
+name.$(some)
+name.$(some.other)
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (selector_expression
+      (reference_expression
+        (identifier))
+      (compile_time_selector_expression
+        (reference_expression
+          (identifier)))))
+  (simple_statement
+    (selector_expression
+      (reference_expression
+        (identifier))
+      (compile_time_selector_expression
+        (selector_expression
+          (reference_expression
+            (identifier))
+          (reference_expression
+            (identifier)))))))

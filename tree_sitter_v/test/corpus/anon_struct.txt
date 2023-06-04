@@ -1,0 +1,127 @@
+================================================================================
+Simple anon struct
+================================================================================
+struct Foo {
+    inner struct {
+        name string
+    }
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (struct_declaration
+    (identifier)
+    (struct_field_declaration
+      (identifier)
+      (plain_type
+        (anon_struct_type
+          (struct_field_declaration
+            (identifier)
+            (plain_type
+              (type_reference_expression
+                (identifier)))))))))
+
+================================================================================
+Anon struct with modifiers
+================================================================================
+struct Foo {
+    inner struct {
+    pub:
+        name string
+    mut:
+        age int
+    }
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (struct_declaration
+    (identifier)
+    (struct_field_declaration
+      (identifier)
+      (plain_type
+        (anon_struct_type
+          (struct_field_scope)
+          (struct_field_declaration
+            (identifier)
+            (plain_type
+              (type_reference_expression
+                (identifier))))
+          (struct_field_scope)
+          (struct_field_declaration
+            (identifier)
+            (plain_type
+              (type_reference_expression
+                (identifier)))))))))
+
+================================================================================
+Anon struct as param type
+================================================================================
+fn func(arg struct { foo string }) {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_declaration
+    (identifier)
+    (signature
+      (parameter_list
+        (parameter_declaration
+          (identifier)
+          (plain_type
+            (anon_struct_type
+              (struct_field_declaration
+                (identifier)
+                (plain_type
+                  (type_reference_expression
+                    (identifier)))))))))
+    (block)))
+
+================================================================================
+Anon struct value with short element list
+================================================================================
+a := struct { 'abc' }
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (var_declaration
+      (expression_list
+        (reference_expression
+          (identifier)))
+      (expression_list
+        (anon_struct_value_expression
+          (short_element_list
+            (element
+              (literal
+                (interpreted_string_literal)))))))))
+
+================================================================================
+Anon struct value with keyed element list
+================================================================================
+a := struct {
+    foo: 'abc'
+    bar: 'def'
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (var_declaration
+      (expression_list
+        (reference_expression
+          (identifier)))
+      (expression_list
+        (anon_struct_value_expression
+          (element_list
+            (keyed_element
+              (field_name
+                (reference_expression
+                  (identifier)))
+              (literal
+                (interpreted_string_literal)))
+            (keyed_element
+              (field_name
+                (reference_expression
+                  (identifier)))
+              (literal
+                (interpreted_string_literal)))))))))

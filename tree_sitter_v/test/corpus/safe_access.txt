@@ -1,0 +1,13 @@
+================================================================================
+Simple safe access
+================================================================================
+foo?.name
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (selector_expression
+      (reference_expression
+        (identifier))
+      (reference_expression
+        (identifier)))))

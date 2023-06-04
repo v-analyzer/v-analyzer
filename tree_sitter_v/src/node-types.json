@@ -114,6 +114,10 @@
     "named": true,
     "subtypes": [
       {
+        "type": "anon_struct_value_expression",
+        "named": true
+      },
+      {
         "type": "compile_time_if_expression",
         "named": true
       },
@@ -246,6 +250,51 @@
         "named": true
       }
     ]
+  },
+  {
+    "type": "anon_struct_type",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "struct_field_declaration",
+          "named": true
+        },
+        {
+          "type": "struct_field_scope",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "anon_struct_value_expression",
+    "named": true,
+    "fields": {
+      "element_list": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "element_list",
+            "named": true
+          }
+        ]
+      },
+      "short_element_list": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "short_element_list",
+            "named": true
+          }
+        ]
+      }
+    }
   },
   {
     "type": "append_statement",
@@ -477,6 +526,21 @@
           }
         ]
       }
+    }
+  },
+  {
+    "type": "atomic_type",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "plain_type",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -900,6 +964,10 @@
       "required": true,
       "types": [
         {
+          "type": "reference_expression",
+          "named": true
+        },
+        {
           "type": "selector_expression",
           "named": true
         }
@@ -1264,6 +1332,10 @@
           },
           {
             "type": "reference_expression",
+            "named": true
+          },
+          {
+            "type": "selector_expression",
             "named": true
           }
         ]
@@ -2721,7 +2793,15 @@
       "required": true,
       "types": [
         {
+          "type": "anon_struct_type",
+          "named": true
+        },
+        {
           "type": "array_type",
+          "named": true
+        },
+        {
+          "type": "atomic_type",
           "named": true
         },
         {
@@ -3953,6 +4033,10 @@
     "named": false
   },
   {
+    "type": "#[",
+    "named": false
+  },
+  {
     "type": "$",
     "named": false
   },
@@ -4129,6 +4213,10 @@
     "named": false
   },
   {
+    "type": "?.",
+    "named": false
+  },
+  {
     "type": "@",
     "named": false
   },
@@ -4162,6 +4250,10 @@
   },
   {
     "type": "assert",
+    "named": false
+  },
+  {
+    "type": "atomic",
     "named": false
   },
   {

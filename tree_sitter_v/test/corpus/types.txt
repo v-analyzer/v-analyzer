@@ -214,6 +214,7 @@ Fixed array type
 fn () [4]string {}
 fn () [2][5]Foo {}
 fn () [const_value][5]Foo {}
+fn () [psi.const_value][5]Foo {}
 --------------------------------------------------------------------------------
 
 (source_file
@@ -250,6 +251,24 @@ fn () [const_value][5]Foo {}
           (fixed_array_type
             (reference_expression
               (identifier))
+            (plain_type
+              (fixed_array_type
+                (int_literal)
+                (plain_type
+                  (type_reference_expression
+                    (identifier))))))))
+      (block)))
+  (simple_statement
+    (function_literal
+      (signature
+        (parameter_list)
+        (plain_type
+          (fixed_array_type
+            (selector_expression
+              (reference_expression
+                (identifier))
+              (reference_expression
+                (identifier)))
             (plain_type
               (fixed_array_type
                 (int_literal)
