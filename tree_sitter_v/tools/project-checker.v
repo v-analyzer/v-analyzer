@@ -102,9 +102,9 @@ pub fn (mut i Checker) check() {
 	println('\nFound ${errors.len} errors in ${per_file.len} files')
 	println('\nParsed correctly ${(100 - (f64(per_file.len) / f64(processed_files) * 100))}% files out of ${processed_files}')
 
-	// for error in errors[..50] {
-	// 	println(error)
-	// }
+	for error in errors[..50] {
+		println(error)
+	}
 }
 
 pub fn (mut c Checker) check_file(path string) []ErrorInfo {

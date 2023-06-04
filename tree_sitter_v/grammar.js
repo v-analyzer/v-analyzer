@@ -112,6 +112,7 @@ module.exports = grammar({
     [$.reference_expression, $.type_reference_expression],
     [$.is_expression],
     [$.not_is_expression],
+    [$._type_union_list],
   ],
 
   rules: {
@@ -218,7 +219,14 @@ module.exports = grammar({
     ),
 
     // int | string | Foo
-    _type_union_list: ($) => seq($.plain_type, repeat(seq('|', $.plain_type))),
+    _type_union_list: ($) => seq($.plain_type, repeat(seq(optional(terminator), '|', $.plain_type))),
+
+    // _type_union_list: ($) => prec.right(seq(
+    //   $.plain_type,
+    //   repeat(seq(
+    //     optional(terminator), '|', alias($._plain_type_without_special, $.plain_type)),
+    //   ),
+    // )),
 
     function_declaration: ($) => prec.right(PREC.resolve,
       seq(
@@ -241,7 +249,7 @@ module.exports = grammar({
       seq(
         field('mutability', optional($.mutability_modifiers)),
         field('name', $.identifier),
-        field('type', alias($._plain_type_without_option, $.plain_type)),
+        field('type', alias($._plain_type_without_special, $.plain_type)),
       ),
       ')',
     )),
@@ -332,8 +340,7 @@ module.exports = grammar({
       optional(seq('=', field('default_value', $._expression))),
     )),
 
-    embedded_definition: ($) => prec.right(PREC.unary, $.plain_type),
-
+    embedded_definition: ($) => prec.right(PREC.unary, $.type_reference_expression),
 
     enum_declaration: ($) => seq(
       field('attributes', optional($.attributes)),
@@ -489,7 +496,7 @@ module.exports = grammar({
 
     special_argument_list: ($) => seq(
       '(',
-      alias($._plain_type_without_option, $.plain_type),
+      alias($._plain_type_without_special, $.plain_type),
       optional(seq(',', $._expression)),
       ')',
     ),
@@ -642,7 +649,7 @@ module.exports = grammar({
 
     array_creation: ($) => prec.right(PREC.multiplicative, $._non_empty_array),
 
-    empty_array_creation: () => prec(PREC.empty_array, seq('[', ']')),
+    empty_array_creation: () => prec.left(PREC.empty_array, seq('[', ']')),
 
     fixed_array_creation: ($) => prec.right(PREC.multiplicative,
       seq($._non_empty_array, '!'),
@@ -745,14 +752,13 @@ module.exports = grammar({
       field('block', $.block),
     ),
 
-    match_expression_list: ($) =>
-      comma_sep1(
-        choice(
-          $._expression,
-          $.match_arm_type,
-          alias($._definite_range, $.range),
-        ),
+    match_expression_list: ($) => comma_sep1(
+      choice(
+        $._expression_without_blocks,
+        $.match_arm_type,
+        alias($._definite_range, $.range),
       ),
+    ),
 
     match_arm_type: ($) => prec(PREC.match_arm_type, $.plain_type),
 
@@ -894,7 +900,7 @@ module.exports = grammar({
     )),
 
     mutability_modifiers: () => prec.left(PREC.resolve, choice(
-      seq('mut', optional('static')),
+      seq('mut', optional('static'), optional('volatile')),
       'shared',
     )),
 
@@ -941,12 +947,13 @@ module.exports = grammar({
     // ==================== TYPES ====================
 
     plain_type: ($) => prec.right(PREC.primary, choice(
-      $._plain_type_without_option,
+      $._plain_type_without_special,
       $.option_type,
       $.result_type,
+      $.multi_return_type,
     )),
 
-    _plain_type_without_option: ($) => prec.right(PREC.primary, choice(
+    _plain_type_without_special: ($) => prec.right(PREC.primary, choice(
       $.type_reference_expression,
       $.qualified_type,
       $.pointer_type,
@@ -960,7 +967,6 @@ module.exports = grammar({
       $.shared_type,
       $.thread_type,
       $.atomic_type,
-      $.multi_return_type,
       $.anon_struct_type,
     )),
 
@@ -989,7 +995,7 @@ module.exports = grammar({
       field('element', $.plain_type),
     ),
 
-    array_type: ($) => prec.right(PREC.resolve,
+    array_type: ($) => prec.right(PREC.match_arm_type,
       seq('[', ']', field('element', $.plain_type)),
     ),
 
@@ -1234,7 +1240,7 @@ function interpolated_quoted_string($, opening) {
 
 function quoted_string($, opening, ...rules) {
   return seq(
-    prec(1, opening),
+    prec.right(PREC.attributes, opening),
     repeat(
       choice(
         $._string_content,

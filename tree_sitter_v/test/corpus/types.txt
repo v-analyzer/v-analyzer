@@ -727,3 +727,35 @@ fn () !(int, string) {}
                   (type_reference_expression
                     (identifier))))))))
       (block))))
+
+================================================================================
+Type union type
+================================================================================
+pub type Any = Null
+	| []Any
+	| bool
+	| f32
+	| f64
+--------------------------------------------------------------------------------
+
+(source_file
+  (type_declaration
+    (visibility_modifiers)
+    (identifier)
+    (plain_type
+      (type_reference_expression
+        (identifier)))
+    (plain_type
+      (array_type
+        (plain_type
+          (type_reference_expression
+            (identifier)))))
+    (plain_type
+      (type_reference_expression
+        (identifier)))
+    (plain_type
+      (type_reference_expression
+        (identifier)))
+    (plain_type
+      (type_reference_expression
+        (identifier)))))

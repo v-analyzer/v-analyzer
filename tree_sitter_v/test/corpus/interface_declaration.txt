@@ -238,9 +238,8 @@ interface Foo {
     (identifier)
     (struct_field_declaration
       (embedded_definition
-        (plain_type
-          (type_reference_expression
-            (identifier)))))))
+        (type_reference_expression
+          (identifier))))))
 
 ================================================================================
 Interface with several embedded interfaces
@@ -256,14 +255,12 @@ interface Foo {
     (identifier)
     (struct_field_declaration
       (embedded_definition
-        (plain_type
-          (type_reference_expression
-            (identifier)))))
+        (type_reference_expression
+          (identifier))))
     (struct_field_declaration
       (embedded_definition
-        (plain_type
-          (type_reference_expression
-            (identifier)))))))
+        (type_reference_expression
+          (identifier))))))
 
 ================================================================================
 Generic interface
