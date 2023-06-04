@@ -5,7 +5,7 @@ import analyzer.psi
 pub struct ResolveSemanticVisitor {}
 
 pub fn (v ResolveSemanticVisitor) accept(root psi.PsiElement) []SemanticToken {
-	mut result := []SemanticToken{cap: 200}
+	mut result := []SemanticToken{cap: 400}
 
 	for node in psi.new_psi_tree_walker(root) {
 		v.highlight_node(node, root, mut result)
@@ -65,6 +65,8 @@ fn (_ ResolveSemanticVisitor) highlight_node(node psi.PsiElement, root psi.PsiEl
 	} else if res is psi.ImportSpec {
 		result << element_to_semantic(first_child, .namespace)
 	} else if res is psi.ModuleClause {
+		result << element_to_semantic(first_child, .namespace)
+	} else if res is psi.TypeAliasDeclaration {
 		result << element_to_semantic(first_child, .namespace)
 	}
 }

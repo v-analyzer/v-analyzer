@@ -57,7 +57,7 @@ pub fn (r &Receiver) get_type() types.Type {
 }
 
 pub fn (r &Receiver) mutability_modifiers() ?&MutabilityModifiers {
-	modifiers := r.find_child_by_type(.mutability_modifiers)?
+	modifiers := r.find_child_by_type_or_stub(.mutability_modifiers)?
 	if modifiers is MutabilityModifiers {
 		return modifiers
 	}

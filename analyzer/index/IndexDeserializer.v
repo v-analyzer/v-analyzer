@@ -47,15 +47,17 @@ pub fn (mut d IndexDeserializer) deserialize_file_indexes() map[string]FileIndex
 
 pub fn (mut d IndexDeserializer) deserialize_file_index() FileIndex {
 	filepath := d.d.read_string()
+	kind := unsafe { IndexingRootKind(d.d.read_u8()) }
 	file_last_modified := d.d.read_i64()
 	module_name := d.d.read_string()
 	module_fqn := d.d.read_string()
 
 	stub_list := d.deserialize_stub_list(filepath)
-	stub_index_sink := d.deserialize_stub_index_sink(stub_list)
+	stub_index_sink := d.deserialize_stub_index_sink(stub_list, kind)
 
 	return FileIndex{
 		filepath: filepath
+		kind: kind
 		file_last_modified: file_last_modified
 		module_name: module_name
 		module_fqn: module_fqn
@@ -64,10 +66,11 @@ pub fn (mut d IndexDeserializer) deserialize_file_index() FileIndex {
 	}
 }
 
-pub fn (mut d IndexDeserializer) deserialize_stub_index_sink(stub_list &psi.StubList) &psi.StubIndexSink {
+pub fn (mut d IndexDeserializer) deserialize_stub_index_sink(stub_list &psi.StubList, kind IndexingRootKind) &psi.StubIndexSink {
 	len := d.d.read_int()
 	mut sink := &psi.StubIndexSink{
 		stub_list: stub_list
+		kind: unsafe { psi.StubIndexLocationKind(u8(kind)) }
 	}
 	for _ in 0 .. len {
 		key := d.d.read_int()

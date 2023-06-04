@@ -43,7 +43,7 @@ pub fn (p &ParameterDeclaration) name() string {
 }
 
 pub fn (p &ParameterDeclaration) mutability_modifiers() ?&MutabilityModifiers {
-	modifiers := p.find_child_by_type(.mutability_modifiers)?
+	modifiers := p.find_child_by_type_or_stub(.mutability_modifiers)?
 	if modifiers is MutabilityModifiers {
 		return modifiers
 	}

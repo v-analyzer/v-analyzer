@@ -6,6 +6,7 @@ pub mut:
 	stub_id     StubId
 	stub_list   &StubList // Список стаблв в текущем файле для которого строится индекс
 	module_name string
+	kind        StubIndexLocationKind
 	data        map[int]map[string][]StubId
 }
 

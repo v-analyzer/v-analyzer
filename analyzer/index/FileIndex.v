@@ -8,6 +8,7 @@ import analyzer.psi
 struct FileIndex {
 pub mut:
 	filepath string // абсолютный путь к файлу
+	kind     IndexingRootKind // пространство в котором находится файл
 	// file_last_modified хранит время последнего изменения файла
 	//
 	// Благодаря ему, во время проверки кеша, мы можем понять,

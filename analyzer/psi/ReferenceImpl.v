@@ -266,8 +266,8 @@ pub fn (r &SubResolver) process_unqualified_resolve(mut processor PsiScopeProces
 			}
 		}
 
-		if struct_ := r.find_type_alias(stubs_index, fqn) {
-			if !processor.execute(struct_) {
+		if alias := r.find_type_alias(stubs_index, fqn) {
+			if !processor.execute(alias) {
 				return false
 			}
 		}

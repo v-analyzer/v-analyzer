@@ -157,7 +157,7 @@ pub fn (_ &StubbedElementType) index_stub(stub &StubBase, mut sink IndexSink) {
 }
 
 pub fn (_ &StubbedElementType) create_psi(stub &StubBase) ?PsiElement {
-	stub_type := stub.stub_type()
+	stub_type := stub.stub_type
 	base_psi := new_psi_node_from_stub(stub.id, stub.stub_list)
 
 	if stub_type == .function_declaration || stub_type == .method_declaration {

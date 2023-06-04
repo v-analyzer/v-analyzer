@@ -23,7 +23,7 @@ pub fn (mut ls LanguageServer) hover(params lsp.HoverParams, mut wr ResponseWrit
 		println('Time to hover: ' + watch.elapsed().str())
 		return lsp.Hover{
 			contents: lsp.hover_markdown_string(content)
-			range: lsp.Range{}
+			range: text_range_to_lsp_range(element.text_range())
 		}
 	}
 

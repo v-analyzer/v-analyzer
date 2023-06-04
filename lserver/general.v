@@ -40,7 +40,7 @@ pub fn (mut ls LanguageServer) initialize(params lsp.InitializeParams, mut wr Re
 		}
 	}
 
-	ls.analyzer_instance.indexer.add_indexing_root(ls.root_uri.path(), .user_code)
+	ls.analyzer_instance.indexer.add_indexing_root(ls.root_uri.path(), .workspace)
 
 	status := ls.analyzer_instance.indexer.index()
 	if status == .needs_ensure_indexed {

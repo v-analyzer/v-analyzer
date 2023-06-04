@@ -16,19 +16,10 @@ pub fn new() &Analyzer {
 }
 
 pub fn (mut a Analyzer) setup_stub_indexes() {
-	mut res := []psi.StubIndexSink{cap: a.indexer.roots.len * 10}
+	mut sinks := []psi.StubIndexSink{cap: a.indexer.roots.len * 30}
 	for root in a.indexer.roots {
-		res << root.index.per_file.get_sinks()
+		sinks << root.index.per_file.get_sinks()
 	}
-
-	mut user_code_sinks := []psi.StubIndexSink{cap: a.indexer.roots.len * 10}
-	for root in a.indexer.roots {
-		if root.kind != .user_code {
-			continue
-		}
-		user_code_sinks << root.index.per_file.get_sinks()
-	}
-
-	a.stub_index = psi.new_stubs_index(res, user_code_sinks)
+	a.stub_index = psi.new_stubs_index(sinks)
 	stubs_index = a.stub_index
 }

@@ -14,6 +14,7 @@ pub enum StubIndexKey as u8 {
 	type_aliases
 	enums
 	attributes
+	_end // see count_index_keys
 }
 
 // IndexSink описывает интерфейс создателя индексов.

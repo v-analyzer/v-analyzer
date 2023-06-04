@@ -16,11 +16,12 @@ pub enum BuiltIndexStatus {
 }
 
 // IndexingRootKind описывает тип корня, который индексируется.
-pub enum IndexingRootKind {
+// Same as `StubIndexKind`.
+pub enum IndexingRootKind as u8 {
 	standard_library
 	modules
 	stubs
-	user_code
+	workspace
 }
 
 // IndexingRoot инкапсулирует в себе логику индексации/реиндексации

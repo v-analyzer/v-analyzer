@@ -5854,6 +5854,13 @@
               {
                 "type": "SYMBOL",
                 "name": "string_interpolation"
+              },
+              {
+                "type": "IMMEDIATE_TOKEN",
+                "content": {
+                  "type": "STRING",
+                  "value": "$"
+                }
               }
             ]
           }
@@ -5920,6 +5927,13 @@
               {
                 "type": "SYMBOL",
                 "name": "string_interpolation"
+              },
+              {
+                "type": "IMMEDIATE_TOKEN",
+                "content": {
+                  "type": "STRING",
+                  "value": "$"
+                }
               }
             ]
           }
