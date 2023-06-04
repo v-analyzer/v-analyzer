@@ -36,10 +36,12 @@ pub fn new_stub_psi_file(path string, stub_list &StubList) &PsiFileImpl {
 	}
 }
 
+[inline]
 pub fn (p &PsiFileImpl) is_stub_based() bool {
 	return isnil(p.tree)
 }
 
+[inline]
 pub fn (p &PsiFileImpl) is_test_file() bool {
 	return p.path.ends_with('_test.v')
 }
@@ -55,10 +57,12 @@ pub fn (mut p PsiFileImpl) reparse(new_code string) {
 	println('reparse time: ${time.since(now)}')
 }
 
+[inline]
 pub fn (p &PsiFileImpl) path() string {
 	return p.path
 }
 
+[inline]
 pub fn (p &PsiFileImpl) text() string {
 	return p.source_text
 }
@@ -77,6 +81,7 @@ pub fn (p &PsiFileImpl) root() PsiElement {
 	return p.root
 }
 
+[inline]
 pub fn (p &PsiFileImpl) find_element_at(offset u32) ?PsiElement {
 	return p.root.find_element_at(offset)
 }
@@ -95,6 +100,7 @@ pub fn (p &PsiFileImpl) find_reference_at(offset u32) ?ReferenceExpressionBase {
 	return none
 }
 
+[inline]
 pub fn (p &PsiFileImpl) module_fqn() string {
 	return stubs_index.get_module_qualified_name(p.path)
 }

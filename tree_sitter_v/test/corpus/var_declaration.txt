@@ -1,0 +1,35 @@
+================================================================================
+Simple var declaration
+================================================================================
+foo := bar
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (var_declaration
+      (expression_list
+        (reference_expression
+          (identifier)))
+      (expression_list
+        (reference_expression
+          (identifier))))))
+
+================================================================================
+Several var declarations
+================================================================================
+foo, goo := bar, zoo
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (var_declaration
+      (expression_list
+        (reference_expression
+          (identifier))
+        (reference_expression
+          (identifier)))
+      (expression_list
+        (reference_expression
+          (identifier))
+        (reference_expression
+          (identifier))))))

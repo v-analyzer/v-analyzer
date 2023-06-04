@@ -19,7 +19,8 @@ pub fn (mut c ReferenceCompletionProcessor) elements() []lsp.CompletionItem {
 }
 
 fn (mut c ReferenceCompletionProcessor) is_local_resolve(element psi.PsiElement) bool {
-	equal := c.module_fqn == element.containing_file.module_fqn()
+	element_module_fqn := element.containing_file.module_fqn()
+	equal := c.module_fqn == element_module_fqn
 	if equal && c.module_fqn == 'main' {
 		// Мы проверяем что модуль совпадает, но если это main, то надо проверить что
 		// файл находится в workspace.

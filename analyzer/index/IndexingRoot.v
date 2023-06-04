@@ -149,17 +149,18 @@ pub fn (mut i IndexingRoot) index() BuiltIndexStatus {
 	return .from_scratch
 }
 
-pub fn (mut r IndexingRoot) index_file(path string) !FileIndex {
+pub fn (mut i IndexingRoot) index_file(path string, content string) !FileIndex {
 	last_modified := os.file_last_mod_unix(path)
-	content := os.read_file(path)!
 	res := parser.parse_code(content)
 	psi_file := psi.new_psi_file(path, res.tree, content)
 	mut cache := FileIndex{
 		filepath: path
+		kind: i.kind
 		file_last_modified: last_modified
 		module_name: psi_file.module_name() or { '' }
-		module_fqn: r.module_qualified_name(psi_file)
+		module_fqn: i.module_qualified_name(psi_file)
 		sink: &psi.StubIndexSink{
+			kind: unsafe { psi.StubIndexLocationKind(u8(i.kind)) }
 			stub_list: unsafe { nil }
 		}
 		stub_list: unsafe { nil }
@@ -183,19 +184,16 @@ pub fn (mut r IndexingRoot) index_file(path string) !FileIndex {
 	return cache
 }
 
-pub fn (mut r IndexingRoot) module_qualified_name(file &psi.PsiFileImpl) string {
+pub fn (mut i IndexingRoot) module_qualified_name(file &psi.PsiFileImpl) string {
 	module_name := file.module_name() or { '' }
-	if module_name == 'main' {
+	if module_name in ['main', 'builtin'] {
 		return module_name
-	}
-	if module_name == 'builtin' {
-		return ''
 	}
 	if module_name == '' && file.is_test_file() {
 		return ''
 	}
 
-	root_dirs := [r.root]
+	root_dirs := [i.root]
 
 	containing_dir := os.dir(file.path)
 
@@ -241,8 +239,14 @@ pub fn (mut i IndexingRoot) spawn_indexing_workers(cache_chan chan FileIndex, fi
 	for j := 0; j < workers; j++ {
 		spawn fn [file_chan, mut wg, mut i, cache_chan] () {
 			for {
-				file := <-file_chan or { break }
-				cache_chan <- i.index_file(file) or { println('Error indexing ${file}: ${err}') }
+				filepath := <-file_chan or { break }
+				content := os.read_file(filepath) or {
+					println('Error reading ${filepath}: ${err}')
+					continue
+				}
+				cache_chan <- i.index_file(filepath, content) or {
+					println('Error indexing ${filepath}: ${err}')
+				}
 			}
 
 			wg.done()
@@ -296,7 +300,7 @@ pub fn (mut i IndexingRoot) ensure_indexed() {
 	println('Reindexing took ${time.since(now)}')
 }
 
-pub fn (mut i IndexingRoot) mark_as_dirty(filepath string) {
+pub fn (mut i IndexingRoot) mark_as_dirty(filepath string, new_content string) ! {
 	if filepath !in i.index.per_file.data {
 		// файл не принадлежит этому индексу
 		return
@@ -304,13 +308,12 @@ pub fn (mut i IndexingRoot) mark_as_dirty(filepath string) {
 
 	println('Marking ${filepath} as dirty')
 	i.index.per_file.data.delete(filepath)
-	res := i.index_file(filepath) or {
-		println('Error indexing dirty ${filepath}: ${err}')
-		return
+	res := i.index_file(filepath, new_content) or {
+		return error('Error indexing dirty ${filepath}: ${err}')
 	}
 	i.index.per_file.data[filepath] = res
 	i.index.updated_at = time.now()
-	i.save_index() or { println(err) }
+	i.save_index() or { return err }
 
 	println('Finished reindexing ${filepath}')
 }

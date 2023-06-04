@@ -209,10 +209,10 @@ pub fn (mut ls LanguageServer) handle_jsonrpc(request &jsonrpc.Request, mut rw j
 				// w.write(ls.implementation(params, mut rw) or { return w.wrap_error(err) })
 			}
 			'workspace/didChangeWatchedFiles' {
-				// params := json.decode(lsp.DidChangeWatchedFilesParams, request.params) or {
-				// 	return err
-				// }
-				// ls.did_change_watched_files(params, mut rw)
+				params := json.decode(lsp.DidChangeWatchedFilesParams, request.params) or {
+					return err
+				}
+				ls.did_change_watched_files(params, mut rw)
 			}
 			'textDocument/codeLens' {
 				params := json.decode(lsp.CodeLensParams, request.params) or {

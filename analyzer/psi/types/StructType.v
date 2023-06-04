@@ -1,5 +1,7 @@
 module types
 
+pub const string_type = new_struct_type('string', 'builtin')
+
 pub struct StructType {
 	BaseNamedType
 }

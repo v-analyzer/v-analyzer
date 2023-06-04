@@ -38,15 +38,21 @@ pub fn (n PsiElementImpl) node() AstNode {
 	return n.node
 }
 
+pub fn (n PsiElementImpl) get_stub() ?&StubBase {
+	if n.stub_id != non_stubbed_element {
+		return n.stubs_list.get_stub(n.stub_id)
+	}
+
+	return none
+}
+
 pub fn (n PsiElementImpl) stub_list() &StubList {
 	return n.stubs_list
 }
 
 pub fn (n PsiElementImpl) element_type() v.NodeType {
-	if n.stub_id != non_stubbed_element {
-		if stub := n.stubs_list.get_stub(n.stub_id) {
-			return stub.element_type()
-		}
+	if stub := n.get_stub() {
+		return stub.element_type()
 	}
 	if isnil(n.node) {
 		return .unknown
@@ -142,6 +148,27 @@ pub fn (n PsiElementImpl) inside(typ v.NodeType) bool {
 		if res.element_type() == typ {
 			return true
 		}
+	}
+
+	return false
+}
+
+pub fn (n PsiElementImpl) is_parent_of(element PsiElement) bool {
+	if stub := n.get_stub() {
+		if element_stub := element.get_stub() {
+			if stub.stub_list.path != element_stub.stub_list.path {
+				return false
+			}
+		}
+	}
+
+	mut parent := element.parent() or { return false }
+
+	for {
+		if parent.is_equal(n) {
+			return true
+		}
+		parent = parent.parent() or { break }
 	}
 
 	return false

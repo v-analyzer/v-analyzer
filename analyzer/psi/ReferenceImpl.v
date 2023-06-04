@@ -210,7 +210,7 @@ pub fn (r &SubResolver) process_unqualified_resolve(mut processor PsiScopeProces
 		return false
 	}
 
-	builtin_elements := stubs_index.get_all_declarations_from_module('')
+	builtin_elements := stubs_index.get_all_declarations_from_module('builtin')
 	for element in builtin_elements {
 		if !processor.execute(element) {
 			return false

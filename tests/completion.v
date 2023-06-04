@@ -6,7 +6,9 @@ import lserver.completion.providers
 mut t := testing.Tester{}
 
 t.test('struct field completion', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
-	fixture.configure_by_text('1.v', '
+	fixture.configure_by_text('4.v', '
+		module field_completion
+
 		struct FooStruct {
 			name string
 		}
@@ -18,15 +20,28 @@ t.test('struct field completion', fn (mut t testing.Test, mut fixture testing.Fi
 	'.trim_indent())!
 
 	items := fixture.complete_at_cursor()
-	if items.len == 0 {
-		t.fail('no completion variants')
-		return
-	}
+	t.assert_has_only_completion_with_labels(items, 'name')!
+})
 
-	first := items.first()
-	if first.label != 'name' {
-		t.fail('expected "name" but got ' + first.label)
-	}
+t.test('struct method completion', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+	fixture.configure_by_text('3.v', '
+		module method_completion
+
+		struct FooStruct {
+			name string
+		}
+
+		fn (foo FooStruct) bar() {
+		}
+
+		fn main() {
+			foo := FooStruct{}
+			foo./*caret*/
+		}
+	'.trim_indent())!
+
+	items := fixture.complete_at_cursor()
+	t.assert_has_only_completion_with_labels(items, 'name', 'bar()')!
 })
 
 t.test('variables completion', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
@@ -448,6 +463,40 @@ t.test('imported modules completion', fn (mut t testing.Test, mut fixture testin
 	t.assert_has_completion_with_label(items, 'bar')!
 	t.assert_no_completion_with_label(items, 'baz')!
 	t.assert_has_completion_with_label(items, 'qux')!
+})
+
+t.test('function without params completion', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+	fixture.configure_by_text('2.v', '
+		module function_without_params_test
+
+		fn function_without_params() {}
+
+		fn bar() {
+			function_without_params/*caret*/
+		}
+	'.trim_indent())!
+
+	items := fixture.complete_at_cursor()
+
+	t.assert_has_completion_with_insert_text(items, 'function_without_params()$0')!
+	t.assert_no_completion_with_insert_text(items, 'function_without_params($1)$0')!
+})
+
+t.test('function with params completion', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+	fixture.configure_by_text('1.v', '
+		module main
+
+		fn function_with_params(a int) {}
+
+		fn bar() {
+			function_with_params/*caret*/
+		}
+	'.trim_indent())!
+
+	items := fixture.complete_at_cursor()
+
+	t.assert_has_completion_with_insert_text(items, 'function_with_params($1)$0')!
+	t.assert_no_completion_with_insert_text(items, 'function_with_params()$0')!
 })
 
 t.stats()

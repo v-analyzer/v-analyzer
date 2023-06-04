@@ -4,13 +4,13 @@
  (identifier) @namespace)
 
 (import_path
- (identifier) @namespace)
+ (import_name) @namespace)
 
 (import_alias
- (identifier) @namespace) 
+ (import_name) @namespace)
 
 (enum_fetch
- (identifier) @constant)
+ (reference_expression) @constant)
 
 (enum_field_definition
  (identifier) @constant)
@@ -22,12 +22,12 @@
  condition: (reference_expression) @constant)
 
 (compile_time_if_expression
- condition: (binary_expression 
+ condition: (binary_expression
               left: (reference_expression) @constant
               right: (reference_expression) @constant))
 
 (compile_time_if_expression
- condition: (binary_expression 
+ condition: (binary_expression
               left: (reference_expression) @constant
               right: (unary_expression (reference_expression) @constant)))
 
@@ -40,8 +40,6 @@
 (function_declaration
  name: (identifier) @function)
 (function_declaration
- name: (binded_identifier) @function) 
-(function_declaration
  receiver: (receiver)
  name: (identifier) @function.method)
 (interface_method_definition
@@ -53,9 +51,6 @@
 
 (call_expression
  name: (reference_expression) @function)
-
-(call_expression
- name: (binded_identifier) @function)
 
 (struct_declaration
  name: (identifier) @type)
@@ -96,7 +91,7 @@
 (attribute) @attribute
 
 [
- (type_reference_expression) 
+ (type_reference_expression)
  ] @type
 
 [

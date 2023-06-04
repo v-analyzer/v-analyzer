@@ -381,8 +381,13 @@ pub fn node_to_var_definition(node AstNode, containing_file &PsiFileImpl, base_n
 		grand := parent.parent() or { return unsafe { nil } }
 
 		if grand.type_name == .var_declaration {
-			return &VarDefinition{
-				PsiElementImpl: base_node or { new_psi_node(psi_counter, containing_file, node) }
+			var_list := grand.child_by_field_name('var_list') or { return unsafe { nil } }
+			if var_list.is_parent_of(node) {
+				return &VarDefinition{
+					PsiElementImpl: base_node or {
+						new_psi_node(psi_counter, containing_file, node)
+					}
+				}
 			}
 		}
 		if grand_grand := grand.parent() {

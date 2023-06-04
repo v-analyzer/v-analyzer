@@ -12,6 +12,7 @@ pub interface PsiElement {
 	node AstNode // базовый узел из Tree Sitter
 	containing_file &PsiFileImpl // файл, в котором находится узел
 	stub_id StubId
+	get_stub() ?&StubBase
 	stub_list() &StubList
 	element_type() v.NodeType
 	node() AstNode // базовый узел из Tree Sitter
@@ -31,6 +32,8 @@ pub interface PsiElement {
 	// Если такого узла не существует, возвращается none.
 	parent_of_type(typ v.NodeType) ?PsiElement
 	inside(typ v.NodeType) bool
+	// is_parent_of возвращает true, если переданный узел является потомком данного узла.
+	is_parent_of(element PsiElement) bool
 	sibling_of_type_backward(typ v.NodeType) ?PsiElement
 	// parent_of_type_or_self возвращает родительский узел с указанным типом или сам узел,
 	// если его тип совпадает с указанным.

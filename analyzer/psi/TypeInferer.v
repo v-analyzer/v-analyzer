@@ -301,8 +301,10 @@ pub fn (t &TypeInferer) process_range_clause(element PsiElement, range PsiElemen
 		if right_type is types.MapType {
 			return right_type.value
 		}
-		if right_type is types.StringType {
-			return types.new_primitive_type('u8')
+		if right_type is types.StructType {
+			if right_type.name() == 'string' {
+				return types.new_primitive_type('u8')
+			}
 		}
 	}
 
@@ -331,8 +333,10 @@ pub fn (t &TypeInferer) process_range_clause(element PsiElement, range PsiElemen
 		if right_type is types.MapType {
 			return right_type.value
 		}
-		if right_type is types.StringType {
-			return types.new_primitive_type('u8')
+		if right_type is types.StructType {
+			if right_type.name() == 'string' {
+				return types.new_primitive_type('u8')
+			}
 		}
 
 		return types.unknown_type

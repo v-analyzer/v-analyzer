@@ -39,7 +39,7 @@ pub fn (mut ls LanguageServer) completion(params lsp.CompletionParams, mut wr Re
 	mut processor := &providers.ReferenceCompletionProcessor{
 		file: file.psi_file
 		module_fqn: file.psi_file.module_fqn()
-		root: ls.root_uri
+		root: ls.root_uri.path()
 		ctx: ctx
 	}
 

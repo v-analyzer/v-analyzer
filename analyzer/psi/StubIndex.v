@@ -22,9 +22,8 @@ pub enum StubIndexLocationKind {
 }
 
 pub struct StubIndex {
-pub:
+pub mut:
 	sinks []StubIndexSink
-mut:
 	// module_to_files описывает отображение полного имени модуля к списку файлов
 	// которые этот модуль содержит.
 	module_to_files map[string][]StubIndexSink
@@ -48,38 +47,76 @@ pub fn new_stubs_index(sinks []StubIndexSink) &StubIndex {
 		}
 	}
 
-	element_type := StubbedElementType{}
 	watch := time.new_stopwatch(auto_start: true)
 	for sink in sinks {
-		index.module_to_files[sink.stub_list.module_name] << sink
-		index.file_to_module[sink.stub_list.path] = sink.stub_list.module_name
+		index.update_index_from_sink(sink)
+	}
 
-		for index_id, datum in sink.data {
-			kind := sink.kind
+	println('Time to build stubs index: ${watch.elapsed()}')
+	return index
+}
 
-			mut mp := index.data[kind][index_id]
-			for name, ids in datum {
-				mut stubs_result := []&StubBase{cap: ids.len}
-				mut psi_result := []PsiElement{cap: ids.len}
-				for stub_id in ids {
-					stub := sink.stub_list.index_map[stub_id] or { continue }
-					stubs_result << stub
-					psi_result << element_type.create_psi(stub) or { continue }
-				}
+pub fn (mut s StubIndex) update_index_from_sink(sink StubIndexSink) {
+	element_type := StubbedElementType{}
+	s.module_to_files[sink.stub_list.module_name] << sink
+	s.file_to_module[sink.stub_list.path] = sink.stub_list.module_name
 
-				mp[name] = StubResult{
-					stubs: stubs_result
-					psis: psi_result
-				}
+	for index_id, datum in sink.data {
+		kind := sink.kind
+
+		mut mp := s.data[kind][index_id]
+		for name, ids in datum {
+			mut stubs_result := []&StubBase{cap: ids.len}
+			mut psi_result := []PsiElement{cap: ids.len}
+			for stub_id in ids {
+				stub := sink.stub_list.index_map[stub_id] or { continue }
+				stubs_result << stub
+				psi_result << element_type.create_psi(stub) or { continue }
 			}
-			index.data[kind][index_id] = mp.move()
+
+			mp[name] = StubResult{
+				stubs: stubs_result
+				psis: psi_result
+			}
+		}
+		s.data[kind][index_id] = mp.move()
+	}
+}
+
+pub fn (mut s StubIndex) update_stubs_index(changed_sinks []StubIndexSink, all_sinks []StubIndexSink) {
+	println('Updating stubs index...')
+	println('Changed files: ${changed_sinks.len}')
+
+	s.sinks = all_sinks
+
+	mut is_workspace_changes := false
+	for sink in changed_sinks {
+		if sink.kind == .workspace {
+			is_workspace_changes = true
+			break
 		}
 	}
 
-	println('time to build stubs index: ${watch.elapsed()}')
-	println('Map size: ${index.data.len}, map size for functions, ${index.data[0].len}')
+	if !is_workspace_changes {
+		return
+	}
 
-	return index
+	s.module_to_files = map[string][]StubIndexSink{}
+	s.file_to_module = map[string]string{}
+
+	// clear all workspace index
+	s.data[StubIndexLocationKind.workspace] = [psi.count_index_keys]map[string]StubResult{}
+	for i in 0 .. psi.count_index_keys {
+		s.data[StubIndexLocationKind.workspace][i] = map[string]StubResult{}
+	}
+
+	for sink in all_sinks {
+		if sink.kind != .workspace {
+			continue
+		}
+
+		s.update_index_from_sink(sink)
+	}
 }
 
 // get_all_elements_from возвращает список всех PSI элементов определенных в переданном индексе.
