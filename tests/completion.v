@@ -107,6 +107,30 @@ t.test('json attribute for field', fn (mut t testing.Test, mut fixture testing.F
 	t.assert_has_completion_with_label(items, "json: 'someValue'")!
 })
 
+t.test('json attribute for field with at', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+	fixture.configure_by_text('1.v', '
+		struct Foo {
+			@enum string [js/*caret*/]
+		}
+	'.trim_indent())!
+
+	items := fixture.complete_at_cursor()
+
+	t.assert_has_completion_with_label(items, "json: 'enum'")!
+})
+
+t.test('json attribute for field with underscore', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+	fixture.configure_by_text('1.v', '
+		struct Foo {
+			type_ string [js/*caret*/]
+		}
+	'.trim_indent())!
+
+	items := fixture.complete_at_cursor()
+
+	t.assert_has_completion_with_label(items, "json: 'type'")!
+})
+
 t.test('compile time constant', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
 	fixture.configure_by_text('1.v', '
 		@/*caret*/

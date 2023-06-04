@@ -166,6 +166,17 @@ fn (mut c ReferenceCompletionProcessor) execute(element psi.PsiElement) bool {
 		}
 	}
 
+	if element is psi.EnumDeclaration {
+		c.result << lsp.CompletionItem{
+			label: element.name()
+			kind: .enum_
+			detail: ''
+			documentation: ''
+			insert_text: element.name()
+			insert_text_format: .plain_text
+		}
+	}
+
 	if element is psi.EnumFieldDeclaration {
 		c.result << lsp.CompletionItem{
 			label: element.name()
