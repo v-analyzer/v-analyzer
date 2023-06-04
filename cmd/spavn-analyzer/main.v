@@ -1,56 +1,24 @@
 module main
 
-import flag
 import os
-import net.http
+import flag
 import lserver
 import jsonrpc
-import lsp.log
-import analyzer
 import streams
-
-struct Analyzer {
-	id          int
-	port        int
-	daemon_port int
-}
-
-fn (a &Analyzer) want_die() {
-	url := 'http://localhost:${a.daemon_port}/want_to_die?id=${a.id}'
-	println(url)
-	res := http.get(url) or {
-		println('failed to send die request to daemon, err: ${err}')
-		exit(0)
-		return
-	}
-
-	if res.status_code != 200 {
-		println('failed to send die request to daemon')
-		exit(0)
-		return
-	}
-	exit(0)
-}
+import analyzer
+import lsp.log
 
 fn main() {
 	mut fp := flag.new_flag_parser(os.args)
-	stdin := fp.bool('stdin', 0, false, 'use stdin')
-	// id := fp.int('id', 0, 6790, 'id of analyzer')
-	// port := fp.int('port', `p`, 6790, 'port to listen on')
-	// daemon_port := fp.int('daemon-port', 0, 0, 'daemon port')
+	stdio := fp.bool('stdio', 0, false, 'use stdio for communication')
 
-	// spawn run_server(id, port, daemon_port)
-
-	analyzer_instance := analyzer.new()
-
-	// mut stream := new_stdio_stream()!
-	mut stream := if stdin {
+	mut stream := if stdio {
 		streams.new_stdio_stream()!
 	} else {
 		streams.new_socket_stream_server(5007, true)!
 	}
 
-	mut ls := lserver.new(analyzer_instance)
+	mut ls := lserver.new(analyzer.new())
 	mut jrpc_server := &jsonrpc.Server{
 		stream: stream
 		interceptors: [
@@ -61,23 +29,5 @@ fn main() {
 		handler: ls
 	}
 
-	mut rw := unsafe { &lserver.ResponseWriter(jrpc_server.writer(own_buffer: true)) }
-
-	// spawn lserver.monitor_changes(mut ls, mut rw)
 	jrpc_server.start()
 }
-
-//
-// fn run_server(id int, port int, daemon_port int) {
-// 	mut app := router.new()
-//
-// 	app.route(.get, '/', fn (_ &ctx.Req, mut res ctx.Resp) {
-// 		res.send_html('<p>Hello Analyzer</p>', 200)
-// 	})
-//
-// 	app.route(.get, '/alive', fn (_ &ctx.Req, mut res ctx.Resp) {
-// 		res.send_status(200)
-// 	})
-//
-// 	vserver.serve(app, port)
-// }

@@ -166,6 +166,8 @@ pub fn (mut d IndexDeserializer) deserialize_stub() &psi.StubBase {
 			end_column: end_column
 		}
 		parent_id: parent_id
+		parent: unsafe { nil } // will be set later
+		stub_list: unsafe { nil } // will be set later
 		stub_type: stub_type
 		id: id
 	}

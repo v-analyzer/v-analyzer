@@ -88,6 +88,8 @@ pub fn (mut ls LanguageServer) handle_jsonrpc(request &jsonrpc.Request, mut rw j
 		ls.writer = rw.server.writer(own_buffer: true)
 	}
 
+	watch := time.new_stopwatch(auto_start: true)
+
 	mut w := unsafe { &ResponseWriter(rw) }
 
 	// The server will log a send request/notification
@@ -137,9 +139,9 @@ pub fn (mut ls LanguageServer) handle_jsonrpc(request &jsonrpc.Request, mut rw j
 				ls.did_close(params, mut rw)
 			}
 			'textDocument/willSave' {
-				params := json.decode(lsp.WillSaveTextDocumentParams, request.params) or {
-					return err
-				}
+				// params := json.decode(lsp.WillSaveTextDocumentParams, request.params) or {
+				// 	return err
+				// }
 				// ls.will_save(params, mut rw)
 			}
 			'textDocument/formatting' {
@@ -183,9 +185,9 @@ pub fn (mut ls LanguageServer) handle_jsonrpc(request &jsonrpc.Request, mut rw j
 				w.write(hover_data)
 			}
 			'textDocument/foldingRange' {
-				params := json.decode(lsp.FoldingRangeParams, request.params) or {
-					return w.wrap_error(err)
-				}
+				// params := json.decode(lsp.FoldingRangeParams, request.params) or {
+				// 	return w.wrap_error(err)
+				// }
 				// w.write(ls.folding_range(params, mut rw) or { return w.wrap_error(err) })
 			}
 			'textDocument/definition' {
@@ -201,15 +203,15 @@ pub fn (mut ls LanguageServer) handle_jsonrpc(request &jsonrpc.Request, mut rw j
 				w.write(ls.references(params, mut rw))
 			}
 			'textDocument/implementation' {
-				params := json.decode(lsp.TextDocumentPositionParams, request.params) or {
-					return w.wrap_error(err)
-				}
+				// params := json.decode(lsp.TextDocumentPositionParams, request.params) or {
+				// 	return w.wrap_error(err)
+				// }
 				// w.write(ls.implementation(params, mut rw) or { return w.wrap_error(err) })
 			}
 			'workspace/didChangeWatchedFiles' {
-				params := json.decode(lsp.DidChangeWatchedFilesParams, request.params) or {
-					return err
-				}
+				// params := json.decode(lsp.DidChangeWatchedFilesParams, request.params) or {
+				// 	return err
+				// }
 				// ls.did_change_watched_files(params, mut rw)
 			}
 			'textDocument/codeLens' {
@@ -277,6 +279,8 @@ pub fn (mut ls LanguageServer) handle_jsonrpc(request &jsonrpc.Request, mut rw j
 			}
 		}
 	}
+
+	println('request "${request.method}" took ${watch.elapsed()}')
 }
 
 pub fn monitor_changes(mut ls LanguageServer, mut wr ResponseWriter) {

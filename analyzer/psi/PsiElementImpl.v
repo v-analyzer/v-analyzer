@@ -17,6 +17,7 @@ pub fn new_psi_node(id ID, containing_file &PsiFileImpl, node AstNode) PsiElemen
 		id: id
 		node: node
 		containing_file: containing_file
+		stubs_list: unsafe { nil }
 	}
 }
 

@@ -159,7 +159,10 @@ pub fn (mut r IndexingRoot) index_file(path string) !FileIndex {
 		file_last_modified: last_modified
 		module_name: psi_file.module_name() or { '' }
 		module_fqn: r.module_qualified_name(psi_file)
-		sink: &psi.StubIndexSink{}
+		sink: &psi.StubIndexSink{
+			stub_list: unsafe { nil }
+		}
+		stub_list: unsafe { nil }
 	}
 	stub_tree := build_stub_tree(psi_file)
 

@@ -175,8 +175,7 @@ pub enum TextDocumentSyncKind {
 
 pub struct ServerCapabilities {
 pub mut:
-	// text_document_sync TextDocumentSyncOptions [json:textDocumentSync]
-	text_document_sync                   TextDocumentSyncKind            [json: textDocumentSync]
+	text_document_sync                   TextDocumentSyncOptions         [json: textDocumentSync]
 	hover_provider                       bool                            [json: hoverProvider]
 	inlay_hint_provider                  InlayHintOptions                [json: inlayHintProvider]
 	completion_provider                  CompletionOptions               [json: completionProvider]

@@ -21,6 +21,7 @@ pub fn new_psi_file(path string, tree &tree_sitter.Tree[v.NodeType], source_text
 		path: path
 		tree: unsafe { tree }
 		source_text: source_text
+		stub_list: unsafe { nil }
 	}
 	file.root = create_element(AstNode(tree.root_node()), file)
 	return file

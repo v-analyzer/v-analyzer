@@ -273,7 +273,7 @@ pub fn (t &TypeInferer) infer_type(elem ?PsiElement) types.Type {
 
 pub fn (t &TypeInferer) process_signature(signature Signature) types.Type {
 	params := signature.parameters()
-	param_types := params.map(fn [t] (it PsiElement) types.Type {
+	param_types := params.map(fn (it PsiElement) types.Type {
 		// TODO: support fn (int, string) without names
 		if it is PsiTypedElement {
 			return it.get_type()

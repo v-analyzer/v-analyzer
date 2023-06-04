@@ -8,6 +8,8 @@ import io
 fn C._setmode(int, int)
 fn C.fgetc(stream &C.FILE) int
 
+const content_length = 'Content-Length: '
+
 pub fn new_stdio_stream() !io.ReaderWriter {
 	stream := &StdioStream{}
 	$if windows {
@@ -53,8 +55,8 @@ pub fn (mut stream StdioStream) read(mut buf []u8) !int {
 		if len == 0 {
 			// encounter empty line ('\r\n') in header, header end
 			break
-		} else if line.starts_with(content_length) {
-			conlen = line.all_after(content_length).int()
+		} else if line.starts_with(streams.content_length) {
+			conlen = line.all_after(streams.content_length).int()
 		}
 	}
 
@@ -193,8 +195,8 @@ pub fn (mut sck SocketStream) read(mut buf []u8) !int {
 		if got_header.len == 0 {
 			// encounter empty line ('\r\n') in header, header end
 			break
-		} else if got_header.starts_with(content_length) {
-			conlen = got_header.all_after(content_length).int()
+		} else if got_header.starts_with(streams.content_length) {
+			conlen = got_header.all_after(streams.content_length).int()
 		}
 	}
 

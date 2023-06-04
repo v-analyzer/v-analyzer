@@ -1,7 +1,5 @@
 module analyzer
 
-import analyzer.structures.ropes
-
 // compute_offset returns a byte offset from the given position
 pub fn compute_offset(src string, line int, col int) int {
 	mut offset := 0

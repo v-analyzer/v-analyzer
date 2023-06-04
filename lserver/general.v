@@ -57,7 +57,10 @@ pub fn (mut ls LanguageServer) initialize(params lsp.InitializeParams, mut wr Re
 
 	return lsp.InitializeResult{
 		capabilities: lsp.ServerCapabilities{
-			text_document_sync: .full
+			text_document_sync: lsp.TextDocumentSyncOptions{
+				open_close: true
+				change: .full
+			}
 			hover_provider: true
 			definition_provider: true
 			references_provider: true
