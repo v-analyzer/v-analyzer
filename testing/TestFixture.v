@@ -66,7 +66,7 @@ pub fn (mut t Fixture) initialize() !lsp.InitializeResult {
 		}
 		root_uri: 'file://${testing.temp_path}'
 		root_path: testing.temp_path
-		initialization_options: 'no-stdlib'
+		initialization_options: 'no-stdlib no-index-save'
 		capabilities: lsp.ClientCapabilities{}
 		trace: ''
 		workspace_folders: []

@@ -11,11 +11,12 @@ struct ReferencesSearch {}
 pub fn (r &ReferencesSearch) search(element psi.PsiElement) []psi.PsiElement {
 	resolved := resolve_identifier(element) or { return [] }
 	if resolved is psi.VarDefinition {
-		// переменные не могут быть использованы вне скоупа где они определены
+		// variables cannot be used outside the scope where they are defined
 		scope := element.parent_of_type(.block) or { return [] }
 		return r.search_in_scope(resolved, scope)
 	}
 	if resolved is psi.ParameterDeclaration {
+		// TODO: support closure parameters
 		parent := resolved.parent_of_type(.function_declaration) or { return [] }
 		return r.search_in_scope(resolved, parent)
 	}
@@ -33,7 +34,7 @@ pub fn (r &ReferencesSearch) search_in_scope(element psi.PsiNamedElement, scope 
 		result << identifier
 	}
 
-	// ищем все ссылки на переменную внутри скоупа
+	// looking for all references to a variable inside the scope
 	for node in psi.new_psi_tree_walker(scope) {
 		if node is psi.ReferenceExpression {
 			if node.text_matches(name) {

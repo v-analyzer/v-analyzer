@@ -9,7 +9,7 @@ import time
 import lserver.semantic
 
 const (
-	analyzer_configs_path = os.expand_tilde_to_home('~/.spavn-analyzer')
+	analyzer_configs_path = os.expand_tilde_to_home('~/.config/spavn-analyzer')
 	analyzer_stubs_path   = os.join_path(analyzer_configs_path, 'metadata')
 )
 
@@ -47,8 +47,13 @@ pub fn (mut ls LanguageServer) initialize(params lsp.InitializeParams, mut wr Re
 		ls.analyzer_instance.indexer.ensure_indexed()
 	}
 
-	ls.analyzer_instance.indexer.save_indexes() or {
-		wr.log_message('Failed to save index: ${err}', .error)
+	// Used in tests to avoid indexing the standard library
+	need_save_index := 'no-index-save' !in params.initialization_options.fields()
+
+	if need_save_index {
+		ls.analyzer_instance.indexer.save_indexes() or {
+			wr.log_message('Failed to save index: ${err}', .error)
+		}
 	}
 
 	ls.analyzer_instance.setup_stub_indexes()

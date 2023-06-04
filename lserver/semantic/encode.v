@@ -1,7 +1,12 @@
 module semantic
 
+// encode encodes an array of semantic tokens into an array of u32s.
+// See https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#textDocument_semanticTokens
+// for more information.
 pub fn encode(tokens []SemanticToken) []u32 {
 	mut result := tokens.clone()
+
+	// By specification, the tokens must be sorted.
 	result.sort_with_compare(fn (left &SemanticToken, right &SemanticToken) int {
 		if left.line != right.line {
 			if left.line < right.line {
@@ -38,8 +43,8 @@ pub fn encode(tokens []SemanticToken) []u32 {
 			res[cur + 1] = tok.start - last.start
 		}
 		res[cur + 2] = tok.len
-		res[cur + 3] = typ // for now
-		res[cur + 4] = if 'mutable' in tok.mods { u32(0b010000000000) } else { u32(0) }
+		res[cur + 3] = typ
+		res[cur + 4] = if 'mutable' in tok.mods { u32(0b010000000000) } else { u32(0) } // temp hack
 		cur += 5
 		last = tok
 	}

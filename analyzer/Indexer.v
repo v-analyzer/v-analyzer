@@ -3,14 +3,13 @@ module analyzer
 import time
 import analyzer.index
 
-// IndexingRootsStatus описывает статус индексации всех рутов.
+// IndexingRootsStatus describes the indexing status of all roots.
 pub enum IndexingRootsStatus {
 	all_indexed
-	needs_ensure_indexed // когда хотя бы один из индексов был взят из кеша
+	needs_ensure_indexed // when at least one of the indexes was taken from the cache
 }
 
-// Indexer инкапсулирует в себе логику индексации проекта
-// и предоставляет интерфейс для работы с индексом.
+// Indexer encapsulates the indexing logic and provides an interface for working with the index.
 pub struct Indexer {
 pub mut:
 	roots []&index.IndexingRoot
@@ -34,9 +33,8 @@ pub fn (mut i Indexer) index() IndexingRootsStatus {
 	for mut indexing_root in i.roots {
 		status := indexing_root.index()
 		if status == .from_cache {
-			// Если хотя бы один из индексов был взят из
-			// кеша, то нужно убедиться, что все индексы
-			// актуальны.
+			// If at least one of the indexes was taken from the cache,
+			// then we need to make sure that all indexes are up to date.
 			need_ensure_indexed = true
 		}
 	}

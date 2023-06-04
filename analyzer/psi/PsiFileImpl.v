@@ -48,8 +48,8 @@ pub fn (p &PsiFileImpl) is_test_file() bool {
 
 pub fn (mut p PsiFileImpl) reparse(new_code string) {
 	now := time.now()
-	// TODO: по каким то причинам если передавать старое дерево затем попытка получить
-	// текст узла дает текст по неправильному смещению
+	// TODO: for some reason if we pass the old tree then trying to get the text
+	// of the node gives the text at the wrong offset.
 	res := parser.parse_code_with_tree(new_code, unsafe { nil })
 	p.tree = res.tree
 	p.source_text = res.source_text

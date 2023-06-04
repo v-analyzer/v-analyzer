@@ -30,8 +30,7 @@ pub fn get_toolchain_candidates() []string {
 	mut flavors := []ToolchainFlavor{}
 	flavors << VenvToolchainFlavor{}
 	$if !windows {
-		// На Windows не создается симлинк на V, так что
-		// нет смысла проверять этот вариант.
+		// On Windows, a symlink to V is not created, so it makes no sense to check this option.
 		flavors << SymlinkToolchainFlavor{}
 	}
 	flavors << SysPathToolchainFlavor{}

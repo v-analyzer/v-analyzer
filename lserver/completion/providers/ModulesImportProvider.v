@@ -13,7 +13,7 @@ fn (m &ModulesImportProvider) is_available(ctx &completion.CompletionContext) bo
 fn (mut m ModulesImportProvider) add_completion(ctx &completion.CompletionContext, mut result completion.CompletionResultSet) {
 	element := ctx.element
 	parent_path := element.parent_nth(2) or { return }
-	before_path := parent_path.get_text().trim_string_right('spavnAnalyzerRulezzz')
+	before_path := parent_path.get_text().trim_string_right(completion.dummy_identifier)
 
 	modules := psi.get_all_modules()
 

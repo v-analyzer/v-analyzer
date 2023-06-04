@@ -4,7 +4,7 @@ module psi
 pub struct StubIndexSink {
 pub mut:
 	stub_id     StubId
-	stub_list   &StubList // Список стаблв в текущем файле для которого строится индекс
+	stub_list   &StubList // List of stubs in the current file for which the index is being built.
 	module_name string
 	kind        StubIndexLocationKind
 	data        map[int]map[string][]StubId

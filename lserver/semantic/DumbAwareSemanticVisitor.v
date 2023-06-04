@@ -2,9 +2,9 @@ module semantic
 
 import analyzer.psi
 
-// DumbAwareSemanticVisitor это максимально оптимизированный обходчик, который собирает
-// информацию о семантических токенах в файле только на основе их синтаксического дерева.
-// Этот аннотатор не должен вызывать resolve или использовать индексы.
+// DumbAwareSemanticVisitor is a highly optimized visitor that collects information about
+// semantic tokens in a file based only on their syntax tree.
+// This annotator must not call resolve or use indexes.
 pub struct DumbAwareSemanticVisitor {}
 
 pub fn (v DumbAwareSemanticVisitor) accept(root psi.PsiElement) []SemanticToken {

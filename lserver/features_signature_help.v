@@ -7,8 +7,6 @@ pub fn (mut ls LanguageServer) signature_help(params lsp.SignatureHelpParams, mu
 	uri := params.text_document.uri.normalize()
 	file := ls.get_file(uri) or { return none }
 
-	println('signature help at ' + params.position.str() + ' in file ' + file.uri)
-
 	offset := file.find_offset(params.position)
 	element := file.psi_file.find_element_at(offset) or {
 		println('cannot find element at ' + offset.str())

@@ -2,17 +2,16 @@ module index
 
 import analyzer.psi
 
-// StubTree представляет дерево stub-ов для файла.
-// Это дерево, в отличии от AST, содержит вершины, данные которых
-// мы хотим сериализовать для ускорения запуска проекта.
-// Такие вершины реализуют интерфейс `psi.StubBasedPsiElement`.
+// StubTree represents a tree of stubs for a file.
+// This tree, unlike the AST, contains the nodes whose data we want to serialize to
+// speed up the startup of the server.
+// Such nodes implement the `psi.StubBasedPsiElement` interface.
 //
-// В отличии от AST, StubTree довольно маленькие деревья, благодаря
-// чему их и можно легко сохранять и полностью загружать в оперативную
-// память не занимая очень много места.
+// Unlike AST, `StubTree` trees are quite small, so they can be easily saved and fully loaded
+// into RAM without taking up a lot of space.
 //
-// С помощью StubTree также строятся стабовые индексы, которые позволяют
-// быстро находить нужные элементы в проекте.
+// With the help of `StubTree`, stub indexes are also built, which allow us to quickly find
+// the necessary elements in the workspace or standard library.
 // See `StubbedElementType.index_stub()`.
 pub struct StubTree {
 	root &psi.StubBase

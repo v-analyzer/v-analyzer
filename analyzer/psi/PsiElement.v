@@ -8,69 +8,91 @@ pub type ID = int
 pub type AstNode = tree_sitter.Node[v.NodeType]
 
 pub interface PsiElement {
-	id ID // базовый узел из Tree Sitter
-	node AstNode // базовый узел из Tree Sitter
-	containing_file &PsiFileImpl // файл, в котором находится узел
+	id ID // unique id of the element
+	node AstNode // base node from Tree Sitter
+	containing_file &PsiFileImpl // file where the element is located
 	stub_id StubId
 	get_stub() ?&StubBase
 	stub_list() &StubList
 	element_type() v.NodeType
-	node() AstNode // базовый узел из Tree Sitter
-	containing_file() &PsiFileImpl // файл, в котором находится узел
-	is_equal(other PsiElement) bool
-	// find_element_at возвращает узел, находящийся в указанной позиции относительно начала узла.
-	// Если узел не найден, возвращается none.
+	node() AstNode // return base node from Tree Sitter
+	containing_file() &PsiFileImpl // return file where the element is located
+	is_equal(other PsiElement) bool // return true if the element is equal to the other element
+	// find_element_at returns the leaf node at the specified position relative to the start of the node.
+	// If the node is not found, none is returned.
 	find_element_at(offset u32) ?PsiElement
+	// find_reference_at returns the reference node at the specified position relative to the start of the node.
+	// If the node is not found, none is returned.
 	find_reference_at(offset u32) ?PsiElement
-	// parent возвращает родительский узел.
-	// Если узел является корневым, возвращается none.
+	// parent returns the parent node.
+	// If the node is the root, none is returned.
 	parent() ?PsiElement
-	// parent_nth возвращает родительский узел, находящийся на указанном уровне вложенности.
-	// Если такого узла не существует, возвращается none.
+	// parent_nth returns the parent node at the specified nesting level.
+	// `parent_nth(0)` is equivalent to `parent()`.
+	// If no such node exists, none is returned.
 	parent_nth(depth int) ?PsiElement
-	// parent_of_type возвращает родительский узел с указанным типом.
-	// Если такого узла не существует, возвращается none.
+	// parent_of_type returns the parent node with the specified type.
+	// If no such node exists, none is returned.
 	parent_of_type(typ v.NodeType) ?PsiElement
+	// inside returns true if the node is inside a node with the specified type.
 	inside(typ v.NodeType) bool
-	// is_parent_of возвращает true, если переданный узел является потомком данного узла.
+	// is_parent_of returns true if the passed node is a child of the given node.
 	is_parent_of(element PsiElement) bool
+	// sibling_of_type_backward returns the previous node at the same nesting level with the specified type.
+	// If no such node exists, none is returned.
 	sibling_of_type_backward(typ v.NodeType) ?PsiElement
-	// parent_of_type_or_self возвращает родительский узел с указанным типом или сам узел,
-	// если его тип совпадает с указанным.
-	// Если такого узла не существует, возвращается none.
+	// parent_of_type_or_self returns the parent node with the specified type, or the
+	// node itself if its type matches the specified one.
+	// If no such node exists, none is returned.
 	parent_of_type_or_self(typ v.NodeType) ?PsiElement
-	// children возвращает все дочерние узлы.
+	// children returns all child nodes.
 	children() []PsiElement
-	// first_child возвращает первый дочерний узел.
-	// Если узел не имеет дочерних узлов, возвращается none.
+	// first_child returns the first child node.
+	// If the node has no children, none is returned.
 	first_child() ?PsiElement
+	// first_child_or_stub returns the first child node or stub.
+	// If the node has no children or stub, none is returned.
 	first_child_or_stub() ?PsiElement
-	// last_child возвращает последний дочерний узел.
-	// Если узел не имеет дочерних узлов, возвращается none.
+	// last_child returns the last child of the node.
+	// If the node has no children, none is returned.
 	last_child() ?PsiElement
+	// last_child_or_stub returns the last child node or stub.
+	// If the node has no children or stub, none is returned.
 	last_child_or_stub() ?PsiElement
-	// next_sibling возвращает следующий узел, находящийся на том же уровне вложенности.
-	// Если узел является последним дочерним узлом, возвращается none.
+	// next_sibling returns the next node at the same nesting level.
+	// If the node is the last child node, none is returned.
 	next_sibling() ?PsiElement
+	// prev_sibling returns the previous node at the same nesting level.
+	// If the node is the first child node, none is returned.
 	prev_sibling() ?PsiElement
+	// prev_sibling_or_stub returns the previous node at the same nesting level or stub.
+	// If the node is the first child node or stub, none is returned.
 	prev_sibling_or_stub() ?PsiElement
-	// find_child_by_type возвращает первый дочерний узел с указанным типом.
-	// Если такой узел не найден, возвращается none.
+	// find_child_by_type returns the first child node with the specified type.
+	// If no such node is found, none is returned.
 	find_child_by_type(typ v.NodeType) ?PsiElement
+	// find_child_by_type_or_stub returns the first child node with the specified type or stub.
+	// If no such node is found, none is returned.
 	find_child_by_type_or_stub(typ v.NodeType) ?PsiElement
+	// find_child_by_name returns the first child node with the specified name.
+	// If no such node is found, none is returned.
 	find_child_by_name(name string) ?PsiElement
-	// find_children_by_type возвращает все дочерние узлы с указанным типом.
-	// Если такие узлы не найдены, возвращается пустой массив.
+	// find_children_by_type returns all child nodes with the specified type.
+	// If no such nodes are found, an empty array is returned.
 	find_children_by_type(typ v.NodeType) []PsiElement
+	// find_children_by_type_or_stub returns all child nodes with the specified type or stub.
+	// If no such nodes are found, an empty array is returned.
 	find_children_by_type_or_stub(typ v.NodeType) []PsiElement
-	// get_text возвращает текст узла.
+	// get_text returns the text of the node.
 	get_text() string
+	// text_matches returns true if the text of the node matches the specified value.
+	// This method is more efficient than `get_text() == value`.
 	text_matches(value string) bool
-	// accept передает элемент в переданный visitor.
+	// accept passes the element to the passed visitor.
 	accept(visitor PsiElementVisitor)
-	// accept_mut передает элемент в переданный visitor.
-	// В отличии от accept, этот метод использует visitor который может
-	// мутировать свое состояние.
+	// accept_mut passes the element to the passed visitor.
+	// Unlike `accept()`, this method uses a visitor that can mutate its state.
 	accept_mut(mut visitor MutablePsiElementVisitor)
+	// text_range returns the range of the node in the source file.
 	text_range() TextRange
 }

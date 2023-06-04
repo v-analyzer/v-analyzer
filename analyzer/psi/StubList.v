@@ -1,8 +1,8 @@
 module psi
 
-// StubList описывает способ хранения всех стабов в конкретном файле.
-// Хранение стабов в виде таблицы эффективнее, чем хранение в виде дерева,
-// а также позволяет проще сериализовать стабы в файл.
+// StubList describes a way to store all stubs in a specific file.
+// Storing stubs as a table is more efficient than storing them as a tree, and
+// also makes it easier to serialize stubs to a file.
 [heap]
 pub struct StubList {
 pub mut:

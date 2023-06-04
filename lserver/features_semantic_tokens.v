@@ -2,6 +2,7 @@ module lserver
 
 import lsp
 import lserver.semantic
+import time
 
 pub fn (mut ls LanguageServer) semantic_tokens_full(params lsp.SemanticTokensParams, mut wr ResponseWriter) ?lsp.SemanticTokens {
 	uri := params.text_document.uri.normalize()
@@ -10,11 +11,12 @@ pub fn (mut ls LanguageServer) semantic_tokens_full(params lsp.SemanticTokensPar
 	lines := file.psi_file.source_text.count('\n')
 
 	if lines > 500 {
+		// We don't want to send too many tokens, so we just send dumb-aware tokens for large files.
 		mut dumb_aware_visitor := semantic.DumbAwareSemanticVisitor{}
 		res := semantic.encode(dumb_aware_visitor.accept(file.psi_file.root))
 
 		return lsp.SemanticTokens{
-			result_id: '0'
+			result_id: time.now().unix_time().str()
 			data: res
 		}
 	}
@@ -30,7 +32,7 @@ pub fn (mut ls LanguageServer) semantic_tokens_full(params lsp.SemanticTokensPar
 	result << resolve_tokens
 
 	return lsp.SemanticTokens{
-		result_id: '0'
+		result_id: time.now().unix_time().str()
 		data: semantic.encode(result)
 	}
 }

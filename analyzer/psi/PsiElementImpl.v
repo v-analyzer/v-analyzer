@@ -5,7 +5,7 @@ import tree_sitter_v as v
 pub struct PsiElementImpl {
 pub:
 	id              ID
-	node            AstNode // базовый узел из Tree Sitter
+	node            AstNode // base node from Tree Sitter
 	containing_file &PsiFileImpl
 	// stubs related
 	stub_id    StubId = non_stubbed_element
@@ -29,10 +29,6 @@ fn new_psi_node_from_stub(id StubId, stubs_list &StubList) PsiElementImpl {
 		stubs_list: stubs_list
 	}
 }
-
-// pub fn (n PsiElementImpl) str() string {
-// 	return "ast node ${n.node.type_name} at ${n.node.start_point()}"
-// }
 
 pub fn (n PsiElementImpl) node() AstNode {
 	return n.node

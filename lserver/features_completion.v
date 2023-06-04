@@ -16,7 +16,15 @@ pub fn (mut ls LanguageServer) completion(params lsp.CompletionParams, mut wr Re
 	offset := file.find_offset(params.position)
 
 	mut source := file.psi_file.source_text
-	source = insert_to_string(source, offset, 'spavnAnalyzerRulezzz')
+
+	// The idea behind this solution is:
+	// When we have an expression like `foo.` and we want to get the autocompletion variants,
+	// it can be difficult to directly try to figure out what is before the dot, since the
+	// parser does not parse it correctly, since there must be an identifier after the dot.
+	// The idea is that we add some dummy identifier at the cursor point and call go to definition,
+	// which goes through all the variants that may be for this place.
+	// Thus, we collect them, filter and show them to the user.
+	source = insert_to_string(source, offset, completion.dummy_identifier)
 
 	res := parser.parse_code(source)
 	patched_psi_file := psi.new_psi_file(uri.path(), res.tree, res.source_text)

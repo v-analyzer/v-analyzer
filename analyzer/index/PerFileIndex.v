@@ -2,7 +2,7 @@ module index
 
 import analyzer.psi
 
-// PerFileIndex описывает кэш группы файлов в индексе.
+// PerFileIndex describes the cache of a group of files in the index.
 pub struct PerFileIndex {
 pub mut:
 	data map[string]FileIndex

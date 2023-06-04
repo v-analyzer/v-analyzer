@@ -9,13 +9,13 @@ import crypto.md5
 import analyzer.psi
 import math
 
-// BuiltIndexStatus описывает статус построенного индекса.
+// BuiltIndexStatus describes the status of the built index.
 pub enum BuiltIndexStatus {
-	from_cache // индекс был загружен из кэша
-	from_scratch // индекс был построен с нуля
+	from_cache // index was loaded from cache
+	from_scratch // index was built from scratch
 }
 
-// IndexingRootKind описывает тип корня, который индексируется.
+// IndexingRootKind describes the type of root that is being indexed.
 // Same as `StubIndexKind`.
 pub enum IndexingRootKind as u8 {
 	standard_library
@@ -24,24 +24,22 @@ pub enum IndexingRootKind as u8 {
 	workspace
 }
 
-// IndexingRoot инкапсулирует в себе логику индексации/реиндексации
-// конкретного корня файловой системы.
+// IndexingRoot encapsulates the logic of indexing/reindexing a particular root of the file system.
 //
-// Разделение на отдельные руты нужно, чтобы обрабатывать стандартную
-// библиотеку и пользовательский код раздельно.
+// Separation into separate roots is necessary in order to process the standard library and user code separately.
 [noinit]
 pub struct IndexingRoot {
 pub:
-	root string // корень, который индексируется
-	kind IndexingRootKind // тип корня
+	root string // root that is indexed
+	kind IndexingRootKind // type of root that is indexed
 pub mut:
-	updated_at time.Time // время последнего обновления индекса
-	index      Index     // кэш по файлам
-	cache_file string    // путь к файлу с кэшем
-	need_save  bool      // нужно ли сохранять кэш при следующем вызове save_index
+	updated_at time.Time // when the index was last updated
+	index      Index     // index itself
+	cache_file string    // path to the file where the index is stored
+	need_save  bool      // whether the index needs to be saved
 }
 
-// new_indexing_root создает новый IndexingRoot для переданного пути.
+// new_indexing_root creates a new indexing root with the given root and kind.
 pub fn new_indexing_root(root string, kind IndexingRootKind) &IndexingRoot {
 	cache_file := 'spavn_index_${md5.hexhash(root)}.txt'
 	return &IndexingRoot{
@@ -86,23 +84,19 @@ pub fn (mut i IndexingRoot) save_index() ! {
 	}
 }
 
-// need_index возвращает true, если файл нужно проиндексировать.
+// need_index returns true if the file needs to be indexed.
 //
-// Мы намеренно не индексируем тестовые файлы, чтобы ускорить
-// процесс индексирования и поиск по нему.
+// We deliberately do not index some of test files to speed up the indexing and searching process.
 fn (mut _ IndexingRoot) need_index(path string) bool {
-	if path.ends_with('/net/http/mime/db.v') {
-		return false
-	}
 	if !path.ends_with('.v') {
 		return false
 	}
 
 	return !path.contains('/tests/') && !path.contains('/slow_tests/')
 		&& !path.contains('/.vmodules/cache/')
-		&& !path.contains('/builtin/wasm/') // TODO: индексировать и эту папку
-		&& !path.contains('/builtin/js/') // TODO: индексировать и эту папку
-		&& !path.contains('/builtin/linux_bare/') // TODO: индексировать и эту папку
+		&& !path.contains('/builtin/wasm/') // TODO: index this folder too
+		&& !path.contains('/builtin/js/') // TODO: index this folder too
+		&& !path.contains('/builtin/linux_bare/') // TODO: index this folder too
 		&& !path.ends_with('.js.v')
 }
 
@@ -257,8 +251,7 @@ pub fn (mut i IndexingRoot) spawn_indexing_workers(cache_chan chan FileIndex, fi
 	cache_chan.close()
 }
 
-// ensure_indexed проверяет индекс на актуальность и переиндексирует
-// файлы, если они были изменены после последнего индексирования.
+// ensure_indexed checks the index for freshness and re-indexes files if they have changed since the last indexing.
 pub fn (mut i IndexingRoot) ensure_indexed() {
 	now := time.now()
 	println('Ensuring indexed root ${i.root}')
@@ -302,7 +295,7 @@ pub fn (mut i IndexingRoot) ensure_indexed() {
 
 pub fn (mut i IndexingRoot) mark_as_dirty(filepath string, new_content string) ! {
 	if filepath !in i.index.per_file.data {
-		// файл не принадлежит этому индексу
+		// file does not belong to this index
 		return
 	}
 

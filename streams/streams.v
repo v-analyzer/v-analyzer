@@ -4,13 +4,13 @@ import term
 import net
 import os
 import io
+import time
 
 fn C._setmode(int, int)
-fn C.fgetc(stream &C.FILE) int
 
 const content_length = 'Content-Length: '
 
-pub fn new_stdio_stream() !io.ReaderWriter {
+pub fn new_stdio_stream() io.ReaderWriter {
 	stream := &StdioStream{}
 	$if windows {
 		// 0x8000 = _O_BINARY from <fcntl.h>
@@ -25,12 +25,6 @@ struct StdioStream {
 mut:
 	stdin  os.File = os.stdin()
 	stdout os.File = os.stdout()
-}
-
-fn (_ &StdioStream) stdin_file() &C.FILE {
-	// TODO:
-	// return &C.FILE(stream.stdin.cfile)
-	return &C.FILE(C.stdin)
 }
 
 pub fn (mut stream StdioStream) write(buf []u8) !int {
@@ -101,14 +95,13 @@ fn read_line(file &os.File, mut buf []u8) !int {
 const base_ip = '127.0.0.1'
 
 pub fn new_socket_stream_server(port int, log bool) !io.ReaderWriter {
-	server_label := 'vls-server'
+	server_label := 'spavn-analyzer-server'
 
-	// Open the connection.
 	address := '${streams.base_ip}:${port}'
 	mut listener := net.listen_tcp(.ip, address)!
 
 	if log {
-		eprintln(term.yellow('Warning: TCP connection is used primarily for debugging purposes only \n\tand may have performance issues. Use it on your own risk.\n'))
+		eprintln(term.yellow('Warning: TCP connection is used primarily for debugging purposes only \n         and may have performance issues. Use it on your own risk.\n'))
 		println('[${server_label}] : Established connection at ${address}\n')
 	}
 
@@ -132,14 +125,13 @@ pub fn new_socket_stream_server(port int, log bool) !io.ReaderWriter {
 }
 
 fn new_socket_stream_client(port int) !io.ReaderWriter {
-	// Open the connection.
 	address := '${streams.base_ip}:${port}'
 	mut conn := net.dial_tcp(address)!
 	mut reader := io.new_buffered_reader(reader: conn, cap: 1024 * 1024)
 	conn.set_blocking(true) or {}
 
 	mut stream := &SocketStream{
-		log_label: 'vls-client'
+		log_label: 'spavn-analyzer-client'
 		log: false
 		port: port
 		conn: conn
@@ -149,7 +141,7 @@ fn new_socket_stream_client(port int) !io.ReaderWriter {
 }
 
 struct SocketStream {
-	log_label string = 'vls'
+	log_label string = 'spavn-analyzer'
 	log       bool   = true
 mut:
 	conn   &net.TcpConn       = &net.TcpConn(net.listen_tcp(.ip, '80')!)
@@ -159,38 +151,30 @@ pub mut:
 	debug bool
 }
 
-pub fn (mut sck SocketStream) write(buf []u8) !int {
+pub fn (mut stream SocketStream) write(buf []u8) !int {
 	// TODO: should be an interceptor
 	$if !test {
-		if sck.log {
-			println('[${sck.log_label}] : ${term.red('Sent data')} : ${buf.bytestr()}\n')
+		if stream.log {
+			println('[${stream.log_label}] : ${time.now()} : ${term.bg_green('Sent data →')} : ${buf.bytestr()}\n')
 		}
 	}
 
-	// if output.starts_with(content_length) {
-	// sck.conn.write_string(output) or { panic(err) }
-	// } else {
-	// sck.conn.write_string(make_lsp_payload(output)) or { panic(err) }
-	// }
-	return sck.conn.write(buf)
+	return stream.conn.write(buf)
 }
 
 const newlines = [u8(`\r`), `\n`]
 
 [manualfree]
-pub fn (mut sck SocketStream) read(mut buf []u8) !int {
+pub fn (mut stream SocketStream) read(mut buf []u8) !int {
 	mut conlen := 0
 	mut header_len := 0
 
 	for {
 		// read header line
-		got_header := sck.reader.read_line() or { return IError(io.Eof{}) }
+		got_header := stream.reader.read_line() or { return IError(io.Eof{}) }
 		buf << got_header.bytes()
 		buf << streams.newlines
 		header_len = got_header.len + 2
-		// $if !test {
-		// 	println('[$sck.log_label] : ${term.green('Received data')} : $got_header')
-		// }
 
 		if got_header.len == 0 {
 			// encounter empty line ('\r\n') in header, header end
@@ -207,15 +191,15 @@ pub fn (mut sck SocketStream) read(mut buf []u8) !int {
 		}
 
 		for read_data_len := 0; read_data_len != conlen; {
-			read_data_len = sck.reader.read(mut rbody) or { return IError(io.Eof{}) }
+			read_data_len = stream.reader.read(mut rbody) or { return IError(io.Eof{}) }
 		}
 
 		buf << rbody
 	}
 
 	$if !test {
-		if sck.log {
-			println('[${sck.log_label}] : ${term.green('Received data')} : ${buf.bytestr()}\n')
+		if stream.log {
+			println('[${stream.log_label}] : ${time.now()} : ${term.green('Received data ←')} : ${buf.bytestr()}\n')
 		}
 	}
 	return conlen + header_len

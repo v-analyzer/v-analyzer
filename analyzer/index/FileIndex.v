@@ -2,33 +2,30 @@ module index
 
 import analyzer.psi
 
-// FileIndex описывает кеш одного файла.
-// Благодаря разделению кеша на файлы, мы можем индексировать файлы
-// параллельно без необходимости синхронизации.
+// FileIndex describes the cache of a single file.
+// By splitting the cache into files, we can index files in parallel
+// without the need for synchronization.
 struct FileIndex {
 pub mut:
-	filepath string // абсолютный путь к файлу
-	kind     IndexingRootKind // пространство в котором находится файл
-	// file_last_modified хранит время последнего изменения файла
+	filepath string // absolute path to the file
+	kind     IndexingRootKind // root where the file is located
+	// file_last_modified stores the time the file was last modified
 	//
-	// Благодаря ему, во время проверки кеша, мы можем понять,
-	// был ли изменен файл или нет.
-	// Если файл был изменен, то мы переиндексируем файл.
+	// Thanks to it, while checking the cache, we can understand whether the
+	// file has been changed or not.
+	// If the file has been modified, then we reindex the file.
 	file_last_modified i64
-	// module_name это имя модуля определенное в файле (`module name`),
-	// если не определено, то пустая строка
+	// module_name is the name of the module defined in the file (`module name`),
+	// if not defined then the empty string.
 	module_name string
-	// module_fqn это полное имя модуля от корня,
-	// например, `foo.bar` или `foo.bar.baz`,
-	// если модуль не определен, то пустая строка
+	// module_fqn is the fully qualified name of the module from the root, eg `foo.bar` or `foo.bar.baz`,
+	//  if no module is defined then the empty string.
 	module_fqn string
-	// stub_list это список всех стабов в файле.
-	// Хранение стабов в виде таблицы позволяет легко и компактно
-	// сохранять их на диск и загружать обратно.
+	// stub_list is a list of all stubs in the file.
+	// Storing stubs as a table makes it easy and compact to save them to disk and load them back.
 	stub_list &psi.StubList
-	// sink описывает индексированные стабы текущего файла.
-	// Так, например, по ключу '.functions' можно получить стабы всех
-	// функций определенных внутри текущего файла.
-	// Смотри также 'StubIndexKey'.
+	// sink describes the indexed stubs of the current file.
+	// So, for example, by the '.functions' key, you can get the stubs of all functions defined inside the current file.
+	// See also 'StubIndexKey'.
 	sink &psi.StubIndexSink
 }

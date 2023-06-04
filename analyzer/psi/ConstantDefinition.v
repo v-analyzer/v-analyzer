@@ -67,7 +67,7 @@ pub fn (c ConstantDefinition) visibility_modifiers() ?&VisibilityModifiers {
 
 pub fn (c &ConstantDefinition) expression() ?PsiElement {
 	if c.stub_id != non_stubbed_element {
-		return none // for now
+		return none // TODO: show constant value from stub
 	}
 	return c.last_child()
 }

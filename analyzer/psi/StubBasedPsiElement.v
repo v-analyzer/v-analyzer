@@ -1,10 +1,8 @@
 module psi
 
-// StubIndexKey описывает различные типы индексов, которые строятся
-// по `index.StubTree`.
-// Эти индексы позволяют быстро находить нужные определения по имени
-// во всех проиндексированных файлах, включая стандартную библиотеку и
-// сторонние библиотеки вне проекта.
+// StubIndexKey describes the various types of indexes that are built on `index.StubTree`.
+// These indexes allow us to quickly find the desired definitions by name in all indexed files,
+// including the standard library and third-party libraries outside the project.
 pub enum StubIndexKey as u8 {
 	functions
 	methods
@@ -17,27 +15,26 @@ pub enum StubIndexKey as u8 {
 	_end // see count_index_keys
 }
 
-// IndexSink описывает интерфейс создателя индексов.
-// Метод `occurrence()` вызывается для каждого стаба в файле. Смотри
-// `StubbedElementType.index_stub()` для примера вызова этого метода.
+// IndexSink describes the index creator interface.
+// The `occurrence()` method is called for every stub in the file.
+// See `StubbedElementType.index_stub()` for an example of calling this method.
 //
-// Параметр `key` это тип индекса, для которого нужно создать запись.
-// Параметр `value` это строка, которая будет использована в качестве
-// значения в индексе. Например, для индекса `functions` это будет имя функции.
+// The `key` parameter is the index type for which the entry is to be created.
+// The `value` parameter is the string that will be used as the value in the index.
+// For example, for the `functions` index, this would be the name of the function.
 pub interface IndexSink {
 mut:
 	occurrence(key StubIndexKey, value string)
 }
 
-// StubBasedPsiElement описывает маркерный интерфейс для элементов PSI,
-// из которых будет построено `index.StubTree`, по которому будут построены
-// стабовые индексы.
+// StubBasedPsiElement describes a marker interface for PSI elements,
+// from which `index.StubTree` will be built, on which stub indexes will be built.
 //
-// PSI элементы которые реализуют этот интерфейс могут быть созданы
-// как из AST, так и из стабов (`psi.StubBase`).
-// Это позволяет единообразно обрабатывать их при резолвинге имен и
-// другой обработке, так как нет разницы, обрабатываем мы реальное AST
-// дерево или дерево стабов из память.
+// PSI elements that implement this interface can be created from
+// both ASTs and stubs (`psi.StubBase`).
+// This allows them to be processed uniformly when resolving names and other
+// processing, since there is no difference whether we are processing a real
+// AST tree or a tree of stubs from memory.
 pub interface StubBasedPsiElement {
 	stub() // marker method
 }

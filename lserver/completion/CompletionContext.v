@@ -3,6 +3,8 @@ module completion
 import analyzer.psi
 import lsp
 
+pub const dummy_identifier = 'spavnAnalyzerRulezzz'
+
 pub struct CompletionContext {
 pub:
 	element      psi.PsiElement
@@ -44,7 +46,7 @@ pub fn (mut c CompletionContext) compute() {
 
 	if parent.node.type_name == .reference_expression {
 		if grand := parent.parent() {
-			// не считаем выражением reference_expression если он внутри атрибута
+			// do not consider as reference_expression if it is inside an attribute
 			c.is_expression = grand !is psi.ValueAttribute
 		}
 	}
@@ -84,7 +86,7 @@ pub fn (mut c CompletionContext) compute() {
 	}
 
 	if !c.inside_loop {
-		// долгий путь в случае если первые три родителя вверх не являются циклами
+		// long way if the first three parents up are not loops
 		c.inside_loop = c.element.inside(.for_statement)
 	}
 }

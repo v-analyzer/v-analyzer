@@ -15,7 +15,7 @@ pub fn new_deserializer(data []u8) &Deserializer {
 pub fn (mut s Deserializer) read_string() string {
 	begin := s.read_begin_symbol()
 	if begin != .string {
-		// TODO: сделать другую обработку ошибок, возможно записывать в массив и потом отдавать
+		// TODO: different error handling, maybe to write to an array and then return
 		panic('Expected string at ${s.index}, got ${begin}')
 	}
 	len := s.read_int()

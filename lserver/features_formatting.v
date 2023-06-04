@@ -10,7 +10,7 @@ pub fn (mut ls LanguageServer) formatting(params lsp.DocumentFormattingParams, m
 	file := ls.get_file(uri) or { return error('Cannot format not opened file') }
 
 	os.write_file(lserver.temp_formatting_file_path, file.psi_file.source_text) or {
-		return error('Cannot write temp file for formatting')
+		return error('Cannot write temp file for formatting: ${err}')
 	}
 
 	mut fmt_proc := ls.launch_tool('fmt', lserver.temp_formatting_file_path)!

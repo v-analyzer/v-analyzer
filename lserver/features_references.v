@@ -14,18 +14,15 @@ pub fn (mut ls LanguageServer) references(params lsp.ReferenceParams, mut wr Res
 		return []
 	}
 
-	elems := search.references(element)
-	return elements_to_locations(elems)
+	references := search.references(element)
+	return elements_to_locations(references)
 }
 
 fn elements_to_locations(elements []psi.PsiElement) []lsp.Location {
-	return elements
-		.map(fn (it psi.PsiElement) lsp.Location {
-			return lsp.Location{
-				uri: 'file://' + it.containing_file.path()
-				range: text_range_to_lsp_range(it.text_range())
-			}
-		})
+	return elements.map(lsp.Location{
+		uri: 'file://' + it.containing_file.path()
+		range: text_range_to_lsp_range(it.text_range())
+	})
 }
 
 fn text_range_to_lsp_range(pos psi.TextRange) lsp.Range {

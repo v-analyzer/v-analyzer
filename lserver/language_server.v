@@ -4,7 +4,6 @@ import json
 import jsonrpc
 import lsp
 import time
-import utils
 import analyzer
 import os
 
@@ -19,15 +18,16 @@ pub mut:
 	status       ServerStatus = .off
 	root_uri     lsp.DocumentUri
 	capabilities lsp.ServerCapabilities
-	client_pid   int
-	writer       &ResponseWriter = &ResponseWriter(unsafe { nil })
-	// opened_files описывает все открытые файлы в редакторе.
+	// client_pid is the process ID of this server.
+	client_pid int
+	writer     &ResponseWriter = &ResponseWriter(unsafe { nil })
+	// opened_files describes all open files in the editor.
 	//
-	// Когда файл открывается вызывается метод `did_open`, который добавляет
-	// файл в `opened_files`.
+	// When a file is opened, the `did_open` method is called,
+	// which adds the file to `opened_files`.
 	//
-	// Когда файл закрывается вызывается метод `did_close`, который удаляет
-	// файл из `opened_files`.
+	// When the file is closed, the `did_close` method is called,
+	// which removes the file from `opened_files`.
 	opened_files map[lsp.DocumentUri]analyzer.OpenedFile
 
 	vmodules_root string
@@ -46,7 +46,8 @@ pub fn (mut ls LanguageServer) compiler_path() ?string {
 	if ls.vroot == '' {
 		return none
 	}
-	return os.join_path(ls.vroot, 'v')
+	compiler_exe_name := $if windows { 'v.exe' } $else { 'v' }
+	return os.join_path(ls.vroot, compiler_exe_name)
 }
 
 pub fn (mut ls LanguageServer) vlib_root() ?string {
@@ -101,7 +102,7 @@ pub fn (mut ls LanguageServer) handle_jsonrpc(request &jsonrpc.Request, mut rw j
 	// if its a notification or a request payload by checking
 	// if the ID is empty.
 	if request.method == 'shutdown' {
-		// NB: LSP specification is unclear whether or not
+		// Note: LSP specification is unclear whether or not
 		// a shutdown request is allowed before server init
 		// but we'll just put it here since we want to formally
 		// shutdown the server after a certain timeout period.
@@ -283,25 +284,17 @@ pub fn (mut ls LanguageServer) handle_jsonrpc(request &jsonrpc.Request, mut rw j
 	println('request "${request.method}" took ${watch.elapsed()}')
 }
 
-pub fn monitor_changes(mut ls LanguageServer, mut wr ResponseWriter) {
-	for {
-		select {
-			// This is for debouncing analysis
-			350 * time.millisecond {
-				if ls.client_pid != 0 && !utils.is_proc_exists(ls.client_pid) {
-					ls.shutdown(mut wr)
-				}
-
-				// ls.analyze_file(ls.files[ls.current_file_uri], ls.last_affected_node,
-				// 	ls.last_modified_line)
-				// ls.last_modified_line = 0
-				// ls.last_affected_node = .unknown
-				// ls.is_typing = false
-			}
-		}
-	}
-}
-
+// launch_tool launches a tool with the same vroot as the language server
+// and returns the process.
+//
+// Example:
+// ```
+// p := ls.launch_tool('tool', 'arg1', 'arg2')!
+// defer {
+//   p.close()
+// }
+// p.wait()
+// ```
 pub fn (mut ls LanguageServer) launch_tool(args ...string) !&os.Process {
 	compiler_path := ls.compiler_path() or { return error('Cannot run tool without vroot') }
 	mut p := os.new_process(compiler_path)

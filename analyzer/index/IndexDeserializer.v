@@ -18,9 +18,9 @@ pub fn new_index_deserializer(data []u8) IndexDeserializer {
 pub fn (mut d IndexDeserializer) deserialize_index(expected_version string) !Index {
 	version := d.d.read_string()
 	if version != expected_version {
-		// Ввиду того, что структура индекса может меняться, мы не можем
-		// просто так восстановить индекс, если версия не совпадает, поэтому
-		// при несовпадении мы останавливаем восстановление индекса сразу.
+		// Due to the fact that the structure of the index can change, we cannot simply
+		// restore the index if the version does not match, therefore, if there is a mismatch,
+		// we stop the decoding of the index immediately.
 		return IndexVersionMismatchError{}
 	}
 	updated_at_unix := d.d.read_i64()

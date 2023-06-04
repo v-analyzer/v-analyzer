@@ -3,22 +3,21 @@ module project
 import project.flavors
 import os
 
-// get_modules_location возвращает папку в которой V ищет и сохраняет модули.
-// По умолчанию это ~/.vmodules, однако его можно переопределить
-// с помощью переменной окружения VMODULES
+// get_modules_location returns the folder where V looks for and saves modules.
+// The default is `~/.vmodules`, however it can be overridden with the `VMODULES` environment variable
 pub fn get_modules_location() string {
 	return os.vmodules_dir()
 }
 
-// get_toolchain_candidates ищет возможные места где был установлен компилятор V.
-// Функция возвращает массив кандидатов, где первый элемент - самый приоритетный.
-// Если ни один кандидат не найден, то возвращается пустой массив.
+// get_toolchain_candidates looks for possible places where the V compiler was installed.
+// The function returns an array of candidates, where the first element is the highest priority.
+// If no candidate is found, then an empty array is returned.
 //
-// Приоритет:
-// 1. VROOT или VEXE переменные окружения
-// 2. Символическая ссылка /usr/local/bin/v -> v (кроме Windows)
-// 3. Путь из переменной окружения PATH
-// 4. Другие дополнительные варианты поиска
+// A priority:
+// 1. `VROOT` or `VEXE` environment variables
+// 2. Symbolic link `/usr/local/bin/v` -> `v` (except Windows)
+// 3. Path from `PATH` environment variable
+// 4. Other additional search options
 pub fn get_toolchain_candidates() []string {
 	return distinct_strings(flavors.get_toolchain_candidates())
 }

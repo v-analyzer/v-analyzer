@@ -14,7 +14,7 @@ pub const top_level_map = {
 	'interface IName { ... }': TopLevelVariant{'interface', 'interface \${1:IName} {\n\t$0\n}'}
 	'enum Colors { ... }':     TopLevelVariant{'enum', 'enum \${1:Colors} {\n\t$0\n}'}
 	'type MyString = string':  TopLevelVariant{'type', 'type \${1:MyString} = \${2:string}$0'}
-	'сonst secret = 100':      TopLevelVariant{'const', 'const \${1:secret} = \${2:100}$0'}
+	'const secret = 100':      TopLevelVariant{'const', 'const \${1:secret} = \${2:100}$0'}
 }
 
 pub struct TopLevelCompletionProvider {}

@@ -136,4 +136,50 @@ t.test('variable definition from if unwrapping from outside', fn (mut t testing.
 	t.assert_no_definition(locations)!
 })
 
+t.test('field definition', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+	fixture.configure_by_text('1.v', '
+		module field_definition_test
+
+		struct Foo {
+			name string
+		}
+
+		fn main() {
+			foo := Foo{}
+			println(foo.na/*caret*/me)
+		}
+	'.trim_indent())!
+
+	locations := fixture.definition_at_cursor()
+	t.assert_has_definition(locations)!
+	first := locations.first()
+	t.assert_uri(first.target_uri, fixture.current_file_uri())
+	t.assert_definition_name(first, 'name')
+})
+
+t.test('method definition', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+	fixture.configure_by_text('1.v', '
+		module method_definition_test
+
+		struct Foo {
+			name string
+		}
+
+		fn (foo Foo) get_name() string {
+			return foo.name
+		}
+
+		fn main() {
+			foo := Foo{}
+			println(foo.get_na/*caret*/me())
+		}
+	'.trim_indent())!
+
+	locations := fixture.definition_at_cursor()
+	t.assert_has_definition(locations)!
+	first := locations.first()
+	t.assert_uri(first.target_uri, fixture.current_file_uri())
+	t.assert_definition_name(first, 'get_name')
+})
+
 t.stats()

@@ -1,6 +1,6 @@
 module psi
 
-// StubElement описывает интерфейс любого стаба.
+// StubElement describes the interface of any stub.
 pub interface StubElement {
 	id() StubId
 	name() string

@@ -11,7 +11,7 @@ const (
 	count_stub_index_location_keys = 5 // StubIndexLocationKind._end
 )
 
-// StubIndexLocationKind описывает тип индекса.
+// StubIndexLocationKind describes the type of index.
 // same as `IndexingRootKind`
 pub enum StubIndexLocationKind {
 	standard_library
@@ -24,14 +24,14 @@ pub enum StubIndexLocationKind {
 pub struct StubIndex {
 pub mut:
 	sinks []StubIndexSink
-	// module_to_files описывает отображение полного имени модуля к списку файлов
-	// которые этот модуль содержит.
+	// module_to_files describes how to map the full name of a module to a list
+	// of files that this module contains.
 	module_to_files map[string][]StubIndexSink
-	// file_to_module описывает отображение пути к файлу к полному имени модуля
-	// которому принадлежит этот файл.
+	// file_to_module describes the mapping of a file path to the full name
+	// of the module that this file belongs to.
 	file_to_module map[string]string
-	// data определяет данные индекса которые позволяют в 2 обращения к
-	// элементам массива и одного lookup по ключу получить описание элемента.
+	// data defines the index data that allows you to get the description of the element
+	// in 2 accesses to the array elements and one lookup by key.
 	data [count_stub_index_location_keys][count_index_keys]map[string]StubResult
 }
 
@@ -119,11 +119,11 @@ pub fn (mut s StubIndex) update_stubs_index(changed_sinks []StubIndexSink, all_s
 	}
 }
 
-// get_all_elements_from возвращает список всех PSI элементов определенных в переданном индексе.
+// get_all_elements_from returns a list of all PSI elements defined in the given index.
 //
 // Example:
 // ```
-// // получает все элементы определенные в текущем проекте
+// // gets all the elements defined in the current project
 // stubs_index.get_all_elements_from(.workspace)
 // ```
 pub fn (s &StubIndex) get_all_elements_from(kind StubIndexLocationKind) []PsiElement {
@@ -149,12 +149,11 @@ pub fn (s &StubIndex) get_all_elements_from(kind StubIndexLocationKind) []PsiEle
 	return elements
 }
 
-// get_all_elements_from_by_key возвращает список всех PSI элементов определенных в переданном индексе по данному
-// ключу.
+// get_all_elements_from_by_key returns a list of all PSI elements defined in the given index for the given key.
 //
 // Example:
 // ```
-// // получает все функции определенные в текущем проекте
+// // gets all the functions defined in the current project
 // stubs_index.get_all_elements_from_by_key(.workspace, .functions)
 // ```
 pub fn (s &StubIndex) get_all_elements_from_by_key(from StubIndexLocationKind, key StubIndexKey) []PsiElement {
@@ -182,7 +181,7 @@ pub fn (s &StubIndex) get_all_elements_from_file(file string) []PsiElement {
 	return elements
 }
 
-// get_all_declarations_from_module возвращает список всех PSI элементов определенных в переданном модуле.
+// get_all_declarations_from_module returns a list of all PSI elements defined in the given module.
 pub fn (s &StubIndex) get_all_declarations_from_module(module_fqn string) []PsiElement {
 	files := s.module_to_files[module_fqn] or { return []PsiElement{} }
 
@@ -197,7 +196,7 @@ pub fn (s &StubIndex) get_all_declarations_from_module(module_fqn string) []PsiE
 	return elements
 }
 
-// get_elements_by_name возвращает определения элемента с переданным именем из переданного индекса.
+// get_elements_by_name returns the definitions of the element with the given name from the given index.
 pub fn (s &StubIndex) get_elements_by_name(key StubIndexKey, name string) []PsiElement {
 	mut elements := []PsiElement{cap: 5}
 
@@ -211,19 +210,19 @@ pub fn (s &StubIndex) get_elements_by_name(key StubIndexKey, name string) []PsiE
 	return elements
 }
 
-// get_module_qualified_name возвращает полное имя модуля в котором определен файл.
+// get_module_qualified_name returns the fully qualified name of the module in which the file is defined.
 pub fn (s &StubIndex) get_module_qualified_name(file string) string {
 	return s.file_to_module[file] or { '' }
 }
 
-// get_module_root возвращает корневую директорию модуля.
+// get_module_root returns the module's root directory.
 pub fn (s &StubIndex) get_module_root(module_fqn string) string {
 	files := s.module_to_files[module_fqn] or { return '' }
 	first := files[0] or { return '' }
 	return os.dir(first.stub_list.path)
 }
 
-// get_all_modules возвращает все известные модули.
+// get_all_modules returns all known modules.
 pub fn get_all_modules() []string {
 	return stubs_index.module_to_files.keys()
 }

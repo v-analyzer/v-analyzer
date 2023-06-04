@@ -5,7 +5,6 @@ import analyzer.psi
 
 pub fn (mut ls LanguageServer) definition(params lsp.TextDocumentPositionParams, mut wr ResponseWriter) ?[]lsp.LocationLink {
 	uri := params.text_document.uri.normalize()
-	println('definition in ' + uri.str())
 	file := ls.get_file(uri) or { return none }
 
 	offset := file.find_offset(params.position)
@@ -22,7 +21,6 @@ pub fn (mut ls LanguageServer) definition(params lsp.TextDocumentPositionParams,
 	}
 
 	data := new_resolve_result(resolved.containing_file(), resolved) or { return [] }
-
 	return [
 		data.to_location_link(element_text_range),
 	]

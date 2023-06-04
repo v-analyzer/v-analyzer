@@ -107,18 +107,34 @@ pub fn (_ &SubResolver) calc_methods(typ types.Type) []PsiElement {
 	return methods
 }
 
+pub fn (r &SubResolver) process_elements(elements []PsiElement, mut processor PsiScopeProcessor) bool {
+	for element in elements {
+		if !processor.execute(element) {
+			return false
+		}
+	}
+	return true
+}
+
 pub fn (r &SubResolver) process_type(typ types.Type, mut processor PsiScopeProcessor) bool {
 	if typ is types.StructType {
 		if struct_ := r.find_struct(stubs_index, typ.qualified_name()) {
-			for field in struct_.fields() {
-				if !processor.execute(field) {
+			is_method_ref := r.element().inside(.call_expression)
+
+			// If it is a call, then most likely it is a method call, but it
+			// could be a function call that is stored in a structure field.
+			if is_method_ref {
+				if !r.process_elements(r.calc_methods(typ), mut processor) {
 					return false
 				}
-			}
-
-			methods := r.calc_methods(typ)
-			for method in methods {
-				if !processor.execute(method) {
+				if !r.process_elements(struct_.fields(), mut processor) {
+					return false
+				}
+			} else {
+				if !r.process_elements(struct_.fields(), mut processor) {
+					return false
+				}
+				if !r.process_elements(r.calc_methods(typ), mut processor) {
 					return false
 				}
 			}
@@ -127,29 +143,32 @@ pub fn (r &SubResolver) process_type(typ types.Type, mut processor PsiScopeProce
 
 	if typ is types.InterfaceType {
 		if interface_ := r.find_interface(stubs_index, typ.qualified_name()) {
-			for field in interface_.fields() {
-				if !processor.execute(field) {
-					return false
-				}
+			if !r.process_elements(r.calc_methods(typ), mut processor) {
+				return false
 			}
-
-			methods := interface_.methods()
-			for method in methods {
-				if !processor.execute(method) {
-					return false
-				}
+			if !r.process_elements(interface_.fields(), mut processor) {
+				return false
+			}
+			if !r.process_elements(interface_.methods(), mut processor) {
+				return false
 			}
 		}
 	}
 
 	if typ is types.EnumType {
 		if enum_ := r.find_enum(stubs_index, typ.qualified_name()) {
-			for field in enum_.fields() {
-				if !processor.execute(field) {
-					return false
-				}
+			if !r.process_elements(enum_.fields(), mut processor) {
+				return false
 			}
 		}
+	}
+
+	if typ is types.ArrayType {
+		return r.process_type(types.builtin_array_type, mut processor)
+	}
+
+	if typ is types.MapType {
+		return r.process_type(types.builtin_map_type, mut processor)
 	}
 
 	if typ is types.PointerType {
@@ -165,11 +184,8 @@ pub fn (r &SubResolver) process_type(typ types.Type, mut processor PsiScopeProce
 	}
 
 	if typ is types.AliasType {
-		methods := r.calc_methods(typ)
-		for method in methods {
-			if !processor.execute(method) {
-				return false
-			}
+		if !r.process_elements(r.calc_methods(typ), mut processor) {
+			return false
 		}
 
 		return r.process_type(typ.inner, mut processor)

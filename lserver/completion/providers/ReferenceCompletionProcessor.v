@@ -22,8 +22,8 @@ fn (mut c ReferenceCompletionProcessor) is_local_resolve(element psi.PsiElement)
 	element_module_fqn := element.containing_file.module_fqn()
 	equal := c.module_fqn == element_module_fqn
 	if equal && c.module_fqn == 'main' {
-		// Мы проверяем что модуль совпадает, но если это main, то надо проверить что
-		// файл находится в workspace.
+		// We check that the module matches, but if it is main, then we need to check
+		// that the file is in the workspace.
 		return element.containing_file.path.starts_with(c.root)
 	}
 	return equal
@@ -49,7 +49,7 @@ fn (mut c ReferenceCompletionProcessor) execute(element psi.PsiElement) bool {
 			documentation: ''
 			insert_text: name
 			insert_text_format: .plain_text
-			sort_text: '0${name}' // чтобы переменные шли первыми
+			sort_text: '0${name}' // variables should go first
 		}
 	}
 
@@ -61,7 +61,7 @@ fn (mut c ReferenceCompletionProcessor) execute(element psi.PsiElement) bool {
 			documentation: ''
 			insert_text: name
 			insert_text_format: .plain_text
-			sort_text: '0${name}' // чтобы параметры шли первыми
+			sort_text: '0${name}' // parameters should go first
 		}
 	}
 
@@ -107,18 +107,18 @@ fn (mut c ReferenceCompletionProcessor) execute(element psi.PsiElement) bool {
 			documentation: element.doc_comment()
 			insert_text: insert_text_builder.str()
 			insert_text_format: .snippet
-			sort_text: '1${name}' // чтобы функции шли вторыми
+			sort_text: '1${name}' // functions should go second
 		}
 	}
 
 	if element is psi.StructDeclaration {
 		if name == 'map' || name == 'array' {
-			// создавать напрямую эти структуры не имеет смысла
+			// it makes no sense to create these structures directly
 			return true
 		}
 
 		insert_text := if c.ctx.is_type_reference {
-			name // если это ссылка на тип, то вставляем только имя
+			name // if it is a reference to a type, then insert only the name
 		} else {
 			name + '{$1}$0'
 		}
