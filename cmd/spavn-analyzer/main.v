@@ -6,19 +6,20 @@ import lserver
 import jsonrpc
 import streams
 import analyzer
-import term
+import cli
 import lsp.log
 
-fn main() {
-	mut fp := flag.new_flag_parser(os.args)
-	stdio := fp.bool('stdio', 0, false, 'Use stdio for communication')
-	port := fp.int('port', 0, 5007, 'Port to use for socket communication. (Default: 5007)')
+const default_tcp_port = 5007
+
+fn run(cmd cli.Command) ! {
+	stdio := cmd.flags.get_bool('stdio') or { false }
+	port := cmd.flags.get_int('port') or { default_tcp_port }
 
 	mut stream := if stdio {
 		streams.new_stdio_stream()
 	} else {
 		streams.new_socket_stream_server(port, true) or {
-			println('${term.red('[ERROR]')} Cannot use ${port} for socket communication, try specify another port with --port')
+			errorln('Cannot use ${port} port for socket communication, try specify another port with --port')
 			return
 		}
 	}
@@ -35,4 +36,38 @@ fn main() {
 	}
 
 	jrpc_server.start()
+}
+
+fn main() {
+	mut cmd := cli.Command{
+		name: 'spavn-analyzer'
+		version: '0.0.1-alpha'
+		description: 'Language server implementation for V language'
+		execute: run
+		posix_mode: true
+	}
+
+	cmd.add_command(cli.Command{
+		name: 'init'
+		description: 'Initialize a configuration file inside the current directory.'
+		execute: init_cmd
+	})
+
+	cmd.add_flags([
+		cli.Flag{
+			flag: .bool
+			name: 'stdio'
+			description: 'Use stdio for communication.'
+		},
+		cli.Flag{
+			flag: .int
+			name: 'port'
+			description: 'Port to use for socket communication. (Default: 5007)'
+			default_value: [
+				'${default_tcp_port}',
+			]
+		},
+	])
+
+	cmd.parse(os.args)
 }

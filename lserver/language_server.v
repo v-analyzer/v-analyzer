@@ -6,6 +6,7 @@ import lsp
 import time
 import analyzer
 import os
+import config
 
 pub enum ServerStatus {
 	off
@@ -32,6 +33,8 @@ pub mut:
 
 	vmodules_root string
 	vroot         string
+
+	cfg config.EditorConfig
 
 	analyzer_instance analyzer.Analyzer
 }
@@ -70,10 +73,10 @@ pub fn (mut ls LanguageServer) vmodules_root() ?string {
 }
 
 pub fn (mut _ LanguageServer) stubs_root() ?string {
-	if !os.exists(analyzer_stubs_path) {
+	if !os.exists(config.analyzer_stubs_path) {
 		return none
 	}
-	return analyzer_stubs_path
+	return config.analyzer_stubs_path
 }
 
 pub fn (mut ls LanguageServer) get_file(uri lsp.DocumentUri) ?analyzer.OpenedFile {

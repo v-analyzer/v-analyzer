@@ -5,12 +5,16 @@ import lserver.semantic
 import time
 
 pub fn (mut ls LanguageServer) semantic_tokens_full(params lsp.SemanticTokensParams, mut wr ResponseWriter) ?lsp.SemanticTokens {
+	if ls.cfg.enable_semantic_tokens == .none_ {
+		return none
+	}
+
 	uri := params.text_document.uri.normalize()
 	file := ls.get_file(uri) or { return none }
 
 	lines := file.psi_file.source_text.count('\n')
 
-	if lines > 500 {
+	if lines > 500 || ls.cfg.enable_semantic_tokens == .syntax {
 		// We don't want to send too many tokens, so we just send dumb-aware tokens for large files.
 		mut dumb_aware_visitor := semantic.DumbAwareSemanticVisitor{}
 		res := semantic.encode(dumb_aware_visitor.accept(file.psi_file.root))
