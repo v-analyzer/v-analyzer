@@ -125,4 +125,11 @@ fn (_ DumbAwareSemanticVisitor) highlight_node(node psi.AstNode, root psi.PsiEle
 	} else if node.type_name == .generic_parameter {
 		result << element_to_semantic(node, .type_parameter)
 	}
+
+	$if debug {
+		// this useful for finding errors in parsing
+		if node.type_name == .error {
+			result << element_to_semantic(node, .namespace, 'mutable')
+		}
+	}
 }

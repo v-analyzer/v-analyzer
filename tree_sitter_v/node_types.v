@@ -14,6 +14,8 @@ pub enum SuperType {
 pub enum NodeType {
 	unknown
 	error
+	anon_struct_type
+	anon_struct_value_expression
 	append_statement
 	argument
 	argument_list
@@ -23,6 +25,7 @@ pub enum NodeType {
 	asm_statement
 	assert_statement
 	assignment_statement
+	atomic_type
 	attribute
 	attribute_expression
 	attributes
@@ -43,7 +46,7 @@ pub enum NodeType {
 	const_declaration
 	const_definition
 	continue_statement
-	dec_statement
+	dec_expression
 	defer_statement
 	element
 	element_list
@@ -83,7 +86,7 @@ pub enum NodeType {
 	import_path
 	import_spec
 	in_expression
-	inc_statement
+	inc_expression
 	index_expression
 	interface_declaration
 	interface_method_definition
@@ -185,6 +188,7 @@ const supertype__expression_nodes = merge(supertype__expression_with_blocks_node
 	.as_type_cast_expression,
 	.binary_expression,
 	.call_expression,
+	.dec_expression,
 	.empty_array_creation,
 	.empty_literal_value,
 	.enum_fetch,
@@ -192,6 +196,7 @@ const supertype__expression_nodes = merge(supertype__expression_with_blocks_node
 	.function_literal,
 	.go_expression,
 	.in_expression,
+	.inc_expression,
 	.index_expression,
 	.is_expression,
 	.literal,
@@ -209,7 +214,8 @@ const supertype__expression_nodes = merge(supertype__expression_with_blocks_node
 ])
 
 const supertype__expression_with_blocks_nodes = [
-	NodeType.compile_time_if_expression,
+	NodeType.anon_struct_value_expression,
+	.compile_time_if_expression,
 	.if_expression,
 	.lock_expression,
 	.match_expression,
@@ -311,6 +317,8 @@ pub struct VNodeTypeFactory {}
 pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 	return match type_name {
 		'ERROR' { NodeType.error }
+		'anon_struct_type' { NodeType.anon_struct_type }
+		'anon_struct_value_expression' { NodeType.anon_struct_value_expression }
 		'append_statement' { NodeType.append_statement }
 		'argument' { NodeType.argument }
 		'argument_list' { NodeType.argument_list }
@@ -320,6 +328,7 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'asm_statement' { NodeType.asm_statement }
 		'assert_statement' { NodeType.assert_statement }
 		'assignment_statement' { NodeType.assignment_statement }
+		'atomic_type' { NodeType.atomic_type }
 		'attribute' { NodeType.attribute }
 		'attribute_expression' { NodeType.attribute_expression }
 		'attributes' { NodeType.attributes }
@@ -340,7 +349,7 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'const_declaration' { NodeType.const_declaration }
 		'const_definition' { NodeType.const_definition }
 		'continue_statement' { NodeType.continue_statement }
-		'dec_statement' { NodeType.dec_statement }
+		'dec_expression' { NodeType.dec_expression }
 		'defer_statement' { NodeType.defer_statement }
 		'element' { NodeType.element }
 		'element_list' { NodeType.element_list }
@@ -380,7 +389,7 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'import_path' { NodeType.import_path }
 		'import_spec' { NodeType.import_spec }
 		'in_expression' { NodeType.in_expression }
-		'inc_statement' { NodeType.inc_statement }
+		'inc_expression' { NodeType.inc_expression }
 		'index_expression' { NodeType.index_expression }
 		'interface_declaration' { NodeType.interface_declaration }
 		'interface_method_definition' { NodeType.interface_method_definition }

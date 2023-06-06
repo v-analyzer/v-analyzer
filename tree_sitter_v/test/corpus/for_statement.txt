@@ -78,7 +78,7 @@ for i := 0; i < 10; i++ {
         (literal
           (int_literal)))
       (simple_statement
-        (inc_statement
+        (inc_expression
           (reference_expression
             (identifier)))))
     (block)))

@@ -420,6 +420,8 @@ module.exports = grammar({
       $.as_type_cast_expression,
       $.selector_expression,
       $.enum_fetch,
+      $.inc_expression,
+      $.dec_expression,
     ),
 
     _expression_with_blocks: ($) => choice(
@@ -433,6 +435,14 @@ module.exports = grammar({
       $.unsafe_expression,
       $.compile_time_if_expression,
     ),
+
+    strictly_expression_list: ($) => prec(PREC.resolve, seq(
+      choice($._expression, $.mutable_expression), ',',  comma_sep1(choice($._expression, $.mutable_expression)),
+    )),
+
+    inc_expression: ($) => seq($._expression, '++'),
+
+    dec_expression: ($) => seq($._expression, '--'),
 
     anon_struct_value_expression: ($) => seq(
       'struct', '{',
@@ -1051,14 +1061,9 @@ module.exports = grammar({
     simple_statement: ($) => choice(
       $.var_declaration,
       $._expression,
-      $.inc_statement,
-      $.dec_statement,
       $.assignment_statement,
+      alias($.strictly_expression_list, $.expression_list),
     ),
-
-    inc_statement: ($) => seq($._expression, '++'),
-
-    dec_statement: ($) => seq($._expression, '--'),
 
     assert_statement: ($) => prec.right(seq('assert', $._expression, optional(seq(',', $.literal)))),
 

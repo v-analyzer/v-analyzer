@@ -1,0 +1,39 @@
+================================================================================
+Simple expression list
+================================================================================
+a, b
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (expression_list
+      (reference_expression
+        (identifier))
+      (reference_expression
+        (identifier)))))
+
+================================================================================
+Expression list inside if
+================================================================================
+if s.no_inner {
+    return '!'
+}
+--------------------------------------------------------------------------------
+
+(ERROR
+  (expression_list
+    (type_initializer
+      (plain_type
+        (qualified_type
+          (reference_expression
+            (identifier))
+          (type_reference_expression
+            (identifier))))
+      (type_initializer_body
+        (short_element_list
+          (element
+            (reference_expression
+              (identifier)))
+          (element
+            (literal
+              (interpreted_string_literal))))))))

@@ -62,5 +62,6 @@ pub fn (c CallExpression) is_json_decode() bool {
 pub fn (c &CallExpression) get_json_decode_type() types.Type {
 	list := c.find_child_by_type(.special_argument_list) or { return types.unknown_type }
 	typ := list.find_child_by_type(.plain_type) or { return types.unknown_type }
-	return TypeInferer{}.convert_type(typ)
+	mut visited := map[string]types.Type{}
+	return TypeInferer{}.convert_type(typ, mut visited)
 }

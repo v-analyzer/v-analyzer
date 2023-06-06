@@ -2171,6 +2171,14 @@
         {
           "type": "SYMBOL",
           "name": "enum_fetch"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "inc_expression"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "dec_expression"
         }
       ]
     },
@@ -2212,6 +2220,101 @@
         {
           "type": "SYMBOL",
           "name": "compile_time_if_expression"
+        }
+      ]
+    },
+    "strictly_expression_list": {
+      "type": "PREC",
+      "value": 1,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_expression"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "mutable_expression"
+              }
+            ]
+          },
+          {
+            "type": "STRING",
+            "value": ","
+          },
+          {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "_expression"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "mutable_expression"
+                  }
+                ]
+              },
+              {
+                "type": "REPEAT",
+                "content": {
+                  "type": "SEQ",
+                  "members": [
+                    {
+                      "type": "STRING",
+                      "value": ","
+                    },
+                    {
+                      "type": "CHOICE",
+                      "members": [
+                        {
+                          "type": "SYMBOL",
+                          "name": "_expression"
+                        },
+                        {
+                          "type": "SYMBOL",
+                          "name": "mutable_expression"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "inc_expression": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_expression"
+        },
+        {
+          "type": "STRING",
+          "value": "++"
+        }
+      ]
+    },
+    "dec_expression": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_expression"
+        },
+        {
+          "type": "STRING",
+          "value": "--"
         }
       ]
     },
@@ -7243,41 +7346,16 @@
         },
         {
           "type": "SYMBOL",
-          "name": "inc_statement"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "dec_statement"
-        },
-        {
-          "type": "SYMBOL",
           "name": "assignment_statement"
-        }
-      ]
-    },
-    "inc_statement": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "_expression"
         },
         {
-          "type": "STRING",
-          "value": "++"
-        }
-      ]
-    },
-    "dec_statement": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "_expression"
-        },
-        {
-          "type": "STRING",
-          "value": "--"
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "strictly_expression_list"
+          },
+          "named": true,
+          "value": "expression_list"
         }
       ]
     },

@@ -346,9 +346,8 @@ fn (mut p Provider) type_alias_documentation(element psi.TypeAliasDeclaration) ?
 	p.write_generic_parameters(element)
 	p.sb.write_string(' = ')
 
-	inferer := psi.TypeInferer{}
 	for index, type_ in element.types() {
-		p.sb.write_string(inferer.convert_type(type_).readable_name())
+		p.sb.write_string(psi.convert_type(type_).readable_name())
 		if index < element.types().len - 1 {
 			p.sb.write_string(' | ')
 		}

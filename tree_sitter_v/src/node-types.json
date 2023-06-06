@@ -24,6 +24,10 @@
         "named": true
       },
       {
+        "type": "dec_expression",
+        "named": true
+      },
+      {
         "type": "empty_array_creation",
         "named": true
       },
@@ -49,6 +53,10 @@
       },
       {
         "type": "in_expression",
+        "named": true
+      },
+      {
+        "type": "inc_expression",
         "named": true
       },
       {
@@ -1046,7 +1054,7 @@
     }
   },
   {
-    "type": "dec_statement",
+    "type": "dec_expression",
     "named": true,
     "fields": {},
     "children": {
@@ -1928,7 +1936,7 @@
     }
   },
   {
-    "type": "inc_statement",
+    "type": "inc_expression",
     "named": true,
     "fields": {},
     "children": {
@@ -2541,6 +2549,10 @@
           "named": true
         },
         {
+          "type": "dec_expression",
+          "named": true
+        },
+        {
           "type": "empty_array_creation",
           "named": true
         },
@@ -2566,6 +2578,10 @@
         },
         {
           "type": "in_expression",
+          "named": true
+        },
+        {
+          "type": "inc_expression",
           "named": true
         },
         {
@@ -3453,11 +3469,7 @@
           "named": true
         },
         {
-          "type": "dec_statement",
-          "named": true
-        },
-        {
-          "type": "inc_statement",
+          "type": "expression_list",
           "named": true
         },
         {

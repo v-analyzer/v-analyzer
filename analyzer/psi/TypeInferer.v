@@ -6,6 +6,11 @@ pub fn infer_type(elem ?PsiElement) types.Type {
 	return TypeInferer{}.infer_type(elem)
 }
 
+pub fn convert_type(plain_type ?PsiElement) types.Type {
+	mut visited := map[string]types.Type{}
+	return TypeInferer{}.convert_type(plain_type, mut visited)
+}
+
 pub struct TypeInferer {}
 
 pub fn (t &TypeInferer) infer_type(elem ?PsiElement) types.Type {
@@ -69,7 +74,7 @@ pub fn (t &TypeInferer) infer_type(elem ?PsiElement) types.Type {
 		}
 	}
 
-	if element.node.type_name == .inc_statement || element.node.type_name == .dec_statement {
+	if element.node.type_name == .inc_expression || element.node.type_name == .dec_expression {
 		return t.infer_type(element.first_child())
 	}
 
@@ -128,7 +133,8 @@ pub fn (t &TypeInferer) infer_type(elem ?PsiElement) types.Type {
 
 	if element is TypeInitializer {
 		type_element := element.find_child_by_type(.plain_type) or { return types.unknown_type }
-		return t.convert_type(type_element)
+		mut visited := map[string]types.Type{}
+		return t.convert_type(type_element, mut visited)
 	}
 
 	if element is UnsafeExpression {
@@ -286,7 +292,8 @@ pub fn (t &TypeInferer) process_signature(signature Signature) types.Type {
 		return types.unknown_type
 	})
 	result := signature.result()
-	result_type := t.convert_type(result)
+	mut visited := map[string]types.Type{}
+	result_type := t.convert_type(result, mut visited)
 	return types.new_function_type(param_types, result_type, result == none)
 }
 
@@ -442,59 +449,68 @@ pub fn (t &TypeInferer) infer_index_type(typ types.Type) types.Type {
 	return types.unknown_type
 }
 
-pub fn (t &TypeInferer) convert_type(plain_type ?PsiElement) types.Type {
+pub fn (t &TypeInferer) convert_type(plain_type ?PsiElement, mut visited map[string]types.Type) types.Type {
 	typ := plain_type or { return types.unknown_type }
 	if plain_type !is PlainType {
 		return types.unknown_type
+	}
+
+	type_text := typ.get_text()
+
+	if type_text in visited {
+		return visited[type_text]
 	}
 
 	mut child := typ.first_child_or_stub() or { return types.unknown_type }
 	for child.element_type() == .unknown {
 		child = child.next_sibling_or_stub() or { return types.unknown_type }
 	}
-	return t.convert_type_inner(child)
+
+	type_inner := t.convert_type_inner(child, mut visited)
+	visited[type_text] = type_inner
+	return type_inner
 }
 
-pub fn (t &TypeInferer) convert_type_inner(element PsiElement) types.Type {
+pub fn (t &TypeInferer) convert_type_inner(element PsiElement, mut visited map[string]types.Type) types.Type {
 	if element.element_type() == .pointer_type {
 		inner := element.last_child_or_stub()
-		return types.new_pointer_type(t.convert_type(inner))
+		return types.new_pointer_type(t.convert_type(inner, mut visited))
 	}
 
 	if element.element_type() == .array_type {
 		inner := element.last_child_or_stub()
-		return types.new_array_type(t.convert_type(inner))
+		return types.new_array_type(t.convert_type(inner, mut visited))
 	}
 
 	if element.element_type() == .fixed_array_type {
 		// TODO: parse size
 		inner := element.last_child_or_stub()
-		return types.new_array_type(t.convert_type(inner))
+		return types.new_array_type(t.convert_type(inner, mut visited))
 	}
 
 	if element.element_type() == .thread_type {
 		inner := element.last_child_or_stub()
-		return types.new_thread_type(t.convert_type(inner))
+		return types.new_thread_type(t.convert_type(inner, mut visited))
 	}
 
 	if element.element_type() == .channel_type {
 		inner := element.last_child_or_stub()
-		return types.new_channel_type(t.convert_type(inner))
+		return types.new_channel_type(t.convert_type(inner, mut visited))
 	}
 
 	if element.element_type() == .option_type {
 		inner := element.last_child_or_stub()
-		return types.new_option_type(t.convert_type(inner), inner == none)
+		return types.new_option_type(t.convert_type(inner, mut visited), inner == none)
 	}
 
 	if element.element_type() == .result_type {
 		inner := element.last_child_or_stub()
-		return types.new_result_type(t.convert_type(inner), inner == none)
+		return types.new_result_type(t.convert_type(inner, mut visited), inner == none)
 	}
 
 	if element.element_type() == .multi_return_type {
 		inner_type_elements := element.find_children_by_type_or_stub(.plain_type)
-		inner_types := inner_type_elements.map(t.convert_type(it))
+		inner_types := inner_type_elements.map(t.convert_type(it, mut visited))
 		return types.new_multi_return_type(inner_types)
 	}
 
@@ -506,7 +522,8 @@ pub fn (t &TypeInferer) convert_type_inner(element PsiElement) types.Type {
 
 		key := types_inner[0]
 		value := types_inner[1]
-		return types.new_map_type(t.convert_type(key), t.convert_type(value))
+		return types.new_map_type(t.convert_type(key, mut visited), t.convert_type(value, mut
+			visited))
 	}
 
 	if element.element_type() == .function_type {
@@ -521,12 +538,12 @@ pub fn (t &TypeInferer) convert_type_inner(element PsiElement) types.Type {
 	if element.element_type() == .generic_type {
 		inner_type := if inner := element.find_child_by_type_or_stub(.type_reference_expression) {
 			if inner is TypeReferenceExpression {
-				t.infer_type_reference_type(inner)
+				t.infer_type_reference_type(inner, mut visited)
 			} else {
 				return types.unknown_type
 			}
 		} else if inner_qualified := element.find_child_by_type_or_stub(.qualified_type) {
-			t.convert_type_inner(inner_qualified)
+			t.convert_type_inner(inner_qualified, mut visited)
 		} else {
 			return types.unknown_type
 		}
@@ -536,25 +553,26 @@ pub fn (t &TypeInferer) convert_type_inner(element PsiElement) types.Type {
 		}
 		type_parameters_list := type_parameters.find_children_by_type_or_stub(.plain_type)
 
-		return types.new_generic_instantiation_type(inner_type, type_parameters_list.map(t.convert_type(it)))
+		return types.new_generic_instantiation_type(inner_type, type_parameters_list.map(t.convert_type(it, mut
+			visited)))
 	}
 
 	if element is QualifiedType {
 		if ref := element.right() {
 			if ref is TypeReferenceExpression {
-				return t.infer_type_reference_type(ref)
+				return t.infer_type_reference_type(ref, mut visited)
 			}
 		}
 	}
 
 	if element is TypeReferenceExpression {
-		return t.infer_type_reference_type(element)
+		return t.infer_type_reference_type(element, mut visited)
 	}
 
 	return types.unknown_type
 }
 
-fn (t &TypeInferer) infer_type_reference_type(element TypeReferenceExpression) types.Type {
+fn (t &TypeInferer) infer_type_reference_type(element TypeReferenceExpression, mut visited map[string]types.Type) types.Type {
 	text := element.get_text()
 	if types.is_primitive_type(text) {
 		// fast path
@@ -579,12 +597,17 @@ fn (t &TypeInferer) infer_type_reference_type(element TypeReferenceExpression) t
 	}
 
 	if resolved is TypeAliasDeclaration {
+		name := resolved.name()
+		visited[name] = types.unknown_type
 		types_list := resolved.types()
 		if types_list.len == 0 {
 			return types.unknown_type
 		}
 		first := types_list.first()
-		return types.new_alias_type(resolved.name(), resolved.module_name(), t.convert_type(first))
+		alias_type := types.new_alias_type(name, resolved.module_name(), t.convert_type(first, mut
+			visited))
+		visited[name] = alias_type
+		return alias_type
 	}
 
 	if resolved is GenericParameter {
@@ -596,7 +619,8 @@ fn (t &TypeInferer) infer_type_reference_type(element TypeReferenceExpression) t
 
 fn (t &TypeInferer) infer_from_plain_type(element PsiElement) types.Type {
 	plain_typ := element.find_child_by_type_or_stub(.plain_type) or { return types.unknown_type }
-	return t.convert_type(plain_typ)
+	mut visited := map[string]types.Type{}
+	return t.convert_type(plain_typ, mut visited)
 }
 
 pub fn (t &TypeInferer) infer_context_type(elem ?PsiElement) types.Type {

@@ -24,11 +24,10 @@ pub fn extract_doc_comment(el PsiElement) string {
 
 	comments.reverse_in_place()
 
-	lines := comments
-		.map(it.get_text()
-			.trim_string_left('//')
-			.trim_string_left(' ')
-			.trim_right(' \t'))
+	lines := comments.map(it.get_text()
+		.trim_string_left('//')
+		.trim_string_left(' ')
+		.trim_right(' \t'))
 
 	mut res := strings.new_builder(lines.len * 40)
 
