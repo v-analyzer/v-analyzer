@@ -26,7 +26,7 @@ pub const (
 pub const default = '# Specifies the path to the V installation directory with `v` executable.
 # If not set, the plugin will try to find it on its own.
 # Basically, you don\'t need to set it.
-custom_vroot = "~/v"
+#custom_vroot = "~/v"
 
 # Specifies whenever to enable semantic tokens or not.
 # - `full` — enables all semantic tokens. In this mode analyzer resolves all symbols
