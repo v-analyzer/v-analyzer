@@ -221,13 +221,6 @@ module.exports = grammar({
     // int | string | Foo
     _type_union_list: ($) => seq($.plain_type, repeat(seq(optional(terminator), '|', $.plain_type))),
 
-    // _type_union_list: ($) => prec.right(seq(
-    //   $.plain_type,
-    //   repeat(seq(
-    //     optional(terminator), '|', alias($._plain_type_without_special, $.plain_type)),
-    //   ),
-    // )),
-
     function_declaration: ($) => prec.right(PREC.resolve,
       seq(
         field('attributes', optional($.attributes)),

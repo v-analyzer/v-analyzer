@@ -66,8 +66,12 @@ pub fn (n PsiElementImpl) containing_file() &PsiFileImpl {
 }
 
 pub fn (n PsiElementImpl) is_equal(other PsiElement) bool {
-	if n.stub_id != non_stubbed_element {
-		return n.stub_id == other.stub_id
+	if n.element_type() != other.element_type() {
+		return false
+	}
+
+	if n.text_range() != other.text_range() {
+		return false
 	}
 
 	return n.get_text() == other.get_text()
@@ -109,6 +113,14 @@ pub fn (n PsiElementImpl) parent() ?PsiElement {
 			}
 
 			parent := stub.parent_stub() or { return none }
+			if isnil(parent) {
+				return none
+			}
+
+			if parent.stub_type() == .root {
+				return none
+			}
+
 			if is_valid_stub(parent) {
 				return parent.get_psi()
 			}
@@ -259,6 +271,20 @@ pub fn (n PsiElementImpl) last_child_or_stub() ?PsiElement {
 pub fn (n PsiElementImpl) next_sibling() ?PsiElement {
 	sibling := n.node.next_sibling() or { return none }
 	return create_element(sibling, n.containing_file)
+}
+
+pub fn (n PsiElementImpl) next_sibling_or_stub() ?PsiElement {
+	if n.stub_id != non_stubbed_element {
+		if stub := n.stubs_list.get_stub(n.stub_id) {
+			sibling := stub.next_sibling() or { return none }
+			if is_valid_stub(sibling) {
+				return sibling.get_psi()
+			}
+			return none
+		}
+	}
+
+	return n.next_sibling()
 }
 
 pub fn (n PsiElementImpl) prev_sibling() ?PsiElement {

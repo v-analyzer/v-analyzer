@@ -4,6 +4,14 @@ pub struct TypeAliasDeclaration {
 	PsiElementImpl
 }
 
+pub fn (a &TypeAliasDeclaration) generic_parameters() ?&GenericParameters {
+	generic_parameters := a.find_child_by_type_or_stub(.generic_parameters) or { return none }
+	if generic_parameters is GenericParameters {
+		return generic_parameters
+	}
+	return none
+}
+
 pub fn (a &TypeAliasDeclaration) is_public() bool {
 	modifiers := a.visibility_modifiers() or { return false }
 	return modifiers.is_public()

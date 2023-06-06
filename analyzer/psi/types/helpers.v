@@ -37,3 +37,29 @@ pub fn unwrap_result_or_option_type_if(typ Type, condition bool) Type {
 	}
 	return typ
 }
+
+pub fn unwrap_generic_instantiation_type(typ Type) Type {
+	if typ is GenericInstantiationType {
+		return typ.inner
+	}
+	return typ
+}
+
+struct IsGenericVisitor {
+mut:
+	is_generic bool
+}
+
+fn (mut v IsGenericVisitor) enter(typ Type) bool {
+	if typ is GenericType {
+		v.is_generic = true
+		return false
+	}
+	return true
+}
+
+pub fn is_generic(typ Type) bool {
+	mut v := IsGenericVisitor{}
+	typ.accept(mut v)
+	return v.is_generic
+}

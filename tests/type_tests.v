@@ -21,5 +21,6 @@ t.type_test('chan type', 'types/chan_type.v')
 t.type_test('struct fields', 'types/fields.v')
 t.type_test('receiver', 'types/receiver.v')
 t.type_test('json decode', 'types/json_decode.v')
+t.type_test('generics', 'types/generics.v')
 
 t.stats()

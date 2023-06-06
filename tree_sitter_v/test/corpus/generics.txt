@@ -1,0 +1,187 @@
+================================================================================
+Generic type
+================================================================================
+fn foo() Foo[int] {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_declaration
+    (identifier)
+    (signature
+      (parameter_list)
+      (plain_type
+        (generic_type
+          (type_reference_expression
+            (identifier))
+          (type_parameters
+            (plain_type
+              (type_reference_expression
+                (identifier)))))))
+    (block)))
+
+================================================================================
+Generic type with two types
+================================================================================
+fn foo() Foo[int, foo.Bar] {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_declaration
+    (identifier)
+    (signature
+      (parameter_list)
+      (plain_type
+        (generic_type
+          (type_reference_expression
+            (identifier))
+          (type_parameters
+            (plain_type
+              (type_reference_expression
+                (identifier)))
+            (plain_type
+              (qualified_type
+                (reference_expression
+                  (identifier))
+                (type_reference_expression
+                  (identifier))))))))
+    (block)))
+
+================================================================================
+Generic qualified type
+================================================================================
+fn foo() bar.Foo[int] {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (function_declaration
+    (identifier)
+    (signature
+      (parameter_list)
+      (plain_type
+        (generic_type
+          (qualified_type
+            (reference_expression
+              (identifier))
+            (type_reference_expression
+              (identifier)))
+          (type_parameters
+            (plain_type
+              (type_reference_expression
+                (identifier)))))))
+    (block)))
+
+================================================================================
+Generic struct
+================================================================================
+struct Foo[T] {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (struct_declaration
+    (identifier)
+    (generic_parameters
+      (generic_parameter
+        (identifier)))))
+
+================================================================================
+Generic struct instantiation
+================================================================================
+Foo[int]{}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (type_initializer
+      (plain_type
+        (generic_type
+          (type_reference_expression
+            (identifier))
+          (type_parameters
+            (plain_type
+              (type_reference_expression
+                (identifier))))))
+      (type_initializer_body))))
+
+================================================================================
+Generic qualified struct instantiation
+================================================================================
+bar.Foo[int]{}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (type_initializer
+      (plain_type
+        (generic_type
+          (qualified_type
+            (reference_expression
+              (identifier))
+            (type_reference_expression
+              (identifier)))
+          (type_parameters
+            (plain_type
+              (type_reference_expression
+                (identifier))))))
+      (type_initializer_body))))
+
+================================================================================
+Generic function call
+================================================================================
+foo[int]()
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (call_expression
+      (index_expression
+        (reference_expression
+          (identifier))
+        (reference_expression
+          (identifier)))
+      (argument_list))))
+
+================================================================================
+Generic function call with nested generics
+================================================================================
+foo[int, Bar[string]]()
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (call_expression
+      (reference_expression
+        (identifier))
+      (type_parameters
+        (plain_type
+          (type_reference_expression
+            (identifier)))
+        (plain_type
+          (generic_type
+            (type_reference_expression
+              (identifier))
+            (type_parameters
+              (plain_type
+                (type_reference_expression
+                  (identifier)))))))
+      (argument_list))))
+
+================================================================================
+Type alias with generic type
+================================================================================
+type Foo[T] = Bar[T]
+--------------------------------------------------------------------------------
+
+(source_file
+  (type_declaration
+    (identifier)
+    (generic_parameters
+      (generic_parameter
+        (identifier)))
+    (plain_type
+      (generic_type
+        (type_reference_expression
+          (identifier))
+        (type_parameters
+          (plain_type
+            (type_reference_expression
+              (identifier))))))))

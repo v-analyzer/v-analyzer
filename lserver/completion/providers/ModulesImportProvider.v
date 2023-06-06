@@ -18,6 +18,10 @@ fn (mut m ModulesImportProvider) add_completion(ctx &completion.CompletionContex
 	modules := psi.get_all_modules()
 
 	for module_ in modules {
+		if module_ == 'main' {
+			continue
+		}
+
 		if !module_.starts_with(before_path) {
 			continue
 		}

@@ -8293,10 +8293,6 @@
       "not_is_expression"
     ],
     [
-      "array_type",
-      "empty_array_creation"
-    ],
-    [
       "_type_union_list"
     ]
   ],

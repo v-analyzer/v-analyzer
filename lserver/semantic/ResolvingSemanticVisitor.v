@@ -24,9 +24,9 @@ fn (_ ResolveSemanticVisitor) highlight_node(node psi.PsiElement, root psi.PsiEl
 		}
 	}
 
-	res, first_child := if node is psi.ReferenceExpression {
-		res := node.resolve() or { return }
-		first_child := node.node.first_child() or { return }
+	res, first_child := if node is psi.ReferenceExpression || node is psi.TypeReferenceExpression {
+		res := (node as psi.ReferenceExpressionBase).resolve() or { return }
+		first_child := (node as psi.PsiElement).node.first_child() or { return }
 		res, first_child
 	} else {
 		return
@@ -67,6 +67,13 @@ fn (_ ResolveSemanticVisitor) highlight_node(node psi.PsiElement, root psi.PsiEl
 	} else if res is psi.ModuleClause {
 		result << element_to_semantic(first_child, .namespace)
 	} else if res is psi.TypeAliasDeclaration {
-		result << element_to_semantic(first_child, .namespace)
+		from_stubs := res.containing_file.path.contains('stubs')
+		if !from_stubs {
+			result << element_to_semantic(first_child, .namespace)
+		}
+	} else if res is psi.GenericParameter {
+		result << element_to_semantic(first_child, .type_parameter)
+	} else if res is psi.FunctionOrMethodDeclaration {
+		result << element_to_semantic(first_child, .function)
 	}
 }

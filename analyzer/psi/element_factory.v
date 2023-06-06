@@ -361,6 +361,18 @@ pub fn create_element(node AstNode, containing_file &PsiFileImpl) PsiElement {
 		}
 	}
 
+	if node.type_name == .generic_parameters {
+		return GenericParameters{
+			PsiElementImpl: base_node
+		}
+	}
+
+	if node.type_name == .generic_parameter {
+		return GenericParameter{
+			PsiElementImpl: base_node
+		}
+	}
+
 	return base_node
 }
 

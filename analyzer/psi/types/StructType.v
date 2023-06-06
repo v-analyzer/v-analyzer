@@ -16,3 +16,9 @@ pub fn new_struct_type(name string, module_name string) &StructType {
 		module_name: module_name
 	}
 }
+
+pub fn (s &StructType) accept(mut visitor TypeVisitor) {
+	if !visitor.enter(s) {
+		return
+	}
+}

@@ -52,6 +52,8 @@ pub enum StubType as u8 {
 	import_alias
 	module_clause
 	reference_expression
+	generic_parameters
+	generic_parameter
 }
 
 pub fn node_type_to_stub_type(typ tree_sitter_v.NodeType) StubType {
@@ -102,6 +104,8 @@ pub fn node_type_to_stub_type(typ tree_sitter_v.NodeType) StubType {
 		.import_alias { .import_alias }
 		.module_clause { .module_clause }
 		.reference_expression { .reference_expression }
+		.generic_parameters { .generic_parameters }
+		.generic_parameter { .generic_parameter }
 		else { .root }
 	}
 }
@@ -305,14 +309,30 @@ pub fn (_ &StubbedElementType) create_psi(stub &StubBase) ?PsiElement {
 			PsiElementImpl: base_psi
 		}
 	}
+	if stub_type == .generic_parameters {
+		return GenericParameters{
+			PsiElementImpl: base_psi
+		}
+	}
+	if stub_type == .generic_parameter {
+		return GenericParameter{
+			PsiElementImpl: base_psi
+		}
+	}
 	return base_psi
 }
 
 pub fn (_ &StubbedElementType) get_receiver_type(psi FunctionOrMethodDeclaration) string {
 	receiver := psi.receiver() or { return '' }
 	typ := receiver.type_element() or { return '' }
-	text := typ.get_text()
-	return text.trim_string_left('&')
+	text := typ.get_text().trim_string_left('&')
+
+	if text.contains('[') && !text.contains('map[') && !text.starts_with('[') {
+		// Foo[T] -> Foo
+		return text.all_before('[')
+	}
+
+	return text
 }
 
 pub fn (s &StubbedElementType) create_stub(psi PsiElement, parent_stub &StubElement) ?&StubBase {
@@ -448,6 +468,14 @@ pub fn (s &StubbedElementType) create_stub(psi PsiElement, parent_stub &StubElem
 
 	if psi is ReferenceExpression {
 		return text_based_stub(*psi, parent_stub, .reference_expression)
+	}
+
+	if psi is GenericParameters {
+		return text_based_stub(*psi, parent_stub, .generic_parameters)
+	}
+
+	if psi is GenericParameter {
+		return declaration_stub(*psi, parent_stub, .generic_parameter)
 	}
 
 	return none

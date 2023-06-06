@@ -10,3 +10,9 @@ pub fn new_interface_type(name string, module_name string) &InterfaceType {
 		module_name: module_name
 	}
 }
+
+pub fn (s &InterfaceType) accept(mut visitor TypeVisitor) {
+	if !visitor.enter(s) {
+		return
+	}
+}

@@ -24,3 +24,15 @@ pub fn (s &GenericInstantiationType) qualified_name() string {
 pub fn (s &GenericInstantiationType) readable_name() string {
 	return '${s.inner.readable_name()}[${s.specialization.map(it.readable_name()).join(', ')}]'
 }
+
+pub fn (s &GenericInstantiationType) accept(mut visitor TypeVisitor) {
+	if !visitor.enter(s) {
+		return
+	}
+
+	s.inner.accept(mut visitor)
+
+	for specialization in s.specialization {
+		specialization.accept(mut visitor)
+	}
+}

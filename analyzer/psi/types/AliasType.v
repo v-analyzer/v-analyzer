@@ -13,3 +13,11 @@ pub fn new_alias_type(name string, module_name string, inner Type) &AliasType {
 		inner: inner
 	}
 }
+
+pub fn (s &AliasType) accept(mut visitor TypeVisitor) {
+	if !visitor.enter(s) {
+		return
+	}
+
+	s.inner.accept(mut visitor)
+}

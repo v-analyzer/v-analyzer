@@ -6,6 +6,14 @@ pub struct StructDeclaration {
 	PsiElementImpl
 }
 
+pub fn (s &StructDeclaration) generic_parameters() ?&GenericParameters {
+	generic_parameters := s.find_child_by_type_or_stub(.generic_parameters) or { return none }
+	if generic_parameters is GenericParameters {
+		return generic_parameters
+	}
+	return none
+}
+
 pub fn (s &StructDeclaration) is_public() bool {
 	modifiers := s.visibility_modifiers() or { return false }
 	return modifiers.is_public()
@@ -75,7 +83,7 @@ pub fn (s StructDeclaration) fields() []PsiElement {
 	field_declarations := s.find_children_by_type_or_stub(.struct_field_declaration)
 	mut result := []PsiElement{cap: field_declarations.len}
 	for field_declaration in field_declarations {
-		if first_child := field_declaration.first_child() {
+		if first_child := field_declaration.first_child_or_stub() {
 			if first_child.element_type() != .embedded_definition {
 				result << field_declaration
 			}

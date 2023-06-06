@@ -22,3 +22,11 @@ pub fn (s &PointerType) qualified_name() string {
 pub fn (s &PointerType) readable_name() string {
 	return '&${s.inner.readable_name()}'
 }
+
+pub fn (s &PointerType) accept(mut visitor TypeVisitor) {
+	if !visitor.enter(s) {
+		return
+	}
+
+	s.inner.accept(mut visitor)
+}

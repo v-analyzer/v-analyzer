@@ -56,10 +56,14 @@ pub fn new_stubs_index(sinks []StubIndexSink) &StubIndex {
 	return index
 }
 
-pub fn (mut s StubIndex) update_index_from_sink(sink StubIndexSink) {
-	element_type := StubbedElementType{}
+pub fn (mut s StubIndex) sub_indexes_from_sink(sink StubIndexSink) {
 	s.module_to_files[sink.stub_list.module_name] << sink
 	s.file_to_module[sink.stub_list.path] = sink.stub_list.module_name
+}
+
+pub fn (mut s StubIndex) update_index_from_sink(sink StubIndexSink) {
+	element_type := StubbedElementType{}
+	s.sub_indexes_from_sink(sink)
 
 	for index_id, datum in sink.data {
 		kind := sink.kind
@@ -111,6 +115,8 @@ pub fn (mut s StubIndex) update_stubs_index(changed_sinks []StubIndexSink, all_s
 	}
 
 	for sink in all_sinks {
+		s.sub_indexes_from_sink(sink)
+
 		if sink.kind != .workspace {
 			continue
 		}
@@ -205,6 +211,24 @@ pub fn (s &StubIndex) get_elements_by_name(key StubIndexKey, name string) []PsiE
 		res := data[key]
 		if found := res[name] {
 			elements << found.psis
+		}
+	}
+	return elements
+}
+
+// get_any_elements_by_name returns the definitions of the element with the given name.
+pub fn (s &StubIndex) get_any_elements_by_name(name string) []PsiElement {
+	mut elements := []PsiElement{cap: 5}
+
+	$for value in StubIndexLocationKind.values {
+		data := s.data[value.value]
+		$for key in StubIndexKey.values {
+			if key.value !in [.methods, .attributes] {
+				res := data[key.value]
+				if found := res[name] {
+					elements << found.psis
+				}
+			}
 		}
 	}
 	return elements

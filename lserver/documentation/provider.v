@@ -85,6 +85,11 @@ pub fn (mut p Provider) documentation(element psi.PsiElement) ?string {
 		return p.sb.str()
 	}
 
+	if element is psi.GenericParameter {
+		p.generic_parameter_documentation(element)?
+		return p.sb.str()
+	}
+
 	return none
 }
 
@@ -138,6 +143,7 @@ fn (mut p Provider) function_documentation(element psi.FunctionOrMethodDeclarati
 		p.sb.write_string(' ')
 	}
 	p.sb.write_string(element.name())
+	p.write_generic_parameters(element)
 	p.write_signature(signature)
 	p.sb.write_string('\n')
 	p.sb.write_string('```')
@@ -154,6 +160,7 @@ fn (mut p Provider) struct_documentation(element psi.StructDeclaration) ? {
 	}
 	p.sb.write_string('struct ')
 	p.sb.write_string(element.name())
+	p.write_generic_parameters(element)
 	p.sb.write_string('\n')
 	p.sb.write_string('```')
 	p.write_separator()
@@ -169,6 +176,7 @@ fn (mut p Provider) interface_documentation(element psi.InterfaceDeclaration) ? 
 	}
 	p.sb.write_string('interface ')
 	p.sb.write_string(element.name())
+	p.write_generic_parameters(element)
 	p.sb.write_string('\n')
 	p.sb.write_string('```')
 	p.write_separator()
@@ -335,6 +343,7 @@ fn (mut p Provider) type_alias_documentation(element psi.TypeAliasDeclaration) ?
 	}
 	p.sb.write_string('type ')
 	p.sb.write_string(element.name())
+	p.write_generic_parameters(element)
 	p.sb.write_string(' = ')
 
 	inferer := psi.TypeInferer{}
@@ -349,6 +358,15 @@ fn (mut p Provider) type_alias_documentation(element psi.TypeAliasDeclaration) ?
 	p.sb.write_string('```')
 	p.write_separator()
 	p.sb.write_string(element.doc_comment())
+}
+
+fn (mut p Provider) generic_parameter_documentation(element psi.GenericParameter) ? {
+	p.write_module_name(element.containing_file)
+	p.sb.write_string('```v\n')
+	p.sb.write_string('generic parameter ')
+	p.sb.write_string(element.name())
+	p.sb.write_string('\n')
+	p.sb.write_string('```')
 }
 
 fn (mut p Provider) write_separator() {
@@ -378,6 +396,11 @@ fn (mut p Provider) write_module_name(file &psi.PsiFileImpl) {
 	p.sb.write_string('<small>Module: **')
 	p.sb.write_string(name)
 	p.sb.write_string('**</small>\n')
+}
+
+fn (mut p Provider) write_generic_parameters(element psi.GenericParametersOwner) {
+	parameters := element.generic_parameters() or { return }
+	p.sb.write_string(parameters.text_presentation())
 }
 
 fn (mut p Provider) write_attributes(element psi.PsiElement) {

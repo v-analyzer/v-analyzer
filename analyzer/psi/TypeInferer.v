@@ -260,6 +260,11 @@ pub fn (t &TypeInferer) infer_type(elem ?PsiElement) types.Type {
 		return t.process_signature(signature)
 	}
 
+	if element is InterfaceMethodDeclaration {
+		signature := element.signature() or { return types.unknown_type }
+		return t.process_signature(signature)
+	}
+
 	if element is EnumDeclaration {
 		return element.get_type()
 	}
@@ -443,7 +448,10 @@ pub fn (t &TypeInferer) convert_type(plain_type ?PsiElement) types.Type {
 		return types.unknown_type
 	}
 
-	child := typ.first_child_or_stub() or { return types.unknown_type }
+	mut child := typ.first_child_or_stub() or { return types.unknown_type }
+	for child.element_type() == .unknown {
+		child = child.next_sibling_or_stub() or { return types.unknown_type }
+	}
 	return t.convert_type_inner(child)
 }
 
@@ -577,6 +585,10 @@ fn (t &TypeInferer) infer_type_reference_type(element TypeReferenceExpression) t
 		}
 		first := types_list.first()
 		return types.new_alias_type(resolved.name(), resolved.module_name(), t.convert_type(first))
+	}
+
+	if resolved is GenericParameter {
+		return types.new_generic_type(element.name())
 	}
 
 	return types.unknown_type

@@ -62,6 +62,9 @@ pub interface PsiElement {
 	// next_sibling returns the next node at the same nesting level.
 	// If the node is the last child node, none is returned.
 	next_sibling() ?PsiElement
+	// next_sibling_or_stub returns the next node at the same nesting level or stub.
+	// If the node is the last child node or stub, none is returned.
+	next_sibling_or_stub() ?PsiElement
 	// prev_sibling returns the previous node at the same nesting level.
 	// If the node is the first child node, none is returned.
 	prev_sibling() ?PsiElement

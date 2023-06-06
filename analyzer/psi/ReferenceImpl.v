@@ -227,10 +227,12 @@ pub fn (r &SubResolver) process_unqualified_resolve(mut processor PsiScopeProces
 		}
 	}
 
-	stubs_elements := stubs_index.get_all_declarations_from_module('stubs')
-	for element in stubs_elements {
-		if !processor.execute(element) {
-			return false
+	if r.for_types {
+		stubs_elements := stubs_index.get_all_declarations_from_module('stubs')
+		for element in stubs_elements {
+			if !processor.execute(element) {
+				return false
+			}
 		}
 	}
 
@@ -328,6 +330,17 @@ pub fn (r &SubResolver) walk_up(element PsiElement, mut processor PsiScopeProces
 			}
 		}
 
+		if mut run is GenericParametersOwner {
+			if parameters := run.generic_parameters() {
+				params := parameters.parameters()
+				for param in params {
+					if !processor.execute(param) {
+						return false
+					}
+				}
+			}
+		}
+
 		last_parent = run
 		run = run.parent() or { break }
 	}
@@ -365,9 +378,9 @@ pub fn (_ &SubResolver) process_receiver(b Block, mut processor PsiScopeProcesso
 }
 
 pub fn (r &SubResolver) process_block(mut processor PsiScopeProcessor) bool {
-	if r.containing_file.is_stub_based() {
-		return true
-	}
+	// if r.containing_file.is_stub_based() {
+	// 	return true
+	// }
 
 	// mut delegate := ResolveProcessor{
 	// 	...processor
@@ -415,7 +428,7 @@ pub fn (r &SubResolver) process_enum_fetch(parent PsiElement, mut processor PsiS
 pub fn (r &SubResolver) process_type_initializer_field(mut processor PsiScopeProcessor) bool {
 	init_expr := r.element().parent_of_type(.type_initializer) or { return true }
 	if init_expr is PsiTypedElement {
-		typ := types.unwrap_pointer_type(infer_type(init_expr as PsiElement))
+		typ := types.unwrap_generic_instantiation_type(types.unwrap_pointer_type(infer_type(init_expr as PsiElement)))
 		if typ is types.StructType {
 			if struct_ := r.find_struct(stubs_index, typ.qualified_name()) {
 				fields := struct_.fields()
@@ -545,4 +558,12 @@ fn (mut r ResolveProcessor) execute(element PsiElement) bool {
 		}
 	}
 	return true
+}
+
+pub fn find_element(fqn string) ?PsiElement {
+	found := stubs_index.get_any_elements_by_name(fqn)
+	if found.len != 0 {
+		return found.first()
+	}
+	return none
 }

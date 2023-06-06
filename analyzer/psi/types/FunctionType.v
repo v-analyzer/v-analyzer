@@ -70,3 +70,15 @@ pub fn (s &FunctionType) readable_name() string {
 
 	return sb.str()
 }
+
+pub fn (s &FunctionType) accept(mut visitor TypeVisitor) {
+	if !visitor.enter(s) {
+		return
+	}
+
+	for param in s.params {
+		param.accept(mut visitor)
+	}
+
+	s.result.accept(mut visitor)
+}

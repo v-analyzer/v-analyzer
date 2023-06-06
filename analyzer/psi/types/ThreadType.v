@@ -21,3 +21,11 @@ pub fn (s &ThreadType) qualified_name() string {
 pub fn (s &ThreadType) readable_name() string {
 	return 'thread ${s.inner.readable_name()}'
 }
+
+pub fn (s &ThreadType) accept(mut visitor TypeVisitor) {
+	if !visitor.enter(s) {
+		return
+	}
+
+	s.inner.accept(mut visitor)
+}

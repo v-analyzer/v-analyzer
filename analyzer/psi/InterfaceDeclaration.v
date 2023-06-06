@@ -6,6 +6,14 @@ pub struct InterfaceDeclaration {
 	PsiElementImpl
 }
 
+pub fn (s &InterfaceDeclaration) generic_parameters() ?&GenericParameters {
+	generic_parameters := s.find_child_by_type_or_stub(.generic_parameters) or { return none }
+	if generic_parameters is GenericParameters {
+		return generic_parameters
+	}
+	return none
+}
+
 pub fn (s &InterfaceDeclaration) is_public() bool {
 	modifiers := s.visibility_modifiers() or { return false }
 	return modifiers.is_public()

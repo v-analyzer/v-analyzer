@@ -6,6 +6,14 @@ pub struct FunctionOrMethodDeclaration {
 	PsiElementImpl
 }
 
+pub fn (f &FunctionOrMethodDeclaration) generic_parameters() ?&GenericParameters {
+	generic_parameters := f.find_child_by_type_or_stub(.generic_parameters) or { return none }
+	if generic_parameters is GenericParameters {
+		return generic_parameters
+	}
+	return none
+}
+
 pub fn (f &FunctionOrMethodDeclaration) is_public() bool {
 	modifiers := f.visibility_modifiers() or { return false }
 	return modifiers.is_public()

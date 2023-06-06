@@ -21,7 +21,7 @@ pub fn (s &BaseNamedType) readable_name() string {
 		return s.name
 	}
 	last_module := s.module_name.split('.').last()
-	if last_module == 'builtin' {
+	if last_module == 'builtin' || last_module == 'stubs' {
 		return s.name
 	}
 	return last_module + '.' + s.name

@@ -68,6 +68,7 @@ pub fn (mut ls LanguageServer) initialize(params lsp.InitializeParams, mut wr Re
 			}
 			hover_provider: true
 			definition_provider: true
+			type_definition_provider: true
 			references_provider: true
 			document_formatting_provider: true
 			completion_provider: lsp.CompletionOptions{

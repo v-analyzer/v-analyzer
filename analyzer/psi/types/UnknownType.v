@@ -21,3 +21,9 @@ fn (_ &UnknownType) qualified_name() string {
 fn (_ &UnknownType) readable_name() string {
 	return 'unknown'
 }
+
+pub fn (s &UnknownType) accept(mut visitor TypeVisitor) {
+	if !visitor.enter(s) {
+		return
+	}
+}

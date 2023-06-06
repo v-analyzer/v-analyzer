@@ -24,3 +24,11 @@ pub fn (s &FixedArrayType) qualified_name() string {
 pub fn (s &FixedArrayType) readable_name() string {
 	return '[${s.size}]${s.inner.readable_name()}'
 }
+
+pub fn (s &FixedArrayType) accept(mut visitor TypeVisitor) {
+	if !visitor.enter(s) {
+		return
+	}
+
+	s.inner.accept(mut visitor)
+}

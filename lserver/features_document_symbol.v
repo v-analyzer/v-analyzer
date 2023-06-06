@@ -44,6 +44,12 @@ fn symbol_kind(element psi.PsiElement) ?lsp.SymbolKind {
 		psi.StructDeclaration {
 			return .struct_
 		}
+		psi.InterfaceDeclaration {
+			return .interface_
+		}
+		psi.InterfaceMethodDeclaration {
+			return .method
+		}
 		psi.FieldDeclaration {
 			return .field
 		}
@@ -65,13 +71,28 @@ fn symbol_kind(element psi.PsiElement) ?lsp.SymbolKind {
 }
 
 fn name_presentation(element psi.PsiNamedElement) string {
+	name := element.name()
+
 	if element is psi.FunctionOrMethodDeclaration {
+		mut parts := []string{}
+
 		if receiver := element.receiver() {
-			return receiver.get_text() + ' ' + element.name()
+			parts << receiver.get_text()
 		}
-		return element.name()
+
+		parts << name
+
+		if parameters := element.generic_parameters() {
+			parts << parameters.text_presentation()
+		}
+
+		return parts.join(' ')
 	}
-	return element.name()
+	if element is psi.GenericParametersOwner {
+		parameters := element.generic_parameters() or { return name }
+		return name + parameters.text_presentation()
+	}
+	return name
 }
 
 fn detail_presentation(element psi.PsiNamedElement) string {
@@ -83,6 +104,11 @@ fn detail_presentation(element psi.PsiNamedElement) string {
 	if element is psi.FieldDeclaration {
 		return element.get_type().readable_name()
 	}
+	if element is psi.InterfaceMethodDeclaration {
+		if signature := element.signature() {
+			return signature.get_text()
+		}
+	}
 	return ''
 }
 
@@ -92,6 +118,9 @@ fn symbol_children(element psi.PsiNamedElement) []lsp.DocumentSymbol {
 		children << element.fields()
 	} else if element is psi.EnumDeclaration {
 		children << element.fields()
+	} else if element is psi.InterfaceDeclaration {
+		children << element.fields()
+		children << element.methods()
 	}
 
 	mut symbols := []lsp.DocumentSymbol{cap: children.len}

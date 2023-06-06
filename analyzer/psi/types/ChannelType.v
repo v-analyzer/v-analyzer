@@ -21,3 +21,11 @@ pub fn (s &ChannelType) qualified_name() string {
 pub fn (s &ChannelType) readable_name() string {
 	return 'chan ${s.inner.readable_name()}'
 }
+
+pub fn (s &ChannelType) accept(mut visitor TypeVisitor) {
+	if !visitor.enter(s) {
+		return
+	}
+
+	s.inner.accept(mut visitor)
+}

@@ -122,5 +122,7 @@ fn (_ DumbAwareSemanticVisitor) highlight_node(node psi.AstNode, root psi.PsiEle
 	} else if node.type_name == .braced_interpolation_opening
 		|| node.type_name == .braced_interpolation_closing {
 		result << element_to_semantic(node, .keyword)
+	} else if node.type_name == .generic_parameter {
+		result << element_to_semantic(node, .type_parameter)
 	}
 }

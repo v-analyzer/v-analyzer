@@ -22,3 +22,11 @@ pub fn (s &ArrayType) qualified_name() string {
 pub fn (s &ArrayType) readable_name() string {
 	return '[]${s.inner.readable_name()}'
 }
+
+pub fn (s &ArrayType) accept(mut visitor TypeVisitor) {
+	if !visitor.enter(s) {
+		return
+	}
+
+	s.inner.accept(mut visitor)
+}

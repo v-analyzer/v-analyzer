@@ -91,6 +91,12 @@ fn (mut c ReferenceCompletionProcessor) execute(element psi.PsiElement) bool {
 		signature := element.signature() or { return true }
 		has_params := signature.parameters().len > 0
 
+		generic_parameters_text := if generic_parameters := element.generic_parameters() {
+			generic_parameters.text_presentation()
+		} else {
+			''
+		}
+
 		mut insert_text_builder := strings.new_builder(20)
 		insert_text_builder.write_string(insert_name)
 		if has_params {
@@ -103,7 +109,7 @@ fn (mut c ReferenceCompletionProcessor) execute(element psi.PsiElement) bool {
 		c.result << lsp.CompletionItem{
 			label: '${name}()'
 			kind: if receiver_text == '' { .function } else { .method }
-			detail: 'fn ${receiver_text}${element.name()}${signature.get_text()}'
+			detail: 'fn ${receiver_text}${element.name()}${generic_parameters_text}${signature.get_text()}'
 			documentation: element.doc_comment()
 			insert_text: insert_text_builder.str()
 			insert_text_format: .snippet
@@ -186,6 +192,13 @@ fn (mut c ReferenceCompletionProcessor) execute(element psi.PsiElement) bool {
 			documentation: ''
 			insert_text: element.name()
 			insert_text_format: .plain_text
+		}
+	}
+
+	if element is psi.GenericParameter {
+		c.result << lsp.CompletionItem{
+			label: element.name()
+			kind: .type_parameter
 		}
 	}
 

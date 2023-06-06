@@ -22,3 +22,13 @@ pub fn (s &MultiReturnType) qualified_name() string {
 pub fn (s &MultiReturnType) readable_name() string {
 	return '(${s.types.map(it.readable_name()).join(', ')})'
 }
+
+pub fn (s &MultiReturnType) accept(mut visitor TypeVisitor) {
+	if !visitor.enter(s) {
+		return
+	}
+
+	for type_ in s.types {
+		type_.accept(mut visitor)
+	}
+}

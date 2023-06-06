@@ -24,3 +24,12 @@ pub fn (s &MapType) qualified_name() string {
 pub fn (s &MapType) readable_name() string {
 	return 'map[${s.key.name()}]${s.value.readable_name()}'
 }
+
+pub fn (s &MapType) accept(mut visitor TypeVisitor) {
+	if !visitor.enter(s) {
+		return
+	}
+
+	s.key.accept(mut visitor)
+	s.value.accept(mut visitor)
+}

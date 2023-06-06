@@ -197,6 +197,12 @@ pub fn (mut ls LanguageServer) handle_jsonrpc(request &jsonrpc.Request, mut rw j
 				}
 				w.write(ls.definition(params, mut rw) or { return w.wrap_error(err) })
 			}
+			'textDocument/typeDefinition' {
+				params := json.decode(lsp.TextDocumentPositionParams, request.params) or {
+					return w.wrap_error(err)
+				}
+				w.write(ls.type_definition(params, mut rw) or { return w.wrap_error(err) })
+			}
 			'textDocument/references' {
 				params := json.decode(lsp.ReferenceParams, request.params) or {
 					return w.wrap_error(err)

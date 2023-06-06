@@ -123,6 +123,8 @@ pub fn (s &StubBase) element_type() v.NodeType {
 		.import_alias { .import_alias }
 		.module_clause { .module_clause }
 		.reference_expression { .reference_expression }
+		.generic_parameters { .generic_parameters }
+		.generic_parameter { .generic_parameter }
 	}
 }
 
@@ -219,6 +221,10 @@ fn (s &StubBase) get_children_by_type(typ StubType) []StubElement {
 
 fn (s &StubBase) prev_sibling() ?&StubElement {
 	return s.stub_list.prev_sibling(s.id)
+}
+
+fn (s &StubBase) next_sibling() ?&StubElement {
+	return s.stub_list.next_sibling(s.id)
 }
 
 pub fn (s &StubBase) children_stubs() []StubElement {
