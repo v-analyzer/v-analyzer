@@ -58,4 +58,28 @@ pub fn (mut v InlayHintsVisitor) process_node(node psi.AstNode, containing_file 
 			}
 		}
 	}
+
+	if node.type_name == .or_block && v.cfg.enable_implicit_err_hints {
+		block := node.child_by_field_name('block') or { return }
+		v.handle_implicit_error_variable(block)
+	}
+}
+
+pub fn (mut v InlayHintsVisitor) handle_implicit_error_variable(block psi.AstNode) {
+	start_point := block.start_point()
+	end_point := block.end_point()
+
+	if start_point.row == end_point.row {
+		// don't show hint if 'or { ... }'
+		return
+	}
+
+	v.result << lsp.InlayHint{
+		position: lsp.Position{
+			line: int(start_point.row)
+			character: int(start_point.column + 1)
+		}
+		label: 'err →'
+		kind: .parameter
+	}
 }

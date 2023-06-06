@@ -10,9 +10,10 @@ pub enum SemanticTokensMode {
 
 pub struct InlayHintsConfig {
 pub mut:
-	enable             bool = true
-	enable_range_hints bool = true
-	enable_type_hints  bool = true
+	enable                    bool = true
+	enable_range_hints        bool = true
+	enable_type_hints         bool = true
+	enable_implicit_err_hints bool = true
 }
 
 pub struct EditorConfig {
@@ -68,6 +69,13 @@ pub fn from_toml(root string, path string, content string) !EditorConfig {
 		true // default to true
 	} else {
 		enable_type_hints_value.bool()
+	}
+
+	enable_implicit_err_hints := inlay_hints_table.value('enable_implicit_err_hints')
+	config.inlay_hints.enable_implicit_err_hints = if enable_implicit_err_hints is toml.Null {
+		true // default to true
+	} else {
+		enable_implicit_err_hints.bool()
 	}
 
 	return config

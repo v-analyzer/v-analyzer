@@ -375,11 +375,12 @@ pub fn (_ &TypeInferer) infer_iterator_struct(typ types.Type) types.Type {
 }
 
 pub fn (t &TypeInferer) infer_call_expr_type(element CallExpression) types.Type {
-	if element.is_json_decode() {
-		return types.new_result_type(element.get_json_decode_type(), false)
-	}
-
 	need_unwrap := if _ := element.error_propagation() { true } else { false }
+
+	if element.is_json_decode() {
+		return types.unwrap_result_or_option_type_if(types.new_result_type(element.get_json_decode_type(),
+			false), need_unwrap)
+	}
 
 	resolved := element.resolve() or { return types.unknown_type }
 	typ := t.infer_type(resolved)

@@ -597,7 +597,7 @@ module.exports = grammar({
 
     error_propagate: ($) => prec.right(choice('?', '!', $.or_block)),
 
-    or_block: ($) => seq('or', $.block),
+    or_block: ($) => seq('or', field('block', $.block)),
 
     _max_group: ($) => prec.left(PREC.resolve, choice(
       $.pseudo_compile_time_identifier,
