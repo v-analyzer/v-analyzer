@@ -28,6 +28,13 @@ pub const default = '# Specifies the path to the V installation directory with `
 # Basically, you don\'t need to set it.
 #custom_vroot = "~/v"
 
+# Specifies the path where to store the cache.
+# By default, it is stored in the system\'s cache directory.
+# You can set it to `./` to store the cache in the project\'s directory, this is useful
+# if you want to debug the analyzer.
+# Basically, you don\'t need to set it.
+#custom_cache_dir = "./"
+
 # Specifies whenever to enable semantic tokens or not.
 # - `full` — enables all semantic tokens. In this mode analyzer resolves all symbols
 #    in the file to provide the most accurate highlighting.

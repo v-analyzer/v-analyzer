@@ -155,15 +155,15 @@ pub mut:
 
 pub struct ClientCapabilities {
 pub mut:
-	workspace     WorkspaceClientCapabilities
-	text_document TextDocumentClientCapabilities [json: textDocument]
+	workspace     WorkspaceClientCapabilities    [skip]
+	text_document TextDocumentClientCapabilities [json: 'textDocument']
 	window        WindowCapability
 	experimental  string                         [raw]
 }
 
 pub struct WindowCapability {
 pub mut:
-	work_done_progress bool [json: workDoneProgress]
+	work_done_progress bool [json: 'workDoneProgress']
 }
 
 [json_as_number]

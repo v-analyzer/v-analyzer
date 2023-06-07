@@ -7,6 +7,8 @@ import time
 import analyzer
 import os
 import config
+import lserver.progress
+import lserver.protocol
 
 pub enum ServerStatus {
 	off
@@ -19,6 +21,8 @@ pub mut:
 	status       ServerStatus = .off
 	root_uri     lsp.DocumentUri
 	capabilities lsp.ServerCapabilities
+
+	client &protocol.Client
 	// client_pid is the process ID of this server.
 	client_pid int
 	writer     &ResponseWriter = &ResponseWriter(unsafe { nil })
@@ -33,9 +37,13 @@ pub mut:
 
 	vmodules_root string
 	vroot         string
+	cache_dir     string
+
+	initialization_options []string
 
 	cfg config.EditorConfig
 
+	progress          &progress.Tracker
 	analyzer_instance analyzer.Analyzer
 }
 
@@ -109,11 +117,13 @@ pub fn (mut ls LanguageServer) handle_jsonrpc(request &jsonrpc.Request, mut rw j
 		// a shutdown request is allowed before server init
 		// but we'll just put it here since we want to formally
 		// shutdown the server after a certain timeout period.
-		ls.shutdown(mut rw)
+		ls.shutdown()
 	} else if ls.status == .initialized {
 		match request.method {
 			// not only requests but also notifications
-			'initialized' {} // does nothing currently
+			'initialized' {
+				ls.initialized(mut rw)
+			}
 			'exit' {
 				// ignore for the reasons stated in the above comment
 				// ls.exit()
@@ -274,7 +284,7 @@ pub fn (mut ls LanguageServer) handle_jsonrpc(request &jsonrpc.Request, mut rw j
 	} else {
 		match request.method {
 			'exit' {
-				ls.exit(mut rw)
+				ls.exit()
 			}
 			'initialize' {
 				params := json.decode(lsp.InitializeParams, request.params) or { return err }

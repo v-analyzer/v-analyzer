@@ -12,16 +12,20 @@ import lsp.log
 const default_tcp_port = 5007
 
 fn run(cmd cli.Command) ! {
-	stdio := cmd.flags.get_bool('stdio') or { false }
+	stdio := cmd.flags.get_bool('stdio') or { true }
+	socket := cmd.flags.get_bool('socket') or { false }
 	port := cmd.flags.get_int('port') or { default_tcp_port }
 
-	mut stream := if stdio {
-		streams.new_stdio_stream()
-	} else {
+	mut stream := if socket {
 		streams.new_socket_stream_server(port, true) or {
 			errorln('Cannot use ${port} port for socket communication, try specify another port with --port')
 			return
 		}
+	} else if stdio {
+		streams.new_stdio_stream()
+	} else {
+		errorln('Either --stdio or --socket flag must be specified')
+		return
 	}
 
 	mut ls := lserver.new(analyzer.new())
@@ -58,6 +62,14 @@ fn main() {
 			flag: .bool
 			name: 'stdio'
 			description: 'Use stdio for communication.'
+			default_value: [
+				'true',
+			]
+		},
+		cli.Flag{
+			flag: .bool
+			name: 'socket'
+			description: 'Use TCP connection for communication.'
 		},
 		cli.Flag{
 			flag: .int

@@ -19,18 +19,23 @@ pub fn new_indexer() &Indexer {
 	return &Indexer{}
 }
 
-pub fn (mut i Indexer) add_indexing_root(root string, kind index.IndexingRootKind) {
-	println('Adding indexing root ${root}')
-	i.roots << index.new_indexing_root(root, kind)
+pub fn (i Indexer) count_roots() int {
+	return i.roots.len
 }
 
-pub fn (mut i Indexer) index() IndexingRootsStatus {
+pub fn (mut i Indexer) add_indexing_root(root string, kind index.IndexingRootKind, cache_dir string) {
+	println('Adding indexing root ${root}')
+	i.roots << index.new_indexing_root(root, kind, cache_dir)
+}
+
+pub fn (mut i Indexer) index(on_start fn (root index.IndexingRoot, index int)) IndexingRootsStatus {
 	now := time.now()
 	println('Indexing ${i.roots.len} roots')
 
 	mut need_ensure_indexed := false
 
-	for mut indexing_root in i.roots {
+	for index, mut indexing_root in i.roots {
+		on_start(*indexing_root, index + 1)
 		status := indexing_root.index()
 		if status == .from_cache {
 			// If at least one of the indexes was taken from the cache,

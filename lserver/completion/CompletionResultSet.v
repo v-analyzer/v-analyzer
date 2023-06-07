@@ -12,5 +12,5 @@ pub fn (mut c CompletionResultSet) add_element(item lsp.CompletionItem) {
 }
 
 pub fn (mut c CompletionResultSet) elements() []lsp.CompletionItem {
-	return c.elements
+	return c.elements.filter(it.label != '')
 }

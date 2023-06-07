@@ -7,52 +7,25 @@ import project
 import metadata
 import time
 import config
+import lserver.protocol
 import lserver.semantic
+import lserver.progress
+import analyzer.index
 
 // initialize sends the server capabilities to the client
 pub fn (mut ls LanguageServer) initialize(params lsp.InitializeParams, mut wr ResponseWriter) lsp.InitializeResult {
 	ls.client_pid = params.process_id
+	ls.client = protocol.new_client(mut wr)
+	ls.progress = progress.new_tracker(mut ls.client)
 
 	ls.root_uri = params.root_uri
 	ls.status = .initialized
 
-	ls.print_info(params.process_id, params.client_info, mut wr)
-	ls.setup(mut wr)
+	ls.progress.support_work_done_progress = params.capabilities.window.work_done_progress
+	ls.initialization_options = params.initialization_options.fields()
 
-	// Used in tests to avoid indexing the standard library
-	need_index_stdlib := 'no-stdlib' !in params.initialization_options.fields()
-
-	if need_index_stdlib {
-		if vlib_root := ls.vlib_root() {
-			ls.analyzer_instance.indexer.add_indexing_root(vlib_root, .standard_library)
-		}
-		if vmodules_root := ls.vmodules_root() {
-			ls.analyzer_instance.indexer.add_indexing_root(vmodules_root, .modules)
-		}
-		if stubs_root := ls.stubs_root() {
-			ls.analyzer_instance.indexer.add_indexing_root(stubs_root, .stubs)
-		}
-	}
-
-	ls.analyzer_instance.indexer.add_indexing_root(ls.root_uri.path(), .workspace)
-
-	status := ls.analyzer_instance.indexer.index()
-	if status == .needs_ensure_indexed {
-		ls.analyzer_instance.indexer.ensure_indexed()
-	}
-
-	// Used in tests to avoid indexing the standard library
-	need_save_index := 'no-index-save' !in params.initialization_options.fields()
-
-	if need_save_index {
-		ls.analyzer_instance.indexer.save_indexes() or {
-			wr.log_message('Failed to save index: ${err}', .error)
-		}
-	}
-
-	ls.analyzer_instance.setup_stub_indexes()
-
-	wr.show_message('Hello, World!', .info)
+	ls.print_info(params.process_id, params.client_info)
+	ls.setup()
 
 	return lsp.InitializeResult{
 		capabilities: lsp.ServerCapabilities{
@@ -95,46 +68,125 @@ pub fn (mut ls LanguageServer) initialize(params lsp.InitializeParams, mut wr Re
 	}
 }
 
-fn (mut ls LanguageServer) setup(mut rw ResponseWriter) {
-	ls.setup_config_dir(mut rw)
-	ls.setup_stubs(mut rw)
+pub fn (mut ls LanguageServer) initialized(mut wr ResponseWriter) {
+	mut work := ls.progress.start('Indexing', 'Indexing roots...', '')
+
+	// Used in tests to avoid indexing the standard library
+	need_index_stdlib := 'no-stdlib' !in ls.initialization_options
+
+	if need_index_stdlib {
+		if vmodules_root := ls.vmodules_root() {
+			ls.analyzer_instance.indexer.add_indexing_root(vmodules_root, .modules, ls.cache_dir)
+		}
+		if stubs_root := ls.stubs_root() {
+			ls.analyzer_instance.indexer.add_indexing_root(stubs_root, .stubs, ls.cache_dir)
+		}
+		if vlib_root := ls.vlib_root() {
+			ls.analyzer_instance.indexer.add_indexing_root(vlib_root, .standard_library,
+				ls.cache_dir)
+		}
+	}
+
+	ls.analyzer_instance.indexer.add_indexing_root(ls.root_uri.path(), .workspace, ls.cache_dir)
+
+	status := ls.analyzer_instance.indexer.index(fn [mut work, mut ls] (root index.IndexingRoot, i int) {
+		percentage := (i * 70) / ls.analyzer_instance.indexer.count_roots()
+		work.progress('Indexing ${root.root}', u32(percentage))
+		ls.client.log_message('Indexing ${root.root}', .info)
+	})
+
+	work.progress('Finish roots indexing', 70)
+	work.progress('Start ensure indexing', 71)
+
+	if status == .needs_ensure_indexed {
+		ls.analyzer_instance.indexer.ensure_indexed()
+	}
+
+	work.progress('Finish ensure indexing', 95)
+
+	// Used in tests to avoid indexing the standard library
+	need_save_index := 'no-index-save' !in ls.initialization_options
+
+	if need_save_index {
+		ls.analyzer_instance.indexer.save_indexes() or {
+			ls.client.log_message('Failed to save index: ${err}', .error)
+		}
+	}
+
+	ls.analyzer_instance.setup_stub_indexes()
+
+	work.progress('Indexing finished', 100)
+	work.end('Indexing finished')
+	ls.client.show_message('Hello, World!', .info)
+}
+
+fn (mut ls LanguageServer) setup() {
+	ls.setup_config_dir()
+	ls.setup_stubs()
 
 	config_path := ls.find_config()
 	if config_path == '' {
-		rw.log_message('No config found', .warning)
-		ls.setup_toolchain(mut rw)
-		ls.setup_vmodules(mut rw)
+		ls.client.log_message('No config found', .warning)
+		ls.setup_toolchain()
+		ls.setup_vmodules()
 		return
 	}
 
 	config_content := os.read_file(config_path) or {
-		rw.log_message('Failed to read config: ${err}', .error)
+		ls.client.log_message('Failed to read config: ${err}', .error)
 		return
 	}
 
 	cfg := config.from_toml(ls.root_uri.path(), config_path, config_content) or {
-		rw.log_message('Failed to decode config: ${err}', .error)
-		rw.log_message('Using default config', .info)
+		ls.client.log_message('Failed to decode config: ${err}', .error)
+		ls.client.log_message('Using default config', .info)
 		config.EditorConfig{}
 	}
 
 	config_type := if cfg.is_local() { 'local' } else { 'global' }
-	rw.log_message('Using ${config_type} config: ${config_path}', .info)
+	ls.client.log_message('Using ${config_type} config: ${config_path}', .info)
 
 	ls.cfg = cfg
 	if cfg.custom_vroot != '' {
 		ls.vroot = os.expand_tilde_to_home(cfg.custom_vroot)
 
-		rw.log_message("Find custom VROOT path in '${cfg.path()}' config", .info)
-		rw.log_message('Using "${cfg.custom_vroot}" as toolchain', .info)
+		ls.client.log_message("Find custom VROOT path in '${cfg.path()}' config", .info)
+		ls.client.log_message('Using "${cfg.custom_vroot}" as toolchain', .info)
+	}
+
+	if cfg.custom_cache_dir != '' {
+		ls.cache_dir = os.expand_tilde_to_home(cfg.custom_cache_dir)
+
+		ls.client.log_message("Find custom cache dir path in '${cfg.path()}' config",
+			.info)
+		ls.client.log_message('Using "${cfg.custom_cache_dir}" as cache dir', .info)
 	}
 
 	if ls.vroot == '' {
 		// if custom vroot is not set, try to find it
-		ls.setup_toolchain(mut rw)
+		ls.setup_toolchain()
 	}
 
-	ls.setup_vmodules(mut rw)
+	if ls.cache_dir == '' {
+		ls.setup_cache_dir()
+	}
+
+	ls.setup_vmodules()
+}
+
+fn (mut ls LanguageServer) setup_cache_dir() {
+	if !os.exists(config.analyzer_caches_path) {
+		os.mkdir(config.analyzer_caches_path) or {
+			ls.client.log_message('Failed to create analyzer caches directory: ${err}',
+				.error)
+			return
+		}
+	}
+
+	// if custom cache dir is not set, use default
+	ls.cache_dir = config.analyzer_caches_path
+
+	ls.client.log_message('Using "${ls.cache_dir}" as cache dir', .info)
 }
 
 fn (mut ls LanguageServer) find_config() string {
@@ -152,52 +204,59 @@ fn (mut ls LanguageServer) find_config() string {
 	return ''
 }
 
-fn (mut ls LanguageServer) setup_toolchain(mut rw ResponseWriter) {
+fn (mut ls LanguageServer) setup_toolchain() {
 	toolchain_candidates := project.get_toolchain_candidates()
 	if toolchain_candidates.len > 0 {
-		rw.log_message('Found toolchain candidates:', .info)
+		ls.client.log_message('Found toolchain candidates:', .info)
 		for toolchain_candidate in toolchain_candidates {
-			rw.log_message('  ${toolchain_candidate}', .info)
+			ls.client.log_message('  ${toolchain_candidate}', .info)
 		}
 
-		rw.log_message('Using "${toolchain_candidates.first()}" as toolchain', .info)
+		ls.client.log_message('Using "${toolchain_candidates.first()}" as toolchain',
+			.info)
 		ls.vroot = toolchain_candidates.first()
+
+		if toolchain_candidates.len > 1 {
+			ls.client.log_message('To set other toolchain, use `custom_vroot` in local or global config.',
+				.info)
+		}
 	} else {
-		rw.log_message("No toolchain candidates found, some of the features won't work properly.
+		ls.client.log_message("No toolchain candidates found, some of the features won't work properly.
 Please, set `custom_vroot` in local or global config.",
 			.error)
 	}
 }
 
-fn (mut ls LanguageServer) setup_vmodules(mut rw ResponseWriter) {
+fn (mut ls LanguageServer) setup_vmodules() {
 	ls.vmodules_root = project.get_modules_location()
-	rw.log_message('Using "${ls.vmodules_root}" as vmodules root', .info)
+	ls.client.log_message('Using "${ls.vmodules_root}" as vmodules root', .info)
 }
 
-fn (mut _ LanguageServer) setup_config_dir(mut rw ResponseWriter) {
+fn (mut ls LanguageServer) setup_config_dir() {
 	if !os.exists(config.analyzer_configs_path) {
 		os.mkdir(config.analyzer_configs_path) or {
-			rw.log_message('Failed to create analyzer configs directory: ${err}', .error)
+			ls.client.log_message('Failed to create analyzer configs directory: ${err}',
+				.error)
 			return
 		}
 	}
 
 	if !os.exists(config.analyzer_global_config_path) {
-		rw.log_message('Global config not found', .info)
-		rw.log_message('Creating default global analyzer config', .info)
+		ls.client.log_message('Global config not found', .info)
+		ls.client.log_message('Creating default global analyzer config', .info)
 
 		os.write_file(config.analyzer_global_config_path, config.default) or {
-			rw.log_message('Failed to create global default analyzer config: ${err}',
+			ls.client.log_message('Failed to create global default analyzer config: ${err}',
 				.error)
 			return
 		}
 
-		rw.log_message('Default analyzer config created at ${config.analyzer_global_config_path}',
+		ls.client.log_message('Default analyzer config created at ${config.analyzer_global_config_path}',
 			.info)
 	}
 }
 
-fn (mut _ LanguageServer) setup_stubs(mut rw ResponseWriter) {
+fn (mut ls LanguageServer) setup_stubs() {
 	if os.exists(config.analyzer_stubs_path) {
 		// TODO: check if the stubs are up to date
 		return
@@ -205,20 +264,20 @@ fn (mut _ LanguageServer) setup_stubs(mut rw ResponseWriter) {
 
 	stubs := metadata.embed_fs()
 	stubs.unpack_to(config.analyzer_stubs_path) or {
-		rw.log_message('Failed to unpack stubs: ${err}', .error)
+		ls.client.log_message('Failed to unpack stubs: ${err}', .error)
 	}
 }
 
 // shutdown sets the state to shutdown but does not exit
 [noreturn]
-pub fn (mut ls LanguageServer) shutdown(mut wr ResponseWriter) {
+pub fn (mut ls LanguageServer) shutdown() {
 	ls.status = .shutdown
-	ls.exit(mut wr)
+	ls.exit()
 }
 
 // exit stops the process
 [noreturn]
-pub fn (mut ls LanguageServer) exit(mut rw ResponseWriter) {
+pub fn (mut ls LanguageServer) exit() {
 	// saves the log into the disk
 	// rw.server.dispatch_event(log.close_event, '') or {}
 	// ls.typing_ch.close()
@@ -229,7 +288,7 @@ pub fn (mut ls LanguageServer) exit(mut rw ResponseWriter) {
 	exit(int(ls.status != .shutdown))
 }
 
-fn (mut _ LanguageServer) print_info(process_id int, client_info lsp.ClientInfo, mut wr ResponseWriter) {
+fn (mut ls LanguageServer) print_info(process_id int, client_info lsp.ClientInfo) {
 	arch := if runtime.is_64bit() { 64 } else { 32 }
 	client_name := if client_info.name.len != 0 {
 		'${client_info.name} ${client_info.version}'
@@ -237,9 +296,10 @@ fn (mut _ LanguageServer) print_info(process_id int, client_info lsp.ClientInfo,
 		'Unknown'
 	}
 
-	wr.log_message('spavn-analyzer version: 0.0.1, OS: ${os.user_os()} x${arch}', .info)
-	wr.log_message('spavn-analyzer executable path: ${os.executable()}', .info)
-	wr.log_message('spavn-analyzer build with V ${@VHASH}', .info)
-	wr.log_message('spavn-analyzer build at ${time.now().format_ss()}', .info)
-	wr.log_message('Client / Editor: ${client_name} (PID: ${process_id})', .info)
+	ls.client.log_message('spavn-analyzer version: 0.0.1, OS: ${os.user_os()} x${arch}',
+		.info)
+	ls.client.log_message('spavn-analyzer executable path: ${os.executable()}', .info)
+	ls.client.log_message('spavn-analyzer build with V ${@VHASH}', .info)
+	ls.client.log_message('spavn-analyzer build at ${time.now().format_ss()}', .info)
+	ls.client.log_message('Client / Editor: ${client_name} (PID: ${process_id})', .info)
 }

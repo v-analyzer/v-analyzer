@@ -21,7 +21,7 @@ pub fn (mut ls LanguageServer) formatting(params lsp.DocumentFormattingParams, m
 
 	if fmt_proc.code > 0 {
 		errors := fmt_proc.stderr_slurp().trim_space()
-		wr.show_message(errors, .info)
+		ls.client.show_message(errors, .info)
 		return error('Formatting failed: ${errors}')
 	}
 

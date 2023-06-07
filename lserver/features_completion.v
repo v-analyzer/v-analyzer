@@ -17,6 +17,11 @@ pub fn (mut ls LanguageServer) completion(params lsp.CompletionParams, mut wr Re
 
 	mut source := file.psi_file.source_text
 
+	if offset >= source.len {
+		println('offset is out of range')
+		return []
+	}
+
 	// The idea behind this solution is:
 	// When we have an expression like `foo.` and we want to get the autocompletion variants,
 	// it can be difficult to directly try to figure out what is before the dot, since the

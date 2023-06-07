@@ -22,6 +22,7 @@ pub:
 	path string
 pub mut:
 	custom_vroot           string
+	custom_cache_dir       string
 	inlay_hints            InlayHintsConfig
 	enable_semantic_tokens SemanticTokensMode = SemanticTokensMode.full
 }
@@ -37,6 +38,11 @@ pub fn from_toml(root string, path string, content string) !EditorConfig {
 	custom_vroot_value := res.value('custom_vroot')
 	if custom_vroot_value is string {
 		config.custom_vroot = custom_vroot_value
+	}
+
+	custom_cache_dir := res.value('custom_cache_dir')
+	if custom_cache_dir is string {
+		config.custom_cache_dir = custom_cache_dir
 	}
 
 	enable_semantic_tokens := res.value('enable_semantic_tokens')

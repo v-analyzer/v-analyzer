@@ -33,6 +33,7 @@ pub:
 	root string // root that is indexed
 	kind IndexingRootKind // type of root that is indexed
 pub mut:
+	cache_dir  string    // path to the directory where the index is stored
 	updated_at time.Time // when the index was last updated
 	index      Index     // index itself
 	cache_file string    // path to the file where the index is stored
@@ -40,31 +41,36 @@ pub mut:
 }
 
 // new_indexing_root creates a new indexing root with the given root and kind.
-pub fn new_indexing_root(root string, kind IndexingRootKind) &IndexingRoot {
-	cache_file := 'spavn_index_${md5.hexhash(root)}.txt'
+pub fn new_indexing_root(root string, kind IndexingRootKind, cache_dir string) &IndexingRoot {
+	cache_file := 'spavn_index_${md5.hexhash(root)}'
 	return &IndexingRoot{
 		root: root
 		kind: kind
+		cache_dir: cache_dir
 		cache_file: cache_file
 	}
 }
 
+fn (mut i IndexingRoot) cache_file() string {
+	return os.join_path(i.cache_dir, i.cache_file)
+}
+
 pub fn (mut i IndexingRoot) load_index() ! {
 	now := time.now()
-	if !os.exists(i.cache_file) {
+	if !os.exists(i.cache_file()) {
 		println('Index for "${i.root}" not found, indexing')
 		return IndexNotFoundError{}
 	}
 
-	data := os.read_bytes(i.cache_file) or {
-		println('Failed to read ${i.cache_file}')
+	data := os.read_bytes(i.cache_file()) or {
+		println('Failed to read ${i.cache_file()}')
 		return IndexNotFoundError{}
 	}
 	i.index.decode(data) or {
 		if err is IndexVersionMismatchError {
 			println('Index version mismatch')
 		} else {
-			println('Error load index ${i.cache_file}: ${err}')
+			println('Error load index ${i.cache_file()}: ${err}')
 		}
 		return NeedReindexedError{}
 	}
@@ -78,8 +84,8 @@ pub fn (mut i IndexingRoot) save_index() ! {
 	i.need_save = false
 
 	data := i.index.encode()
-	os.write_file_array(i.cache_file, data) or {
-		println('Failed to write index.json')
+	os.write_file_array(i.cache_file(), data) or {
+		println('Failed to write index.json: ${err}')
 		return err
 	}
 }
