@@ -19,7 +19,7 @@ fn (mut _ ImportsCompletionProvider) add_completion(ctx &completion.CompletionCo
 		result.add_element(lsp.CompletionItem{
 			label: import_name
 			kind: .module_
-			insert_text: '${import_name}.'
+			insert_text: import_name
 		})
 	}
 }
