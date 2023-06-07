@@ -1,0 +1,236 @@
+{
+	"name": "vscode-spavn-analyzer",
+	"displayName": "spavn-analyzer",
+	"description": "V language support (syntax highlighting, formatter, snippets) for Visual Studio Code.",
+	"publisher": "VOSCA",
+	"icon": "icons/icon.png",
+	"version": "0.0.1-alpha",
+	"engines": {
+		"vscode": "^1.66.0"
+	},
+	"homepage": "https://vlang.io/",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/spavn-analyzer/spavn-analyzer/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/spavn-analyzer/spavn-analyzer"
+	},
+	"keywords": [
+		"V",
+		"v",
+		"v language",
+		"vlang"
+	],
+	"categories": [
+		"Programming Languages"
+	],
+	"scripts": {
+		"compile": "node ./scripts/build.js",
+		"compile-dev": "node ./scripts/build.js --watch",
+		"lint": "eslint .",
+		"lintmd": "markdownlint *.md -i CHANGELOG.md",
+		"vscode:prepublish": "node ./scripts/minify_json.js && cross-env NODE_ENV=production node ./scripts/build.js",
+		"watch": "tsc -watch -p ./",
+		"package": "vsce package",
+		"postpackage": "node ./scripts/minify_json.js --restore",
+		"testgrammar": "vscode-tmgrammar-test -s source.v -g syntaxes/v.tmLanguage.json -t \"syntaxes/tests/*.v\""
+	},
+	"contributes": {
+		"languages": [
+			{
+				"id": "v",
+				"aliases": [
+					"V"
+				],
+				"extensions": [
+					".v",
+					".vsh",
+					".vv"
+				],
+				"configuration": "language-configuration.json"
+			},
+			{
+				"id": "v.mod",
+				"language": "v.mod",
+				"scopeName": "source.v.mod",
+				"extensions": [
+					".mod"
+				],
+				"configuration": "vmod-language-configuration.json"
+			}
+		],
+		"grammars": [
+			{
+				"language": "v",
+				"scopeName": "source.v",
+				"path": "syntaxes/v.tmLanguage.json"
+			},
+			{
+				"language": "v.mod",
+				"scopeName": "source.v.mod",
+				"path": "syntaxes/v.mod.tmLanguage.json"
+			}
+		],
+		"configuration": {
+			"title": "spavn-analyzer",
+			"properties": {
+				"v.executablePath": {
+					"scope": "resource",
+					"type": "string",
+					"description": "Custom path to the V compiler executable (`v`).\nNOTE: Setting this won't change the VROOT path in spavn-analyzer."
+				},
+				"spavn-analyzer.customVrootPath": {
+					"scope": "resource",
+					"type": "string",
+					"default": "",
+					"description": "Custom path to the V installation directory (VROOT).\nNOTE: Setting this won't change the V compiler executable to be used."
+				},
+				"spavn-analyzer.customPath": {
+					"scope": "resource",
+					"type": "string",
+					"default": "",
+					"description": "Custom path to the spavn-analyzer executable."
+				},
+				"spavn-analyzer.connectionMode": {
+					"scope": "resource",
+					"type": "string",
+					"default": "stdio",
+					"enum": [
+						"stdio",
+						"tcp"
+					],
+					"description": "Specify the mode to be used when connecting to spavn-analyzer.",
+					"enumDescriptions": [
+						"Connects to the language server via standard input/output. (Default)",
+						"Connects to the language server via TCP"
+					]
+				},
+				"spavn-analyzer.tcpMode.port": {
+					"scope": "resource",
+					"type": "number",
+					"default": 5007,
+					"description": "Port to be used when connecting to the language server. (Only in TCP mode)"
+				},
+				"spavn-analyzer.tcpMode.useRemoteServer": {
+					"scope": "resource",
+					"default": false,
+					"type": "boolean",
+					"description": "Connect to a remote server instead of launching a new local process. (Only in TCP mode)"
+				},
+				"spavn-analyzer.customArgs": {
+					"scope": "resource",
+					"type": "string",
+					"description": "Custom arguments to be passed to the spavn-analyzer executable."
+				}
+			}
+		},
+		"configurationDefaults": {
+			"[v]": {
+				"editor.insertSpaces": false
+			}
+		},
+		"keybindings": [
+			{
+				"command": "v.fmt",
+				"key": "ctrl+i ctrl+i"
+			}
+		],
+		"commands": [
+			{
+				"command": "v.run",
+				"title": "Run current file",
+				"category": "V"
+			},
+			{
+				"command": "v.fmt",
+				"title": "Format current file",
+				"category": "V"
+			},
+			{
+				"command": "v.prod",
+				"title": "Build an optimized executable from current file",
+				"category": "V"
+			},
+			{
+				"command": "v.ver",
+				"title": "Show V version",
+				"category": "V"
+			},
+			{
+				"command": "spavn-analyzer.restart",
+				"title": "Restart",
+				"category": "spavn-analyzer"
+			}
+		],
+		"menus": {
+			"commandPalette": [
+				{
+					"command": "v.run",
+					"when": "editorLangId == v"
+				},
+				{
+					"command": "v.fmt",
+					"when": "editorLangId == v"
+				},
+				{
+					"command": "v.prod",
+					"when": "editorLangId == v"
+				},
+				{
+					"command": "spavn-analyzer.restart",
+					"when": "editorLangId == v"
+				}
+			]
+		},
+		"breakpoints": [
+			{
+				"language": "v"
+			}
+		],
+		"semanticTokenModifiers": [
+			{
+				"id": "mutable",
+				"description": "Style for mutable variables/parameters/receivers"
+			}
+		],
+		"semanticTokenScopes": [
+			{
+				"language": "v",
+				"scopes": {
+					"*.mutable": [
+						"markup.underline"
+					]
+				}
+			}
+		]
+	},
+	"activationEvents": [
+		"onLanguage:v",
+		"workspaceContains:**/*.v",
+		"workspaceContains:**/v.mod",
+		"onCommand:v.run",
+		"onCommand:v.fmt",
+		"onCommand:v.prod",
+		"onCommand:v.ver",
+		"onCommand:spavn-analyzer.restart"
+	],
+	"main": "./out/extension.js",
+	"dependencies": {
+		"cross-env": "^7.0.3",
+		"esbuild": "^0.15.7",
+		"vscode-languageclient": "^7.0.0"
+	},
+	"devDependencies": {
+		"@types/node": "12",
+		"@types/vscode": "1.40.0",
+		"@typescript-eslint/eslint-plugin": "^4.33",
+		"@typescript-eslint/parser": "^4.33",
+		"eslint": "^7.32",
+		"markdownlint-cli": "^0.31.1",
+		"typescript": "^4.6.4",
+		"vsce": "^2.7.0",
+		"vscode-tmgrammar-test": "~0.0.11"
+	}
+}

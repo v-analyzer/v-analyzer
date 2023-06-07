@@ -1,0 +1,9 @@
+.vscode/ipch
+.idea/
+*.code-workspace
+node_modules/
+out/
+*.exe
+*.vsix
+*.tmp.json
+.DS_Store

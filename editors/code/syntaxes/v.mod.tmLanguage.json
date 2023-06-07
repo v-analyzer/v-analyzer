@@ -1,0 +1,62 @@
+{
+	"scopeName": "source.v.mod",
+	"patterns": [
+		{
+			"include": "#module-decl"
+		},
+		{
+			"include": "#brackets"
+		}
+	],
+	"repository": {
+		"module-decl": {
+			"name": "keyword.module.v.mod",
+			"match": "\\bModule\\b"
+		},
+		"brackets": {
+			"patterns": [
+				{
+					"begin": "{",
+					"beginCaptures": {
+						"0": {
+							"name": "punctuation.definition.bracket.curly.begin.v.mod"
+						}
+					},
+					"patterns": [
+						{
+							"include": "#field"
+						},
+						{
+							"include": "#string"
+						}
+					],
+					"end": "}",
+					"endCaptures": {
+						"0": {
+							"name": "punctuation.definition.bracket.curly.end.v.mod"
+						}
+					}
+				}
+			]
+		},
+		"field": {
+			"name": "meta.definition.field.v.mod",
+			"match": "\\b(\\w+):"
+		},
+		"string": {
+			"name": "string.v.mod",
+			"begin": "'|\"",
+			"beginCaptures": {
+				"0": {
+					"name": "string.v.mod"
+				}
+			},
+			"end": "'|\"",
+			"endCaptures": {
+				"0": {
+					"name": "string.v.mod"
+				}
+			}
+		}
+	}
+}
