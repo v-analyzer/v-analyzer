@@ -25,8 +25,8 @@ pub fn (mut ls LanguageServer) did_open(params lsp.DidOpenTextDocumentParams, mu
 	// psi_file.root().accept_mut(mut visitor)
 	// visitor.print()
 	//
-	tree := index.build_stub_tree(psi_file)
-	tree.print()
+	// tree := index.build_stub_tree(psi_file)
+	// tree.print()
 
 	println('opened file: ${uri}')
 }
