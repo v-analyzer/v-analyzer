@@ -356,6 +356,9 @@ bool scan_string_content(Scanner *scanner, TSLexer *lexer) {
         if (!is_raw && lexer->lookahead == '\\') {
             has_content = true;
             advance(lexer);
+            if (!lexer->eof(lexer)) {
+                advance(lexer);
+            }
 
             if (lexer->lookahead == '$') {
                 advance(lexer);

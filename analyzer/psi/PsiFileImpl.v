@@ -46,6 +46,11 @@ pub fn (p &PsiFileImpl) is_test_file() bool {
 	return p.path.ends_with('_test.v')
 }
 
+[inline]
+pub fn (p &PsiFileImpl) index_sink() ?StubIndexSink {
+	return stubs_index.get_sink_for_file(p.path)
+}
+
 pub fn (mut p PsiFileImpl) reparse(new_code string) {
 	now := time.now()
 	// TODO: for some reason if we pass the old tree then trying to get the text

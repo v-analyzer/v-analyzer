@@ -31,6 +31,25 @@ pub fn (tree &StubTree) print_stub(stub psi.StubElement, indent int) {
 	}
 }
 
+pub fn (tree &StubTree) get_imported_modules() []string {
+	mut result := []string{}
+	children := tree.root.children_stubs()
+	for child in children {
+		if child.stub_type() == .import_list {
+			declarations := child.children_stubs()
+			for declaration in declarations {
+				import_spec := declaration.first_child() or { continue }
+				import_path := import_spec.first_child() or { continue }
+				if import_path.stub_type() == .import_path {
+					result << import_path.text()
+				}
+			}
+		}
+	}
+
+	return result
+}
+
 pub fn build_stub_tree(file &psi.PsiFileImpl) &StubTree {
 	root := file.root()
 	stub_root := psi.new_root_stub(file.path())

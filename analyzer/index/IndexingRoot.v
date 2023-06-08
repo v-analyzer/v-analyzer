@@ -172,6 +172,8 @@ pub fn (mut i IndexingRoot) index_file(path string, content string) !FileIndex {
 	stub_list.module_name = cache.module_fqn
 	cache.sink.module_name = cache.module_fqn
 
+	cache.sink.imported_modules = stub_tree.get_imported_modules()
+
 	stubs := stub_list.index_map.values()
 	for stub in stubs {
 		cache.sink.stub_id = stub.id

@@ -58,7 +58,8 @@ pub fn (c ConstantDefinition) doc_comment() string {
 }
 
 pub fn (c ConstantDefinition) visibility_modifiers() ?&VisibilityModifiers {
-	modifiers := c.find_child_by_type_or_stub(.visibility_modifiers)?
+	decl := c.parent() or { return none }
+	modifiers := decl.find_child_by_type_or_stub(.visibility_modifiers)?
 	if modifiers is VisibilityModifiers {
 		return modifiers
 	}

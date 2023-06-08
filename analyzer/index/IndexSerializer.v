@@ -38,6 +38,11 @@ pub fn (mut s IndexSerializer) serialize_stub_index_sink(sink &psi.StubIndexSink
 		s.s.write_int(key)
 		s.serialize_stub_index_sink_map(datum)
 	}
+
+	s.s.write_int(sink.imported_modules.len)
+	for module_ in sink.imported_modules {
+		s.s.write_string(module_)
+	}
 }
 
 pub fn (mut s IndexSerializer) serialize_stub_index_sink_map(sink_map map[string][]psi.StubId) {

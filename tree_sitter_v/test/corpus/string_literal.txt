@@ -328,3 +328,14 @@ r'Hello, ${name}!'
   (simple_statement
     (literal
       (raw_string_literal))))
+
+================================================================================
+String literal with escape sequences
+================================================================================
+'Hello, \''
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (literal
+      (interpreted_string_literal))))

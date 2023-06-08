@@ -14,7 +14,7 @@ pub fn (mut ls LanguageServer) rename(params lsp.RenameParams, mut wr ResponseWr
 		return error('cannot find element at ' + offset.str())
 	}
 
-	references := search.references(element)
+	references := search.references(element, include_declaration: true)
 	edits := elements_to_text_edits(references, params.new_name)
 
 	return lsp.WorkspaceEdit{

@@ -78,6 +78,12 @@ pub fn (mut d IndexDeserializer) deserialize_stub_index_sink(stub_list &psi.Stub
 		sink.data[key] = sink_map.move()
 		sink.module_name = stub_list.module_name
 	}
+	count_imported_modules := d.d.read_int()
+	mut imported_modules := []string{cap: count_imported_modules}
+	for _ in 0 .. count_imported_modules {
+		imported_modules << d.d.read_string()
+	}
+	sink.imported_modules = imported_modules
 	return sink
 }
 

@@ -9,6 +9,8 @@ pub struct ParseResult {
 pub:
 	tree        &tree_sitter.Tree[v.NodeType] // Resulting tree or nil if the source could not be parsed.
 	source_text string // Source code.
+pub mut:
+	path string // Path of the file that was parsed.
 }
 
 // Source represent the possible types of V source code to parse.
