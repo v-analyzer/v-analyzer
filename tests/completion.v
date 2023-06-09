@@ -1,7 +1,7 @@
 module main
 
 import testing
-import lserver.completion.providers
+import server.completion.providers
 
 mut t := testing.Tester{}
 

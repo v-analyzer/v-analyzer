@@ -1,6 +1,6 @@
 module main
 
-import lserver
+import server
 import jsonrpc
 import streams
 import analyzer
@@ -32,7 +32,7 @@ fn run(cmd cli.Command) ! {
 
 	setup_logger(stdio && !socket)
 
-	mut ls := lserver.new(analyzer.new())
+	mut ls := server.new(analyzer.new())
 	mut jrpc_server := &jsonrpc.Server{
 		stream: stream
 		interceptors: [

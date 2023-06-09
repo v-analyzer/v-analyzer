@@ -4,7 +4,7 @@ import os
 import testing.client
 import lsp
 import jsonrpc
-import lserver
+import server
 import analyzer
 
 const temp_path = os.join_path(os.temp_dir(), 'spavn-analyzer-test')
@@ -22,7 +22,7 @@ pub fn (t TestFile) uri() lsp.DocumentUri {
 [noinit]
 pub struct Fixture {
 mut:
-	ls           &lserver.LanguageServer
+	ls           &server.LanguageServer
 	stream       &client.TestStream
 	server       &jsonrpc.Server
 	test_client  client.TestClient
@@ -33,7 +33,7 @@ mut:
 
 pub fn new_fixture() &Fixture {
 	analyzer_instance := analyzer.new()
-	mut ls := lserver.new(analyzer_instance)
+	mut ls := server.new(analyzer_instance)
 
 	stream := &client.TestStream{}
 	mut server := &jsonrpc.Server{

@@ -1,3 +1,3 @@
 # Description
 
-Модуль `jsonrpc` описывает реализацию JSON-RPC 2.0.
+`jsonrpc` module describes the JSON-RPC 2.0 implementation.

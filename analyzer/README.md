@@ -1,6 +1,6 @@
 # Description
 
-Модуль `analyzer` описывает весь функционал, связанный с анализом кода.
+`analyzer` module describes all the functionality related to code analysis.
 
-Модуль `lserver` использует модуль `analyzer` для реализации всех возможностей
-связанных с анализом кода.
+`server` module uses the `analyzer` module to implement all the features related to code
+analysis.
