@@ -1,7 +1,7 @@
 {
 	"name": "vscode-spavn-analyzer",
 	"displayName": "spavn-analyzer",
-	"description": "V language support (syntax highlighting, formatter, snippets) for Visual Studio Code.",
+	"description": "V language support (syntax highlighting, formatter, language server) for Visual Studio Code.",
 	"publisher": "VOSCA",
 	"icon": "icons/icon.png",
 	"version": "0.0.1-alpha",
