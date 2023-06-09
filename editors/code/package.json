@@ -193,6 +193,10 @@
 			{
 				"id": "mutable",
 				"description": "Style for mutable variables/parameters/receivers"
+			},
+			{
+				"id": "global",
+				"description": "Style for global variables"
 			}
 		],
 		"semanticTokenScopes": [
@@ -201,6 +205,9 @@
 				"scopes": {
 					"*.mutable": [
 						"markup.underline"
+					],
+					"*.global": [
+						"markup.bold"
 					]
 				}
 			}

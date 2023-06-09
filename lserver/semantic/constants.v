@@ -38,5 +38,6 @@ pub const (
 		'documentation',
 		'defaultLibrary',
 		'mutable',
+		'global',
 	]
 )

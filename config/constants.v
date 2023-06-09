@@ -47,9 +47,9 @@ pub const default = '# Specifies the path to the V installation directory with `
 #    in the file to provide the most accurate highlighting.
 # - `syntax` — enables only syntax tokens, such tokens highlight structural elements
 #    such as field names or import names.
-#    The fastest option, which is always enabled when the file contains more than 700 lines.
+#    The fastest option, which is always enabled when the file contains more than 1000 lines.
 # - `none` — disables semantic tokens.
-# By default, `full` for files with less than 700 lines, `syntax` for files with more.
+# By default, `full` for files with less than 1000 lines, `syntax` for files with more.
 enable_semantic_tokens = "full"
 
 # Specifies inlay hints to show.

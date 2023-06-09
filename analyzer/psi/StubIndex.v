@@ -8,7 +8,7 @@ import loglib
 __global stubs_index = StubIndex{}
 
 const (
-	count_index_keys               = 9 // StubIndexKey._end (TODO: replace after https://github.com/vlang/v/issues/18310)
+	count_index_keys               = 10 // StubIndexKey._end (TODO: replace after https://github.com/vlang/v/issues/18310)
 	count_stub_index_location_keys = 5 // StubIndexLocationKind._end
 )
 

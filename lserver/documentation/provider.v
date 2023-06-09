@@ -258,6 +258,8 @@ fn (mut p Provider) global_variable_documentation(element psi.GlobalVarDefinitio
 	p.sb.write_string('```v\n')
 	p.sb.write_string('__global ')
 	p.sb.write_string(element.name())
+	p.sb.write_string(' ')
+	p.sb.write_string(element.get_type().readable_name())
 	p.sb.write_string('\n')
 	p.sb.write_string('```')
 }

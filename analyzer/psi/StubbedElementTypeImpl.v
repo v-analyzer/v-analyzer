@@ -54,6 +54,7 @@ pub enum StubType as u8 {
 	reference_expression
 	generic_parameters
 	generic_parameter
+	global_variable
 }
 
 pub fn node_type_to_stub_type(typ tree_sitter_v.NodeType) StubType {
@@ -106,6 +107,7 @@ pub fn node_type_to_stub_type(typ tree_sitter_v.NodeType) StubType {
 		.reference_expression { .reference_expression }
 		.generic_parameters { .generic_parameters }
 		.generic_parameter { .generic_parameter }
+		.global_var_definition { .global_variable }
 		else { .root }
 	}
 }
@@ -157,6 +159,10 @@ pub fn (_ &StubbedElementType) index_stub(stub &StubBase, mut sink IndexSink) {
 
 	if stub.stub_type == .type_alias_declaration {
 		sink.occurrence(StubIndexKey.type_aliases, stub.name())
+	}
+
+	if stub.stub_type == .global_variable {
+		sink.occurrence(StubIndexKey.global_variables, stub.name())
 	}
 }
 
@@ -319,6 +325,11 @@ pub fn (_ &StubbedElementType) create_psi(stub &StubBase) ?PsiElement {
 			PsiElementImpl: base_psi
 		}
 	}
+	if stub_type == .global_variable {
+		return GlobalVarDefinition{
+			PsiElementImpl: base_psi
+		}
+	}
 	return base_psi
 }
 
@@ -476,6 +487,10 @@ pub fn (s &StubbedElementType) create_stub(psi PsiElement, parent_stub &StubElem
 
 	if psi is GenericParameter {
 		return declaration_stub(*psi, parent_stub, .generic_parameter)
+	}
+
+	if psi is GlobalVarDefinition {
+		return declaration_stub(*psi, parent_stub, .global_variable)
 	}
 
 	return none

@@ -125,6 +125,7 @@ pub fn (s &StubBase) element_type() v.NodeType {
 		.reference_expression { .reference_expression }
 		.generic_parameters { .generic_parameters }
 		.generic_parameter { .generic_parameter }
+		.global_variable { .global_var_definition }
 	}
 }
 

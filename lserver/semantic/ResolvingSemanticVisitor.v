@@ -75,5 +75,7 @@ fn (_ ResolveSemanticVisitor) highlight_node(node psi.PsiElement, root psi.PsiEl
 		result << element_to_semantic(first_child, .type_parameter)
 	} else if res is psi.FunctionOrMethodDeclaration {
 		result << element_to_semantic(first_child, .function)
+	} else if res is psi.GlobalVarDefinition {
+		result << element_to_semantic(first_child, .variable, 'global')
 	}
 }

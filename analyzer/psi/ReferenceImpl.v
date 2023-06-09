@@ -283,6 +283,13 @@ pub fn (r &SubResolver) process_unqualified_resolve(mut processor PsiScopeProces
 				return false
 			}
 		}
+
+		// global variable cannot have module name
+		if global_variable := r.find_global_variable(stubs_index, element.name()) {
+			if !processor.execute(global_variable) {
+				return false
+			}
+		}
 	}
 
 	current_module_elements := stubs_index.get_all_declarations_from_module(module_name)
@@ -504,6 +511,17 @@ pub fn (_ &SubResolver) find_type_alias(stubs_index StubIndex, name string) ?&Ty
 	if found.len != 0 {
 		first := found.first()
 		if first is TypeAliasDeclaration {
+			return first
+		}
+	}
+	return none
+}
+
+pub fn (_ &SubResolver) find_global_variable(stubs_index StubIndex, name string) ?&GlobalVarDefinition {
+	found := stubs_index.get_elements_by_name(.global_variables, name)
+	if found.len != 0 {
+		first := found.first()
+		if first is GlobalVarDefinition {
 			return first
 		}
 	}

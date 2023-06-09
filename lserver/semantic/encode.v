@@ -44,7 +44,13 @@ pub fn encode(tokens []SemanticToken) []u32 {
 		}
 		res[cur + 2] = tok.len
 		res[cur + 3] = typ
-		res[cur + 4] = if 'mutable' in tok.mods { u32(0b010000000000) } else { u32(0) } // temp hack
+		res[cur + 4] = if 'mutable' in tok.mods {
+			u32(0b010000000000)
+		} else if 'global' in tok.mods {
+			u32(0b0100000000000)
+		} else {
+			u32(0)
+		} // temp hack
 		cur += 5
 		last = tok
 	}

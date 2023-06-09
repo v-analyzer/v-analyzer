@@ -6,6 +6,8 @@ pub struct GlobalVarDefinition {
 	PsiElementImpl
 }
 
+fn (_ &GlobalVarDefinition) stub() {}
+
 fn (_ &GlobalVarDefinition) expr() {}
 
 pub fn (_ &GlobalVarDefinition) is_public() bool {

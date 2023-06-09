@@ -124,6 +124,9 @@ fn (_ DumbAwareSemanticVisitor) highlight_node(node psi.AstNode, root psi.PsiEle
 		result << element_to_semantic(node, .keyword)
 	} else if node.type_name == .generic_parameter {
 		result << element_to_semantic(node, .type_parameter)
+	} else if node.type_name == .global_var_definition {
+		identifier := node.child_by_field_name('name') or { return }
+		result << element_to_semantic(identifier, .variable, 'global')
 	}
 
 	$if debug {

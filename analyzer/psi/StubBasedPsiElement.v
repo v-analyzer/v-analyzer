@@ -12,6 +12,7 @@ pub enum StubIndexKey as u8 {
 	type_aliases
 	enums
 	attributes
+	global_variables
 	_end // see count_index_keys
 }
 
