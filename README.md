@@ -2,6 +2,39 @@
 
 Bring IDE features for V programming languages in VS Code, Vim, and other editors
 
+## Building from source
+
+Debug build:
+
+```bash
+v install
+make build-debug
+```
+
+Release build:
+
+```bash
+v install
+make build-prod
+```
+
+Binary will be placed in `bin/` folder.
+
+## Setup
+
+Add `bin/` folder to your `$PATH` environment variable to use `spavn-analyzer`
+command inside VS Code and other editors.
+
+Or, you can specify the path to the binary in your VS Code settings:
+
+```json
+{
+  "spavn-analyzer.customPath": "/path/to/spavn-analyzer/bin"
+}
+```
+
+Restart VS Code after changing the settings or PATH.
+
 ## Authors
 
 - `jsonrpc`, `lsp`, `tree_sitter_v` modules written initially by
