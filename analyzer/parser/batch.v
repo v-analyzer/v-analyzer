@@ -1,7 +1,6 @@
 module parser
 
 import sync
-import time
 
 pub fn parse_batch_files(files []string, count_workers int) []ParseResult {
 	effective_workers := if files.len < count_workers {

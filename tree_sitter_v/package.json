@@ -1,21 +1,19 @@
 {
   "name": "tree-sitter-v",
-  "version": "1.0.7",
+  "version": "0.0.1-alpha",
   "main": "bindings/node",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/nedpals/tree-sitter-v.git"
+    "url": "https://github.com/vlang-association/spavn-analyzer.git"
   },
   "scripts": {
     "test": "tree-sitter test",
-    "generate-scanner": "v -shared -skip-unused -o src/scanner.c scanner/",
     "generate-types": "v run generate_types.vsh",
     "generate": "tree-sitter generate",
     "parse": "tree-sitter parse",
     "parseg": "tree-sitter parse --debug-graph"
   },
-  "homepage": "https://github.com/nedpals/tree-sitter-v#readme",
   "dependencies": {
     "nan": "^2.14.0"
   },

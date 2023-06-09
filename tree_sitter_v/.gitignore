@@ -2,17 +2,16 @@
 node_modules/
 *.log
 build/
-.vscode
 package-lock.json
-.DS_Store
 
-# Ignore local files used for testing and development
-hello.v
-hello.vv
-hello2.v
-src/binding.v
-wasm/
-grammar (old).js
+# Ignore binary output folders
+bin/
+
+# Ignore common editor/system specific metadata
+.DS_Store
+.idea/
+.vscode/
+*.iml
 
 target/
 Cargo.lock

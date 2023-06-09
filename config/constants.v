@@ -78,4 +78,13 @@ enable_range_hints = true
 #      ^^^^^
 # ```
 enable_type_hints = true
+
+# Specifies whenever to show hints for implicit err variables or not.
+# Example:
+# ```
+# foo() or { err ->
+#            ^^^^^^
+# }
+# ```
+enable_implicit_err_hints = true
 '

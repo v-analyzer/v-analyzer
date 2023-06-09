@@ -36,7 +36,7 @@ fn (s &StubList) first_child(id StubId) ?&StubElement {
 	}
 
 	child_id := children_ids.first()
-	return s.index_map[child_id]
+	return s.index_map[child_id] or { return none }
 }
 
 fn (s &StubList) last_child(id StubId) ?&StubElement {
@@ -47,14 +47,14 @@ fn (s &StubList) last_child(id StubId) ?&StubElement {
 	}
 
 	child_id := children_ids.last()
-	return s.index_map[child_id]
+	return s.index_map[child_id] or { return none }
 }
 
 fn (s &StubList) get_children_stubs(id StubId) []StubElement {
 	stub_ids := s.child_map[id]
 	mut stubs := []StubElement{cap: stub_ids.len}
 	for stub_id in stub_ids {
-		stubs << s.index_map[stub_id]
+		stubs << s.index_map[stub_id] or { continue }
 	}
 	return stubs
 }
@@ -70,7 +70,7 @@ fn (s &StubList) prev_sibling(id StubId) ?&StubElement {
 	}
 
 	prev_id := children_ids[index - 1]
-	return s.index_map[prev_id]
+	return s.index_map[prev_id] or { return none }
 }
 
 fn (s &StubList) next_sibling(id StubId) ?&StubElement {
@@ -84,7 +84,7 @@ fn (s &StubList) next_sibling(id StubId) ?&StubElement {
 	}
 
 	prev_id := children_ids[index + 1] or { return none }
-	return s.index_map[prev_id]
+	return s.index_map[prev_id] or { return none }
 }
 
 fn (s StubList) get_stub(id StubId) ?&StubBase {

@@ -51,6 +51,8 @@ pub mut:
 pub fn new(analyzer_instance analyzer.Analyzer) &LanguageServer {
 	return &LanguageServer{
 		analyzer_instance: analyzer_instance
+		client: unsafe { nil } // will be initialized in `initialize`
+		progress: unsafe { nil } // will be initialized in `initialize`
 	}
 }
 

@@ -11,7 +11,7 @@ import tree_sitter_v as v
 
 fn main() {
 	mut checker := Checker{
-		root: '/Users/petrmakhnev/v/vlib'
+		root: os.join_path(@VEXEROOT, 'vlib')
 	}
 	checker.check()
 }

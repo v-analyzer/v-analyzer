@@ -5,6 +5,7 @@ main
 *.so
 *.dylib
 *.dll
+*.log
 
 # Ignore binary output folders
 bin/

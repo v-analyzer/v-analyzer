@@ -8,7 +8,7 @@ import term
 
 fn init_cmd(cmd cli.Command) ! {
 	pwd := os.getwd()
-	if pwd != '' {
+	if pwd == '' {
 		return error('Cannot get current working directory')
 	}
 
