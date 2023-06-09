@@ -56,7 +56,7 @@ fn run(cmd cli.Command) ! {
 fn setup_logger(to_file bool) {
 	if to_file {
 		if !os.exists(config.analyzer_logs_path) {
-			os.mkdir(config.analyzer_logs_path) or {
+			os.mkdir_all(config.analyzer_logs_path) or {
 				errorln('Failed to create analyzer logs directory: ${err}')
 				return
 			}

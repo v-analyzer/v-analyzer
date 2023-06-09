@@ -179,7 +179,7 @@ fn (mut ls LanguageServer) setup() {
 
 fn (mut ls LanguageServer) setup_cache_dir() {
 	if !os.exists(config.analyzer_caches_path) {
-		os.mkdir(config.analyzer_caches_path) or {
+		os.mkdir_all(config.analyzer_caches_path) or {
 			ls.client.log_message('Failed to create analyzer caches directory: ${err}',
 				.error)
 			return
