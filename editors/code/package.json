@@ -140,7 +140,7 @@
 		"commands": [
 			{
 				"command": "v.run",
-				"title": "Run current file",
+				"title": "Run current directory",
 				"category": "V"
 			},
 			{

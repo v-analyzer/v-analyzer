@@ -2,16 +2,17 @@ import { window, ProgressLocation } from 'vscode';
 import { runVCommand, runVCommandInBackground, runVCommandCallback } from './exec';
 import { activateSpavnAnalyzer, deactivateSpavnAnalyzer } from './langserver';
 import { log, vOutputChannel, spavnAnalyzerOutputChannel } from './debug';
+import * as path from "path";
 
 /**
- * Run current file.
+ * Run current directory.
  */
 export async function run(): Promise<void> {
 	const document = window.activeTextEditor.document;
 	await document.save();
-	const filePath = `"${document.fileName}"`;
+	const dir = path.parse(document.fileName).dir
 
-	runVCommand(['run', filePath]);
+	runVCommand(['run', dir]);
 }
 
 /**

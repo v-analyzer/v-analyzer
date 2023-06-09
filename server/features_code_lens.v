@@ -24,7 +24,7 @@ pub fn (mut ls LanguageServer) code_lens(params lsp.CodeLensParams, mut wr Respo
 					}
 					command: lsp.Command{
 						title: '▶ Run'
-						command: 'spavn-analyzer.run'
+						command: 'v.run'
 						arguments: [
 							uri.path(),
 						]
