@@ -340,9 +340,62 @@ pub fn (mut i IndexingRoot) mark_as_dirty(filepath string, new_content string) !
 	}
 	i.index.per_file.data[filepath] = res
 	i.index.updated_at = time.now()
+	i.need_save = true
 	i.save_index() or { return err }
 
 	loglib.with_fields({
 		'uri': 'file://${filepath}'
 	}).info('Finished reindexing document')
+}
+
+pub fn (mut i IndexingRoot) add_file(filepath string, content string) !FileIndex {
+	loglib.with_fields({
+		'uri': 'file://${filepath}'
+	}).info('Adding new document')
+
+	res := i.index_file(filepath, content) or {
+		return error('Error indexing added ${filepath}: ${err}')
+	}
+	i.index.per_file.data[filepath] = res
+	i.index.updated_at = time.now()
+	i.need_save = true
+	i.save_index() or { return err }
+
+	loglib.with_fields({
+		'uri': 'file://${filepath}'
+	}).info('Finished indexing added document')
+
+	if isnil(res.sink) {
+		return error('Sink of added file is nil')
+	}
+
+	return res
+}
+
+pub fn (mut i IndexingRoot) rename_file(old string, new string) !FileIndex {
+	cache := i.index.per_file.rename_file(old, new) or {
+		return error('cannot find file index after rename, most likely rename was failed')
+	}
+	i.need_save = true
+	i.save_index() or { return err }
+	if isnil(cache.sink) {
+		return error('Sink of renamed file is nil')
+	}
+	return cache
+}
+
+pub fn (mut i IndexingRoot) remove_file(path string) !FileIndex {
+	cache := i.index.per_file.remove_file(path) or {
+		return error('cannot find file index after remove, most likely remove was failed')
+	}
+	i.need_save = true
+	i.save_index() or { return err }
+	if isnil(cache.sink) {
+		return error('Sink of removed file is nil')
+	}
+	return cache
+}
+
+pub fn (i &IndexingRoot) contains(path string) bool {
+	return path.starts_with(i.root)
 }

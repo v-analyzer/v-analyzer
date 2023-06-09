@@ -1,5 +1,6 @@
 module analyzer
 
+import os
 import time
 import loglib
 import analyzer.index
@@ -83,4 +84,62 @@ pub fn (mut i Indexer) mark_as_dirty(filepath string, new_content string) ! {
 	for mut indexing_root in i.roots {
 		indexing_root.mark_as_dirty(filepath, new_content)!
 	}
+}
+
+pub fn (mut i Indexer) add_file(path string) ?index.FileIndex {
+	content := os.read_file(path) or {
+		loglib.with_fields({
+			'path': path
+			'err':  err.str()
+		}).error('Failed to read new file')
+		return none
+	}
+
+	for mut root in i.roots {
+		if root.contains(path) {
+			return root.add_file(path, content) or {
+				loglib.with_fields({
+					'root': root.root
+					'path': path
+					'err':  err.str()
+				}).error('Failed to add new file')
+				return none
+			}
+		}
+	}
+
+	return none
+}
+
+pub fn (mut i Indexer) rename_file(old_path string, new_path string) ?index.FileIndex {
+	for mut root in i.roots {
+		if root.contains(old_path) {
+			return root.rename_file(old_path, new_path) or {
+				loglib.with_fields({
+					'root':     root.root
+					'old_path': old_path
+					'new_path': new_path
+					'err':      err.str()
+				}).error('Failed to rename file')
+			}
+		}
+	}
+
+	return none
+}
+
+pub fn (mut i Indexer) remove_file(path string) ?index.FileIndex {
+	for mut root in i.roots {
+		if root.contains(path) {
+			return root.remove_file(path) or {
+				loglib.with_fields({
+					'root': root.root
+					'path': path
+					'err':  err.str()
+				}).error('Failed to remove file')
+			}
+		}
+	}
+
+	return none
 }

@@ -21,8 +21,13 @@ pub fn (mut a Analyzer) setup_stub_indexes() {
 	stubs_index = a.stub_index
 }
 
+pub fn (mut a Analyzer) update_stub_indexes_from_sinks(changed_sinks []psi.StubIndexSink) {
+	all_sinks := a.all_sinks()
+	stubs_index.update_stubs_index(changed_sinks, all_sinks)
+}
+
 pub fn (mut a Analyzer) update_stub_indexes(changed_files []&psi.PsiFileImpl) {
-	mut all_sinks := a.all_sinks()
+	all_sinks := a.all_sinks()
 	mut changed_sinks := []psi.StubIndexSink{cap: changed_files.len}
 
 	for root in a.indexer.roots {

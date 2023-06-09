@@ -12,7 +12,7 @@ pub fn (mut ls LanguageServer) did_change(params lsp.DidChangeTextDocumentParams
 			'uri':    uri.str()
 			'params': params.str()
 			'caller': @METHOD
-		}).error('file not opened')
+		}).error('File not opened')
 		return
 	}
 	new_content := params.content_changes[0].text
