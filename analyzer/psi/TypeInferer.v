@@ -672,5 +672,19 @@ pub fn (t &TypeInferer) infer_context_type(elem ?PsiElement) types.Type {
 		return t.infer_from_plain_type(resolved)
 	}
 
+	if parent.element_type() == .argument {
+		call_expression := parent.parent_nth(2) or { return types.unknown_type }
+		if call_expression is CallExpression {
+			called := call_expression.resolve() or { return types.unknown_type }
+			typ := t.infer_type(called)
+
+			if typ is types.FunctionType {
+				index := call_expression.parameter_index_on_offset(parent.node.start_byte())
+				param_type := typ.params[index] or { return types.unknown_type }
+				return param_type
+			}
+		}
+	}
+
 	return types.unknown_type
 }

@@ -97,12 +97,28 @@ fn (mut c ReferenceCompletionProcessor) execute(element psi.PsiElement) bool {
 			''
 		}
 
+		text_ranga := c.ctx.element.text_range()
+		symbol := c.ctx.element.containing_file.symbol_at(psi.TextRange{
+			line: text_ranga.line
+			column: text_ranga.end_column + 1
+		})
+		paren_after_cursor := symbol == `(`
+
 		mut insert_text_builder := strings.new_builder(20)
 		insert_text_builder.write_string(insert_name)
-		if has_params {
-			insert_text_builder.write_string('($1)')
-		} else {
-			insert_text_builder.write_string('()')
+
+		// we don't want add extra parentheses if the cursor is before the parentheses
+		// It happens when user replaces the function name in the call, for example:
+		// 1. foo()
+		// 2. remove foo, type bar and autocomplete
+		// 3. bar()
+		// without this check we would get bar()()
+		if !paren_after_cursor {
+			if has_params {
+				insert_text_builder.write_string('($1)')
+			} else {
+				insert_text_builder.write_string('()')
+			}
 		}
 		insert_text_builder.write_string('$0')
 
@@ -123,7 +139,14 @@ fn (mut c ReferenceCompletionProcessor) execute(element psi.PsiElement) bool {
 			return true
 		}
 
-		insert_text := if c.ctx.is_type_reference {
+		text_ranga := c.ctx.element.text_range()
+		symbol := c.ctx.element.containing_file.symbol_at(psi.TextRange{
+			line: text_ranga.line
+			column: text_ranga.end_column + 1
+		})
+		paren_after_cursor := symbol == `{`
+
+		insert_text := if c.ctx.is_type_reference || paren_after_cursor {
 			name // if it is a reference to a type, then insert only the name
 		} else {
 			name + '{$1}$0'
@@ -199,6 +222,15 @@ fn (mut c ReferenceCompletionProcessor) execute(element psi.PsiElement) bool {
 		c.result << lsp.CompletionItem{
 			label: element.name()
 			kind: .type_parameter
+		}
+	}
+
+	if element is psi.GlobalVarDefinition {
+		module_name := element.containing_file.module_fqn()
+		c.result << lsp.CompletionItem{
+			label: element.name() + ' (global defined in ${module_name})'
+			kind: .variable
+			insert_text: element.name()
 		}
 	}
 

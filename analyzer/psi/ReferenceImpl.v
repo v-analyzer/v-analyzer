@@ -79,7 +79,8 @@ pub fn (r &SubResolver) process_qualifier_expression(qualifier PsiElement, mut p
 	if qualifier is ReferenceExpressionBase {
 		resolved := qualifier.resolve() or { return true }
 		if resolved is ImportSpec {
-			elements := stubs_index.get_all_declarations_from_module(resolved.qualified_name())
+			elements := stubs_index.get_all_declarations_from_module(resolved.qualified_name(),
+				r.for_types)
 			for element in elements {
 				if !processor.execute(element) {
 					return false
@@ -89,7 +90,8 @@ pub fn (r &SubResolver) process_qualifier_expression(qualifier PsiElement, mut p
 
 		if resolved is ModuleClause {
 			module_name := stubs_index.get_module_qualified_name(r.containing_file.path)
-			current_module_elements := stubs_index.get_all_declarations_from_module(module_name)
+			current_module_elements := stubs_index.get_all_declarations_from_module(module_name,
+				r.for_types)
 			for elem in current_module_elements {
 				if !processor.execute(elem) {
 					return false
@@ -220,7 +222,7 @@ pub fn (r &SubResolver) process_unqualified_resolve(mut processor PsiScopeProces
 		return false
 	}
 
-	builtin_elements := stubs_index.get_all_declarations_from_module('builtin')
+	builtin_elements := stubs_index.get_all_declarations_from_module('builtin', r.for_types)
 	for element in builtin_elements {
 		if !processor.execute(element) {
 			return false
@@ -228,7 +230,7 @@ pub fn (r &SubResolver) process_unqualified_resolve(mut processor PsiScopeProces
 	}
 
 	if r.for_types {
-		stubs_elements := stubs_index.get_all_declarations_from_module('stubs')
+		stubs_elements := stubs_index.get_all_declarations_from_module('stubs', r.for_types)
 		for element in stubs_elements {
 			if !processor.execute(element) {
 				return false
@@ -292,7 +294,8 @@ pub fn (r &SubResolver) process_unqualified_resolve(mut processor PsiScopeProces
 		}
 	}
 
-	current_module_elements := stubs_index.get_all_declarations_from_module(module_name)
+	current_module_elements := stubs_index.get_all_declarations_from_module(module_name,
+		r.for_types)
 	for elem in current_module_elements {
 		if !processor.execute(elem) {
 			return false

@@ -189,14 +189,16 @@ pub fn (s &StubIndex) get_all_elements_from_file(file string) []PsiElement {
 }
 
 // get_all_declarations_from_module returns a list of all PSI elements defined in the given module.
-pub fn (s &StubIndex) get_all_declarations_from_module(module_fqn string) []PsiElement {
+pub fn (s &StubIndex) get_all_declarations_from_module(module_fqn string, only_types bool) []PsiElement {
 	files := s.module_to_files[module_fqn] or { return []PsiElement{} }
 
 	mut elements := []PsiElement{cap: files.len * 10}
 	for sink in files {
 		$for key in StubIndexKey.values {
 			if key.value !in [.methods, .attributes] {
-				elements << s.get_all_elements_from_sink_by_key(key.value, sink)
+				if !only_types || (only_types && key.value !in [.functions, .constants]) {
+					elements << s.get_all_elements_from_sink_by_key(key.value, sink)
+				}
 			}
 		}
 	}

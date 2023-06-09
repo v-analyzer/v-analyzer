@@ -26,7 +26,7 @@ fn (mut r ReferenceCompletionProvider) add_completion(ctx &completion.Completion
 		sub := psi.SubResolver{
 			containing_file: parent.containing_file
 			element: parent
-			for_types: false
+			for_types: true
 		}
 
 		sub.process_resolve_variants(mut r.processor)

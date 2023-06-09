@@ -78,6 +78,12 @@ fn (_ DumbAwareSemanticVisitor) highlight_node(node psi.AstNode, root psi.PsiEle
 				}
 			}
 		}
+		if text == '\$for' {
+			result << element_to_semantic(node, .keyword)
+		}
+		if text == '\$if' {
+			result << element_to_semantic(node, .keyword)
+		}
 	} else if node.type_name == .enum_declaration {
 		identifier := node.child_by_field_name('name') or { return }
 		result << element_to_semantic(identifier, .enum_)
