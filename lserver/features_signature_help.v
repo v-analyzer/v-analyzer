@@ -2,6 +2,7 @@ module lserver
 
 import lsp
 import analyzer.psi
+import loglib
 
 pub fn (mut ls LanguageServer) signature_help(params lsp.SignatureHelpParams, mut wr ResponseWriter) ?lsp.SignatureHelp {
 	uri := params.text_document.uri.normalize()
@@ -9,12 +10,16 @@ pub fn (mut ls LanguageServer) signature_help(params lsp.SignatureHelpParams, mu
 
 	offset := file.find_offset(params.position)
 	element := file.psi_file.find_element_at(offset) or {
-		println('cannot find element at ' + offset.str())
+		loglib.with_fields({
+			'offset': offset.str()
+		}).warn('Cannot find element')
 		return none
 	}
 
 	call := element.parent_of_type_or_self(.call_expression) or {
-		println('cannot find call expression at ' + offset.str())
+		loglib.with_fields({
+			'offset': offset.str()
+		}).warn('Cannot find call expression')
 		return none
 	}
 

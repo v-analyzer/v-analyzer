@@ -3,11 +3,16 @@ module lserver
 import lsp
 import analyzer
 import time
+import loglib
 
 pub fn (mut ls LanguageServer) did_change(params lsp.DidChangeTextDocumentParams, mut wr ResponseWriter) {
 	uri := params.text_document.uri.normalize()
 	mut file := ls.opened_files[uri] or {
-		println('file not opened')
+		loglib.with_fields({
+			'uri':    uri.str()
+			'params': params.str()
+			'caller': @METHOD
+		}).error('file not opened')
 		return
 	}
 	new_content := params.content_changes[0].text
@@ -19,12 +24,23 @@ pub fn (mut ls LanguageServer) did_change(params lsp.DidChangeTextDocumentParams
 	}
 
 	ls.analyzer_instance.indexer.mark_as_dirty(uri.path(), new_content) or {
-		println('Error marking "${uri}" as dirty: ${err}')
+		loglib.with_fields({
+			'uri':    uri.str()
+			'params': params.str()
+			'caller': @METHOD
+			'err':    err.str()
+		}).error('Error marking document as dirty')
 	}
 
 	watch := time.new_stopwatch(auto_start: true)
 	ls.analyzer_instance.update_stub_indexes([file.psi_file])
-	println('Updated stub indexes in ${watch.elapsed()}')
 
-	println('Reparsed file ${uri}')
+	loglib.with_fields({
+		'caller':   @METHOD
+		'duration': watch.elapsed().str()
+	}).info('Updated stub indexes')
+
+	loglib.with_fields({
+		'uri': uri.str()
+	}).info('Reparsed file')
 }

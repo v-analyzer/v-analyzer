@@ -2,6 +2,7 @@ module lserver
 
 import lsp
 import analyzer.psi
+import loglib
 
 pub fn (mut ls LanguageServer) prepare_rename(params lsp.PrepareRenameParams, mut wr ResponseWriter) !lsp.PrepareRenameResult {
 	uri := params.text_document.uri.normalize()
@@ -9,7 +10,9 @@ pub fn (mut ls LanguageServer) prepare_rename(params lsp.PrepareRenameParams, mu
 
 	offset := file.find_offset(params.position)
 	element := file.psi_file.find_element_at(offset) or {
-		println('cannot find element at ' + offset.str())
+		loglib.with_fields({
+			'offset': offset.str()
+		}).warn('Cannot find element')
 		return error('cannot find element at ' + offset.str())
 	}
 

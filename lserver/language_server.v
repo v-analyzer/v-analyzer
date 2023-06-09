@@ -7,6 +7,7 @@ import time
 import analyzer
 import os
 import config
+import loglib
 import lserver.progress
 import lserver.protocol
 
@@ -89,7 +90,9 @@ pub fn (mut _ LanguageServer) stubs_root() ?string {
 
 pub fn (mut ls LanguageServer) get_file(uri lsp.DocumentUri) ?analyzer.OpenedFile {
 	return ls.opened_files[uri] or {
-		println('file not found: ${uri}')
+		loglib.with_fields({
+			'uri': uri.str()
+		}).warn('Cannot find file in opened_files')
 		return none
 	}
 }
@@ -273,11 +276,14 @@ pub fn (mut ls LanguageServer) handle_jsonrpc(request &jsonrpc.Request, mut rw j
 				w.write(ls.semantic_tokens_full(params, mut rw) or { return w.wrap_error(err) })
 			}
 			'$/cancelRequest' {
-				println('cancelRequest')
+				loglib.info('got $/cancelRequest request')
 				return jsonrpc.response_error(error: jsonrpc.method_not_found, data: request.method).err()
 			}
 			else {
-				println('unhandled ${request.method}')
+				loglib.with_fields({
+					'method': request.method
+					'params': request.params
+				}).info('unhandled method call')
 				return jsonrpc.response_error(error: jsonrpc.method_not_found, data: request.method).err()
 			}
 		}
@@ -300,7 +306,10 @@ pub fn (mut ls LanguageServer) handle_jsonrpc(request &jsonrpc.Request, mut rw j
 		}
 	}
 
-	println('request "${request.method}" took ${watch.elapsed()}')
+	loglib.with_fields({
+		'method':   request.method
+		'duration': watch.elapsed().str()
+	}).log_one(.info, 'Request finished')
 }
 
 // launch_tool launches a tool with the same vroot as the language server

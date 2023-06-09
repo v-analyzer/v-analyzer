@@ -1,6 +1,7 @@
 module analyzer
 
 import time
+import loglib
 import analyzer.index
 
 // IndexingRootsStatus describes the indexing status of all roots.
@@ -24,13 +25,15 @@ pub fn (i Indexer) count_roots() int {
 }
 
 pub fn (mut i Indexer) add_indexing_root(root string, kind index.IndexingRootKind, cache_dir string) {
-	println('Adding indexing root ${root}')
+	loglib.with_fields({
+		'root': root
+	}).info('Adding indexing root')
 	i.roots << index.new_indexing_root(root, kind, cache_dir)
 }
 
 pub fn (mut i Indexer) index(on_start fn (root index.IndexingRoot, index int)) IndexingRootsStatus {
 	now := time.now()
-	println('Indexing ${i.roots.len} roots')
+	loglib.info('Indexing ${i.roots.len} roots')
 
 	mut need_ensure_indexed := false
 
@@ -44,7 +47,7 @@ pub fn (mut i Indexer) index(on_start fn (root index.IndexingRoot, index int)) I
 		}
 	}
 
-	println('Indexing all roots took ${time.since(now)}')
+	loglib.with_duration(time.since(now)).info('Indexing all roots')
 
 	return if need_ensure_indexed {
 		.needs_ensure_indexed
@@ -55,19 +58,22 @@ pub fn (mut i Indexer) index(on_start fn (root index.IndexingRoot, index int)) I
 
 pub fn (mut i Indexer) ensure_indexed() {
 	now := time.now()
-	println('Ensure indexed of ${i.roots.len} roots')
+	loglib.info('Ensure indexed of ${i.roots.len} roots')
 
 	for mut indexing_root in i.roots {
 		indexing_root.ensure_indexed()
 	}
 
-	println('Ensure indexed of all roots took ${time.since(now)}')
+	loglib.with_duration(time.since(now)).info('Ensure indexed of all roots')
 }
 
 pub fn (mut i Indexer) save_indexes() ! {
 	for mut indexing_root in i.roots {
 		indexing_root.save_index() or {
-			println('Failed to save index: ${err}')
+			loglib.with_fields({
+				'root': indexing_root.root
+				'err':  err.str()
+			}).error('Failed to save index')
 			return err
 		}
 	}

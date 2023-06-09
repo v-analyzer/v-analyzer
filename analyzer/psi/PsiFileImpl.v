@@ -1,6 +1,7 @@
 module psi
 
 import time
+import loglib
 import tree_sitter_v as v
 import analyzer.parser
 import v_tree_sitter.tree_sitter
@@ -59,7 +60,11 @@ pub fn (mut p PsiFileImpl) reparse(new_code string) {
 	p.tree = res.tree
 	p.source_text = res.source_text
 	p.root = create_element(AstNode(res.tree.root_node()), p)
-	println('reparse time: ${time.since(now)}')
+
+	loglib.with_duration(time.since(now)).with_fields({
+		'file':   p.path
+		'length': p.source_text.len.str()
+	}).info('Reparsed file')
 }
 
 [inline]

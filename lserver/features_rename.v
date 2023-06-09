@@ -1,6 +1,7 @@
 module lserver
 
 import lsp
+import loglib
 import analyzer.psi
 import analyzer.psi.search
 
@@ -10,7 +11,9 @@ pub fn (mut ls LanguageServer) rename(params lsp.RenameParams, mut wr ResponseWr
 
 	offset := file.find_offset(params.position)
 	element := file.psi_file.find_element_at(offset) or {
-		println('cannot find element at ' + offset.str())
+		loglib.with_fields({
+			'offset': offset.str()
+		}).warn('Cannot find element')
 		return error('cannot find element at ' + offset.str())
 	}
 

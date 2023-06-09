@@ -10,6 +10,13 @@ pub const (
 	// root configuration files for the analyzer.
 	analyzer_configs_path       = os.expand_tilde_to_home('~/.config/spavn-analyzer')
 
+	// analyzer_log_file_name is the name of the log file for the analyzer.
+	analyzer_log_file_name      = 'spavn-analyzer.log'
+
+	// analyzer_logs_path is the path to the directory containing the
+	// logs for the analyzer.
+	analyzer_logs_path          = os.join_path(analyzer_configs_path, 'logs')
+
 	// analyzer_global_config_path is the path to the global configuration
 	// file for the analyzer.
 	analyzer_global_config_path = os.join_path(analyzer_configs_path, analyzer_config_name)

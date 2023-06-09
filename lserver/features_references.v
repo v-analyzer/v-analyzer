@@ -3,6 +3,7 @@ module lserver
 import lsp
 import analyzer.psi
 import analyzer.psi.search
+import loglib
 
 pub fn (mut ls LanguageServer) references(params lsp.ReferenceParams, mut wr ResponseWriter) []lsp.Location {
 	uri := params.text_document.uri.normalize()
@@ -10,7 +11,9 @@ pub fn (mut ls LanguageServer) references(params lsp.ReferenceParams, mut wr Res
 
 	offset := file.find_offset(params.position)
 	element := file.psi_file.find_element_at(offset) or {
-		println('cannot find element at ' + offset.str())
+		loglib.with_fields({
+			'offset': offset.str()
+		}).warn('Cannot find element')
 		return []
 	}
 

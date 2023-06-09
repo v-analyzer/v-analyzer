@@ -3,7 +3,7 @@ module main
 import term
 
 pub fn errorln(msg string) {
-	println('${term.red('[ERROR]')} ${msg}')
+	eprintln('${term.red('[ERROR]')} ${msg}')
 }
 
 pub fn warnln(msg string) {

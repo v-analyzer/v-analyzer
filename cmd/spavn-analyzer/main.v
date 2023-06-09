@@ -1,12 +1,14 @@
 module main
 
-import os
-import flag
 import lserver
 import jsonrpc
 import streams
 import analyzer
 import cli
+import os
+import loglib
+import time
+import config
 import lsp.log
 
 const default_tcp_port = 5007
@@ -28,6 +30,8 @@ fn run(cmd cli.Command) ! {
 		return
 	}
 
+	setup_logger(stdio && !socket)
+
 	mut ls := lserver.new(analyzer.new())
 	mut jrpc_server := &jsonrpc.Server{
 		stream: stream
@@ -39,7 +43,34 @@ fn run(cmd cli.Command) ! {
 		handler: ls
 	}
 
+	defer {
+		mut out := loglib.get_output()
+		if mut out is os.File {
+			out.close()
+		}
+	}
+
 	jrpc_server.start()
+}
+
+fn setup_logger(to_file bool) {
+	if to_file {
+		if !os.exists(config.analyzer_logs_path) {
+			os.mkdir(config.analyzer_logs_path) or {
+				errorln('Failed to create analyzer logs directory: ${err}')
+				return
+			}
+		}
+
+		config_path := os.join_path(config.analyzer_logs_path, config.analyzer_log_file_name)
+
+		if mut file := os.open_file(config_path, 'a') {
+			loglib.set_output(file)
+		}
+	}
+
+	loglib.set_level(.trace)
+	loglib.set_flush_rate(1 * time.second)
 }
 
 fn main() {

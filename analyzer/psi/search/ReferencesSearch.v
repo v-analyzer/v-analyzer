@@ -5,6 +5,7 @@ import analyzer.parser
 import runtime
 import math
 import time
+import loglib
 
 [params]
 pub struct SearchParams {
@@ -162,7 +163,8 @@ pub fn (r &ReferencesSearch) search_public_named_element(element psi.PsiNamedEle
 		psi_file := psi.new_psi_file(parsed_result.path, parsed_result.tree, parsed_result.source_text)
 		usages_in_depends_modules << r.search_in(identifier, psi_file.root)
 	}
-	println('searching in depends modules took: ${watch.elapsed()}')
+
+	loglib.with_duration(watch.elapsed()).info('Finish searching in depends modules')
 
 	mut all_usages := []psi.PsiElement{cap: usages_in_own_module.len + usages_in_depends_modules.len}
 	all_usages << usages_in_own_module

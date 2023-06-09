@@ -6,7 +6,6 @@ module jsonrpc
 import json
 import strings
 import io
-import time
 
 // Server represents a JSONRPC server that sends/receives data
 // from a stream (an io.ReaderWriter), inspects data with interceptors
@@ -75,7 +74,7 @@ fn (mut s Server) internal_respond(mut base_rw ResponseWriter) ! {
 	}
 	s.stream.read(mut s.req_buf) or {
 		if err is io.Eof {
-			return
+			return err
 		}
 		return err
 	}
@@ -147,10 +146,11 @@ pub fn (mut s Server) start() {
 	mut rw := s.writer()
 	for {
 		s.internal_respond(mut rw) or {
-			time.sleep(100 * time.millisecond)
+			if err is io.Eof {
+				return
+			}
 			continue
 		}
-		time.sleep(100 * time.millisecond)
 	}
 }
 
@@ -181,7 +181,7 @@ pub mut:
 	writer io.Writer
 }
 
-fn (mut rw ResponseWriter) close() {
+fn (mut rw ResponseWriter) flush() {
 	rw.writer.write(rw.sb) or {}
 	rw.sb.go_back_to(0)
 }
@@ -193,7 +193,7 @@ pub fn (mut rw ResponseWriter) write[T](payload T) {
 		result: payload
 	}
 	encode_response[T](final_resp, mut rw.sb)
-	rw.close()
+	rw.flush()
 }
 
 pub fn (mut rw ResponseWriter) write_empty() {
@@ -208,7 +208,7 @@ pub fn (mut rw ResponseWriter) write_notify[T](method string, params T) {
 		params: params
 	}
 	encode_notification[T](notif, mut rw.sb)
-	rw.close()
+	rw.flush()
 }
 
 // write_error sends a ResponseError to the stream.
@@ -218,7 +218,7 @@ pub fn (mut rw ResponseWriter) write_error(err &ResponseError) {
 		error: err
 	}
 	encode_response[string](final_resp, mut rw.sb)
-	rw.close()
+	rw.flush()
 }
 
 // Writer is an internal representation of a raw response writer.

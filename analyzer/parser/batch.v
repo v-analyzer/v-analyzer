@@ -37,12 +37,7 @@ fn spawn_parser_workers(result_chan chan ParseResult, file_chan chan string, cou
 		spawn fn [file_chan, mut wg, result_chan] () {
 			for {
 				filepath := <-file_chan or { break }
-				watch := time.new_stopwatch(auto_start: true)
-				mut result := parse_file(filepath) or {
-					println('Error parse ${filepath}: ${err}')
-					continue
-				}
-				println('Parsed ${filepath} in ${watch.elapsed()}')
+				mut result := parse_file(filepath) or { continue }
 				result.path = filepath
 				result_chan <- result
 			}

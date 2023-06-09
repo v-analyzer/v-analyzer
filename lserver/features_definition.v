@@ -1,6 +1,7 @@
 module lserver
 
 import lsp
+import loglib
 import analyzer.psi
 
 pub fn (mut ls LanguageServer) definition(params lsp.TextDocumentPositionParams, mut wr ResponseWriter) ?[]lsp.LocationLink {
@@ -9,14 +10,19 @@ pub fn (mut ls LanguageServer) definition(params lsp.TextDocumentPositionParams,
 
 	offset := file.find_offset(params.position)
 	element := file.psi_file.find_reference_at(offset) or {
-		println('cannot find reference at ' + offset.str())
+		loglib.with_fields({
+			'offset': offset.str()
+		}).warn('cannot find reference')
 		return none
 	}
 
 	element_text_range := element.text_range()
 
 	resolved := element.resolve() or {
-		println('cannot resolve ' + element.name())
+		loglib.with_fields({
+			'caller': @METHOD
+			'name':   element.name()
+		}).warn('cannot resolve reference')
 		return none
 	}
 

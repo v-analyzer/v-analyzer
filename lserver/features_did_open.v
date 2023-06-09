@@ -4,7 +4,7 @@ import lsp
 import analyzer
 import analyzer.psi
 import analyzer.parser
-import analyzer.index
+import loglib
 
 pub fn (mut ls LanguageServer) did_open(params lsp.DidOpenTextDocumentParams, mut wr ResponseWriter) {
 	src := params.text_document.text
@@ -28,5 +28,8 @@ pub fn (mut ls LanguageServer) did_open(params lsp.DidOpenTextDocumentParams, mu
 	// tree := index.build_stub_tree(psi_file)
 	// tree.print()
 
-	println('opened file: ${uri}')
+	loglib.with_fields({
+		'uri':              uri.str()
+		'opened_files len': ls.opened_files.len.str()
+	}).info('Opened file')
 }

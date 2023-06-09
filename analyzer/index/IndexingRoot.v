@@ -8,6 +8,7 @@ import runtime
 import crypto.md5
 import analyzer.psi
 import math
+import loglib
 
 // BuiltIndexStatus describes the status of the built index.
 pub enum BuiltIndexStatus {
@@ -58,23 +59,31 @@ fn (mut i IndexingRoot) cache_file() string {
 pub fn (mut i IndexingRoot) load_index() ! {
 	now := time.now()
 	if !os.exists(i.cache_file()) {
-		println('Index for "${i.root}" not found, indexing')
+		loglib.with_fields({
+			'root': i.root
+		}).info('Index not found, start indexing')
 		return IndexNotFoundError{}
 	}
 
 	data := os.read_bytes(i.cache_file()) or {
-		println('Failed to read ${i.cache_file()}')
+		loglib.with_fields({
+			'file':  i.cache_file()
+			'error': err.str()
+		}).error('Failed to read index')
 		return IndexNotFoundError{}
 	}
 	i.index.decode(data) or {
 		if err is IndexVersionMismatchError {
-			println('Index version mismatch')
+			loglib.info('Index version mismatch')
 		} else {
-			println('Error load index ${i.cache_file()}: ${err}')
+			loglib.with_fields({
+				'file':  i.cache_file()
+				'error': err.str()
+			}).error('Error load index')
 		}
 		return NeedReindexedError{}
 	}
-	println('Loaded index in ${time.since(now)}')
+	loglib.info('Loaded index in ${time.since(now)}')
 }
 
 pub fn (mut i IndexingRoot) save_index() ! {
@@ -85,7 +94,10 @@ pub fn (mut i IndexingRoot) save_index() ! {
 
 	data := i.index.encode()
 	os.write_file_array(i.cache_file(), data) or {
-		println('Failed to write index.json: ${err}')
+		loglib.with_fields({
+			'file':  i.cache_file()
+			'error': err.str()
+		}).error('Failed to write index.json')
 		return err
 	}
 }
@@ -108,10 +120,13 @@ fn (mut _ IndexingRoot) need_index(path string) bool {
 
 pub fn (mut i IndexingRoot) index() BuiltIndexStatus {
 	now := time.now()
-	println('Indexing root ${i.root}')
+
+	loglib.with_fields({
+		'root': i.root
+	}).info('Indexing root')
 
 	if _ := i.load_index() {
-		println('Index loaded from cache, took ${time.since(now)}')
+		loglib.with_duration(time.since(now)).info('Index loaded from cache')
 		return .from_cache
 	}
 
@@ -144,8 +159,7 @@ pub fn (mut i IndexingRoot) index() BuiltIndexStatus {
 	i.updated_at = time.now()
 	i.need_save = true
 
-	println('Indexing finished')
-	println('Indexing took ${time.since(now)}')
+	loglib.with_duration(time.since(now)).info('Indexing finished')
 	return .from_scratch
 }
 
@@ -243,11 +257,17 @@ pub fn (mut i IndexingRoot) spawn_indexing_workers(cache_chan chan FileIndex, fi
 			for {
 				filepath := <-file_chan or { break }
 				content := os.read_file(filepath) or {
-					println('Error reading ${filepath}: ${err}')
+					loglib.with_fields({
+						'uri':   'file://${filepath}'
+						'error': err.str()
+					}).error('Error reading file for index')
 					continue
 				}
 				cache_chan <- i.index_file(filepath, content) or {
-					println('Error indexing ${filepath}: ${err}')
+					loglib.with_fields({
+						'uri':   'file://${filepath}'
+						'error': err.str()
+					}).error('Error indexing file')
 				}
 			}
 
@@ -262,7 +282,10 @@ pub fn (mut i IndexingRoot) spawn_indexing_workers(cache_chan chan FileIndex, fi
 // ensure_indexed checks the index for freshness and re-indexes files if they have changed since the last indexing.
 pub fn (mut i IndexingRoot) ensure_indexed() {
 	now := time.now()
-	println('Ensuring indexed root ${i.root}')
+
+	loglib.with_fields({
+		'root': i.root
+	}).info('Ensuring indexed root')
 
 	reindex_files_chan := chan string{cap: 1000}
 	cache_chan := chan FileIndex{cap: 1000}
@@ -271,7 +294,9 @@ pub fn (mut i IndexingRoot) ensure_indexed() {
 		for filepath, datum in i.index.per_file.data {
 			last_modified := os.file_last_mod_unix(filepath)
 			if last_modified > datum.file_last_modified {
-				println('File ${filepath} was modified, reindexing')
+				loglib.with_fields({
+					'uri': 'file://${filepath}'
+				}).info('File was modified, reindexing')
 				i.index.per_file.data.delete(filepath)
 				reindex_files_chan <- filepath
 			}
@@ -297,8 +322,7 @@ pub fn (mut i IndexingRoot) ensure_indexed() {
 		i.need_save = true
 	}
 
-	println('Reindexing finished')
-	println('Reindexing took ${time.since(now)}')
+	loglib.with_duration(time.since(now)).info('Reindexing finished')
 }
 
 pub fn (mut i IndexingRoot) mark_as_dirty(filepath string, new_content string) ! {
@@ -307,7 +331,9 @@ pub fn (mut i IndexingRoot) mark_as_dirty(filepath string, new_content string) !
 		return
 	}
 
-	println('Marking ${filepath} as dirty')
+	loglib.with_fields({
+		'uri': 'file://${filepath}'
+	}).info('Marking document as dirty')
 	i.index.per_file.data.delete(filepath)
 	res := i.index_file(filepath, new_content) or {
 		return error('Error indexing dirty ${filepath}: ${err}')
@@ -316,5 +342,7 @@ pub fn (mut i IndexingRoot) mark_as_dirty(filepath string, new_content string) !
 	i.index.updated_at = time.now()
 	i.save_index() or { return err }
 
-	println('Finished reindexing ${filepath}')
+	loglib.with_fields({
+		'uri': 'file://${filepath}'
+	}).info('Finished reindexing document')
 }

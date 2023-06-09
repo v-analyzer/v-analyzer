@@ -2,16 +2,22 @@ module lserver
 
 import lsp
 import lserver.documentation
+import loglib
 
 pub fn (mut ls LanguageServer) hover(params lsp.HoverParams, mut wr ResponseWriter) ?lsp.Hover {
 	uri := params.text_document.uri.normalize()
 	file := ls.get_file(uri) or { return none }
 
-	println('hovering at ' + params.position.str() + ' in file ' + file.uri)
+	loglib.with_fields({
+		'position': params.position.str()
+		'uri':      file.uri
+	}).warn('Hover request')
 
 	offset := file.find_offset(params.position)
 	element := file.psi_file.find_element_at(offset) or {
-		println('cannot find element at ' + offset.str())
+		loglib.with_fields({
+			'offset': offset.str()
+		}).warn('Cannot find element')
 		return none
 	}
 

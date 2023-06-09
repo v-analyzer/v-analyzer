@@ -14,7 +14,7 @@ pub fn (mut ls LanguageServer) semantic_tokens_full(params lsp.SemanticTokensPar
 
 	lines := file.psi_file.source_text.count('\n')
 
-	if lines > 500 || ls.cfg.enable_semantic_tokens == .syntax {
+	if lines > 700 || ls.cfg.enable_semantic_tokens == .syntax {
 		// We don't want to send too many tokens, so we just send dumb-aware tokens for large files.
 		mut dumb_aware_visitor := semantic.DumbAwareSemanticVisitor{}
 		res := semantic.encode(dumb_aware_visitor.accept(file.psi_file.root))

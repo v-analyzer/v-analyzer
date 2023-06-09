@@ -4,7 +4,7 @@ import term
 import net
 import os
 import io
-import time
+import loglib
 
 fn C._setmode(int, int)
 
@@ -155,7 +155,7 @@ pub fn (mut stream SocketStream) write(buf []u8) !int {
 	// TODO: should be an interceptor
 	$if !test {
 		if stream.log {
-			println('[${stream.log_label}] : ${time.now()} : ${term.bg_green('Sent data →')} : ${buf.bytestr()}\n')
+			loglib.trace('${term.bg_green('Sent data →')} : ${buf.bytestr()}\n')
 		}
 	}
 
@@ -199,7 +199,7 @@ pub fn (mut stream SocketStream) read(mut buf []u8) !int {
 
 	$if !test {
 		if stream.log {
-			println('[${stream.log_label}] : ${time.now()} : ${term.green('Received data ←')} : ${buf.bytestr()}\n')
+			loglib.trace('${term.green('Received data ←')} : ${buf.bytestr()}\n')
 		}
 	}
 	return conlen + header_len

@@ -1,6 +1,7 @@
 module lserver
 
 import lsp
+import loglib
 
 pub fn (mut ls LanguageServer) did_close(params lsp.DidCloseTextDocumentParams, mut wr ResponseWriter) {
 	uri := params.text_document.uri.normalize()
@@ -9,5 +10,9 @@ pub fn (mut ls LanguageServer) did_close(params lsp.DidCloseTextDocumentParams, 
 	}
 
 	ls.opened_files.delete(uri)
-	println('closed file: ${uri}')
+
+	loglib.with_fields({
+		'uri':              uri.str()
+		'opened_files len': ls.opened_files.len.str()
+	}).info('closed file')
 }

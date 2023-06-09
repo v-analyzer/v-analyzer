@@ -5,11 +5,14 @@ import analyzer.psi
 import analyzer.parser
 import lserver.completion
 import lserver.completion.providers
+import loglib
 
 pub fn (mut ls LanguageServer) completion(params lsp.CompletionParams, mut wr ResponseWriter) ![]lsp.CompletionItem {
 	uri := params.text_document.uri.normalize()
 	file := ls.get_file(uri) or {
-		println('cannot find file ' + uri.str())
+		loglib.with_fields({
+			'uri': uri.str()
+		}).warn('Cannot find file')
 		return []
 	}
 
@@ -18,7 +21,10 @@ pub fn (mut ls LanguageServer) completion(params lsp.CompletionParams, mut wr Re
 	mut source := file.psi_file.source_text
 
 	if offset >= source.len {
-		println('offset is out of range')
+		loglib.with_fields({
+			'offset':     offset.str()
+			'source_len': source.len.str()
+		}).warn('Offset is out of range')
 		return []
 	}
 
@@ -35,7 +41,9 @@ pub fn (mut ls LanguageServer) completion(params lsp.CompletionParams, mut wr Re
 	patched_psi_file := psi.new_psi_file(uri.path(), res.tree, res.source_text)
 
 	element := patched_psi_file.root().find_element_at(offset) or {
-		println('cannot find element at ' + offset.str())
+		loglib.with_fields({
+			'offset': offset.str()
+		}).warn('Cannot find element')
 		return []
 	}
 

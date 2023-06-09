@@ -7,6 +7,7 @@ import project
 import metadata
 import time
 import config
+import loglib
 import lserver.protocol
 import lserver.semantic
 import lserver.progress
@@ -69,6 +70,8 @@ pub fn (mut ls LanguageServer) initialize(params lsp.InitializeParams, mut wr Re
 }
 
 pub fn (mut ls LanguageServer) initialized(mut wr ResponseWriter) {
+	loglib.info('-------- New session -------- ')
+
 	mut work := ls.progress.start('Indexing', 'Indexing roots...', '')
 
 	// Used in tests to avoid indexing the standard library

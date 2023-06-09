@@ -3,6 +3,7 @@ module psi
 
 import time
 import os
+import loglib
 
 __global stubs_index = StubIndex{}
 
@@ -52,7 +53,7 @@ pub fn new_stubs_index(sinks []StubIndexSink) &StubIndex {
 		index.update_index_from_sink(sink)
 	}
 
-	println('Time to build stubs index: ${watch.elapsed()}')
+	loglib.with_duration(watch.elapsed()).log_one(.info, 'Build stubs index')
 	return index
 }
 
@@ -88,8 +89,8 @@ pub fn (mut s StubIndex) update_index_from_sink(sink StubIndexSink) {
 }
 
 pub fn (mut s StubIndex) update_stubs_index(changed_sinks []StubIndexSink, all_sinks []StubIndexSink) {
-	println('Updating stubs index...')
-	println('Changed files: ${changed_sinks.len}')
+	loglib.log_one(.info, 'Updating stubs index...')
+	loglib.log_one(.info, 'Changed files: ${changed_sinks.len}')
 
 	s.sinks = all_sinks
 

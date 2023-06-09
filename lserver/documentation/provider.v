@@ -3,6 +3,7 @@ module documentation
 import analyzer.psi
 import strings
 import os
+import loglib
 
 pub struct Provider {
 mut:
@@ -420,7 +421,9 @@ pub fn (mut p Provider) find_documentation_element(element psi.PsiElement) ?psi.
 		parent := element.parent()?
 		if parent is psi.ReferenceExpressionBase {
 			return parent.resolve() or {
-				println('cannot resolve reference ' + parent.name())
+				loglib.with_fields({
+					'name': element.get_text()
+				}).log(.warn, 'cannot resolve reference for documentation')
 				return element
 			}
 		}
