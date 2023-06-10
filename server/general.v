@@ -112,7 +112,9 @@ pub fn (mut ls LanguageServer) initialized(mut wr ResponseWriter) {
 
 	if need_save_index {
 		ls.analyzer_instance.indexer.save_indexes() or {
-			ls.client.log_message('Failed to save index: ${err}', .error)
+			loglib.with_fields({
+				'err': err.str()
+			}).error('Failed to save index')
 		}
 	}
 
@@ -130,6 +132,7 @@ fn (mut ls LanguageServer) setup() {
 	config_path := ls.find_config()
 	if config_path == '' {
 		ls.client.log_message('No config found', .warning)
+		loglib.warn('No config found')
 		ls.setup_toolchain()
 		ls.setup_vmodules()
 		return
@@ -137,12 +140,21 @@ fn (mut ls LanguageServer) setup() {
 
 	config_content := os.read_file(config_path) or {
 		ls.client.log_message('Failed to read config: ${err}', .error)
+
+		loglib.with_fields({
+			'err': err.str()
+		}).error('Failed to read config')
 		return
 	}
 
 	cfg := config.from_toml(ls.root_uri.path(), config_path, config_content) or {
 		ls.client.log_message('Failed to decode config: ${err}', .error)
 		ls.client.log_message('Using default config', .info)
+
+		loglib.with_fields({
+			'err': err.str()
+		}).error('Failed to decode config')
+		loglib.info('Using default config')
 		config.EditorConfig{}
 	}
 
@@ -155,6 +167,9 @@ fn (mut ls LanguageServer) setup() {
 
 		ls.client.log_message("Find custom VROOT path in '${cfg.path()}' config", .info)
 		ls.client.log_message('Using "${cfg.custom_vroot}" as toolchain', .info)
+
+		loglib.info("Find custom VROOT path in '${cfg.path()}' config")
+		loglib.info('Using "${cfg.custom_vroot}" as toolchain')
 	}
 
 	if cfg.custom_cache_dir != '' {
@@ -163,6 +178,9 @@ fn (mut ls LanguageServer) setup() {
 		ls.client.log_message("Find custom cache dir path in '${cfg.path()}' config",
 			.info)
 		ls.client.log_message('Using "${cfg.custom_cache_dir}" as cache dir', .info)
+
+		loglib.info("Find custom cache dir path in '${cfg.path()}' config")
+		loglib.info('Using "${cfg.custom_cache_dir}" as cache dir')
 	}
 
 	if ls.vroot == '' {
@@ -182,6 +200,10 @@ fn (mut ls LanguageServer) setup_cache_dir() {
 		os.mkdir_all(config.analyzer_caches_path) or {
 			ls.client.log_message('Failed to create analyzer caches directory: ${err}',
 				.error)
+
+			loglib.with_fields({
+				'err': err.str()
+			}).error('Failed to create analyzer caches directory')
 			return
 		}
 	}
@@ -190,6 +212,7 @@ fn (mut ls LanguageServer) setup_cache_dir() {
 	ls.cache_dir = config.analyzer_caches_path
 
 	ls.client.log_message('Using "${ls.cache_dir}" as cache dir', .info)
+	loglib.info('Using "${ls.cache_dir}" as cache dir')
 }
 
 fn (mut ls LanguageServer) find_config() string {
@@ -211,12 +234,15 @@ fn (mut ls LanguageServer) setup_toolchain() {
 	toolchain_candidates := project.get_toolchain_candidates()
 	if toolchain_candidates.len > 0 {
 		ls.client.log_message('Found toolchain candidates:', .info)
+		loglib.info('Found toolchain candidates:')
 		for toolchain_candidate in toolchain_candidates {
 			ls.client.log_message('  ${toolchain_candidate}', .info)
+			loglib.info('  ${toolchain_candidate}')
 		}
 
 		ls.client.log_message('Using "${toolchain_candidates.first()}" as toolchain',
 			.info)
+		loglib.info('Using "${toolchain_candidates.first()}" as toolchain')
 		ls.vroot = toolchain_candidates.first()
 
 		if toolchain_candidates.len > 1 {
@@ -227,12 +253,15 @@ fn (mut ls LanguageServer) setup_toolchain() {
 		ls.client.log_message("No toolchain candidates found, some of the features won't work properly.
 Please, set `custom_vroot` in local or global config.",
 			.error)
+		loglib.error("No toolchain candidates found, some of the features won't work properly.
+Please, set `custom_vroot` in local or global config.")
 	}
 }
 
 fn (mut ls LanguageServer) setup_vmodules() {
 	ls.vmodules_root = project.get_modules_location()
 	ls.client.log_message('Using "${ls.vmodules_root}" as vmodules root', .info)
+	loglib.info('Using "${ls.vmodules_root}" as vmodules root')
 }
 
 fn (mut ls LanguageServer) setup_config_dir() {
@@ -240,6 +269,10 @@ fn (mut ls LanguageServer) setup_config_dir() {
 		os.mkdir(config.analyzer_configs_path) or {
 			ls.client.log_message('Failed to create analyzer configs directory: ${err}',
 				.error)
+
+			loglib.with_fields({
+				'err': err.str()
+			}).error('Failed to create analyzer configs directory')
 			return
 		}
 	}
@@ -248,14 +281,22 @@ fn (mut ls LanguageServer) setup_config_dir() {
 		ls.client.log_message('Global config not found', .info)
 		ls.client.log_message('Creating default global analyzer config', .info)
 
+		loglib.info('Global config not found')
+		loglib.info('Creating default global analyzer config')
+
 		os.write_file(config.analyzer_global_config_path, config.default) or {
 			ls.client.log_message('Failed to create global default analyzer config: ${err}',
 				.error)
+
+			loglib.with_fields({
+				'err': err.str()
+			}).error('Failed to create global default analyzer config')
 			return
 		}
 
 		ls.client.log_message('Default analyzer config created at ${config.analyzer_global_config_path}',
 			.info)
+		loglib.info('Default analyzer config created at ${config.analyzer_global_config_path}')
 	}
 }
 
@@ -268,6 +309,10 @@ fn (mut ls LanguageServer) setup_stubs() {
 	stubs := metadata.embed_fs()
 	stubs.unpack_to(config.analyzer_stubs_path) or {
 		ls.client.log_message('Failed to unpack stubs: ${err}', .error)
+
+		loglib.with_fields({
+			'err': err.str()
+		}).error('Failed to unpack stubs')
 	}
 }
 
@@ -305,4 +350,14 @@ fn (mut ls LanguageServer) print_info(process_id int, client_info lsp.ClientInfo
 	ls.client.log_message('spavn-analyzer build with V ${@VHASH}', .info)
 	ls.client.log_message('spavn-analyzer build at ${time.now().format_ss()}', .info)
 	ls.client.log_message('Client / Editor: ${client_name} (PID: ${process_id})', .info)
+
+	loglib.with_fields({
+		'client_name': client_name
+		'process_id':  process_id.str()
+		'os':          os.user_os()
+		'arch':        'x${arch}'
+		'executable':  os.executable()
+		'build_with':  @VHASH
+		'build_at':    time.now().format_ss()
+	}).info('spavn-analyzer started')
 }
