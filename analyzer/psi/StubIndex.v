@@ -116,9 +116,9 @@ pub fn (mut s StubIndex) update_stubs_index(changed_sinks []StubIndexSink, all_s
 	}
 
 	for sink in all_sinks {
-		s.sub_indexes_from_sink(sink)
-
 		if sink.kind != .workspace {
+			// for non workspace sinks we just update the module_to_files and file_to_module maps
+			s.sub_indexes_from_sink(sink)
 			continue
 		}
 
