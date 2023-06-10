@@ -2,12 +2,11 @@ module loglib
 
 import strings
 import term
-import sync
 
 pub struct TextFormatter {
 mut:
-	is_terminal        bool
-	terminal_init_once sync.Once
+	is_terminal bool
+	initialized bool
 }
 
 fn (mut t TextFormatter) init(entry &Entry) {
@@ -15,9 +14,10 @@ fn (mut t TextFormatter) init(entry &Entry) {
 }
 
 fn (mut t TextFormatter) format(entry &Entry) ![]u8 {
-	t.terminal_init_once.do(fn [entry, mut t] () {
+	if !t.initialized {
 		t.init(entry)
-	})
+		t.initialized = true
+	}
 
 	mut sb := strings.new_builder(10)
 
