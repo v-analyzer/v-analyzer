@@ -27,7 +27,9 @@ fn (_ DumbAwareSemanticVisitor) highlight_node(node psi.AstNode, root psi.PsiEle
 		result << element_to_semantic(node, .property)
 	} else if node.type_name == .struct_field_declaration {
 		if first_child := node.first_child() {
-			result << element_to_semantic(first_child, .property)
+			if first_child.type_name != .embedded_definition {
+				result << element_to_semantic(first_child, .property)
+			}
 		}
 	} else if node.type_name == .module_clause {
 		if last_child := node.last_child() {
