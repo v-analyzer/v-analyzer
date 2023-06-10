@@ -135,6 +135,14 @@ fn (_ DumbAwareSemanticVisitor) highlight_node(node psi.AstNode, root psi.PsiEle
 	} else if node.type_name == .global_var_definition {
 		identifier := node.child_by_field_name('name') or { return }
 		result << element_to_semantic(identifier, .variable, 'global')
+	} else if node.type_name == .function_declaration {
+		if first_child := node.child_by_field_name('name') {
+			first_char := first_child.first_char(root.containing_file.source_text)
+			if first_char in [`@`, `$`] {
+				// tweak highlighting for @lock/@rlock
+				result << element_to_semantic(first_child, .function)
+			}
+		}
 	}
 
 	$if debug {
