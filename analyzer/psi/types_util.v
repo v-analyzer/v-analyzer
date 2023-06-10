@@ -9,18 +9,22 @@ pub fn own_methods_list(typ types.Type) []PsiElement {
 }
 
 pub fn methods_list(typ types.Type) []PsiElement {
-	own_methods := own_methods_list(typ)
-	unwrapped := types.unwrap_alias_type(types.unwrap_pointer_type(typ))
+	mut result := own_methods_list(typ)
 
-	if unwrapped.qualified_name() == typ.qualified_name() {
-		return own_methods
+	unwrapped := types.unwrap_alias_type(types.unwrap_pointer_type(typ))
+	if unwrapped.qualified_name() != typ.qualified_name() {
+		result << own_methods_list(unwrapped)
 	}
 
-	inherited_methods := own_methods_list(unwrapped)
+	if typ is types.StructType {
+		if struct_ := find_struct(typ.qualified_name()) {
+			embedded_types := struct_.embedded_definitions().map(it.get_type())
+			for embedded_type in embedded_types {
+				result << methods_list(embedded_type)
+			}
+		}
+	}
 
-	mut result := []PsiElement{cap: own_methods.len + inherited_methods.len}
-	result << own_methods
-	result << inherited_methods
 	return result
 }
 
