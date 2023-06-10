@@ -69,7 +69,7 @@ fn (_ ResolveSemanticVisitor) highlight_node(node psi.PsiElement, root psi.PsiEl
 	} else if res is psi.TypeAliasDeclaration {
 		from_stubs := res.containing_file.path.contains('stubs')
 		if !from_stubs {
-			result << element_to_semantic(first_child, .namespace)
+			result << element_to_semantic(first_child, .type_)
 		}
 	} else if res is psi.GenericParameter {
 		result << element_to_semantic(first_child, .type_parameter)
