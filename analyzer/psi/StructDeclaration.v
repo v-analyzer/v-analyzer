@@ -92,13 +92,13 @@ pub fn (s StructDeclaration) fields() []PsiElement {
 	return result
 }
 
-pub fn (s StructDeclaration) embedded_definitions() []PsiElement {
+pub fn (s StructDeclaration) embedded_definitions() []&EmbeddedDefinition {
 	field_declarations := s.find_children_by_type_or_stub(.struct_field_declaration)
-	mut result := []PsiElement{cap: field_declarations.len}
+	mut result := []&EmbeddedDefinition{cap: field_declarations.len}
 	for field_declaration in field_declarations {
-		if first_child := field_declaration.first_child() {
-			if first_child.element_type() == .embedded_definition {
-				result << field_declaration
+		if embedded_definition := field_declaration.find_child_by_type_or_stub(.embedded_definition) {
+			if embedded_definition is EmbeddedDefinition {
+				result << embedded_definition
 			}
 		}
 	}

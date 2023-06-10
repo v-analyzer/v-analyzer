@@ -279,6 +279,11 @@ pub fn (t &TypeInferer) infer_type(elem ?PsiElement) types.Type {
 		return element.get_type()
 	}
 
+	if element is TypeReferenceExpression {
+		mut visited := map[string]types.Type{}
+		return t.infer_type_reference_type(element, mut visited)
+	}
+
 	if element is GlobalVarDefinition {
 		type_element := element.find_child_by_type_or_stub(.plain_type) or {
 			return types.unknown_type

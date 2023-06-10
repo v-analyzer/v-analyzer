@@ -55,6 +55,7 @@ pub enum StubType as u8 {
 	generic_parameters
 	generic_parameter
 	global_variable
+	embedded_definition
 }
 
 pub fn node_type_to_stub_type(typ tree_sitter_v.NodeType) StubType {
@@ -108,6 +109,7 @@ pub fn node_type_to_stub_type(typ tree_sitter_v.NodeType) StubType {
 		.generic_parameters { .generic_parameters }
 		.generic_parameter { .generic_parameter }
 		.global_var_definition { .global_variable }
+		.embedded_definition { .embedded_definition }
 		else { .root }
 	}
 }
@@ -330,6 +332,11 @@ pub fn (_ &StubbedElementType) create_psi(stub &StubBase) ?PsiElement {
 			PsiElementImpl: base_psi
 		}
 	}
+	if stub_type == .embedded_definition {
+		return EmbeddedDefinition{
+			PsiElementImpl: base_psi
+		}
+	}
 	return base_psi
 }
 
@@ -491,6 +498,10 @@ pub fn (s &StubbedElementType) create_stub(psi PsiElement, parent_stub &StubElem
 
 	if psi is GlobalVarDefinition {
 		return declaration_stub(*psi, parent_stub, .global_variable)
+	}
+
+	if psi is EmbeddedDefinition {
+		return text_based_stub(*psi, parent_stub, .embedded_definition)
 	}
 
 	return none

@@ -115,7 +115,11 @@ pub fn (r &SubResolver) process_elements(elements []PsiElement, mut processor Ps
 pub fn (r &SubResolver) process_type(typ types.Type, mut processor PsiScopeProcessor) bool {
 	if typ is types.StructType {
 		if struct_ := r.find_struct(stubs_index, typ.qualified_name()) {
-			is_method_ref := r.element().inside(.call_expression)
+			is_method_ref := if grand := r.element().parent_nth(2) {
+				grand is CallExpression
+			} else {
+				false
+			}
 
 			// If it is a call, then most likely it is a method call, but it
 			// could be a function call that is stored in a structure field.
@@ -134,7 +138,17 @@ pub fn (r &SubResolver) process_type(typ types.Type, mut processor PsiScopeProce
 					return false
 				}
 			}
+
+			embedded := struct_.embedded_definitions()
+			embedded_types := embedded.map(it.get_type())
+			for embedded_type in embedded_types {
+				if !r.process_type(embedded_type, mut processor) {
+					return false
+				}
+			}
 		}
+
+		return true
 	}
 
 	if typ is types.InterfaceType {
@@ -149,6 +163,8 @@ pub fn (r &SubResolver) process_type(typ types.Type, mut processor PsiScopeProce
 				return false
 			}
 		}
+
+		return true
 	}
 
 	if typ is types.EnumType {
@@ -157,6 +173,8 @@ pub fn (r &SubResolver) process_type(typ types.Type, mut processor PsiScopeProce
 				return false
 			}
 		}
+
+		return true
 	}
 
 	if typ is types.ArrayType {
