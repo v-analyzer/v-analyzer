@@ -115,7 +115,7 @@ fn detail_presentation(element psi.PsiNamedElement) string {
 fn symbol_children(element psi.PsiNamedElement) []lsp.DocumentSymbol {
 	mut children := []psi.PsiElement{}
 	if element is psi.StructDeclaration {
-		children << element.fields()
+		children << element.own_fields()
 	} else if element is psi.EnumDeclaration {
 		children << element.fields()
 	} else if element is psi.InterfaceDeclaration {

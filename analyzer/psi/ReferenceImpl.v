@@ -606,3 +606,14 @@ pub fn find_element(fqn string) ?PsiElement {
 	}
 	return none
 }
+
+pub fn find_struct(fqn string) ?&StructDeclaration {
+	found := stubs_index.get_elements_by_name(.structs, fqn)
+	if found.len != 0 {
+		first := found.first()
+		if first is StructDeclaration {
+			return first
+		}
+	}
+	return none
+}
