@@ -758,7 +758,7 @@
 			"patterns": [
 				{
 					"name": "keyword.control.v",
-					"match": "(\\$if|\\$else)"
+					"match": "(\\$if|\\$else|\\$for)"
 				},
 				{
 					"name": "keyword.control.v",
