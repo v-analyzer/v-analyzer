@@ -501,7 +501,7 @@ pub fn (s &StubbedElementType) create_stub(psi PsiElement, parent_stub &StubElem
 	}
 
 	if psi is EmbeddedDefinition {
-		return text_based_stub(*psi, parent_stub, .embedded_definition)
+		return declaration_stub(*psi, parent_stub, .embedded_definition)
 	}
 
 	return none

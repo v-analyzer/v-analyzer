@@ -333,7 +333,7 @@ module.exports = grammar({
       optional(seq('=', field('default_value', $._expression))),
     )),
 
-    embedded_definition: ($) => choice($.type_reference_expression, $.qualified_type),
+    embedded_definition: ($) => choice($.type_reference_expression, $.qualified_type, $.generic_type),
 
     enum_declaration: ($) => seq(
       field('attributes', optional($.attributes)),

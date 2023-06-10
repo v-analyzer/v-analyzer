@@ -71,6 +71,11 @@ pub fn (mut p Provider) documentation(element psi.PsiElement) ?string {
 		return p.sb.str()
 	}
 
+	if element is psi.EmbeddedDefinition {
+		p.embedded_definition_documentation(element)?
+		return p.sb.str()
+	}
+
 	if element is psi.EnumFieldDeclaration {
 		p.enum_field_documentation(element)?
 		return p.sb.str()
@@ -304,6 +309,22 @@ fn (mut p Provider) field_documentation(element psi.FieldDeclaration) ? {
 	p.sb.write_string('```')
 	p.write_separator()
 	p.sb.write_string(element.doc_comment())
+}
+
+fn (mut p Provider) embedded_definition_documentation(element psi.EmbeddedDefinition) ? {
+	p.sb.write_string('```v\n')
+	p.sb.write_string('embedded ')
+
+	if owner := element.owner() {
+		if owner is psi.PsiNamedElement {
+			p.sb.write_string(owner.name())
+			p.sb.write_string('.')
+		}
+	}
+
+	p.sb.write_string(element.name())
+	p.sb.write_string('\n')
+	p.sb.write_string('```')
 }
 
 fn (mut p Provider) enum_field_documentation(element psi.EnumFieldDeclaration) ? {

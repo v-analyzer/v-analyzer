@@ -1639,6 +1639,10 @@
         {
           "type": "SYMBOL",
           "name": "qualified_type"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "generic_type"
         }
       ]
     },

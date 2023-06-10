@@ -140,9 +140,8 @@ pub fn (r &SubResolver) process_type(typ types.Type, mut processor PsiScopeProce
 			}
 
 			embedded := struct_.embedded_definitions()
-			embedded_types := embedded.map(it.get_type())
-			for embedded_type in embedded_types {
-				if !r.process_type(embedded_type, mut processor) {
+			for def in embedded {
+				if !processor.execute(def) {
 					return false
 				}
 			}

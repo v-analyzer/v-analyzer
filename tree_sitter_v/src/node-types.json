@@ -1126,6 +1126,10 @@
       "required": true,
       "types": [
         {
+          "type": "generic_type",
+          "named": true
+        },
+        {
           "type": "qualified_type",
           "named": true
         },

@@ -292,6 +292,22 @@ pub fn (t &TypeInferer) infer_type(elem ?PsiElement) types.Type {
 		return t.convert_type(type_element, mut visited)
 	}
 
+	if element is EmbeddedDefinition {
+		mut visited := map[string]types.Type{}
+
+		if qualified_type := element.find_child_by_type_or_stub(.qualified_type) {
+			return t.convert_type_inner(qualified_type, mut visited)
+		}
+		if generic_type := element.find_child_by_type_or_stub(.generic_type) {
+			return t.convert_type_inner(generic_type, mut visited)
+		}
+		if ref_expression := element.find_child_by_type_or_stub(.type_reference_expression) {
+			if ref_expression is TypeReferenceExpression {
+				return t.infer_type_reference_type(ref_expression, mut visited)
+			}
+		}
+	}
+
 	return types.unknown_type
 }
 
