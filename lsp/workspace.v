@@ -55,6 +55,30 @@ pub struct ChangeAnnotation { // line 6831
 	description string [omitempty]
 }
 
+pub struct WorkspaceSymbol {
+pub mut:
+	// The name of this symbol. Will be displayed in the user interface and
+	// therefore must not be an empty string or a string only consisting of
+	// white spaces.
+	name string
+	// The kind of this symbol.
+	kind SymbolKind
+	// The name of the symbol containing this symbol. This information is for
+	// user interface purposes (e.g. to render a qualifier in the user interface
+	// if necessary). It can't be used to re-infer a hierarchy for the document
+	// symbols.
+	container_name string [json: 'containerName'; omitempty]
+	// The location of this symbol. Whether a server is allowed to
+	// return a location without a range depends on the client
+	// capability `workspace.symbol.resolveSupport`.
+	//
+	// See also `SymbolInformation.location`.
+	location Location [omitempty]
+	// A data entry field that is preserved on a workspace symbol between a
+	// workspace symbol request and a workspace symbol resolve request.
+	data string [raw]
+}
+
 pub struct DidChangeWorkspaceFoldersParams {
 	event WorkspaceFoldersChangeEvent
 }

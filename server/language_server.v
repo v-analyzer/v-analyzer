@@ -176,10 +176,10 @@ pub fn (mut ls LanguageServer) handle_jsonrpc(request &jsonrpc.Request, mut rw j
 				w.write(ls.document_symbol(params, mut rw) or { return w.wrap_error(err) })
 			}
 			'workspace/symbol' {
-				// params := json.decode(lsp.WorkspaceSymbolParams, request.params) or {
-				// 	return w.wrap_error(err)
-				// }
-				// ls.workspace_symbol(lsp.WorkspaceSymbolParams{}, mut rw)
+				params := json.decode(lsp.WorkspaceSymbolParams, request.params) or {
+					return w.wrap_error(err)
+				}
+				w.write(ls.workspace_symbol(params, mut rw) or { return w.wrap_error(err) })
 			}
 			'textDocument/signatureHelp' {
 				params := json.decode(lsp.SignatureHelpParams, request.params) or {
@@ -263,14 +263,7 @@ pub fn (mut ls LanguageServer) handle_jsonrpc(request &jsonrpc.Request, mut rw j
 				}
 				w.write(ls.rename(params, mut rw) or { return w.wrap_error(err) })
 			}
-			'textDocument/documentLink' {
-				// params := json.decode(lsp.DocumentLinkParams, request.params) or {
-				// 	return w.wrap_error(err)
-				// }
-				// w.write(ls.document_link(lsp.DocumentLinkParams{}, mut rw) or {
-				// 	return w.wrap_error(err)
-				// })
-			}
+			'textDocument/documentLink' {}
 			'textDocument/semanticTokens/full' {
 				params := json.decode(lsp.SemanticTokensParams, request.params) or {
 					return w.wrap_error(err)

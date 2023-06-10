@@ -2,17 +2,17 @@ module lsp
 
 pub struct WorkspaceClientCapabilities {
 pub mut:
-	apply_edit               bool            [json: applyEdit]
-	workspace_edit           WorkspaceEdit   [json: workspaceEdit]
-	did_change_configuration DidChange       [json: didChangeConfiguration]
-	did_change_watched_files DidChange       [json: didChangeWatchedFiles]
-	symbol                   WorkspaceSymbol
-	execute_command          DidChange       [json: executeCommand]
-	workspace_folders        bool            [json: workspaceFolders]
+	apply_edit               bool                        [json: applyEdit]
+	workspace_edit           WorkspaceEdit               [json: workspaceEdit]
+	did_change_configuration DidChange                   [json: didChangeConfiguration]
+	did_change_watched_files DidChange                   [json: didChangeWatchedFiles]
+	symbol                   WorkspaceSymbolCapabilities
+	execute_command          DidChange                   [json: executeCommand]
+	workspace_folders        bool                        [json: workspaceFolders]
 	configuration            bool
 }
 
-pub struct WorkspaceSymbol {
+pub struct WorkspaceSymbolCapabilities {
 pub mut:
 	dynamic_registration bool     [json: dynamicRegistration]
 	symbol_kind          ValueSet [json: symbolKind]

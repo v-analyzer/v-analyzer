@@ -74,6 +74,11 @@ pub fn (p &PsiFileImpl) path() string {
 }
 
 [inline]
+pub fn (p &PsiFileImpl) uri() string {
+	return 'file://${p.path}'
+}
+
+[inline]
 pub fn (p &PsiFileImpl) text() string {
 	return p.source_text
 }
