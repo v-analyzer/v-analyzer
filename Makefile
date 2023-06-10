@@ -1,9 +1,9 @@
 build-debug:
-	mkdir -p bin
+	mkdir bin
 	v ./cmd/spavn-analyzer -o ./bin/spavn-analyzer -g -d use_libbacktrace
 
 build-prod:
-	mkdir -p bin
+	mkdir bin
 	v ./cmd/spavn-analyzer -o ./bin/spavn-analyzer -cflags "-O3 -DNDEBUG" -prod
 
 build-vscode-extension:
