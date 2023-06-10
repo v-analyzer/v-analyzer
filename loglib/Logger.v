@@ -5,7 +5,6 @@ import term
 import io
 import os
 import time
-import sync.stdatomic
 
 __global logger = Logger{
 	formatter: TextFormatter{}
@@ -51,12 +50,12 @@ pub fn (mut l Logger) use_color_mode_string(mode string) {
 
 [inline]
 pub fn (l &Logger) level() u64 {
-	return stdatomic.load_u64(&l.level)
+	return l.level
 }
 
 [inline]
 pub fn (mut l Logger) set_level(level LogLevel) {
-	stdatomic.store_u64(&l.level, u64(level))
+	l.level = u64(level)
 }
 
 [inline]
