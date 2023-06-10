@@ -333,7 +333,7 @@ module.exports = grammar({
       optional(seq('=', field('default_value', $._expression))),
     )),
 
-    embedded_definition: ($) => prec.right(PREC.unary, $.type_reference_expression),
+    embedded_definition: ($) => choice($.type_reference_expression, $.qualified_type),
 
     enum_declaration: ($) => seq(
       field('attributes', optional($.attributes)),
@@ -437,7 +437,7 @@ module.exports = grammar({
     ),
 
     strictly_expression_list: ($) => prec(PREC.resolve, seq(
-      choice($._expression, $.mutable_expression), ',',  comma_sep1(choice($._expression, $.mutable_expression)),
+      choice($._expression, $.mutable_expression), ',', comma_sep1(choice($._expression, $.mutable_expression)),
     )),
 
     inc_expression: ($) => seq($._expression, '++'),

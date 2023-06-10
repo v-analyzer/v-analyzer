@@ -1630,12 +1630,17 @@
       }
     },
     "embedded_definition": {
-      "type": "PREC_RIGHT",
-      "value": 6,
-      "content": {
-        "type": "SYMBOL",
-        "name": "type_reference_expression"
-      }
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "type_reference_expression"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "qualified_type"
+        }
+      ]
     },
     "enum_declaration": {
       "type": "SEQ",

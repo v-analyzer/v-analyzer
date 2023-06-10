@@ -282,6 +282,25 @@ struct Foo {
           (identifier))))))
 
 ================================================================================
+Simple struct with qualified embedding
+================================================================================
+struct Foo {
+    foo.Embedded
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (struct_declaration
+    (identifier)
+    (struct_field_declaration
+      (embedded_definition
+        (qualified_type
+          (reference_expression
+            (identifier))
+          (type_reference_expression
+            (identifier)))))))
+
+================================================================================
 Simple struct with several embedding and fields
 ================================================================================
 struct Foo {
