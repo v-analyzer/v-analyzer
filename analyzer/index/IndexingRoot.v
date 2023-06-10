@@ -209,7 +209,12 @@ pub fn (mut i IndexingRoot) module_qualified_name(file &psi.PsiFileImpl) string 
 		return ''
 	}
 
-	root_dirs := [i.root]
+	mut root_dirs := [i.root]
+
+	src_dir := os.join_path(i.root, 'src')
+	if os.exists(src_dir) {
+		root_dirs << src_dir
+	}
 
 	containing_dir := os.dir(file.path)
 
