@@ -3,6 +3,7 @@ module providers
 import analyzer.psi
 import server.completion
 import analyzer.psi.types
+import analyzer.lang
 import lsp
 
 pub struct ReturnCompletionProvider {}
@@ -23,7 +24,7 @@ fn (mut _ ReturnCompletionProvider) add_completion(ctx &completion.CompletionCon
 
 	function_type := signature.get_type()
 	if function_type is types.FunctionType {
-		has_result_type := function_type.no_result
+		has_result_type := !function_type.no_result
 		result_type := function_type.result
 		if result_type is types.PrimitiveType {
 			if result_type.name == 'bool' {
@@ -38,7 +39,15 @@ fn (mut _ ReturnCompletionProvider) add_completion(ctx &completion.CompletionCon
 			}
 		}
 
-		label := if has_result_type {
+		if has_result_type {
+			zero_value := lang.get_zero_value_for(result_type)
+			result.add_element(lsp.CompletionItem{
+				label: 'return ${zero_value}'
+				kind: .text
+			})
+		}
+
+		label := if !has_result_type {
 			'return'
 		} else {
 			'return '

@@ -1,6 +1,7 @@
 module types
 
 pub struct ChannelType {
+pub:
 	inner Type
 }
 
