@@ -60,7 +60,16 @@ pub fn (n &VarDefinition) mutability_modifiers() ?&MutabilityModifiers {
 pub fn (n &VarDefinition) is_mutable() bool {
 	mods := n.mutability_modifiers() or {
 		if first_child := n.first_child() {
-			return first_child.text_matches('mut')
+			if first_child.text_matches('mut') {
+				return true
+			}
+		}
+
+		if grand := n.parent_nth(4) {
+			if grand.element_type() == .for_clause {
+				// variable inside for loop initializer is mutable by default
+				return true
+			}
 		}
 		return false
 	}
