@@ -66,4 +66,11 @@ pub fn (m InterfaceMethodDeclaration) doc_comment() string {
 	return extract_doc_comment(m)
 }
 
+pub fn (m InterfaceMethodDeclaration) fingerprint() string {
+	signature := m.signature() or { return '' }
+	count_params := signature.parameters().len
+	has_return_type := if _ := signature.result() { true } else { false }
+	return '${m.name()}:${count_params}:${has_return_type}'
+}
+
 pub fn (_ InterfaceMethodDeclaration) stub() {}

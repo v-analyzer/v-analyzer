@@ -8,6 +8,20 @@ pub fn own_methods_list(typ types.Type) []PsiElement {
 	return methods
 }
 
+pub fn fields_list(typ types.Type) []PsiElement {
+	name := typ.qualified_name()
+	structs := stubs_index.get_elements_by_name(.structs, name)
+	if structs.len == 0 {
+		return []
+	}
+
+	struct_ := structs.first()
+	if struct_ is StructDeclaration {
+		return struct_.fields()
+	}
+	return []
+}
+
 pub fn methods_list(typ types.Type) []PsiElement {
 	mut result := own_methods_list(typ)
 

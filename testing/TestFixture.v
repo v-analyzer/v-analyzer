@@ -36,20 +36,20 @@ pub fn new_fixture() &Fixture {
 	mut ls := server.new(analyzer_instance)
 
 	stream := &client.TestStream{}
-	mut server := &jsonrpc.Server{
+	mut jsonprc_server := &jsonrpc.Server{
 		stream: stream
 		handler: ls
 	}
 
 	mut test_client := client.TestClient{
-		server: server
+		server: jsonprc_server
 		stream: stream
 	}
 
 	return &Fixture{
 		ls: ls
 		stream: stream
-		server: server
+		server: jsonprc_server
 		test_client: test_client
 	}
 }
@@ -73,6 +73,10 @@ pub fn (mut t Fixture) initialize() !lsp.InitializeResult {
 	})!
 
 	return result
+}
+
+pub fn (mut t Fixture) initialized() ! {
+	t.test_client.send[jsonrpc.Null, jsonrpc.Null]('initialized', jsonrpc.Null{})!
 }
 
 pub fn (mut t Fixture) configure_by_file(path string) ! {
@@ -183,6 +187,22 @@ pub fn (mut t Fixture) compute_semantic_tokens() lsp.SemanticTokens {
 	}) or { lsp.SemanticTokens{} }
 
 	return tokens
+}
+
+pub fn (mut t Fixture) implementation_at_cursor() []lsp.Location {
+	return t.implementation(t.current_caret_pos())
+}
+
+pub fn (mut t Fixture) implementation(pos lsp.Position) []lsp.Location {
+	links := t.test_client.send[lsp.TextDocumentPositionParams, []lsp.Location]('textDocument/implementation',
+		lsp.TextDocumentPositionParams{
+		text_document: lsp.TextDocumentIdentifier{
+			uri: 'file://${t.current_file.path}'
+		}
+		position: pos
+	}) or { []lsp.Location{} }
+
+	return links
 }
 
 pub fn (mut t Fixture) close_file(path string) {

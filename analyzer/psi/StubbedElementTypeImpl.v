@@ -133,6 +133,7 @@ pub fn (_ &StubbedElementType) index_stub(stub &StubBase, mut sink IndexSink) {
 	if stub.stub_type == .method_declaration {
 		receiver := stub.receiver()
 		sink.occurrence(StubIndexKey.methods, receiver)
+		sink.occurrence(StubIndexKey.methods_fingerprint, stub.additional)
 	}
 
 	if stub.stub_type == .struct_declaration {
@@ -165,6 +166,10 @@ pub fn (_ &StubbedElementType) index_stub(stub &StubBase, mut sink IndexSink) {
 
 	if stub.stub_type == .global_variable {
 		sink.occurrence(StubIndexKey.global_variables, stub.name())
+	}
+
+	if stub.stub_type == .field_declaration {
+		sink.occurrence(StubIndexKey.fields_fingerprint, stub.name())
 	}
 }
 
@@ -369,9 +374,17 @@ pub fn (s &StubbedElementType) create_stub(psi PsiElement, parent_stub &StubElem
 		} else {
 			StubType.function_declaration
 		}
+
+		fingerprint := if is_method {
+			psi.fingerprint()
+		} else {
+			''
+		}
+
 		return new_stub_base(parent_stub, stub_type, psi.name(), text_range,
 			comment: comment
 			receiver: receiver_type
+			additional: fingerprint
 		)
 	}
 

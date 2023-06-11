@@ -13,6 +13,8 @@ pub enum StubIndexKey as u8 {
 	enums
 	attributes
 	global_variables
+	methods_fingerprint
+	fields_fingerprint
 	_end // see count_index_keys
 }
 

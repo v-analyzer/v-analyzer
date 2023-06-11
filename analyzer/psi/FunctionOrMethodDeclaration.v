@@ -96,4 +96,24 @@ pub fn (f FunctionOrMethodDeclaration) visibility_modifiers() ?&VisibilityModifi
 	return none
 }
 
+pub fn (f FunctionOrMethodDeclaration) owner() ?PsiElement {
+	receiver := f.receiver() or { return none }
+	typ := receiver.get_type()
+	unwrapped := types.unwrap_generic_instantiation_type(types.unwrap_pointer_type(typ))
+	if unwrapped is types.StructType {
+		return *find_struct(unwrapped.qualified_name()) or { return none }
+	}
+	if unwrapped is types.AliasType {
+		return *find_alias(unwrapped.qualified_name()) or { return none }
+	}
+	return none
+}
+
+pub fn (f FunctionOrMethodDeclaration) fingerprint() string {
+	signature := f.signature() or { return '' }
+	count_params := signature.parameters().len
+	has_return_type := if _ := signature.result() { true } else { false }
+	return '${f.name()}:${count_params}:${has_return_type}'
+}
+
 pub fn (_ FunctionOrMethodDeclaration) stub() {}

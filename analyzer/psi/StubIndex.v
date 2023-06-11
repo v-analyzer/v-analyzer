@@ -8,7 +8,7 @@ import loglib
 __global stubs_index = StubIndex{}
 
 const (
-	count_index_keys               = 10 // StubIndexKey._end (TODO: replace after https://github.com/vlang/v/issues/18310)
+	count_index_keys               = 11 // StubIndexKey._end (TODO: replace after https://github.com/vlang/v/issues/18310)
 	count_stub_index_location_keys = 5 // StubIndexLocationKind._end
 )
 
@@ -79,10 +79,10 @@ pub fn (mut s StubIndex) update_index_from_sink(sink StubIndexSink) {
 				psi_result << element_type.create_psi(stub) or { continue }
 			}
 
-			mp[name] = StubResult{
-				stubs: stubs_result
-				psis: psi_result
-			}
+			mut data_by_name := mp[name]
+			data_by_name.stubs << stubs_result
+			data_by_name.psis << psi_result
+			mp[name] = data_by_name
 		}
 		s.data[kind][index_id] = mp.move()
 	}
@@ -196,8 +196,8 @@ pub fn (s &StubIndex) get_all_declarations_from_module(module_fqn string, only_t
 	for sink in files {
 		$for key in StubIndexKey.values {
 			if key.value !in [.methods, .attributes] {
-				if !only_types
-					|| (only_types && key.value !in [.functions, .constants, .global_variables]) {
+				if !only_types || (only_types
+					&& key.value !in [.functions, .constants, .global_variables, .methods_fingerprint, .fields_fingerprint]) {
 					elements << s.get_all_elements_from_sink_by_key(key.value, sink)
 				}
 			}
@@ -243,6 +243,16 @@ pub fn (s &StubIndex) get_elements_by_name(key StubIndexKey, name string) []PsiE
 		if found := res[name] {
 			elements << found.psis
 		}
+	}
+	return elements
+}
+
+pub fn (s &StubIndex) get_elements_from_by_name(from StubIndexLocationKind, key StubIndexKey, name string) []PsiElement {
+	mut elements := []PsiElement{cap: 5}
+	data := s.data[from]
+	res := data[key]
+	if found := res[name] {
+		elements << found.psis
 	}
 	return elements
 }
@@ -298,6 +308,7 @@ fn (_ &StubIndex) get_all_elements_from_sink_by_key(key StubIndexKey, sink StubI
 }
 
 struct StubResult {
+mut:
 	stubs []&StubBase
 	psis  []PsiElement
 }

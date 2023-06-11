@@ -12,6 +12,10 @@ pub:
 	end   Position
 }
 
+pub fn (r Range) is_empty() bool {
+	return r.start.line == 0 && r.end.line == 0 && r.start.character == 0 && r.end.character == 0
+}
+
 pub struct TextEdit {
 pub:
 	range    Range

@@ -149,6 +149,7 @@ pub fn (mut d IndexDeserializer) deserialize_stub() &psi.StubBase {
 	text := d.d.read_string()
 	comment := d.d.read_string()
 	receiver := d.d.read_string()
+	additional := d.d.read_string()
 	name := d.d.read_string()
 
 	line := d.d.read_int()
@@ -164,6 +165,7 @@ pub fn (mut d IndexDeserializer) deserialize_stub() &psi.StubBase {
 		text: text
 		comment: comment
 		receiver: receiver
+		additional: additional
 		name: name
 		text_range: psi.TextRange{
 			line: line

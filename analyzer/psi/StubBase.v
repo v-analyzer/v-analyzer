@@ -9,9 +9,10 @@ const non_stubbed_element = StubId(-1)
 [params]
 pub struct StubData {
 pub:
-	text     string
-	comment  string
-	receiver string
+	text       string
+	comment    string
+	receiver   string
+	additional string
 }
 
 [heap]
@@ -40,6 +41,7 @@ pub fn new_stub_base(parent &StubElement, stub_type StubType, name string, text_
 		text: data.text
 		comment: data.comment
 		receiver: data.receiver
+		additional: data.additional
 		text_range: text_range
 		stub_list: stub_list
 		parent_id: parent_id

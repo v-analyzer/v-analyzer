@@ -6,6 +6,14 @@ pub struct FieldDeclaration {
 	PsiElementImpl
 }
 
+pub fn (f &FieldDeclaration) is_embedded_definition() bool {
+	return if _ := f.find_child_by_type(.embedded_definition) {
+		true
+	} else {
+		false
+	}
+}
+
 pub fn (f &FieldDeclaration) is_public() bool {
 	_, is_pub := f.is_mutable_public()
 	return is_pub

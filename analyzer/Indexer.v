@@ -14,11 +14,19 @@ pub enum IndexingRootsStatus {
 // Indexer encapsulates the indexing logic and provides an interface for working with the index.
 pub struct Indexer {
 pub mut:
-	roots []&index.IndexingRoot
+	roots   []&index.IndexingRoot
+	no_save bool
 }
 
 pub fn new_indexer() &Indexer {
 	return &Indexer{}
+}
+
+pub fn (mut i Indexer) set_no_save(value bool) {
+	i.no_save = value
+	for mut root in i.roots {
+		root.no_save = value
+	}
 }
 
 pub fn (i Indexer) count_roots() int {
@@ -69,6 +77,10 @@ pub fn (mut i Indexer) ensure_indexed() {
 }
 
 pub fn (mut i Indexer) save_indexes() ! {
+	if i.no_save {
+		return
+	}
+
 	for mut indexing_root in i.roots {
 		indexing_root.save_index() or {
 			loglib.with_fields({

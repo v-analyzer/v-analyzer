@@ -78,6 +78,7 @@ pub fn (mut s IndexSerializer) serialize_stub(stub psi.StubBase) {
 	s.s.write_string(stub.text)
 	s.s.write_string(stub.comment)
 	s.s.write_string(stub.receiver)
+	s.s.write_string(stub.additional)
 	s.s.write_string(stub.name)
 
 	s.s.write_int(stub.text_range.line)

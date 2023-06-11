@@ -62,6 +62,7 @@ pub fn (mut ls LanguageServer) initialize(params lsp.InitializeParams, mut wr Re
 			}
 			document_symbol_provider: true
 			workspace_symbol_provider: true
+			implementation_provider: true
 		}
 		server_info: lsp.ServerInfo{
 			name: 'spavn-analyzer'
@@ -111,12 +112,12 @@ pub fn (mut ls LanguageServer) initialized(mut wr ResponseWriter) {
 	// Used in tests to avoid indexing the standard library
 	need_save_index := 'no-index-save' !in ls.initialization_options
 
-	if need_save_index {
-		ls.analyzer_instance.indexer.save_indexes() or {
-			loglib.with_fields({
-				'err': err.str()
-			}).error('Failed to save index')
-		}
+	ls.analyzer_instance.indexer.set_no_save(!need_save_index)
+
+	ls.analyzer_instance.indexer.save_indexes() or {
+		loglib.with_fields({
+			'err': err.str()
+		}).error('Failed to save index')
 	}
 
 	ls.analyzer_instance.setup_stub_indexes()

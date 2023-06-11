@@ -2,12 +2,14 @@ module lsp
 
 pub struct CodeLensOptions {
 pub mut:
-	resolve_provider bool [json: resolveProvider]
+	resolve_provider   bool [json: 'resolveProvider'; omitempty]
+	work_done_progress bool [json: 'workDoneProgress'; omitempty]
 }
 
 // method: ‘textDocument/codeLens’
 // response: []CodeLens | none
 pub struct CodeLensParams {
+	WorkDoneProgressParams
 pub:
 	text_document TextDocumentIdentifier [json: textDocument]
 }

@@ -14,6 +14,16 @@ pub fn generate_progress_token() ProgressToken {
 	return md5.hexhash(value.str())
 }
 
+pub struct WorkDoneProgressParams {
+pub:
+	work_done_token ProgressToken [json: 'workDoneToken'; omitempty]
+}
+
+pub struct PartialResultParams {
+pub:
+	partial_result_token ProgressToken [json: 'partialResultToken'; omitempty]
+}
+
 pub struct WorkDoneProgressCreateParams {
 pub:
 	token ProgressToken

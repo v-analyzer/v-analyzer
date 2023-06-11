@@ -2,6 +2,7 @@ module testing
 
 import analyzer.psi
 import time
+import loglib
 
 pub struct Tester {
 mut:
@@ -17,6 +18,11 @@ pub fn (mut t Tester) create_or_reuse_fixture() &Fixture {
 	mut fixture := new_fixture()
 	fixture.initialize() or {
 		println('Cannot initialize fixture: ${err}')
+		return fixture
+	}
+
+	fixture.initialized() or {
+		println('Cannot run initialized request: ${err}')
 		return fixture
 	}
 
@@ -53,6 +59,8 @@ pub fn (mut t Tester) stats() {
 }
 
 pub fn (mut t Tester) test(name string, test_func fn (mut test Test, mut fixture Fixture) !) {
+	loglib.set_level(.warn) // we don't want to see info messages in tests
+
 	watch := time.new_stopwatch(auto_start: true)
 	mut fixture := t.create_or_reuse_fixture()
 

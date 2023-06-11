@@ -1,7 +1,7 @@
-import { window, ProgressLocation } from 'vscode';
-import { runVCommand, runVCommandInBackground, runVCommandCallback } from './exec';
-import { activateSpavnAnalyzer, deactivateSpavnAnalyzer } from './langserver';
-import { log, vOutputChannel, spavnAnalyzerOutputChannel } from './debug';
+import vscode, {Position, ProgressLocation, window} from 'vscode';
+import {runVCommand, runVCommandCallback, runVCommandInBackground} from './exec';
+import {activateSpavnAnalyzer, deactivateSpavnAnalyzer} from './langserver';
+import {log, spavnAnalyzerOutputChannel, vOutputChannel} from './debug';
 import * as path from "path";
 
 /**
@@ -58,7 +58,7 @@ export function restartSpavnAnalyzer(): void {
 		cancellable: false,
 		title: 'spavn-analyzer'
 	}, async (progress) => {
-		progress.report({ message: 'Restarting' });
+		progress.report({message: 'Restarting'});
 		deactivateSpavnAnalyzer();
 		spavnAnalyzerOutputChannel.clear();
 		await activateSpavnAnalyzer();
@@ -74,4 +74,26 @@ export function restartSpavnAnalyzer(): void {
 			);
 		}
 	);
+}
+
+export async function goToImplementations(line: any, column: any): Promise<void> {
+	const position = new Position(line, column);
+	log(position.line.toString());
+	log(position.character.toString());
+
+	const document = window.activeTextEditor.document;
+	// const location = Location.create(document.uri.toString(), Range.create(position, position));
+
+	const editor = vscode.window.activeTextEditor;
+	// const currentPosition = editor.selection.start
+
+	const newSelection = new vscode.Selection(position, position);
+	editor.selection = newSelection;
+
+	// await vscode.commands.executeCommand("cursorMove",
+	// 	{
+	// 		to: "up", value: 2
+	// 	});
+
+	vscode.commands.executeCommand('editor.action.goToImplementation', document.uri, position)
 }

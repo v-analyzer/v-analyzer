@@ -108,6 +108,27 @@ pub fn (mut t Test) assert_no_completion_with_label(items []lsp.CompletionItem, 
 	}
 }
 
+pub fn (mut t Test) assert_has_implementation_with_name(items []lsp.Location, name string) ! {
+	for item in items {
+		link_text := t.fixture.text_at_range(item.range)
+		if link_text == name {
+			return
+		}
+	}
+
+	t.fail('expected implementation "${name}" not found')
+}
+
+pub fn (mut t Test) assert_no_implementation_with_name(items []lsp.Location, name string) ! {
+	for item in items {
+		link_text := t.fixture.text_at_range(item.range)
+		if link_text == name {
+			t.fail('unexpected implementation "${name}" found')
+			return error('unexpected implementation "${name}" found')
+		}
+	}
+}
+
 pub fn (mut t Test) assert_uri(left lsp.DocumentUri, right lsp.DocumentUri) {
 	if left.compare(right) != 0 {
 		t.fail('expected ${left}, but got ${right}')

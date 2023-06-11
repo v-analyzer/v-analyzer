@@ -616,3 +616,14 @@ pub fn find_struct(fqn string) ?&StructDeclaration {
 	}
 	return none
 }
+
+pub fn find_alias(fqn string) ?&TypeAliasDeclaration {
+	found := stubs_index.get_elements_by_name(.type_aliases, fqn)
+	if found.len != 0 {
+		first := found.first()
+		if first is TypeAliasDeclaration {
+			return first
+		}
+	}
+	return none
+}

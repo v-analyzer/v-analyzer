@@ -39,6 +39,7 @@ pub mut:
 	index      Index     // index itself
 	cache_file string    // path to the file where the index is stored
 	need_save  bool      // whether the index needs to be saved
+	no_save    bool      // for tests
 }
 
 // new_indexing_root creates a new indexing root with the given root and kind.
@@ -87,7 +88,7 @@ pub fn (mut i IndexingRoot) load_index() ! {
 }
 
 pub fn (mut i IndexingRoot) save_index() ! {
-	if !i.need_save {
+	if !i.need_save || i.no_save {
 		return
 	}
 	i.need_save = false

@@ -35,3 +35,11 @@ pub:
 	// The text document.
 	text_document TextDocumentIdentifier [json: 'textDocument']
 }
+
+pub struct SemanticTokensRangeParams {
+pub:
+	// The text document.
+	text_document TextDocumentIdentifier [json: 'textDocument']
+	// The range the semantic tokens are requested for.
+	range Range [omitempty]
+}
