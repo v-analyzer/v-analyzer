@@ -268,7 +268,17 @@ pub fn (mut ls LanguageServer) handle_jsonrpc(request &jsonrpc.Request, mut rw j
 				params := json.decode(lsp.SemanticTokensParams, request.params) or {
 					return w.wrap_error(err)
 				}
-				w.write(ls.semantic_tokens_full(params, mut rw) or { return w.wrap_error(err) })
+				w.write(ls.semantic_tokens(params.text_document, lsp.Range{}, mut rw) or {
+					return w.wrap_error(err)
+				})
+			}
+			'textDocument/semanticTokens/range' {
+				params := json.decode(lsp.SemanticTokensRangeParams, request.params) or {
+					return w.wrap_error(err)
+				}
+				w.write(ls.semantic_tokens(params.text_document, params.range, mut rw) or {
+					return w.wrap_error(err)
+				})
 			}
 			'$/cancelRequest' {
 				loglib.info('got $/cancelRequest request')

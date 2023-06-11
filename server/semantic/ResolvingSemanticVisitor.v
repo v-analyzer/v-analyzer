@@ -1,13 +1,35 @@
 module semantic
 
+import lsp
+import analyzer
 import analyzer.psi
 
-pub struct ResolveSemanticVisitor {}
+pub struct ResolveSemanticVisitor {
+	start      u32  // start offset when request range is specified
+	end        u32  // end offset when request range is specified
+	with_range bool // whether request range is specified
+}
+
+pub fn new_resolve_semantic_visitor(range lsp.Range, containing_file &psi.PsiFileImpl) ResolveSemanticVisitor {
+	start := analyzer.compute_offset(containing_file.source_text, range.start.line, range.start.character)
+	end := analyzer.compute_offset(containing_file.source_text, range.end.line, range.end.character)
+
+	return ResolveSemanticVisitor{
+		with_range: !range.is_empty()
+		start: u32(start)
+		end: u32(end)
+	}
+}
 
 pub fn (v ResolveSemanticVisitor) accept(root psi.PsiElement) []SemanticToken {
 	mut result := []SemanticToken{cap: 400}
 
 	for node in psi.new_psi_tree_walker(root) {
+		range := node.node.range()
+		if v.with_range && (range.end_byte <= v.start || range.start_byte >= v.end) {
+			continue
+		}
+
 		v.highlight_node(node, root, mut result)
 	}
 

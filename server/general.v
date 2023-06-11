@@ -37,7 +37,7 @@ pub fn (mut ls LanguageServer) initialize(params lsp.InitializeParams, mut wr Re
 			hover_provider: true
 			definition_provider: true
 			type_definition_provider: true
-			references_provider: true
+			references_provider: lsp.ReferencesOptions{}
 			document_formatting_provider: true
 			completion_provider: lsp.CompletionOptions{
 				resolve_provider: false
@@ -54,7 +54,7 @@ pub fn (mut ls LanguageServer) initialize(params lsp.InitializeParams, mut wr Re
 					token_types: semantic.semantic_types
 					token_modifiers: semantic.semantic_modifiers
 				}
-				range: false
+				range: true
 				full: true
 			}
 			rename_provider: lsp.RenameOptions{

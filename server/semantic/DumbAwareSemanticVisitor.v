@@ -1,16 +1,38 @@
 module semantic
 
 import analyzer.psi
+import analyzer
+import lsp
 
 // DumbAwareSemanticVisitor is a highly optimized visitor that collects information about
 // semantic tokens in a file based only on their syntax tree.
 // This annotator must not call resolve or use indexes.
-pub struct DumbAwareSemanticVisitor {}
+pub struct DumbAwareSemanticVisitor {
+	start      u32  // start offset when request range is specified
+	end        u32  // end offset when request range is specified
+	with_range bool // whether request range is specified
+}
+
+pub fn new_dumb_aware_semantic_visitor(range lsp.Range, containing_file &psi.PsiFileImpl) DumbAwareSemanticVisitor {
+	start := analyzer.compute_offset(containing_file.source_text, range.start.line, range.start.character)
+	end := analyzer.compute_offset(containing_file.source_text, range.end.line, range.end.character)
+
+	return DumbAwareSemanticVisitor{
+		with_range: !range.is_empty()
+		start: u32(start)
+		end: u32(end)
+	}
+}
 
 pub fn (v DumbAwareSemanticVisitor) accept(root psi.PsiElement) []SemanticToken {
 	mut result := []SemanticToken{cap: 1000}
 
 	for node in psi.new_tree_walker(root.node) {
+		range := node.range()
+		if v.with_range && (range.end_byte <= v.start || range.start_byte >= v.end) {
+			continue
+		}
+
 		v.highlight_node(node, root, mut result)
 	}
 
