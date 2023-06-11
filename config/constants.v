@@ -1,6 +1,7 @@
 module config
 
 import os
+import utils
 
 pub const (
 	// analyzer_config_name is the name of the analyzer's configuration
@@ -8,7 +9,7 @@ pub const (
 
 	// analyzer_configs_path is the path to the directory containing the
 	// root configuration files for the analyzer.
-	analyzer_configs_path       = os.expand_tilde_to_home('~/.config/spavn-analyzer')
+	analyzer_configs_path       = utils.expand_tilde_to_home('~/.config/spavn-analyzer')
 
 	// analyzer_log_file_name is the name of the log file for the analyzer.
 	analyzer_log_file_name      = 'spavn-analyzer.log'
