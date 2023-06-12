@@ -21,9 +21,6 @@ export function activate(context: ExtensionContext): void {
 		context.subscriptions.push(disposable);
 	}
 
-	const disposable = vscode.commands.registerCommand('spavn-analyzer.goToImplementations', commands.goToImplementations);
-	context.subscriptions.push(disposable);
-
 	workspace.onDidChangeConfiguration((e: ConfigurationChangeEvent) => {
 		if (!e.affectsConfiguration('spavn-analyzer')) return;
 

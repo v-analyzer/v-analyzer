@@ -1,4 +1,4 @@
-import vscode, {Position, ProgressLocation, window} from 'vscode';
+import {ProgressLocation, window} from 'vscode';
 import {runVCommand, runVCommandCallback, runVCommandInBackground} from './exec';
 import {activateSpavnAnalyzer, deactivateSpavnAnalyzer} from './langserver';
 import {log, spavnAnalyzerOutputChannel, vOutputChannel} from './debug';
@@ -74,26 +74,4 @@ export function restartSpavnAnalyzer(): void {
 			);
 		}
 	);
-}
-
-export async function goToImplementations(line: any, column: any): Promise<void> {
-	const position = new Position(line, column);
-	log(position.line.toString());
-	log(position.character.toString());
-
-	const document = window.activeTextEditor.document;
-	// const location = Location.create(document.uri.toString(), Range.create(position, position));
-
-	const editor = vscode.window.activeTextEditor;
-	// const currentPosition = editor.selection.start
-
-	const newSelection = new vscode.Selection(position, position);
-	editor.selection = newSelection;
-
-	// await vscode.commands.executeCommand("cursorMove",
-	// 	{
-	// 		to: "up", value: 2
-	// 	});
-
-	vscode.commands.executeCommand('editor.action.goToImplementation', document.uri, position)
 }

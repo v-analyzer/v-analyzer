@@ -162,11 +162,6 @@
 				"command": "spavn-analyzer.restart",
 				"title": "Restart",
 				"category": "spavn-analyzer"
-			},
-			{
-				"command": "spavn-analyzer.goToImplementations",
-				"title": "Go To Implementations",
-				"category": "spavn-analyzer"
 			}
 		],
 		"menus": {
