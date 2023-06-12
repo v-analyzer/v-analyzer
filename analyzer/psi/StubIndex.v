@@ -8,8 +8,8 @@ import loglib
 __global stubs_index = StubIndex{}
 
 const (
-	count_index_keys               = 11 // StubIndexKey._end (TODO: replace after https://github.com/vlang/v/issues/18310)
-	count_stub_index_location_keys = 5 // StubIndexLocationKind._end
+	count_index_keys               = 11 // StubIndexKey
+	count_stub_index_location_keys = 5 // StubIndexLocationKind
 )
 
 // StubIndexLocationKind describes the type of index.
@@ -19,7 +19,6 @@ pub enum StubIndexLocationKind {
 	modules
 	stubs
 	workspace
-	_end
 }
 
 pub struct StubIndex {
