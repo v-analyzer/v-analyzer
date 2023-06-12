@@ -3,8 +3,14 @@ module psi
 import analyzer.psi.types
 
 pub fn own_methods_list(typ types.Type) []PsiElement {
-	name := typ.qualified_name()
-	methods := stubs_index.get_elements_by_name(.methods, name)
+	module_name := typ.module_name()
+	name := typ.name()
+	if module_name == '' || name == '' {
+		return []
+	}
+
+	key := '${module_name}.${name}'
+	methods := stubs_index.get_elements_by_name(.methods, key)
 	return methods
 }
 
@@ -27,6 +33,8 @@ pub fn methods_list(typ types.Type) []PsiElement {
 
 	unwrapped := types.unwrap_alias_type(types.unwrap_pointer_type(typ))
 	if unwrapped.qualified_name() != typ.qualified_name() {
+		// if after unwrapping alias type we get another type, we need
+		// to collect their methods as well.
 		result << own_methods_list(unwrapped)
 	}
 

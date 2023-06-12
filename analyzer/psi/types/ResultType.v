@@ -34,6 +34,10 @@ pub fn (s &ResultType) readable_name() string {
 	return '!${s.inner.readable_name()}'
 }
 
+pub fn (s &ResultType) module_name() string {
+	return s.inner.module_name()
+}
+
 pub fn (s &ResultType) accept(mut visitor TypeVisitor) {
 	if !visitor.enter(s) {
 		return

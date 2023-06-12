@@ -15,6 +15,12 @@ pub fn (f &FieldDeclaration) is_embedded_definition() bool {
 }
 
 pub fn (f &FieldDeclaration) is_public() bool {
+	if owner := f.owner() {
+		if owner is InterfaceDeclaration {
+			return true // all interface fields are public by default
+		}
+	}
+
 	_, is_pub := f.is_mutable_public()
 	return is_pub
 }

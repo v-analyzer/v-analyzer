@@ -358,7 +358,7 @@ pub fn (_ &StubbedElementType) get_receiver_type(psi FunctionOrMethodDeclaration
 	return text
 }
 
-pub fn (s &StubbedElementType) create_stub(psi PsiElement, parent_stub &StubElement) ?&StubBase {
+pub fn (s &StubbedElementType) create_stub(psi PsiElement, parent_stub &StubElement, module_fqn string) ?&StubBase {
 	if psi is FunctionOrMethodDeclaration {
 		text_range := if identifier := psi.identifier() {
 			identifier.text_range()
@@ -367,7 +367,13 @@ pub fn (s &StubbedElementType) create_stub(psi PsiElement, parent_stub &StubElem
 		}
 		comment := psi.doc_comment()
 
-		receiver_type := s.get_receiver_type(psi)
+		mut receiver_type := s.get_receiver_type(psi)
+		if receiver_type != '' {
+			if module_fqn != '' {
+				receiver_type = module_fqn + '.' + receiver_type
+			}
+		}
+
 		is_method := receiver_type != ''
 		stub_type := if is_method {
 			StubType.method_declaration

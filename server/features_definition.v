@@ -55,7 +55,7 @@ pub fn new_resolve_result(containing_file &psi.PsiFileImpl, element psi.PsiEleme
 fn (r &ResolveResult) to_location_link(origin_selection_range psi.TextRange) lsp.LocationLink {
 	range := text_range_to_lsp_range(r.range)
 	return lsp.LocationLink{
-		target_uri: 'file://' + r.filepath
+		target_uri: lsp.document_uri_from_path(r.filepath)
 		origin_selection_range: text_range_to_lsp_range(origin_selection_range)
 		target_range: range
 		target_selection_range: range

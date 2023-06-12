@@ -18,6 +18,10 @@ pub fn (mut ls LanguageServer) document_symbol(params lsp.DocumentSymbolParams, 
 fn document_symbol_presentation(element psi.PsiElement) ?lsp.DocumentSymbol {
 	full_text_range := element.text_range()
 	if element is psi.PsiNamedElement {
+		if element.name() == '' {
+			return none
+		}
+
 		text_range := element.identifier_text_range()
 		children := symbol_children(element)
 		return lsp.DocumentSymbol{

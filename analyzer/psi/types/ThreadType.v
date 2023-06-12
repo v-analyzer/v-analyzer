@@ -22,6 +22,10 @@ pub fn (s &ThreadType) readable_name() string {
 	return 'thread ${s.inner.readable_name()}'
 }
 
+pub fn (s &ThreadType) module_name() string {
+	return s.inner.module_name()
+}
+
 pub fn (s &ThreadType) accept(mut visitor TypeVisitor) {
 	if !visitor.enter(s) {
 		return

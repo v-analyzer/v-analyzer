@@ -2,13 +2,14 @@ module index
 
 import time
 import os
-import analyzer.parser
 import sync
 import runtime
-import crypto.md5
-import analyzer.psi
 import math
 import loglib
+import lsp
+import crypto.md5
+import analyzer.psi
+import analyzer.parser
 
 // BuiltIndexStatus describes the status of the built index.
 pub enum BuiltIndexStatus {
@@ -173,14 +174,14 @@ pub fn (mut i IndexingRoot) index_file(path string, content string) !FileIndex {
 		kind: i.kind
 		file_last_modified: last_modified
 		module_name: psi_file.module_name() or { '' }
-		module_fqn: i.module_qualified_name(psi_file)
+		module_fqn: psi.module_qualified_name(psi_file, i.root)
 		sink: &psi.StubIndexSink{
 			kind: unsafe { psi.StubIndexLocationKind(u8(i.kind)) }
 			stub_list: unsafe { nil }
 		}
 		stub_list: unsafe { nil }
 	}
-	stub_tree := build_stub_tree(psi_file)
+	stub_tree := build_stub_tree(psi_file, i.root)
 
 	stub_type := psi.StubbedElementType{}
 	mut stub_list := stub_tree.root.stub_list
@@ -201,58 +202,6 @@ pub fn (mut i IndexingRoot) index_file(path string, content string) !FileIndex {
 	return cache
 }
 
-pub fn (mut i IndexingRoot) module_qualified_name(file &psi.PsiFileImpl) string {
-	module_name := file.module_name() or { '' }
-	if module_name in ['main', 'builtin'] {
-		return module_name
-	}
-	if module_name == '' && file.is_test_file() {
-		return ''
-	}
-
-	mut root_dirs := [i.root]
-
-	src_dir := os.join_path(i.root, 'src')
-	if os.exists(src_dir) {
-		root_dirs << src_dir
-	}
-
-	containing_dir := os.dir(file.path)
-
-	mut module_names := []string{}
-
-	mut dir := containing_dir
-	for dir != '' && dir !in root_dirs {
-		module_names << os.file_name(dir)
-		dir = os.dir(dir)
-	}
-
-	module_names.reverse_in_place()
-
-	if module_names.len == 0 {
-		return module_name
-	}
-
-	if module_names.first() == 'builtin' {
-		module_names = module_names[1..]
-	}
-
-	if module_names.len != 0 && module_names.last() == module_name {
-		module_names = module_names[..module_names.len - 1]
-	}
-
-	qualifier := module_names.join('.')
-	if qualifier == '' {
-		return module_name
-	}
-
-	if module_name == '' {
-		return qualifier
-	}
-
-	return qualifier + '.' + module_name
-}
-
 pub fn (mut i IndexingRoot) spawn_indexing_workers(cache_chan chan FileIndex, file_chan chan string) {
 	mut wg := sync.new_waitgroup()
 	cpus := runtime.nr_cpus()
@@ -264,14 +213,14 @@ pub fn (mut i IndexingRoot) spawn_indexing_workers(cache_chan chan FileIndex, fi
 				filepath := <-file_chan or { break }
 				content := os.read_file(filepath) or {
 					loglib.with_fields({
-						'uri':   'file://${filepath}'
+						'uri':   lsp.document_uri_from_path(filepath).str()
 						'error': err.str()
 					}).error('Error reading file for index')
 					continue
 				}
 				cache_chan <- i.index_file(filepath, content) or {
 					loglib.with_fields({
-						'uri':   'file://${filepath}'
+						'uri':   lsp.document_uri_from_path(filepath).str()
 						'error': err.str()
 					}).error('Error indexing file')
 				}
@@ -301,7 +250,7 @@ pub fn (mut i IndexingRoot) ensure_indexed() {
 			last_modified := os.file_last_mod_unix(filepath)
 			if last_modified > datum.file_last_modified {
 				loglib.with_fields({
-					'uri': 'file://${filepath}'
+					'uri': lsp.document_uri_from_path(filepath).str()
 				}).info('File was modified, reindexing')
 				i.index.per_file.data.delete(filepath)
 				reindex_files_chan <- filepath
@@ -338,7 +287,7 @@ pub fn (mut i IndexingRoot) mark_as_dirty(filepath string, new_content string) !
 	}
 
 	loglib.with_fields({
-		'uri': 'file://${filepath}'
+		'uri': lsp.document_uri_from_path(filepath).str()
 	}).info('Marking document as dirty')
 	i.index.per_file.data.delete(filepath)
 	res := i.index_file(filepath, new_content) or {
@@ -350,13 +299,13 @@ pub fn (mut i IndexingRoot) mark_as_dirty(filepath string, new_content string) !
 	i.save_index() or { return err }
 
 	loglib.with_fields({
-		'uri': 'file://${filepath}'
+		'uri': lsp.document_uri_from_path(filepath).str()
 	}).info('Finished reindexing document')
 }
 
 pub fn (mut i IndexingRoot) add_file(filepath string, content string) !FileIndex {
 	loglib.with_fields({
-		'uri': 'file://${filepath}'
+		'uri': lsp.document_uri_from_path(filepath).str()
 	}).info('Adding new document')
 
 	res := i.index_file(filepath, content) or {
@@ -368,7 +317,7 @@ pub fn (mut i IndexingRoot) add_file(filepath string, content string) !FileIndex
 	i.save_index() or { return err }
 
 	loglib.with_fields({
-		'uri': 'file://${filepath}'
+		'uri': lsp.document_uri_from_path(filepath).str()
 	}).info('Finished indexing added document')
 
 	if isnil(res.sink) {

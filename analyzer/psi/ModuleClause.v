@@ -1,5 +1,7 @@
 module psi
 
+import os
+
 pub struct ModuleClause {
 	PsiElementImpl
 }
@@ -34,4 +36,56 @@ pub fn (n ModuleClause) name() string {
 
 	identifier := n.identifier() or { return '' }
 	return identifier.get_text()
+}
+
+pub fn module_qualified_name(file &PsiFileImpl, indexing_root string) string {
+	module_name := file.module_name() or { '' }
+	if module_name in ['main', 'builtin'] {
+		return module_name
+	}
+	if module_name == '' && file.is_test_file() {
+		return ''
+	}
+
+	mut root_dirs := [indexing_root]
+
+	src_dir := os.join_path(indexing_root, 'src')
+	if os.exists(src_dir) {
+		root_dirs << src_dir
+	}
+
+	containing_dir := os.dir(file.path)
+
+	mut module_names := []string{}
+
+	mut dir := containing_dir
+	for dir != '' && dir !in root_dirs {
+		module_names << os.file_name(dir)
+		dir = os.dir(dir)
+	}
+
+	module_names.reverse_in_place()
+
+	if module_names.len == 0 {
+		return module_name
+	}
+
+	if module_names.first() == 'builtin' {
+		module_names = module_names[1..]
+	}
+
+	if module_names.len != 0 && module_names.last() == module_name {
+		module_names = module_names[..module_names.len - 1]
+	}
+
+	qualifier := module_names.join('.')
+	if qualifier == '' {
+		return module_name
+	}
+
+	if module_name == '' {
+		return qualifier
+	}
+
+	return qualifier + '.' + module_name
 }

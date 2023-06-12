@@ -1,15 +1,17 @@
 module types
 
 pub struct MapType {
+	BaseType
 pub:
 	key   Type
 	value Type
 }
 
-pub fn new_map_type(key Type, value Type) &MapType {
+pub fn new_map_type(module_name string, key Type, value Type) &MapType {
 	return &MapType{
 		key: key
 		value: value
+		module_name: module_name
 	}
 }
 

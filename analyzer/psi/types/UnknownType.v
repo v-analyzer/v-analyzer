@@ -22,6 +22,10 @@ fn (_ &UnknownType) readable_name() string {
 	return 'unknown'
 }
 
+fn (_ &UnknownType) module_name() string {
+	return ''
+}
+
 pub fn (s &UnknownType) accept(mut visitor TypeVisitor) {
 	if !visitor.enter(s) {
 		return

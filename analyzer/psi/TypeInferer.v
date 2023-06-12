@@ -91,6 +91,11 @@ pub fn (t &TypeInferer) infer_type(elem ?PsiElement) types.Type {
 		return t.infer_type(expr)
 	}
 
+	if element.node.type_name == .receive_expression {
+		operand := element.find_child_by_name('operand') or { return types.unknown_type }
+		return types.unwrap_channel_type(t.infer_type(operand))
+	}
+
 	if element is IndexExpression {
 		expr := element.expression() or { return types.unknown_type }
 		expr_type := t.infer_type(expr)
@@ -187,9 +192,10 @@ pub fn (t &TypeInferer) infer_type(elem ?PsiElement) types.Type {
 	}
 
 	if element is MapInitExpression {
+		module_fqn := element.containing_file.module_fqn()
 		key_values := element.key_values()
 		if key_values.len == 0 {
-			return types.new_map_type(types.unknown_type, types.unknown_type)
+			return types.new_map_type(module_fqn, types.unknown_type, types.unknown_type)
 		}
 
 		first_key_value := key_values.first()
@@ -198,10 +204,10 @@ pub fn (t &TypeInferer) infer_type(elem ?PsiElement) types.Type {
 			value := first_key_value.value() or { return types.unknown_type }
 			key_type := t.infer_type(key)
 			value_type := t.infer_type(value)
-			return types.new_map_type(key_type, value_type)
+			return types.new_map_type(module_fqn, key_type, value_type)
 		}
 
-		return types.new_map_type(types.unknown_type, types.unknown_type)
+		return types.new_map_type(module_fqn, types.unknown_type, types.unknown_type)
 	}
 
 	if element is CallExpression {
@@ -323,7 +329,8 @@ pub fn (t &TypeInferer) process_signature(signature Signature) types.Type {
 	result := signature.result()
 	mut visited := map[string]types.Type{}
 	result_type := t.convert_type(result, mut visited)
-	return types.new_function_type(param_types, result_type, result == none)
+	return types.new_function_type(signature.containing_file.module_fqn(), param_types,
+		result_type, result == none)
 }
 
 pub fn (t &TypeInferer) process_range_clause(element PsiElement, range PsiElement) types.Type {
@@ -465,7 +472,7 @@ pub fn (t &TypeInferer) infer_index_type(typ types.Type) types.Type {
 	if typ is types.MapType {
 		return typ.value
 	}
-	if typ is types.PrimitiveType {
+	if typ is types.StructType {
 		if typ.name == 'string' {
 			return types.new_primitive_type('u8')
 		}
@@ -545,14 +552,15 @@ pub fn (t &TypeInferer) convert_type_inner(element PsiElement, mut visited map[s
 	}
 
 	if element.element_type() == .map_type {
+		module_fqn := element.containing_file.module_fqn()
 		types_inner := element.find_children_by_type_or_stub(.plain_type)
 		if types_inner.len != 2 {
-			return types.new_map_type(types.unknown_type, types.unknown_type)
+			return types.new_map_type(module_fqn, types.unknown_type, types.unknown_type)
 		}
 
 		key := types_inner[0]
 		value := types_inner[1]
-		return types.new_map_type(t.convert_type(key, mut visited), t.convert_type(value, mut
+		return types.new_map_type(module_fqn, t.convert_type(key, mut visited), t.convert_type(value, mut
 			visited))
 	}
 
@@ -641,7 +649,7 @@ fn (t &TypeInferer) infer_type_reference_type(element TypeReferenceExpression, m
 	}
 
 	if resolved is GenericParameter {
-		return types.new_generic_type(element.name())
+		return types.new_generic_type(element.name(), element.containing_file.module_fqn())
 	}
 
 	return types.unknown_type

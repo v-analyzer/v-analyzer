@@ -23,6 +23,10 @@ pub fn (s &ChannelType) readable_name() string {
 	return 'chan ${s.inner.readable_name()}'
 }
 
+pub fn (s &ChannelType) module_name() string {
+	return s.inner.module_name()
+}
+
 pub fn (s &ChannelType) accept(mut visitor TypeVisitor) {
 	if !visitor.enter(s) {
 		return

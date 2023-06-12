@@ -11,6 +11,9 @@ import time
 import config
 import lsp.log
 
+// default_tcp_port is default TCP port that the analyzer uses to connect to the socket
+// when the --socket flag is passed at startup.
+// See also the `--port` flag to specify a custom port.
 const default_tcp_port = 5007
 
 fn run(cmd cli.Command) ! {

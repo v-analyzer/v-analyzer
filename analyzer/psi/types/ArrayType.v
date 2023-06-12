@@ -23,6 +23,10 @@ pub fn (s &ArrayType) readable_name() string {
 	return '[]${s.inner.readable_name()}'
 }
 
+pub fn (s &ArrayType) module_name() string {
+	return s.inner.module_name()
+}
+
 pub fn (s &ArrayType) accept(mut visitor TypeVisitor) {
 	if !visitor.enter(s) {
 		return

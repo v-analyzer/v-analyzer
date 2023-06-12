@@ -194,9 +194,9 @@ pub fn (s &StubIndex) get_all_declarations_from_module(module_fqn string, only_t
 	mut elements := []PsiElement{cap: files.len * 10}
 	for sink in files {
 		$for key in StubIndexKey.values {
-			if key.value !in [.methods, .attributes] {
-				if !only_types || (only_types
-					&& key.value !in [.functions, .constants, .global_variables, .methods_fingerprint, .fields_fingerprint]) {
+			if key.value !in [.methods, .attributes, .methods_fingerprint, .fields_fingerprint] {
+				if !only_types
+					|| (only_types && key.value !in [.functions, .constants, .global_variables]) {
 					elements << s.get_all_elements_from_sink_by_key(key.value, sink)
 				}
 			}

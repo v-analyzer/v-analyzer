@@ -4,10 +4,10 @@ pub struct GenericType {
 	BaseNamedType
 }
 
-pub fn new_generic_type(name string) &GenericType {
+pub fn new_generic_type(name string, module_name string) &GenericType {
 	return &GenericType{
 		name: name
-		module_name: ''
+		module_name: module_name
 	}
 }
 

@@ -23,28 +23,35 @@ pub fn (mut v InlayHintsVisitor) process_node(node psi.AstNode, containing_file 
 		start_point := operator.start_point()
 		end_point := operator.end_point()
 
-		v.result << lsp.InlayHint{
-			position: lsp.Position{
-				line: int(start_point.row)
-				character: int(start_point.column)
+		need_left := if _ := node.child_by_field_name('start') { true } else { false }
+		need_right := if _ := node.child_by_field_name('end') { true } else { false }
+
+		if need_left {
+			v.result << lsp.InlayHint{
+				position: lsp.Position{
+					line: int(start_point.row)
+					character: int(start_point.column)
+				}
+				label: '≤'
+				kind: .type_
 			}
-			label: '≤'
-			kind: .type_
 		}
-		v.result << lsp.InlayHint{
-			position: lsp.Position{
-				line: int(end_point.row)
-				character: int(end_point.column)
+		if need_right {
+			v.result << lsp.InlayHint{
+				position: lsp.Position{
+					line: int(end_point.row)
+					character: int(end_point.column)
+				}
+				label: '<'
+				kind: .type_
 			}
-			label: '<'
-			kind: .type_
 		}
 		return
 	}
 
 	if v.cfg.enable_type_hints {
 		def := psi.node_to_var_definition(node, containing_file, none)
-		if !isnil(def) {
+		if !isnil(def) && def.name() != '_' {
 			typ := def.get_type()
 			range := def.text_range()
 
@@ -79,7 +86,7 @@ pub fn (mut v InlayHintsVisitor) handle_implicit_error_variable(block psi.AstNod
 			line: int(start_point.row)
 			character: int(start_point.column + 1)
 		}
-		label: 'err →'
+		label: ' err →'
 		kind: .parameter
 	}
 }

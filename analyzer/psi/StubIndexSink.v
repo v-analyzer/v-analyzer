@@ -13,7 +13,7 @@ pub mut:
 
 fn (mut s StubIndexSink) occurrence(key StubIndexKey, value string) {
 	resulting_value := if s.module_name != ''
-		&& key !in [.global_variables, .methods_fingerprint, .fields_fingerprint] {
+		&& key !in [.global_variables, .methods_fingerprint, .fields_fingerprint, .methods] {
 		s.module_name + '.' + value
 	} else {
 		value

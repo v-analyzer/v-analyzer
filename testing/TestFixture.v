@@ -16,7 +16,7 @@ struct TestFile {
 }
 
 pub fn (t TestFile) uri() lsp.DocumentUri {
-	return 'file://${t.path}'
+	return lsp.document_uri_from_path(filepath)
 }
 
 [noinit]
@@ -64,7 +64,7 @@ pub fn (mut t Fixture) initialize() !lsp.InitializeResult {
 			name: 'Testing'
 			version: '0.0.1'
 		}
-		root_uri: 'file://${testing.temp_path}'
+		root_uri: lsp.document_uri_from_path(testing.temp_path)
 		root_path: testing.temp_path
 		initialization_options: 'no-stdlib no-index-save'
 		capabilities: lsp.ClientCapabilities{}
@@ -124,7 +124,7 @@ fn (mut t Fixture) send_open_current_file_request() ! {
 	t.test_client.send[lsp.DidOpenTextDocumentParams, jsonrpc.Null]('textDocument/didOpen',
 		lsp.DidOpenTextDocumentParams{
 		text_document: lsp.TextDocumentItem{
-			uri: 'file://${t.current_file.path}'
+			uri: lsp.document_uri_from_path(t.current_file.path)
 			language_id: 'v'
 			version: 1
 			text: t.current_file.content.join('\n')
@@ -140,7 +140,7 @@ pub fn (mut t Fixture) definition(pos lsp.Position) []lsp.LocationLink {
 	links := t.test_client.send[lsp.TextDocumentPositionParams, []lsp.LocationLink]('textDocument/definition',
 		lsp.TextDocumentPositionParams{
 		text_document: lsp.TextDocumentIdentifier{
-			uri: 'file://${t.current_file.path}'
+			uri: lsp.document_uri_from_path(t.current_file.path)
 		}
 		position: pos
 	}) or { []lsp.LocationLink{} }
@@ -156,7 +156,7 @@ pub fn (mut t Fixture) complete(pos lsp.Position) []lsp.CompletionItem {
 	items := t.test_client.send[lsp.CompletionParams, []lsp.CompletionItem]('textDocument/completion',
 		lsp.CompletionParams{
 		text_document: lsp.TextDocumentIdentifier{
-			uri: 'file://${t.current_file.path}'
+			uri: lsp.document_uri_from_path(t.current_file.path)
 		}
 		position: pos
 		context: lsp.CompletionContext{
@@ -171,7 +171,7 @@ pub fn (mut t Fixture) compute_inlay_hints() []lsp.InlayHint {
 	hints := t.test_client.send[lsp.InlayHintParams, []lsp.InlayHint]('textDocument/inlayHint',
 		lsp.InlayHintParams{
 		text_document: lsp.TextDocumentIdentifier{
-			uri: 'file://${t.current_file.path}'
+			uri: lsp.document_uri_from_path(t.current_file.path)
 		}
 	}) or { []lsp.InlayHint{} }
 
@@ -182,7 +182,7 @@ pub fn (mut t Fixture) compute_semantic_tokens() lsp.SemanticTokens {
 	tokens := t.test_client.send[lsp.SemanticTokensParams, lsp.SemanticTokens]('textDocument/semanticTokens/full',
 		lsp.SemanticTokensParams{
 		text_document: lsp.TextDocumentIdentifier{
-			uri: 'file://${t.current_file.path}'
+			uri: lsp.document_uri_from_path(t.current_file.path)
 		}
 	}) or { lsp.SemanticTokens{} }
 
@@ -197,7 +197,7 @@ pub fn (mut t Fixture) implementation(pos lsp.Position) []lsp.Location {
 	links := t.test_client.send[lsp.TextDocumentPositionParams, []lsp.Location]('textDocument/implementation',
 		lsp.TextDocumentPositionParams{
 		text_document: lsp.TextDocumentIdentifier{
-			uri: 'file://${t.current_file.path}'
+			uri: lsp.document_uri_from_path(t.current_file.path)
 		}
 		position: pos
 	}) or { []lsp.Location{} }
@@ -209,7 +209,7 @@ pub fn (mut t Fixture) close_file(path string) {
 	t.test_client.send[lsp.DidCloseTextDocumentParams, jsonrpc.Null]('textDocument/didClose',
 		lsp.DidCloseTextDocumentParams{
 		text_document: lsp.TextDocumentIdentifier{
-			uri: 'file://${path}'
+			uri: lsp.document_uri_from_path(filepath)
 		}
 	}) or {}
 }

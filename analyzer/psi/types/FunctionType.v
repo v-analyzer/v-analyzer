@@ -3,17 +3,19 @@ module types
 import strings
 
 pub struct FunctionType {
+	BaseType
 pub:
 	params    []Type
 	result    Type
 	no_result bool
 }
 
-pub fn new_function_type(params []Type, result Type, no_result bool) &FunctionType {
+pub fn new_function_type(module_name string, params []Type, result Type, no_result bool) &FunctionType {
 	return &FunctionType{
 		params: params
 		result: result
 		no_result: no_result
+		module_name: module_name
 	}
 }
 

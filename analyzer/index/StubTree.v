@@ -50,32 +50,34 @@ pub fn (tree &StubTree) get_imported_modules() []string {
 	return result
 }
 
-pub fn build_stub_tree(file &psi.PsiFileImpl) &StubTree {
+pub fn build_stub_tree(file &psi.PsiFileImpl, indexing_root string) &StubTree {
 	root := file.root()
 	stub_root := psi.new_root_stub(file.path())
+	module_fqn := psi.module_qualified_name(file, indexing_root)
 
-	build_stub_tree_for_node(root, stub_root, false)
+	build_stub_tree_for_node(root, stub_root, module_fqn, false)
 
 	return &StubTree{
 		root: stub_root
 	}
 }
 
-pub fn build_stub_tree_for_node(node psi.PsiElement, parent psi.StubBase, build_for_all_children bool) {
+pub fn build_stub_tree_for_node(node psi.PsiElement, parent psi.StubBase, module_fqn string, build_for_all_children bool) {
 	element_type := psi.StubbedElementType{}
 
 	if node is psi.StubBasedPsiElement || psi.node_is_type(node) || build_for_all_children {
-		if stub := element_type.create_stub(node as psi.PsiElement, parent) {
+		if stub := element_type.create_stub(node as psi.PsiElement, parent, module_fqn) {
 			is_qualified_type := node is psi.QualifiedType
 			for child in (node as psi.PsiElement).children() {
-				build_stub_tree_for_node(child, stub, build_for_all_children || is_qualified_type)
+				build_stub_tree_for_node(child, stub, module_fqn, build_for_all_children
+					|| is_qualified_type)
 			}
 		}
 		return
 	}
 
 	for child in node.children() {
-		build_stub_tree_for_node(child, parent, false)
+		build_stub_tree_for_node(child, parent, module_fqn, false)
 	}
 }
 
@@ -102,7 +104,9 @@ pub fn build_stub_tree_iterative(file &psi.PsiFileImpl, mut nodes []NodeInfo) &S
 		this_parent_stub := node.parent
 
 		parent_stub := if node.node is psi.StubBasedPsiElement {
-			if stub := element_type.create_stub(node.node as psi.PsiElement, this_parent_stub) {
+			if stub := element_type.create_stub(node.node as psi.PsiElement, this_parent_stub,
+				'')
+			{
 				stub
 			} else {
 				this_parent_stub

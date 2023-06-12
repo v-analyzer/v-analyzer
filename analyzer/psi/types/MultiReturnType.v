@@ -23,6 +23,10 @@ pub fn (s &MultiReturnType) readable_name() string {
 	return '(${s.types.map(it.readable_name()).join(', ')})'
 }
 
+pub fn (s &MultiReturnType) module_name() string {
+	return ''
+}
+
 pub fn (s &MultiReturnType) accept(mut visitor TypeVisitor) {
 	if !visitor.enter(s) {
 		return

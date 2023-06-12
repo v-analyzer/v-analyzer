@@ -1,5 +1,6 @@
 module psi
 
+import lsp
 import time
 import loglib
 import tree_sitter_v as v
@@ -75,7 +76,7 @@ pub fn (p &PsiFileImpl) path() string {
 
 [inline]
 pub fn (p &PsiFileImpl) uri() string {
-	return 'file://${p.path}'
+	return lsp.document_uri_from_path(p.path)
 }
 
 [inline]

@@ -177,10 +177,16 @@ pub fn (r &SubResolver) process_type(typ types.Type, mut processor PsiScopeProce
 	}
 
 	if typ is types.ArrayType {
+		if !r.process_elements(methods_list(typ), mut processor) {
+			return false
+		}
 		return r.process_type(types.builtin_array_type, mut processor)
 	}
 
 	if typ is types.MapType {
+		if !r.process_elements(methods_list(typ), mut processor) {
+			return false
+		}
 		return r.process_type(types.builtin_map_type, mut processor)
 	}
 

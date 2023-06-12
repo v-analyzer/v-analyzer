@@ -25,6 +25,10 @@ pub fn (s &FixedArrayType) readable_name() string {
 	return '[${s.size}]${s.inner.readable_name()}'
 }
 
+pub fn (s &FixedArrayType) module_name() string {
+	return s.inner.module_name()
+}
+
 pub fn (s &FixedArrayType) accept(mut visitor TypeVisitor) {
 	if !visitor.enter(s) {
 		return

@@ -23,7 +23,7 @@ pub fn (mut ls LanguageServer) references(params lsp.ReferenceParams, mut wr Res
 
 fn elements_to_locations(elements []psi.PsiElement) []lsp.Location {
 	return elements.map(lsp.Location{
-		uri: 'file://' + it.containing_file.path()
+		uri: it.containing_file.uri()
 		range: text_range_to_lsp_range(it.text_range())
 	})
 }
