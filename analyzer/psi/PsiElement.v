@@ -34,6 +34,9 @@ pub interface PsiElement {
 	// parent_of_type returns the parent node with the specified type.
 	// If no such node exists, none is returned.
 	parent_of_type(typ v.NodeType) ?PsiElement
+	// parent_of_any_type returns the parent node with one of the specified types.
+	// If no such node exists, none is returned.
+	parent_of_any_type(types ...v.NodeType) ?PsiElement
 	// inside returns true if the node is inside a node with the specified type.
 	inside(typ v.NodeType) bool
 	// is_parent_of returns true if the passed node is a child of the given node.

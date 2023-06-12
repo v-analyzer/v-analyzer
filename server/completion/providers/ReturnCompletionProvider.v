@@ -15,7 +15,9 @@ fn (_ &ReturnCompletionProvider) is_available(ctx &completion.CompletionContext)
 fn (mut _ ReturnCompletionProvider) add_completion(ctx &completion.CompletionContext, mut result completion.CompletionResultSet) {
 	element := ctx.element
 
-	parent_function := element.parent_of_type(.function_declaration) or { return }
+	parent_function := element.parent_of_any_type(.function_declaration, .function_literal) or {
+		return
+	}
 	signature := if parent_function is psi.SignatureOwner {
 		parent_function.signature() or { return }
 	} else {
