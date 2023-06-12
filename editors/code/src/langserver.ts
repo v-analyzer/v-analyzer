@@ -1,6 +1,6 @@
 import cp from 'child_process';
 import * as net from 'net';
-import {Disposable, window, workspace} from 'vscode';
+import {window, workspace} from 'vscode';
 import {
 	CloseAction,
 	ErrorAction,
@@ -9,13 +9,12 @@ import {
 	ServerOptions,
 	StreamInfo
 } from 'vscode-languageclient/node';
-import {terminate} from 'vscode-languageclient/lib/node/processes';
 
 import {getWorkspaceConfig, getWorkspaceFolder} from './utils';
 import {log, spavnAnalyzerOutputChannel} from './debug';
+import {Message} from "vscode-languageclient";
 
 export let client: LanguageClient;
-export let clientDisposable: Disposable;
 
 let crashCount = 0;
 let spavnAnalyzerProcess: cp.ChildProcess;
@@ -101,25 +100,35 @@ export function connectSpavnAnalyzer(): void {
 		},
 		outputChannel: spavnAnalyzerOutputChannel,
 		errorHandler: {
-			closed() {
-				crashCount++;
-				if (crashCount < 5) {
-					return CloseAction.Restart;
-				}
-				return CloseAction.DoNotRestart;
-			},
-			error(err, msg, count) {
+			error: (error: Error, _: Message, count: number) => {
 				// taken from: https://github.com/golang/vscode-go/blob/HEAD/src/goLanguageServer.ts#L533-L539
 				if (count < 5) {
-					return ErrorAction.Continue;
+					return {
+						message: '', // suppresses error popups
+						action: ErrorAction.Continue
+					};
 				}
 				void window.showErrorMessage(
 					// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-					`spavn-analyzer: Error communicating with the language server: ${err}: ${msg}.`
+					`spavn-analyzer: Error communicating with the language server: ${error}: ${error}.`
 				);
 
-				return ErrorAction.Shutdown;
-			}
+				return {
+					action: ErrorAction.Shutdown
+				};
+			},
+			closed: () => {
+				crashCount++;
+				if (crashCount < 5) {
+					return {
+						message: '', // suppresses error popups
+						action: CloseAction.Restart
+					};
+				}
+				return {
+					action: CloseAction.DoNotRestart
+				};
+			},
 		},
 		markdown: {
 			isTrusted: true
@@ -133,18 +142,12 @@ export function connectSpavnAnalyzer(): void {
 		true
 	);
 
-	client.onReady()
-		.then(() => {
-			window.setStatusBarMessage('spavn-analyzer is ready.', 3000);
-		})
-		.catch(() => {
-			window.setStatusBarMessage('spavn-analyzer failed to initialize.', 3000);
-		});
-
-	// NOTE: the language client was removed in the context subscriptions
-	// because of it's error-handling behavior which causes the progress/message
-	// box to hang and produce unnecessary errors in the output/devtools log.
-	clientDisposable = client.start();
+	client.start().catch(reason => {
+		window.showWarningMessage(`spavn-analyzer failed to initialize: ${reason}`);
+		client = null;
+	}).then(() => {
+		window.setStatusBarMessage('spavn-analyzer is ready.', 3000);
+	});
 }
 
 export async function activateSpavnAnalyzer(): Promise<void> {
@@ -157,11 +160,6 @@ export async function activateSpavnAnalyzer(): Promise<void> {
 }
 
 export function deactivateSpavnAnalyzer(): void {
-	if (client) {
-		clientDisposable.dispose();
-		return;
-	}
-
 	killSpavnAnalyzerProcess();
 }
 
@@ -171,5 +169,5 @@ function killSpavnAnalyzerProcess(): void {
 	}
 
 	log('Terminating existing spavn-analyzer process.');
-	terminate(spavnAnalyzerProcess);
+	spavnAnalyzerProcess.kill("SIGKILL")
 }
