@@ -31,8 +31,13 @@ fn elements_to_text_edits(elements []psi.PsiElement, new_name string) []lsp.Text
 	mut result := []lsp.TextEdit{cap: elements.len}
 
 	for element in elements {
+		range := if element is psi.PsiNamedElement {
+			element.identifier_text_range()
+		} else {
+			element.text_range()
+		}
 		result << lsp.TextEdit{
-			range: text_range_to_lsp_range(element.text_range())
+			range: text_range_to_lsp_range(range)
 			new_text: new_name
 		}
 	}

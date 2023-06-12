@@ -5,7 +5,7 @@ module lsp
 // request: TextDocumentPositionParams
 pub struct DocumentHighlight {
 	range Range
-	kind  int
+	kind  DocumentHighlightKind
 }
 
 [json_as_number]
