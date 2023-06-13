@@ -237,6 +237,19 @@ pub fn (t &TypeInferer) infer_type(elem ?PsiElement) types.Type {
 				}
 			}
 
+			if typ is types.MultiReturnType {
+				mut define_index := 0
+				for index, def in parent.children() {
+					if def.is_equal(element) {
+						define_index = index
+						break
+					}
+				}
+
+				inner_types := typ.types
+				return inner_types[define_index] or { return types.unknown_type }
+			}
+
 			return typ
 		}
 		return types.unknown_type

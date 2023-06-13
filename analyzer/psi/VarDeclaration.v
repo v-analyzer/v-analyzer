@@ -30,6 +30,10 @@ fn (v VarDeclaration) initializer_of(def VarDefinition) ?PsiElement {
 	}
 
 	expressions := v.expressions()
+	if expressions.len == 1 && expressions.first() is CallExpression {
+		return expressions.first()
+	}
+
 	if index >= expressions.len {
 		return none
 	}
