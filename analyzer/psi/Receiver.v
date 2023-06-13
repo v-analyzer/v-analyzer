@@ -11,10 +11,8 @@ pub fn (r &Receiver) is_public() bool {
 }
 
 fn (r &Receiver) identifier_text_range() TextRange {
-	if r.stub_id != non_stubbed_element {
-		if stub := r.stubs_list.get_stub(r.stub_id) {
-			return stub.text_range
-		}
+	if stub := r.get_stub() {
+		return stub.text_range
 	}
 
 	identifier := r.identifier() or { return TextRange{} }
@@ -26,10 +24,8 @@ fn (r &Receiver) identifier() ?PsiElement {
 }
 
 pub fn (r &Receiver) name() string {
-	if r.stub_id != non_stubbed_element {
-		if stub := r.stubs_list.get_stub(r.stub_id) {
-			return stub.name
-		}
+	if stub := r.get_stub() {
+		return stub.name
 	}
 
 	identifier := r.identifier() or { return '' }
@@ -37,16 +33,14 @@ pub fn (r &Receiver) name() string {
 }
 
 pub fn (r &Receiver) type_element() ?PsiElement {
-	if r.stub_id != non_stubbed_element {
-		if stub := r.stubs_list.get_stub(r.stub_id) {
-			if receiver_stub := stub.get_child_by_type(.plain_type) {
-				psi := receiver_stub.get_psi() or { return none }
-				if psi is PlainType {
-					return psi
-				}
+	if stub := r.get_stub() {
+		if receiver_stub := stub.get_child_by_type(.plain_type) {
+			psi := receiver_stub.get_psi() or { return none }
+			if psi is PlainType {
+				return psi
 			}
-			return none
 		}
+		return none
 	}
 
 	return r.find_child_by_type(.plain_type)

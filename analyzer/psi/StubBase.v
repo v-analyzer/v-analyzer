@@ -136,14 +136,6 @@ pub fn (s StubBase) name() string {
 	return s.name
 }
 
-pub fn (s &StubBase) qualified_name() string {
-	module_name := s.stub_list.module_name
-	if module_name == '' {
-		return s.name
-	}
-	return module_name + '.' + s.name
-}
-
 pub fn (s StubBase) text() string {
 	return s.text
 }
@@ -212,15 +204,15 @@ fn (s &StubBase) parent_stub() ?&StubElement {
 }
 
 fn (s &StubBase) get_child_by_type(typ StubType) ?StubElement {
-	stubs := s.get_children_by_type(typ)
-	if stubs.len == 0 {
-		return none
-	}
-	return stubs.first()
+	return s.stub_list.get_child_by_type(s.id, typ)
 }
 
 fn (s &StubBase) get_children_by_type(typ StubType) []StubElement {
 	return s.stub_list.get_children_stubs(s.id).filter(it.stub_type() == typ)
+}
+
+fn (s &StubBase) has_child_of_type(typ StubType) bool {
+	return s.stub_list.has_child_of_type(s.id, typ)
 }
 
 fn (s &StubBase) prev_sibling() ?&StubElement {

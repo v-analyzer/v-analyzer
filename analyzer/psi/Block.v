@@ -9,8 +9,7 @@ pub fn (b Block) last_expression() ?PsiElement {
 	if statements.len == 0 {
 		return none
 	}
-	last_statement := statements.last()
-	return last_statement.first_child()
+	return statements.last().first_child()
 }
 
 pub fn (b Block) process_declarations(mut processor PsiScopeProcessor, last_parent PsiElement) bool {

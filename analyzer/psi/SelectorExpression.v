@@ -15,7 +15,7 @@ fn (n &SelectorExpression) qualifier() ?PsiElement {
 }
 
 fn (n &SelectorExpression) reference() PsiReference {
-	ref_expr := n.right()
+	ref_expr := n.right() or { panic('no right element for SelectorExpression') }
 	return new_reference(n.containing_file, ref_expr as ReferenceExpressionBase, false)
 }
 
@@ -23,10 +23,8 @@ fn (n &SelectorExpression) resolve() ?PsiElement {
 	return n.reference().resolve()
 }
 
-fn (n &SelectorExpression) expr() {}
-
 fn (n &SelectorExpression) get_type() types.Type {
-	right := n.right()
+	right := n.right() or { return types.unknown_type }
 	if right is ReferenceExpressionBase {
 		resolved := right.resolve() or { return types.unknown_type }
 		if resolved is PsiTypedElement {
@@ -37,10 +35,10 @@ fn (n &SelectorExpression) get_type() types.Type {
 	return types.unknown_type
 }
 
-pub fn (n SelectorExpression) left() PsiElement {
-	return n.first_child() or { panic('') }
+pub fn (n SelectorExpression) left() ?PsiElement {
+	return n.first_child()
 }
 
-pub fn (n SelectorExpression) right() PsiElement {
-	return n.last_child() or { panic('') }
+pub fn (n SelectorExpression) right() ?PsiElement {
+	return n.last_child()
 }

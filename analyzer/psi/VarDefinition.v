@@ -6,8 +6,6 @@ pub struct VarDefinition {
 	PsiElementImpl
 }
 
-fn (_ &VarDefinition) expr() {}
-
 pub fn (_ &VarDefinition) is_public() bool {
 	return true
 }

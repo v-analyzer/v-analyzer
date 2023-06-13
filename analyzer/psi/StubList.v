@@ -50,6 +50,28 @@ fn (s &StubList) last_child(id StubId) ?&StubElement {
 	return s.index_map[child_id] or { return none }
 }
 
+fn (s &StubList) get_child_by_type(id StubId, typ StubType) ?StubElement {
+	stub_ids := s.child_map[id]
+	for stub_id in stub_ids {
+		stub := s.index_map[stub_id] or { continue }
+		if stub.stub_type == typ {
+			return stub
+		}
+	}
+	return none
+}
+
+fn (s &StubList) has_child_of_type(id StubId, typ StubType) bool {
+	stub_ids := s.child_map[id]
+	for stub_id in stub_ids {
+		stub := s.index_map[stub_id] or { continue }
+		if stub.stub_type == typ {
+			return true
+		}
+	}
+	return false
+}
+
 fn (s &StubList) get_children_stubs(id StubId) []StubElement {
 	stub_ids := s.child_map[id]
 	mut stubs := []StubElement{cap: stub_ids.len}
@@ -88,5 +110,9 @@ fn (s &StubList) next_sibling(id StubId) ?&StubElement {
 }
 
 fn (s StubList) get_stub(id StubId) ?&StubBase {
-	return s.index_map[id] or { return none }
+	stub := s.index_map[id] or { return none }
+	if isnil(stub) {
+		return none
+	}
+	return stub
 }

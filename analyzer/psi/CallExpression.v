@@ -61,10 +61,7 @@ pub fn (c CallExpression) arguments() []PsiElement {
 }
 
 pub fn (c CallExpression) is_json_decode() bool {
-	if _ := c.find_child_by_type(.special_argument_list) {
-		return true
-	}
-	return false
+	return c.has_child_of_type(.special_argument_list)
 }
 
 pub fn (c &CallExpression) get_json_decode_type() types.Type {

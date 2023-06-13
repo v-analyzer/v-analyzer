@@ -23,8 +23,6 @@ fn (n &QualifiedType) resolve() ?PsiElement {
 	return n.reference().resolve()
 }
 
-fn (n &QualifiedType) expr() {}
-
 fn (n &QualifiedType) get_type() types.Type {
 	right := n.right() or { return types.unknown_type }
 	if right is ReferenceExpressionBase {

@@ -30,16 +30,20 @@ fn new_psi_node_from_stub(id StubId, stubs_list &StubList) PsiElementImpl {
 	}
 }
 
+pub fn (n PsiElementImpl) stub_based() bool {
+	return n.stub_id != non_stubbed_element && !isnil(n.stubs_list)
+}
+
 pub fn (n PsiElementImpl) node() AstNode {
 	return n.node
 }
 
 pub fn (n PsiElementImpl) get_stub() ?&StubBase {
-	if n.stub_id != non_stubbed_element {
-		return n.stubs_list.get_stub(n.stub_id)
+	if !n.stub_based() {
+		return none
 	}
 
-	return none
+	return n.stubs_list.get_stub(n.stub_id)
 }
 
 pub fn (n PsiElementImpl) stub_list() &StubList {
@@ -57,7 +61,7 @@ pub fn (n PsiElementImpl) element_type() v.NodeType {
 }
 
 pub fn (n PsiElementImpl) containing_file() &PsiFileImpl {
-	if n.stub_id != non_stubbed_element {
+	if n.stub_based() {
 		path := n.stubs_list.path
 		return new_stub_psi_file(path, n.stubs_list)
 	}
@@ -106,26 +110,24 @@ pub fn (n PsiElementImpl) find_reference_at(offset u32) ?PsiElement {
 }
 
 pub fn (n PsiElementImpl) parent() ?PsiElement {
-	if n.stub_id != non_stubbed_element {
-		if stub := n.stubs_list.get_stub(n.stub_id) {
-			if isnil(stub) {
-				return none
-			}
-
-			parent := stub.parent_stub() or { return none }
-			if isnil(parent) {
-				return none
-			}
-
-			if parent.stub_type() == .root {
-				return none
-			}
-
-			if is_valid_stub(parent) {
-				return parent.get_psi()
-			}
+	if stub := n.get_stub() {
+		if isnil(stub) {
 			return none
 		}
+
+		parent := stub.parent_stub() or { return none }
+		if isnil(parent) {
+			return none
+		}
+
+		if parent.stub_type() == .root {
+			return none
+		}
+
+		if is_valid_stub(parent) {
+			return parent.get_psi()
+		}
+		return none
 	}
 
 	parent := n.node.parent() or { return none }
@@ -227,15 +229,9 @@ pub fn (n PsiElementImpl) parent_of_type_or_self(typ v.NodeType) ?PsiElement {
 }
 
 pub fn (n PsiElementImpl) children() []PsiElement {
-	if n.stub_id != non_stubbed_element {
-		if stub := n.stubs_list.get_stub(n.stub_id) {
-			children := stub.children_stubs()
-			mut result := []PsiElement{cap: children.len}
-			for child in children {
-				result << child.get_psi() or { continue }
-			}
-			return result
-		}
+	if stub := n.get_stub() {
+		children := stub.children_stubs()
+		return children.get_psi()
 	}
 
 	mut result := []PsiElement{}
@@ -253,11 +249,9 @@ pub fn (n PsiElementImpl) first_child() ?PsiElement {
 }
 
 pub fn (n PsiElementImpl) first_child_or_stub() ?PsiElement {
-	if n.stub_id != non_stubbed_element {
-		if stub := n.stubs_list.get_stub(n.stub_id) {
-			child := stub.first_child() or { return none }
-			return child.get_psi()
-		}
+	if stub := n.get_stub() {
+		child := stub.first_child() or { return none }
+		return child.get_psi()
 	}
 
 	child := n.node.first_child() or { return none }
@@ -270,11 +264,9 @@ pub fn (n PsiElementImpl) last_child() ?PsiElement {
 }
 
 pub fn (n PsiElementImpl) last_child_or_stub() ?PsiElement {
-	if n.stub_id != non_stubbed_element {
-		if stub := n.stubs_list.get_stub(n.stub_id) {
-			child := stub.last_child() or { return none }
-			return child.get_psi()
-		}
+	if stub := n.get_stub() {
+		child := stub.last_child() or { return none }
+		return child.get_psi()
 	}
 
 	child := n.node.last_child() or { return none }
@@ -287,14 +279,12 @@ pub fn (n PsiElementImpl) next_sibling() ?PsiElement {
 }
 
 pub fn (n PsiElementImpl) next_sibling_or_stub() ?PsiElement {
-	if n.stub_id != non_stubbed_element {
-		if stub := n.stubs_list.get_stub(n.stub_id) {
-			sibling := stub.next_sibling() or { return none }
-			if is_valid_stub(sibling) {
-				return sibling.get_psi()
-			}
-			return none
+	if stub := n.get_stub() {
+		sibling := stub.next_sibling() or { return none }
+		if is_valid_stub(sibling) {
+			return sibling.get_psi()
 		}
+		return none
 	}
 
 	return n.next_sibling()
@@ -306,14 +296,12 @@ pub fn (n PsiElementImpl) prev_sibling() ?PsiElement {
 }
 
 pub fn (n PsiElementImpl) prev_sibling_or_stub() ?PsiElement {
-	if n.stub_id != non_stubbed_element {
-		if stub := n.stubs_list.get_stub(n.stub_id) {
-			sibling := stub.prev_sibling() or { return none }
-			if is_valid_stub(sibling) {
-				return sibling.get_psi()
-			}
-			return none
+	if stub := n.get_stub() {
+		sibling := stub.prev_sibling() or { return none }
+		if is_valid_stub(sibling) {
+			return sibling.get_psi()
 		}
+		return none
 	}
 
 	return n.prev_sibling()
@@ -324,12 +312,22 @@ pub fn (n PsiElementImpl) find_child_by_type(typ v.NodeType) ?PsiElement {
 	return create_element(ast_node, n.containing_file)
 }
 
+pub fn (n PsiElementImpl) has_child_of_type(typ v.NodeType) bool {
+	if stub := n.get_stub() {
+		return stub.has_child_of_type(node_type_to_stub_type(typ))
+	}
+
+	if _ := n.node.first_node_by_type(typ) {
+		return true
+	}
+
+	return false
+}
+
 pub fn (n PsiElementImpl) find_child_by_type_or_stub(typ v.NodeType) ?PsiElement {
-	if n.stub_id != non_stubbed_element {
-		if stub := n.stubs_list.get_stub(n.stub_id) {
-			child := stub.get_child_by_type(node_type_to_stub_type(typ)) or { return none }
-			return child.get_psi()
-		}
+	if stub := n.get_stub() {
+		child := stub.get_child_by_type(node_type_to_stub_type(typ)) or { return none }
+		return child.get_psi()
 	}
 
 	ast_node := n.node.first_node_by_type(typ) or { return none }
@@ -354,15 +352,8 @@ pub fn (n PsiElementImpl) find_children_by_type(typ v.NodeType) []PsiElement {
 }
 
 pub fn (n PsiElementImpl) find_children_by_type_or_stub(typ v.NodeType) []PsiElement {
-	if n.stub_id != non_stubbed_element {
-		if stub := n.stubs_list.get_stub(n.stub_id) {
-			child := stub.get_children_by_type(node_type_to_stub_type(typ))
-			mut result := []PsiElement{cap: child.len}
-			for c in child {
-				result << c.get_psi() or { continue }
-			}
-			return result
-		}
+	if stub := n.get_stub() {
+		return stub.get_children_by_type(node_type_to_stub_type(typ)).get_psi()
 	}
 
 	mut result := []PsiElement{}
@@ -382,30 +373,24 @@ pub fn (n PsiElementImpl) find_last_child_by_type(typ v.NodeType) ?PsiElement {
 }
 
 pub fn (n PsiElementImpl) get_text() string {
-	if n.stub_id != non_stubbed_element {
-		if stub := n.stubs_list.get_stub(n.stub_id) {
-			return stub.text
-		}
+	if stub := n.get_stub() {
+		return stub.text
 	}
 
 	return n.node.text(n.containing_file.source_text)
 }
 
 pub fn (n PsiElementImpl) text_matches(value string) bool {
-	if n.stub_id != non_stubbed_element {
-		if stub := n.stubs_list.get_stub(n.stub_id) {
-			return stub.text == value
-		}
+	if stub := n.get_stub() {
+		return stub.text == value
 	}
 
 	return n.node.text_matches(n.containing_file.source_text, value)
 }
 
 pub fn (n PsiElementImpl) text_range() TextRange {
-	if n.stub_id != non_stubbed_element {
-		if stub := n.stubs_list.get_stub(n.stub_id) {
-			return stub.text_range
-		}
+	if stub := n.get_stub() {
+		return stub.text_range
 	}
 
 	return TextRange{

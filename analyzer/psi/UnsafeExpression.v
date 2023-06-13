@@ -11,8 +11,3 @@ pub fn (n UnsafeExpression) block() ?&Block {
 	}
 	return none
 }
-
-pub fn (n UnsafeExpression) last_expression() ?PsiElement {
-	block := n.block()?
-	return block.last_expression()
-}

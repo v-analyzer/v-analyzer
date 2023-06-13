@@ -1,5 +1,6 @@
 module psi
 
+// TextRange represents a range of text in a file.
 pub struct TextRange {
 pub:
 	line       int

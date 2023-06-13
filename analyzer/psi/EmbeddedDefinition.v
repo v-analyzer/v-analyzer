@@ -14,10 +14,8 @@ pub fn (n &EmbeddedDefinition) owner() ?PsiElement {
 }
 
 pub fn (n &EmbeddedDefinition) identifier_text_range() TextRange {
-	if n.stub_id != non_stubbed_element {
-		if stub := n.stubs_list.get_stub(n.stub_id) {
-			return stub.text_range
-		}
+	if stub := n.get_stub() {
+		return stub.text_range
 	}
 
 	identifier := n.identifier() or { return TextRange{} }
@@ -38,10 +36,8 @@ pub fn (n &EmbeddedDefinition) identifier() ?PsiElement {
 }
 
 pub fn (n &EmbeddedDefinition) name() string {
-	if n.stub_id != non_stubbed_element {
-		if stub := n.stubs_list.get_stub(n.stub_id) {
-			return stub.name
-		}
+	if stub := n.get_stub() {
+		return stub.name
 	}
 
 	identifier := n.identifier() or { return '' }
@@ -56,4 +52,4 @@ pub fn (n &EmbeddedDefinition) get_type() types.Type {
 	return infer_type(n)
 }
 
-fn (n &EmbeddedDefinition) stub() {}
+fn (_ &EmbeddedDefinition) stub() {}

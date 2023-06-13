@@ -11,10 +11,8 @@ pub fn (_ &EnumFieldDeclaration) is_public() bool {
 }
 
 pub fn (f &EnumFieldDeclaration) doc_comment() string {
-	if f.stub_id != non_stubbed_element {
-		if stub := f.stubs_list.get_stub(f.stub_id) {
-			return stub.comment
-		}
+	if stub := f.get_stub() {
+		return stub.comment
 	}
 
 	if comment := f.find_child_by_type(.comment) {
@@ -29,10 +27,8 @@ pub fn (f &EnumFieldDeclaration) identifier() ?PsiElement {
 }
 
 pub fn (f EnumFieldDeclaration) identifier_text_range() TextRange {
-	if f.stub_id != non_stubbed_element {
-		if stub := f.stubs_list.get_stub(f.stub_id) {
-			return stub.text_range
-		}
+	if stub := f.get_stub() {
+		return stub.text_range
 	}
 
 	identifier := f.identifier() or { return TextRange{} }
@@ -40,10 +36,8 @@ pub fn (f EnumFieldDeclaration) identifier_text_range() TextRange {
 }
 
 pub fn (f &EnumFieldDeclaration) name() string {
-	if f.stub_id != non_stubbed_element {
-		if stub := f.stubs_list.get_stub(f.stub_id) {
-			return stub.name
-		}
+	if stub := f.get_stub() {
+		return stub.name
 	}
 
 	identifier := f.identifier() or { return '' }
@@ -59,15 +53,13 @@ pub fn (f &EnumFieldDeclaration) get_type() types.Type {
 }
 
 pub fn (f &EnumFieldDeclaration) owner() ?PsiElement {
-	if f.stub_id != non_stubbed_element {
-		if stub := f.stubs_list.get_stub(f.stub_id) {
-			if parent := stub.parent_of_type(.enum_declaration) {
-				if is_valid_stub(parent) {
-					return parent.get_psi()
-				}
+	if stub := f.get_stub() {
+		if parent := stub.parent_of_type(.enum_declaration) {
+			if is_valid_stub(parent) {
+				return parent.get_psi()
 			}
-			return none
 		}
+		return none
 	}
 
 	return f.parent_of_type(.enum_declaration)

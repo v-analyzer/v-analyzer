@@ -77,6 +77,8 @@ pub interface PsiElement {
 	// find_child_by_type returns the first child node with the specified type.
 	// If no such node is found, none is returned.
 	find_child_by_type(typ v.NodeType) ?PsiElement
+	// has_child_of_type returns true if the node has a child with the specified type.
+	has_child_of_type(typ v.NodeType) bool
 	// find_child_by_type_or_stub returns the first child node with the specified type or stub.
 	// If no such node is found, none is returned.
 	find_child_by_type_or_stub(typ v.NodeType) ?PsiElement

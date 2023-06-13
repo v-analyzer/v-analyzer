@@ -4,7 +4,7 @@ pub struct InterfaceMethodDeclaration {
 	PsiElementImpl
 }
 
-pub fn (m InterfaceMethodDeclaration) is_public() bool {
+pub fn (_ InterfaceMethodDeclaration) is_public() bool {
 	return true
 }
 
@@ -13,10 +13,8 @@ pub fn (m InterfaceMethodDeclaration) identifier() ?PsiElement {
 }
 
 pub fn (m InterfaceMethodDeclaration) identifier_text_range() TextRange {
-	if m.stub_id != non_stubbed_element {
-		if stub := m.stubs_list.get_stub(m.stub_id) {
-			return stub.text_range
-		}
+	if stub := m.get_stub() {
+		return stub.text_range
 	}
 
 	identifier := m.identifier() or { return TextRange{} }
@@ -32,10 +30,8 @@ pub fn (m InterfaceMethodDeclaration) signature() ?&Signature {
 }
 
 pub fn (m InterfaceMethodDeclaration) name() string {
-	if m.stub_id != non_stubbed_element {
-		if stub := m.stubs_list.get_stub(m.stub_id) {
-			return stub.name
-		}
+	if stub := m.get_stub() {
+		return stub.name
 	}
 
 	identifier := m.identifier() or { return '' }
@@ -58,10 +54,8 @@ pub fn (m &InterfaceMethodDeclaration) scope() ?&StructFieldScope {
 }
 
 pub fn (m InterfaceMethodDeclaration) doc_comment() string {
-	if m.stub_id != non_stubbed_element {
-		if stub := m.stubs_list.get_stub(m.stub_id) {
-			return stub.comment
-		}
+	if stub := m.get_stub() {
+		return stub.comment
 	}
 	return extract_doc_comment(m)
 }

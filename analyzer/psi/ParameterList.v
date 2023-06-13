@@ -4,4 +4,4 @@ pub struct ParameterList {
 	PsiElementImpl
 }
 
-fn (n &ParameterList) stub() {}
+fn (_ &ParameterList) stub() {}

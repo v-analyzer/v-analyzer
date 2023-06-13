@@ -6,10 +6,8 @@ pub struct GenericParameter {
 }
 
 pub fn (n &GenericParameter) identifier_text_range() TextRange {
-	if n.stub_id != non_stubbed_element {
-		if stub := n.stubs_list.get_stub(n.stub_id) {
-			return stub.text_range
-		}
+	if stub := n.get_stub() {
+		return stub.text_range
 	}
 
 	identifier := n.identifier() or { return TextRange{} }
@@ -21,10 +19,8 @@ pub fn (n &GenericParameter) identifier() ?PsiElement {
 }
 
 pub fn (n &GenericParameter) name() string {
-	if n.stub_id != non_stubbed_element {
-		if stub := n.stubs_list.get_stub(n.stub_id) {
-			return stub.name
-		}
+	if stub := n.get_stub() {
+		return stub.name
 	}
 
 	identifier := n.identifier() or { return '' }

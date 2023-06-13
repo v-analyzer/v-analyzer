@@ -7,11 +7,7 @@ pub struct FieldDeclaration {
 }
 
 pub fn (f &FieldDeclaration) is_embedded_definition() bool {
-	return if _ := f.find_child_by_type(.embedded_definition) {
-		true
-	} else {
-		false
-	}
+	return f.has_child_of_type(.embedded_definition)
 }
 
 pub fn (f &FieldDeclaration) is_public() bool {
@@ -26,10 +22,8 @@ pub fn (f &FieldDeclaration) is_public() bool {
 }
 
 pub fn (f &FieldDeclaration) doc_comment() string {
-	if f.stub_id != non_stubbed_element {
-		if stub := f.stubs_list.get_stub(f.stub_id) {
-			return stub.comment
-		}
+	if stub := f.get_stub() {
+		return stub.comment
 	}
 
 	if comment := f.find_child_by_type(.comment) {
@@ -44,10 +38,8 @@ pub fn (f &FieldDeclaration) identifier() ?PsiElement {
 }
 
 pub fn (f FieldDeclaration) identifier_text_range() TextRange {
-	if f.stub_id != non_stubbed_element {
-		if stub := f.stubs_list.get_stub(f.stub_id) {
-			return stub.text_range
-		}
+	if stub := f.get_stub() {
+		return stub.text_range
 	}
 
 	identifier := f.identifier() or { return TextRange{} }
@@ -55,10 +47,8 @@ pub fn (f FieldDeclaration) identifier_text_range() TextRange {
 }
 
 pub fn (f &FieldDeclaration) name() string {
-	if f.stub_id != non_stubbed_element {
-		if stub := f.stubs_list.get_stub(f.stub_id) {
-			return stub.name
-		}
+	if stub := f.get_stub() {
+		return stub.name
 	}
 
 	identifier := f.identifier() or { return '' }

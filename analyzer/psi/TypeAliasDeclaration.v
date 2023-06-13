@@ -22,10 +22,8 @@ pub fn (a &TypeAliasDeclaration) module_name() string {
 }
 
 pub fn (a TypeAliasDeclaration) doc_comment() string {
-	if a.stub_id != non_stubbed_element {
-		if stub := a.stubs_list.get_stub(a.stub_id) {
-			return stub.comment
-		}
+	if stub := a.get_stub() {
+		return stub.comment
 	}
 	return extract_doc_comment(a)
 }
@@ -46,10 +44,8 @@ pub fn (a TypeAliasDeclaration) identifier() ?PsiElement {
 }
 
 pub fn (a &TypeAliasDeclaration) identifier_text_range() TextRange {
-	if a.stub_id != non_stubbed_element {
-		if stub := a.stubs_list.get_stub(a.stub_id) {
-			return stub.text_range
-		}
+	if stub := a.get_stub() {
+		return stub.text_range
 	}
 
 	identifier := a.identifier() or { return TextRange{} }
@@ -57,10 +53,8 @@ pub fn (a &TypeAliasDeclaration) identifier_text_range() TextRange {
 }
 
 pub fn (a TypeAliasDeclaration) name() string {
-	if a.stub_id != non_stubbed_element {
-		if stub := a.stubs_list.get_stub(a.stub_id) {
-			return stub.name
-		}
+	if stub := a.get_stub() {
+		return stub.name
 	}
 
 	identifier := a.identifier() or { return '' }

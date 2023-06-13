@@ -6,9 +6,6 @@ pub struct ReferenceExpression {
 	PsiElementImpl
 }
 
-// marker method for Expression
-fn (_ &ReferenceExpression) expr() {}
-
 pub fn (r &ReferenceExpression) is_public() bool {
 	return true
 }
@@ -18,10 +15,8 @@ pub fn (r ReferenceExpression) identifier() ?PsiElement {
 }
 
 pub fn (r &ReferenceExpression) identifier_text_range() TextRange {
-	if r.stub_id != non_stubbed_element {
-		if stub := r.stubs_list.get_stub(r.stub_id) {
-			return stub.text_range
-		}
+	if stub := r.get_stub() {
+		return stub.text_range
 	}
 
 	identifier := r.identifier() or { return TextRange{} }
@@ -29,10 +24,8 @@ pub fn (r &ReferenceExpression) identifier_text_range() TextRange {
 }
 
 pub fn (r &ReferenceExpression) name() string {
-	if r.stub_id != non_stubbed_element {
-		if stub := r.stubs_list.get_stub(r.stub_id) {
-			return stub.text
-		}
+	if stub := r.get_stub() {
+		return stub.text
 	}
 
 	identifier := r.identifier() or { return '' }
@@ -43,7 +36,7 @@ pub fn (r ReferenceExpression) qualifier() ?PsiElement {
 	parent := r.parent() or { return none }
 
 	if parent is SelectorExpression {
-		left := parent.left()
+		left := parent.left() or { return none }
 		if left.is_equal(r) {
 			return none
 		}

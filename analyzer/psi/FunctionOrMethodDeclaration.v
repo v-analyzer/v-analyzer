@@ -29,10 +29,8 @@ pub fn (f FunctionOrMethodDeclaration) identifier() ?PsiElement {
 }
 
 pub fn (f FunctionOrMethodDeclaration) identifier_text_range() TextRange {
-	if f.stub_id != non_stubbed_element {
-		if stub := f.stubs_list.get_stub(f.stub_id) {
-			return stub.text_range
-		}
+	if stub := f.get_stub() {
+		return stub.text_range
 	}
 
 	identifier := f.identifier() or { return TextRange{} }
@@ -48,10 +46,8 @@ pub fn (f FunctionOrMethodDeclaration) signature() ?&Signature {
 }
 
 pub fn (f FunctionOrMethodDeclaration) name() string {
-	if f.stub_id != non_stubbed_element {
-		if stub := f.stubs_list.get_stub(f.stub_id) {
-			return stub.name
-		}
+	if stub := f.get_stub() {
+		return stub.name
 	}
 
 	identifier := f.identifier() or { return '' }
@@ -59,29 +55,14 @@ pub fn (f FunctionOrMethodDeclaration) name() string {
 }
 
 pub fn (f FunctionOrMethodDeclaration) doc_comment() string {
-	if f.stub_id != non_stubbed_element {
-		if stub := f.stubs_list.get_stub(f.stub_id) {
-			return stub.comment
-		}
+	if stub := f.get_stub() {
+		return stub.comment
 	}
 	return extract_doc_comment(f)
 }
 
 pub fn (f FunctionOrMethodDeclaration) receiver() ?&Receiver {
-	if f.stub_id != non_stubbed_element {
-		if stub := f.stubs_list.get_stub(f.stub_id) {
-			receiver_stubs := stub.get_children_by_type(.receiver)
-			if receiver_stubs.len > 0 {
-				psi := receiver_stubs.first().get_psi() or { return none }
-				if psi is Receiver {
-					return psi
-				}
-			}
-			return none
-		}
-	}
-
-	element := f.find_child_by_type(.receiver) or { return none }
+	element := f.find_child_by_type_or_stub(.receiver) or { return none }
 	if element is Receiver {
 		return element
 	}

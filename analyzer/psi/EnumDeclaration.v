@@ -21,10 +21,8 @@ pub fn (e EnumDeclaration) identifier() ?PsiElement {
 }
 
 pub fn (e EnumDeclaration) identifier_text_range() TextRange {
-	if e.stub_id != non_stubbed_element {
-		if stub := e.stubs_list.get_stub(e.stub_id) {
-			return stub.text_range
-		}
+	if stub := e.get_stub() {
+		return stub.text_range
 	}
 
 	identifier := e.identifier() or { return TextRange{} }
@@ -32,10 +30,8 @@ pub fn (e EnumDeclaration) identifier_text_range() TextRange {
 }
 
 pub fn (e EnumDeclaration) name() string {
-	if e.stub_id != non_stubbed_element {
-		if stub := e.stubs_list.get_stub(e.stub_id) {
-			return stub.name
-		}
+	if stub := e.get_stub() {
+		return stub.name
 	}
 
 	identifier := e.identifier() or { return '' }
@@ -43,10 +39,8 @@ pub fn (e EnumDeclaration) name() string {
 }
 
 pub fn (e EnumDeclaration) doc_comment() string {
-	if e.stub_id != non_stubbed_element {
-		if stub := e.stubs_list.get_stub(e.stub_id) {
-			return stub.comment
-		}
+	if stub := e.get_stub() {
+		return stub.comment
 	}
 	return extract_doc_comment(e)
 }
@@ -60,15 +54,8 @@ pub fn (e EnumDeclaration) visibility_modifiers() ?&VisibilityModifiers {
 }
 
 pub fn (e EnumDeclaration) fields() []PsiElement {
-	if e.stub_id != non_stubbed_element {
-		if stub := e.stubs_list.get_stub(e.stub_id) {
-			stubs := stub.get_children_by_type(.enum_field_definition)
-			mut fields := []PsiElement{cap: stubs.len}
-			for field_stub in stubs {
-				fields << field_stub.get_psi() or { continue }
-			}
-			return fields
-		}
+	if stub := e.get_stub() {
+		return stub.get_children_by_type(.enum_field_definition).get_psi()
 	}
 
 	return e.find_children_by_type(.enum_field_definition)

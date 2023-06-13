@@ -28,7 +28,7 @@ pub fn (s &StructDeclaration) get_type() types.Type {
 }
 
 pub fn (s &StructDeclaration) attributes() []PsiElement {
-	attributes := s.find_child_by_type(.attributes) or { return [] }
+	attributes := s.find_child_by_type_or_stub(.attributes) or { return [] }
 	if attributes is Attributes {
 		return attributes.attributes()
 	}
@@ -41,10 +41,8 @@ pub fn (s StructDeclaration) identifier() ?PsiElement {
 }
 
 pub fn (s StructDeclaration) identifier_text_range() TextRange {
-	if s.stub_id != non_stubbed_element {
-		if stub := s.stubs_list.get_stub(s.stub_id) {
-			return stub.text_range
-		}
+	if stub := s.get_stub() {
+		return stub.text_range
 	}
 
 	identifier := s.identifier() or { return TextRange{} }
@@ -52,10 +50,8 @@ pub fn (s StructDeclaration) identifier_text_range() TextRange {
 }
 
 pub fn (s StructDeclaration) name() string {
-	if s.stub_id != non_stubbed_element {
-		if stub := s.stubs_list.get_stub(s.stub_id) {
-			return stub.name
-		}
+	if stub := s.get_stub() {
+		return stub.name
 	}
 
 	identifier := s.identifier() or { return '' }
@@ -63,10 +59,8 @@ pub fn (s StructDeclaration) name() string {
 }
 
 pub fn (s StructDeclaration) doc_comment() string {
-	if s.stub_id != non_stubbed_element {
-		if stub := s.stubs_list.get_stub(s.stub_id) {
-			return stub.comment
-		}
+	if stub := s.get_stub() {
+		return stub.comment
 	}
 	return extract_doc_comment(s)
 }

@@ -21,10 +21,8 @@ pub fn (p &ParameterDeclaration) identifier() ?PsiElement {
 }
 
 pub fn (p &ParameterDeclaration) identifier_text_range() TextRange {
-	if p.stub_id != non_stubbed_element {
-		if stub := p.stubs_list.get_stub(p.stub_id) {
-			return stub.text_range
-		}
+	if stub := p.get_stub() {
+		return stub.text_range
 	}
 
 	identifier := p.identifier() or { return TextRange{} }
@@ -32,10 +30,8 @@ pub fn (p &ParameterDeclaration) identifier_text_range() TextRange {
 }
 
 pub fn (p &ParameterDeclaration) name() string {
-	if p.stub_id != non_stubbed_element {
-		if stub := p.stubs_list.get_stub(p.stub_id) {
-			return stub.name
-		}
+	if stub := p.get_stub() {
+		return stub.name
 	}
 
 	identifier := p.identifier() or { return '' }

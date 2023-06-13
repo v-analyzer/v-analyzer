@@ -17,10 +17,8 @@ fn (n &ModuleClause) identifier() ?PsiElement {
 }
 
 pub fn (n &ModuleClause) identifier_text_range() TextRange {
-	if n.stub_id != non_stubbed_element {
-		if stub := n.stubs_list.get_stub(n.stub_id) {
-			return stub.text_range
-		}
+	if stub := n.get_stub() {
+		return stub.text_range
 	}
 
 	identifier := n.identifier() or { return TextRange{} }
@@ -28,10 +26,8 @@ pub fn (n &ModuleClause) identifier_text_range() TextRange {
 }
 
 pub fn (n ModuleClause) name() string {
-	if n.stub_id != non_stubbed_element {
-		if stub := n.stubs_list.get_stub(n.stub_id) {
-			return stub.name
-		}
+	if stub := n.get_stub() {
+		return stub.name
 	}
 
 	identifier := n.identifier() or { return '' }

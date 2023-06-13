@@ -26,10 +26,8 @@ fn (c &ConstantDefinition) identifier() ?PsiElement {
 }
 
 pub fn (c ConstantDefinition) identifier_text_range() TextRange {
-	if c.stub_id != non_stubbed_element {
-		if stub := c.stubs_list.get_stub(c.stub_id) {
-			return stub.text_range
-		}
+	if stub := c.get_stub() {
+		return stub.text_range
 	}
 
 	identifier := c.identifier() or { return TextRange{} }
@@ -37,10 +35,8 @@ pub fn (c ConstantDefinition) identifier_text_range() TextRange {
 }
 
 pub fn (c ConstantDefinition) name() string {
-	if c.stub_id != non_stubbed_element {
-		if stub := c.stubs_list.get_stub(c.stub_id) {
-			return stub.name
-		}
+	if stub := c.get_stub() {
+		return stub.name
 	}
 
 	identifier := c.identifier() or { return '' }
@@ -48,10 +44,8 @@ pub fn (c ConstantDefinition) name() string {
 }
 
 pub fn (c ConstantDefinition) doc_comment() string {
-	if c.stub_id != non_stubbed_element {
-		if stub := c.stubs_list.get_stub(c.stub_id) {
-			return stub.comment
-		}
+	if stub := c.get_stub() {
+		return stub.comment
 	}
 	parent := c.parent() or { return '' }
 	return extract_doc_comment(parent)
@@ -67,7 +61,7 @@ pub fn (c ConstantDefinition) visibility_modifiers() ?&VisibilityModifiers {
 }
 
 pub fn (c &ConstantDefinition) expression() ?PsiElement {
-	if c.stub_id != non_stubbed_element {
+	if c.stub_based() {
 		return none // TODO: show constant value from stub
 	}
 	return c.last_child()
