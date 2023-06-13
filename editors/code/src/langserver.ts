@@ -50,7 +50,7 @@ function runSpavnAnalyzer(args: string[]): cp.ChildProcess {
 	const analyzerPath = findSpavnAnalyzerPath();
 	log(`Spawning ${analyzerPath} ${args.join(' ')}...`);
 	const folder = getWorkspaceFolder();
-	return cp.spawn(analyzerPath, args, {shell: true, cwd: folder.uri.path});
+	return cp.spawn(analyzerPath, args, {shell: true, cwd: folder.uri.fsPath});
 }
 
 function connectSpavnAnalyzerViaTcp(port: number): Promise<StreamInfo> {
