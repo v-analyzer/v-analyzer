@@ -72,10 +72,6 @@
         "named": true
       },
       {
-        "type": "map_init_expression",
-        "named": true
-      },
-      {
         "type": "not_in_expression",
         "named": true
       },
@@ -147,6 +143,10 @@
       },
       {
         "type": "lock_expression",
+        "named": true
+      },
+      {
+        "type": "map_init_expression",
         "named": true
       },
       {
@@ -2579,10 +2579,6 @@
         },
         {
           "type": "literal",
-          "named": true
-        },
-        {
-          "type": "map_init_expression",
           "named": true
         },
         {

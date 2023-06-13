@@ -77,27 +77,28 @@ enum TokenType {
     AUTOMATIC_SEPARATOR,
     BRACED_INTERPOLATION_OPENING,
     INTERPOLATION_CLOSING,
-    C_STRING_OPENING, // = 4
-    RAW_STRING_OPENING, // = 5
-    STRING_OPENING, // = 6
+    C_STRING_OPENING, // = 3
+    RAW_STRING_OPENING, // = 4
+    STRING_OPENING, // = 5
     STRING_CONTENT,
     STRING_CLOSING,
     COMMENT,
+    ERROR_SENTINEL,
     NONE
 };
 
 enum StringType {
-    SINGLE_QUOTE = NONE + 1, // = 9 + 1 + 1 = 11
-    DOUBLE_QUOTE = NONE + 4, // = 9 + 1 + 4 = 14
+    SINGLE_QUOTE = NONE + 1, // = 8 + 1 + 1 = 10
+    DOUBLE_QUOTE = NONE + 4, // = 8 + 1 + 4 = 13
 };
 
 enum StringTokenType {
-    C_SINGLE_QUOTE_OPENING = C_STRING_OPENING + SINGLE_QUOTE, // 5 + 11 = 16
-    C_DOUBLE_QUOTE_OPENING = C_STRING_OPENING + DOUBLE_QUOTE, // 5 + 14 = 19
-    RAW_SINGLE_QUOTE_OPENING = RAW_STRING_OPENING + SINGLE_QUOTE, // 4 + 11 = 15
-    RAW_DOUBLE_QUOTE_OPENING = RAW_STRING_OPENING + DOUBLE_QUOTE, // 4 + 14 = 18
-    SINGLE_QUOTE_OPENING = STRING_OPENING + SINGLE_QUOTE, // 6 + 11 = 17
-    DOUBLE_QUOTE_OPENING = STRING_OPENING + DOUBLE_QUOTE // 6 + 14 = 20
+    C_SINGLE_QUOTE_OPENING = C_STRING_OPENING + SINGLE_QUOTE, // 5 + 10 = 15
+    C_DOUBLE_QUOTE_OPENING = C_STRING_OPENING + DOUBLE_QUOTE, // 5 + 13 = 18
+    RAW_SINGLE_QUOTE_OPENING = RAW_STRING_OPENING + SINGLE_QUOTE, // 4 + 10 = 14
+    RAW_DOUBLE_QUOTE_OPENING = RAW_STRING_OPENING + DOUBLE_QUOTE, // 4 + 13 = 17
+    SINGLE_QUOTE_OPENING = STRING_OPENING + SINGLE_QUOTE, // 6 + 10 = 16
+    DOUBLE_QUOTE_OPENING = STRING_OPENING + DOUBLE_QUOTE // 6 + 13 = 19
 };
 
 bool is_type_single_quote(uint8_t type) {
@@ -323,9 +324,7 @@ bool scan_string_opening(Scanner *scanner, TSLexer *lexer, bool is_quote, bool i
 
     if (lexer->lookahead == '\'' || lexer->lookahead == '"') {
         uint8_t string_type = lexer->lookahead == '\'' ? SINGLE_QUOTE : DOUBLE_QUOTE;
-
         advance(lexer);
-        mark_end(lexer);
         push_type(scanner, lexer->result_symbol + string_type);
         return true;
     }
@@ -547,7 +546,8 @@ bool tree_sitter_v_external_scanner_scan(void *payload, TSLexer *lexer, const bo
     int stack_about_string = top == BRACED_INTERPOLATION_OPENING ||
                              is_stack_empty;
 
-    if (stack_about_string && expect_string_start) {
+    if (valid_symbols[ERROR_SENTINEL] && (lexer->lookahead == '\'' || lexer->lookahead == '"' || is_type_string(top))) {
+        stack_pop(scanner->tokens);
         return scan_string_opening(
                 scanner,
                 lexer,
@@ -557,9 +557,15 @@ bool tree_sitter_v_external_scanner_scan(void *payload, TSLexer *lexer, const bo
         );
     }
 
-//    while (iswspace(lexer->lookahead)) {
-//        skip(lexer);
-//    }
+    if (stack_about_string && expect_string_start) {
+        return scan_string_opening(
+                scanner,
+                lexer,
+                expect_string_quote,
+                expect_c_string,
+                expect_raw_string
+        );
+    }
 
     if (lexer->lookahead == '}' && valid_symbols[INTERPOLATION_CLOSING]) {
         return scan_interpolation_closing(scanner, lexer);

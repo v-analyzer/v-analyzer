@@ -2119,10 +2119,6 @@
         },
         {
           "type": "SYMBOL",
-          "name": "map_init_expression"
-        },
-        {
-          "type": "SYMBOL",
           "name": "array_creation"
         },
         {
@@ -2241,6 +2237,10 @@
         {
           "type": "SYMBOL",
           "name": "compile_time_if_expression"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "map_init_expression"
         }
       ]
     },
@@ -4193,7 +4193,7 @@
       ]
     },
     "is_expression": {
-      "type": "PREC_RIGHT",
+      "type": "PREC_LEFT",
       "value": 3,
       "content": {
         "type": "SEQ",
@@ -4239,7 +4239,7 @@
       }
     },
     "not_is_expression": {
-      "type": "PREC_RIGHT",
+      "type": "PREC_LEFT",
       "value": 3,
       "content": {
         "type": "SEQ",
@@ -8406,6 +8406,10 @@
     {
       "type": "SYMBOL",
       "name": "_comment"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "error_sentinel"
     }
   ],
   "inline": [

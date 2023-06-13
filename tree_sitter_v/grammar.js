@@ -88,6 +88,7 @@ module.exports = grammar({
     $._string_content,
     $._string_closing,
     $._comment,
+    $.error_sentinel,
   ],
 
   inline: ($) => [
@@ -403,7 +404,6 @@ module.exports = grammar({
       $.empty_literal_value,
       $.reference_expression,
       $._max_group,
-      $.map_init_expression,
       $.array_creation,
       $.empty_array_creation,
       $.fixed_array_creation,
@@ -437,6 +437,7 @@ module.exports = grammar({
       $.lock_expression,
       $.unsafe_expression,
       $.compile_time_if_expression,
+      $.map_init_expression,
     ),
 
     strictly_expression_list: ($) => prec(PREC.resolve, seq(
