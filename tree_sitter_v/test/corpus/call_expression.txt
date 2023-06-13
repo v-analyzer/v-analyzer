@@ -35,14 +35,14 @@ foo(100)?
 
 (source_file
   (simple_statement
-    (call_expression
-      (reference_expression
-        (identifier))
-      (argument_list
-        (argument
-          (literal
-            (int_literal))))
-      (error_propagate))))
+    (option_propagation_expression
+      (call_expression
+        (reference_expression
+          (identifier))
+        (argument_list
+          (argument
+            (literal
+              (int_literal))))))))
 
 ================================================================================
 Simple call expression with Result propagation
@@ -52,14 +52,14 @@ foo(100)!
 
 (source_file
   (simple_statement
-    (call_expression
-      (reference_expression
-        (identifier))
-      (argument_list
-        (argument
-          (literal
-            (int_literal))))
-      (error_propagate))))
+    (result_propagation_expression
+      (call_expression
+        (reference_expression
+          (identifier))
+        (argument_list
+          (argument
+            (literal
+              (int_literal))))))))
 
 ================================================================================
 Simple call expression with or block
@@ -69,19 +69,19 @@ foo(100) or { 100 }
 
 (source_file
   (simple_statement
-    (call_expression
-      (reference_expression
-        (identifier))
-      (argument_list
-        (argument
-          (literal
-            (int_literal))))
-      (error_propagate
-        (or_block
-          (block
-            (simple_statement
-              (literal
-                (int_literal)))))))))
+    (or_block_expression
+      (call_expression
+        (reference_expression
+          (identifier))
+        (argument_list
+          (argument
+            (literal
+              (int_literal)))))
+      (or_block
+        (block
+          (simple_statement
+            (literal
+              (int_literal))))))))
 
 ================================================================================
 Simple call expression with mutable argument

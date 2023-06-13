@@ -29,9 +29,9 @@ cache = <-cache_chan!
           (identifier)))
       (expression_list
         (receive_expression
-          (reference_expression
-            (identifier))
-          (error_propagate))))))
+          (result_propagation_expression
+            (reference_expression
+              (identifier))))))))
 
 ================================================================================
 Receive expression with or block
@@ -46,13 +46,13 @@ cache = <-cache_chan or { return }
         (reference_expression
           (identifier)))
       (expression_list
-        (receive_expression
-          (reference_expression
-            (identifier))
-          (error_propagate
-            (or_block
-              (block
-                (return_statement)))))))))
+        (or_block_expression
+          (receive_expression
+            (reference_expression
+              (identifier)))
+          (or_block
+            (block
+              (return_statement))))))))
 
 ================================================================================
 Send statement
@@ -77,9 +77,9 @@ cache <- cache_chan!
   (send_statement
     (reference_expression
       (identifier))
-    (reference_expression
-      (identifier))
-    (error_propagate)))
+    (result_propagation_expression
+      (reference_expression
+        (identifier)))))
 
 ================================================================================
 Send statement with or block
@@ -91,9 +91,9 @@ cache <- cache_chan or { return }
   (send_statement
     (reference_expression
       (identifier))
-    (reference_expression
-      (identifier))
-    (error_propagate
+    (or_block_expression
+      (reference_expression
+        (identifier))
       (or_block
         (block
           (return_statement))))))

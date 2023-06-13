@@ -161,6 +161,7 @@ $if some_define ? {}
 (source_file
   (simple_statement
     (compile_time_if_expression
-      (reference_expression
-        (identifier))
+      (option_propagation_expression
+        (reference_expression
+          (identifier)))
       (block))))

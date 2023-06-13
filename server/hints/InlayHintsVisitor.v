@@ -1,8 +1,9 @@
 module hints
 
 import lsp
-import analyzer.psi
 import config
+import analyzer.psi
+import analyzer.psi.types
 
 pub struct InlayHintsVisitor {
 	cfg config.InlayHintsConfig
@@ -66,8 +67,17 @@ pub fn (mut v InlayHintsVisitor) process_node(node psi.AstNode, containing_file 
 		}
 	}
 
-	if node.type_name == .or_block && v.cfg.enable_implicit_err_hints {
-		block := node.child_by_field_name('block') or { return }
+	if node.type_name == .or_block_expression && v.cfg.enable_implicit_err_hints {
+		expression_node := node.first_child() or { return }
+		expression := psi.create_element(expression_node, containing_file)
+		typ := psi.infer_type(expression)
+		if typ !is types.ResultType {
+			// show `err ->` hint only for `Result` type
+			return
+		}
+
+		or_block := node.last_child() or { return }
+		block := or_block.child_by_field_name('block') or { return }
 		v.handle_implicit_error_variable(block)
 	}
 }

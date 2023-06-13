@@ -422,6 +422,9 @@ module.exports = grammar({
       $.enum_fetch,
       $.inc_expression,
       $.dec_expression,
+      $.or_block_expression,
+      $.option_propagation_expression,
+      $.result_propagation_expression,
     ),
 
     _expression_with_blocks: ($) => choice(
@@ -444,6 +447,12 @@ module.exports = grammar({
 
     dec_expression: ($) => seq($._expression, '--'),
 
+    or_block_expression: ($) => seq($._expression, $.or_block),
+
+    option_propagation_expression: ($) => prec(PREC.match_arm_type, seq($._expression, '?')),
+
+    result_propagation_expression: ($) => prec(PREC.match_arm_type, seq($._expression, '!')),
+
     anon_struct_value_expression: ($) => seq(
       'struct', '{',
       choice(
@@ -464,13 +473,11 @@ module.exports = grammar({
       seq(
         field('function', token('json.decode')),
         field('arguments', $.special_argument_list),
-        optional($.error_propagate),
       ),
       seq(
         field('name', $._expression),
         field('type_parameters', optional($.type_parameters)),
         field('arguments', $.argument_list),
-        optional($.error_propagate),
       ),
     )),
 
@@ -561,7 +568,6 @@ module.exports = grammar({
     receive_expression: ($) => prec.right(PREC.unary, seq(
       field('operator', '<-'),
       field('operand', $._expression),
-      optional($.error_propagate),
     )),
 
     binary_expression: ($) => {
@@ -594,8 +600,6 @@ module.exports = grammar({
 
     compile_time_selector_expression: ($) =>
       comp_time(seq('(', choice($.reference_expression, $.selector_expression), ')')),
-
-    error_propagate: ($) => prec.right(choice('?', '!', $.or_block)),
 
     or_block: ($) => seq('or', field('block', $.block)),
 
@@ -677,7 +681,6 @@ module.exports = grammar({
       choice('[', token.immediate('['), token('#[')),
       field('index', $._expression),
       ']',
-      optional($.error_propagate),
     )),
 
     slice_expression: ($) => prec(PREC.primary,
@@ -1077,7 +1080,6 @@ module.exports = grammar({
       field('channel', $._expression),
       '<-',
       field('value', $._expression),
-      optional($.error_propagate),
     )),
 
     var_declaration: ($) => prec.right(seq(
@@ -1186,7 +1188,7 @@ module.exports = grammar({
     )),
 
     // [if some ?]
-    if_attribute: ($) => seq('if', $.reference_expression, optional('?')),
+    if_attribute: ($) => prec(PREC.attributes, seq('if', $.reference_expression, optional('?'))),
 
     _plain_attribute: ($) => choice(
       $.literal_attribute,

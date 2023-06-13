@@ -33,6 +33,27 @@ if a is []Any {
         (block)))))
 
 ================================================================================
+Is expression with qualified type
+================================================================================
+if a is foo.Bar {
+}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (if_expression
+      (selector_expression
+        (is_expression
+          (reference_expression
+            (identifier))
+          (plain_type
+            (type_reference_expression
+              (identifier))))
+        (reference_expression
+          (identifier)))
+      (block))))
+
+================================================================================
 Is expression with mut
 ================================================================================
 if mut run is Block {
@@ -270,27 +291,27 @@ fn test_parse_compact_text() {
             (reference_expression
               (identifier)))
           (expression_list
-            (call_expression
-              (selector_expression
-                (reference_expression
-                  (identifier))
-                (reference_expression
-                  (identifier)))
-              (argument_list
-                (argument
+            (or_block_expression
+              (call_expression
+                (selector_expression
                   (reference_expression
-                    (identifier))))
-              (error_propagate
-                (or_block
-                  (block
-                    (simple_statement
-                      (call_expression
-                        (reference_expression
-                          (identifier))
-                        (argument_list
-                          (argument
-                            (reference_expression
-                              (identifier)))))))))))))
+                    (identifier))
+                  (reference_expression
+                    (identifier)))
+                (argument_list
+                  (argument
+                    (reference_expression
+                      (identifier)))))
+              (or_block
+                (block
+                  (simple_statement
+                    (call_expression
+                      (reference_expression
+                        (identifier))
+                      (argument_list
+                        (argument
+                          (reference_expression
+                            (identifier))))))))))))
       (simple_statement
         (var_declaration
           (expression_list
@@ -365,22 +386,22 @@ fn test_parse_compact_text() {
             (reference_expression
               (identifier)))
           (expression_list
-            (index_expression
-              (reference_expression
-                (identifier))
-              (literal
-                (int_literal))
-              (error_propagate
-                (or_block
-                  (block
-                    (simple_statement
-                      (call_expression
-                        (reference_expression
-                          (identifier))
-                        (argument_list
-                          (argument
-                            (literal
-                              (interpreted_string_literal)))))))))))))
+            (or_block_expression
+              (index_expression
+                (reference_expression
+                  (identifier))
+                (literal
+                  (int_literal)))
+              (or_block
+                (block
+                  (simple_statement
+                    (call_expression
+                      (reference_expression
+                        (identifier))
+                      (argument_list
+                        (argument
+                          (literal
+                            (interpreted_string_literal))))))))))))
       (assert_statement
         (binary_expression
           (as_type_cast_expression

@@ -1,0 +1,112 @@
+================================================================================
+Or block
+================================================================================
+foo or {}
+foo() or {}
+foo[1] or {}
+if true {} else {} or {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (or_block_expression
+      (reference_expression
+        (identifier))
+      (or_block
+        (block))))
+  (simple_statement
+    (or_block_expression
+      (call_expression
+        (reference_expression
+          (identifier))
+        (argument_list))
+      (or_block
+        (block))))
+  (simple_statement
+    (or_block_expression
+      (index_expression
+        (reference_expression
+          (identifier))
+        (literal
+          (int_literal)))
+      (or_block
+        (block))))
+  (simple_statement
+    (or_block_expression
+      (if_expression
+        (literal
+          (true))
+        (block)
+        (block))
+      (or_block
+        (block)))))
+
+================================================================================
+! propagation
+================================================================================
+foo!
+foo()!
+foo[1]!
+if true {} else {}!
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (result_propagation_expression
+      (reference_expression
+        (identifier))))
+  (simple_statement
+    (result_propagation_expression
+      (call_expression
+        (reference_expression
+          (identifier))
+        (argument_list))))
+  (simple_statement
+    (result_propagation_expression
+      (index_expression
+        (reference_expression
+          (identifier))
+        (literal
+          (int_literal)))))
+  (simple_statement
+    (result_propagation_expression
+      (if_expression
+        (literal
+          (true))
+        (block)
+        (block)))))
+
+================================================================================
+? propagation
+================================================================================
+foo?
+foo()?
+foo[1]?
+if true {} else {}?
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (option_propagation_expression
+      (reference_expression
+        (identifier))))
+  (simple_statement
+    (option_propagation_expression
+      (call_expression
+        (reference_expression
+          (identifier))
+        (argument_list))))
+  (simple_statement
+    (option_propagation_expression
+      (index_expression
+        (reference_expression
+          (identifier))
+        (literal
+          (int_literal)))))
+  (simple_statement
+    (option_propagation_expression
+      (if_expression
+        (literal
+          (true))
+        (block)
+        (block)))))

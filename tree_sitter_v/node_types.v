@@ -57,7 +57,6 @@ pub enum NodeType {
 	enum_declaration
 	enum_fetch
 	enum_field_definition
-	error_propagate
 	expression_list
 	field_name
 	fixed_array_creation
@@ -117,8 +116,10 @@ pub enum NodeType {
 	mutable_identifier
 	not_in_expression
 	not_is_expression
+	option_propagation_expression
 	option_type
 	or_block
+	or_block_expression
 	overridable_operator
 	parameter_declaration
 	parameter_list
@@ -133,6 +134,7 @@ pub enum NodeType {
 	receive_expression
 	receiver
 	reference_expression
+	result_propagation_expression
 	result_type
 	return_statement
 	select_arm
@@ -203,10 +205,13 @@ const supertype__expression_nodes = merge(supertype__expression_with_blocks_node
 	.map_init_expression,
 	.not_in_expression,
 	.not_is_expression,
+	.option_propagation_expression,
+	.or_block_expression,
 	.parenthesized_expression,
 	.pseudo_compile_time_identifier,
 	.receive_expression,
 	.reference_expression,
+	.result_propagation_expression,
 	.selector_expression,
 	.slice_expression,
 	.spawn_expression,
@@ -360,7 +365,6 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'enum_declaration' { NodeType.enum_declaration }
 		'enum_fetch' { NodeType.enum_fetch }
 		'enum_field_definition' { NodeType.enum_field_definition }
-		'error_propagate' { NodeType.error_propagate }
 		'expression_list' { NodeType.expression_list }
 		'field_name' { NodeType.field_name }
 		'fixed_array_creation' { NodeType.fixed_array_creation }
@@ -420,8 +424,10 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'mutable_identifier' { NodeType.mutable_identifier }
 		'not_in_expression' { NodeType.not_in_expression }
 		'not_is_expression' { NodeType.not_is_expression }
+		'option_propagation_expression' { NodeType.option_propagation_expression }
 		'option_type' { NodeType.option_type }
 		'or_block' { NodeType.or_block }
+		'or_block_expression' { NodeType.or_block_expression }
 		'overridable_operator' { NodeType.overridable_operator }
 		'parameter_declaration' { NodeType.parameter_declaration }
 		'parameter_list' { NodeType.parameter_list }
@@ -436,6 +442,7 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'receive_expression' { NodeType.receive_expression }
 		'receiver' { NodeType.receiver }
 		'reference_expression' { NodeType.reference_expression }
+		'result_propagation_expression' { NodeType.result_propagation_expression }
 		'result_type' { NodeType.result_type }
 		'return_statement' { NodeType.return_statement }
 		'select_arm' { NodeType.select_arm }

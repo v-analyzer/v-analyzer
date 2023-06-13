@@ -37,7 +37,7 @@ pub fn (t &TypeInferer) infer_type(elem ?PsiElement) types.Type {
 			else {}
 		}
 
-		if operator in ['+', '-', '|', '^'] {
+		if operator in ['+', '-', '|', '^', '&'] {
 			left := element.first_child() or { return types.unknown_type }
 			return t.infer_type(left)
 		}
@@ -94,6 +94,24 @@ pub fn (t &TypeInferer) infer_type(elem ?PsiElement) types.Type {
 	if element.node.type_name == .receive_expression {
 		operand := element.find_child_by_name('operand') or { return types.unknown_type }
 		return types.unwrap_channel_type(t.infer_type(operand))
+	}
+
+	if element is OrBlockExpression {
+		expr := element.expression() or { return types.unknown_type }
+		expr_type := t.infer_type(expr)
+		return types.unwrap_result_or_option_type(expr_type)
+	}
+
+	if element is ResultPropagationExpression {
+		expr := element.expression() or { return types.unknown_type }
+		expr_type := t.infer_type(expr)
+		return types.unwrap_result_or_option_type(expr_type)
+	}
+
+	if element is OptionPropagationExpression {
+		expr := element.expression() or { return types.unknown_type }
+		expr_type := t.infer_type(expr)
+		return types.unwrap_result_or_option_type(expr_type)
 	}
 
 	if element is IndexExpression {
@@ -434,7 +452,7 @@ pub fn (t &TypeInferer) infer_call_expr_type(element CallExpression) types.Type 
 	resolved := element.resolve() or { return types.unknown_type }
 	typ := t.infer_type(resolved)
 	if typ is types.FunctionType {
-		return types.unwrap_result_or_option_type_if(typ.result, need_unwrap)
+		return typ.result
 	}
 
 	return types.unknown_type

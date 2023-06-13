@@ -385,6 +385,24 @@ pub fn create_element(node AstNode, containing_file &PsiFileImpl) PsiElement {
 		}
 	}
 
+	if node.type_name == .or_block_expression {
+		return OrBlockExpression{
+			PsiElementImpl: base_node
+		}
+	}
+
+	if node.type_name == .option_propagation_expression {
+		return OptionPropagationExpression{
+			PsiElementImpl: base_node
+		}
+	}
+
+	if node.type_name == .result_propagation_expression {
+		return ResultPropagationExpression{
+			PsiElementImpl: base_node
+		}
+	}
+
 	return base_node
 }
 

@@ -11,7 +11,15 @@ fn (c &CallExpression) get_type() types.Type {
 }
 
 pub fn (c CallExpression) error_propagation() ?PsiElement {
-	return c.find_child_by_type(.error_propagate)
+	parent := c.parent() or { return none }
+	if parent.element_type() in [
+		.or_block_expression,
+		.option_propagation_expression,
+		.result_propagation_expression,
+	] {
+		return parent
+	}
+	return none
 }
 
 pub fn (c CallExpression) expression() ?PsiElement {
