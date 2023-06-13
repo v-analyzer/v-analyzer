@@ -134,6 +134,8 @@
   "lock"
   "rlock"
   "spawn"
+  "break"
+  "continue"
   "go"
 ] @keyword.control
 
