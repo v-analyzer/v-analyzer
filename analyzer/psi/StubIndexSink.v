@@ -11,9 +11,11 @@ pub mut:
 	data             map[int]map[string][]StubId
 }
 
+const non_fqn_keys = [StubIndexKey.global_variables, .methods_fingerprint, .fields_fingerprint,
+	.interface_methods_fingerprint, .interface_fields_fingerprint, .methods]
+
 fn (mut s StubIndexSink) occurrence(key StubIndexKey, value string) {
-	resulting_value := if s.module_name != ''
-		&& key !in [.global_variables, .methods_fingerprint, .fields_fingerprint, .methods] {
+	resulting_value := if s.module_name != '' && key !in psi.non_fqn_keys {
 		s.module_name + '.' + value
 	} else {
 		value

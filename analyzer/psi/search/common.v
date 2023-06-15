@@ -3,45 +3,8 @@ module search
 import analyzer.psi
 import analyzer.psi.types
 
-pub fn implementations(iface psi.InterfaceDeclaration) []psi.PsiElement {
-	methods := iface.methods()
-	fields := iface.fields()
-
-	if methods.len == 0 && fields.len == 0 {
-		return []
-	}
-
-	candidates := candidates_by_methods_and_fields(methods, fields)
-	if candidates.len == 0 {
-		return []
-	}
-
-	mut result := []psi.PsiElement{cap: 5}
-
-	for candidate in candidates {
-		if is_implemented(methods, fields, candidate) {
-			result << candidate
-		}
-	}
-
-	return result
-}
-
-fn is_implemented(iface_methods []psi.PsiElement, iface_fields []psi.PsiElement, symbol psi.PsiElement) bool {
-	symbol_type := if symbol is psi.PsiTypedElement {
-		symbol.get_type()
-	} else {
-		return false
-	}
-	symbol_methods := psi.methods_list(symbol_type)
-	if symbol_methods.len == 0 && iface_methods.len != 0 {
-		return false
-	}
-	symbol_fields := psi.fields_list(symbol_type)
-	if symbol_fields.len == 0 && iface_fields.len != 0 {
-		return false
-	}
-
+// is_implemented checks if the given symbol (methods and fields) implements the given interface (methods and fields).
+fn is_implemented(iface_methods []psi.PsiElement, iface_fields []psi.PsiElement, symbol_methods []psi.PsiElement, symbol_fields []psi.PsiElement) bool {
 	mut symbol_methods_set := map[string]psi.FunctionOrMethodDeclaration{}
 	for symbol_method in symbol_methods {
 		if symbol_method is psi.FunctionOrMethodDeclaration {
@@ -141,57 +104,4 @@ fn is_field_compatible(iface_field psi.FieldDeclaration, symbol_field psi.FieldD
 	symbol_type := symbol_field.get_type()
 
 	return iface_type.qualified_name() == symbol_type.qualified_name()
-}
-
-fn candidates_by_methods_and_fields(methods []psi.PsiElement, fields []psi.PsiElement) []psi.PsiElement {
-	by_methods := candidates_by_methods(methods)
-	by_fields := candidates_by_fields(fields)
-	mut result := []psi.PsiElement{cap: by_methods.len + by_fields.len}
-	result << by_methods
-	result << by_fields
-	return result
-}
-
-fn candidates_by_methods(methods []psi.PsiElement) []psi.PsiElement {
-	mut candidates := []psi.PsiElement{cap: 5}
-
-	for method in methods {
-		if method is psi.InterfaceMethodDeclaration {
-			fingerprint := method.fingerprint()
-
-			// all methods with the same fingerprint can probably be part of struct that implements the interface
-			struct_methods := stubs_index.get_elements_from_by_name(.workspace, .methods_fingerprint,
-				fingerprint)
-
-			for struct_method in struct_methods {
-				if struct_method is psi.FunctionOrMethodDeclaration {
-					candidates << struct_method.owner() or { continue }
-				}
-			}
-		}
-	}
-
-	return candidates
-}
-
-fn candidates_by_fields(fields []psi.PsiElement) []psi.PsiElement {
-	mut candidates := []psi.PsiElement{cap: 5}
-
-	for field in fields {
-		if field is psi.FieldDeclaration {
-			fingerprint := field.name()
-
-			// all fields with the same fingerprint can probably be part of struct that implements the interface
-			struct_fields := stubs_index.get_elements_from_by_name(.workspace, .fields_fingerprint,
-				fingerprint)
-
-			for struct_field in struct_fields {
-				if struct_field is psi.FieldDeclaration {
-					candidates << struct_field.owner() or { continue }
-				}
-			}
-		}
-	}
-
-	return candidates
 }

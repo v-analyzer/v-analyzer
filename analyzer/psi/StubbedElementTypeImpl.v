@@ -127,13 +127,13 @@ pub fn (_ &StubbedElementType) index_stub(stub &StubBase, mut sink IndexSink) {
 			return
 		}
 
-		sink.occurrence(StubIndexKey.functions, name)
+		sink.occurrence(.functions, name)
 	}
 
 	if stub.stub_type == .method_declaration {
 		receiver := stub.receiver()
-		sink.occurrence(StubIndexKey.methods, receiver)
-		sink.occurrence(StubIndexKey.methods_fingerprint, stub.additional)
+		sink.occurrence(.methods, receiver)
+		sink.occurrence(.methods_fingerprint, stub.additional)
 	}
 
 	if stub.stub_type == .struct_declaration {
@@ -141,35 +141,45 @@ pub fn (_ &StubbedElementType) index_stub(stub &StubBase, mut sink IndexSink) {
 		if name.ends_with('Attribute') {
 			// convert DeprecatedAfter to deprecated_after
 			clear_name := utils.pascal_case_to_snake_case(name.trim_string_right('Attribute'))
-			sink.occurrence(StubIndexKey.attributes, clear_name)
+			sink.occurrence(.attributes, clear_name)
 			return
 		}
 
-		sink.occurrence(StubIndexKey.structs, name)
+		sink.occurrence(.structs, name)
 	}
 
 	if stub.stub_type == .interface_declaration {
-		sink.occurrence(StubIndexKey.interfaces, stub.name())
+		sink.occurrence(.interfaces, stub.name())
+	}
+
+	if stub.stub_type == .interface_method_declaration {
+		sink.occurrence(.interface_methods_fingerprint, stub.additional)
 	}
 
 	if stub.stub_type == .enum_declaration {
-		sink.occurrence(StubIndexKey.enums, stub.name())
+		sink.occurrence(.enums, stub.name())
 	}
 
 	if stub.stub_type == .constant_declaration {
-		sink.occurrence(StubIndexKey.constants, stub.name())
+		sink.occurrence(.constants, stub.name())
 	}
 
 	if stub.stub_type == .type_alias_declaration {
-		sink.occurrence(StubIndexKey.type_aliases, stub.name())
+		sink.occurrence(.type_aliases, stub.name())
 	}
 
 	if stub.stub_type == .global_variable {
-		sink.occurrence(StubIndexKey.global_variables, stub.name())
+		sink.occurrence(.global_variables, stub.name())
 	}
 
 	if stub.stub_type == .field_declaration {
-		sink.occurrence(StubIndexKey.fields_fingerprint, stub.name())
+		if parent := stub.parent_stub() {
+			if parent.stub_type() == .struct_declaration {
+				sink.occurrence(.fields_fingerprint, stub.additional)
+			} else if parent.stub_type() == .interface_declaration {
+				sink.occurrence(.interface_fields_fingerprint, stub.additional)
+			}
+		}
 	}
 }
 
@@ -416,7 +426,9 @@ pub fn (s &StubbedElementType) create_stub(psi PsiElement, parent_stub &StubElem
 	}
 
 	if psi is InterfaceMethodDeclaration {
-		return declaration_stub(*psi, parent_stub, .interface_method_declaration)
+		return declaration_stub(*psi, parent_stub, .interface_method_declaration,
+			additional: psi.fingerprint()
+		)
 	}
 
 	if psi is Receiver {
@@ -529,6 +541,7 @@ pub fn (s &StubbedElementType) create_stub(psi PsiElement, parent_stub &StubElem
 [params]
 struct StubParams {
 	include_text bool
+	additional   string
 }
 
 [inline]
@@ -541,6 +554,7 @@ pub fn declaration_stub(psi PsiNamedElement, parent_stub &StubElement, stub_type
 	return new_stub_base(parent_stub, stub_type, psi.name(), text_range,
 		comment: if psi is PsiDocCommentOwner { psi.doc_comment() } else { '' }
 		text: if params.include_text { (psi as PsiElement).get_text() } else { '' }
+		additional: params.additional
 	)
 }
 
