@@ -1,7 +1,13 @@
 module psi
 
+import analyzer.psi.types
+
 pub struct TypeAliasDeclaration {
 	PsiElementImpl
+}
+
+pub fn (a &TypeAliasDeclaration) get_type() types.Type {
+	return types.new_interface_type(a.name(), a.module_name())
 }
 
 pub fn (a &TypeAliasDeclaration) generic_parameters() ?&GenericParameters {
@@ -29,9 +35,9 @@ pub fn (a TypeAliasDeclaration) doc_comment() string {
 }
 
 pub fn (a &TypeAliasDeclaration) types() []PlainType {
-	types := a.find_children_by_type_or_stub(.plain_type)
-	mut result := []PlainType{cap: types.len}
-	for type_ in types {
+	inner_types := a.find_children_by_type_or_stub(.plain_type)
+	mut result := []PlainType{cap: inner_types.len}
+	for type_ in inner_types {
 		if type_ is PlainType {
 			result << type_
 		}

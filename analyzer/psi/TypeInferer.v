@@ -461,10 +461,21 @@ pub fn (t &TypeInferer) infer_call_expr_type(element CallExpression) types.Type 
 			false), need_unwrap)
 	}
 
-	resolved := element.resolve() or { return types.unknown_type }
-	typ := t.infer_type(resolved)
-	if typ is types.FunctionType {
-		return typ.result
+	if resolved := element.resolve() {
+		typ := t.infer_type(resolved)
+		if typ is types.FunctionType {
+			return typ.result
+		}
+	}
+
+	// most probably type cast expression: PsiElement(node)
+	// try to resolve as type
+	expr := element.ref_expression() or { return types.unknown_type }
+	ref := new_reference(element.containing_file, expr, true)
+	if resolved := ref.resolve() {
+		if resolved is PsiTypedElement {
+			return resolved.get_type()
+		}
 	}
 
 	return types.unknown_type
