@@ -881,7 +881,10 @@ module.exports = grammar({
       choice(
         format_flag,
         seq(
-          optional(token(/[+\-0]/)),
+          optional(choice(
+            token(/[+\-]/),
+            token('0'),
+          )),
           optional($.int_literal),
           optional(seq('.', $.int_literal)),
           optional(format_flag),

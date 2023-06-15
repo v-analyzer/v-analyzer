@@ -6229,11 +6229,23 @@
                   "type": "CHOICE",
                   "members": [
                     {
-                      "type": "TOKEN",
-                      "content": {
-                        "type": "PATTERN",
-                        "value": "[+\\-0]"
-                      }
+                      "type": "CHOICE",
+                      "members": [
+                        {
+                          "type": "TOKEN",
+                          "content": {
+                            "type": "PATTERN",
+                            "value": "[+\\-]"
+                          }
+                        },
+                        {
+                          "type": "TOKEN",
+                          "content": {
+                            "type": "STRING",
+                            "value": "0"
+                          }
+                        }
+                      ]
                     },
                     {
                       "type": "BLANK"
