@@ -121,7 +121,7 @@ pub fn (mut v CodeLensVisitor) add_super_interfaces_lens(node psi.AstNode) {
 		identifier_text_range := element.identifier_text_range()
 		locations := tform.elements_to_locations(supers)
 
-		lens_title := 'implemented ' + supers.len.str() +
+		lens_title := 'implement ' + supers.len.str() +
 			if supers.len == 1 { ' interface' } else { ' interfaces' }
 
 		v.add_lens(node, lsp.Command{
