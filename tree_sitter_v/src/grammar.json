@@ -6626,49 +6626,6 @@
         ]
       }
     },
-    "_expression_list_repeat1": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "_expression"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "mutable_expression"
-            }
-          ]
-        },
-        {
-          "type": "REPEAT1",
-          "content": {
-            "type": "SEQ",
-            "members": [
-              {
-                "type": "STRING",
-                "value": ","
-              },
-              {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "SYMBOL",
-                    "name": "_expression"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "mutable_expression"
-                  }
-                ]
-              }
-            ]
-          }
-        }
-      ]
-    },
     "empty_literal_value": {
       "type": "PREC",
       "value": -1,

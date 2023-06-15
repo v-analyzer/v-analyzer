@@ -930,25 +930,6 @@ module.exports = grammar({
     expression_without_blocks_list: ($) =>
       prec(PREC.resolve, comma_sep1($._expression_without_blocks)),
 
-    // TODO: any expression on the right that is recognized
-    // as external tokens will be deduced as separate nodes
-    // instead of having under the same expression_list node
-    _expression_list_repeat1: ($) => seq(
-      choice(
-        $._expression,
-        $.mutable_expression,
-      ),
-      repeat1(
-        seq(
-          ',',
-          choice(
-            $._expression,
-            $.mutable_expression,
-          ),
-        ),
-      ),
-    ),
-
     empty_literal_value: () => prec(PREC.composite_literal, seq('{', '}')),
 
     // ==================== TYPES ====================
