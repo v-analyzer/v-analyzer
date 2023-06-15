@@ -69,7 +69,7 @@ enable_parameter_name_hints = true
 [code_lens]
 # Specifies whenever to enable code lenses or not.
 # By default, they are enabled.
-enable = false
+enable = true
 
 # Specifies whenever to show code lenses for main function to run current directory or not.
 # Example:
