@@ -769,5 +769,21 @@ pub fn (t &TypeInferer) infer_context_type(elem ?PsiElement) types.Type {
 		}
 	}
 
+	if parent.element_type() == .expression_list {
+		grand := parent.parent() or { return types.unknown_type }
+		if grand.element_type() == .return_statement {
+			function := grand.parent_of_any_type(.function_declaration, .function_literal) or {
+				return types.unknown_type
+			}
+			if function is SignatureOwner {
+				signature := function.signature() or { return types.unknown_type }
+				typ := signature.get_type()
+				if typ is types.FunctionType {
+					return typ.result
+				}
+			}
+		}
+	}
+
 	return types.unknown_type
 }
