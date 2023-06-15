@@ -15,6 +15,18 @@ pub struct TypeInferer {}
 
 pub fn (t &TypeInferer) infer_type(elem ?PsiElement) types.Type {
 	element := elem or { return types.unknown_type }
+
+	if from_cache := type_cache.get(element) {
+		return from_cache
+	}
+
+	typ := t.infer_type_impl(elem)
+	type_cache.put(element, typ)
+	return typ
+}
+
+pub fn (t &TypeInferer) infer_type_impl(elem ?PsiElement) types.Type {
+	element := elem or { return types.unknown_type }
 	if element.node.type_name in [
 		.in_expression,
 		.not_in_expression,

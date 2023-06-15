@@ -35,6 +35,8 @@ pub fn (mut ls LanguageServer) did_change(params lsp.DidChangeTextDocumentParams
 	watch := time.new_stopwatch(auto_start: true)
 	ls.analyzer_instance.update_stub_indexes([file.psi_file])
 
+	type_cache.clear()
+
 	loglib.with_fields({
 		'caller':   @METHOD
 		'duration': watch.elapsed().str()
