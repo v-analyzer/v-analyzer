@@ -27,13 +27,17 @@ pub fn (c CallExpression) expression() ?PsiElement {
 }
 
 pub fn (c CallExpression) ref_expression() ?ReferenceExpressionBase {
-	return if selector_expr := c.find_child_by_type(.selector_expression) {
-		selector_expr as ReferenceExpressionBase
+	if selector_expr := c.find_child_by_type(.selector_expression) {
+		if selector_expr is ReferenceExpressionBase {
+			return selector_expr
+		}
 	} else if ref_expr := c.find_child_by_type(.reference_expression) {
-		ref_expr as ReferenceExpressionBase
-	} else {
-		return none
+		if ref_expr is ReferenceExpressionBase {
+			return ref_expr
+		}
 	}
+
+	return none
 }
 
 pub fn (c CallExpression) resolve() ?PsiElement {

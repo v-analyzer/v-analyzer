@@ -98,6 +98,14 @@ enable_implicit_err_hints = true
 #     ^^    ^^
 enable_parameter_name_hints = true
 
+# Specifies whenever to show type hints for constants or not.
+# Example:
+# ```
+# const foo : int = 1
+#           ^^^^^
+# ```
+enable_constant_type_hints = true
+
 # Specifies code lenses to show.
 [code_lens]
 # Specifies whenever to enable code lenses or not.

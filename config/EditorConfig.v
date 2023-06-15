@@ -15,6 +15,7 @@ pub mut:
 	enable_type_hints           bool = true
 	enable_implicit_err_hints   bool = true
 	enable_parameter_name_hints bool = true
+	enable_constant_type_hints  bool = true
 }
 
 pub struct CodeLensConfig {
@@ -99,6 +100,13 @@ pub fn from_toml(root string, path string, content string) !EditorConfig {
 		true // default to true
 	} else {
 		enable_parameter_name_hints.bool()
+	}
+
+	enable_constant_type_hints := inlay_hints_table.value('enable_constant_type_hints')
+	config.inlay_hints.enable_constant_type_hints = if enable_constant_type_hints is toml.Null {
+		true // default to true
+	} else {
+		enable_constant_type_hints.bool()
 	}
 
 	code_lens_table := res.value('code_lens')

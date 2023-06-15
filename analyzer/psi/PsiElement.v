@@ -71,6 +71,9 @@ pub interface PsiElement {
 	// prev_sibling returns the previous node at the same nesting level.
 	// If the node is the first child node, none is returned.
 	prev_sibling() ?PsiElement
+	// prev_sibling_of_type returns the previous node at the same nesting level with the specified type.
+	// If no such node exists, none is returned.
+	prev_sibling_of_type(typ v.NodeType) ?PsiElement
 	// prev_sibling_or_stub returns the previous node at the same nesting level or stub.
 	// If the node is the first child node or stub, none is returned.
 	prev_sibling_or_stub() ?PsiElement

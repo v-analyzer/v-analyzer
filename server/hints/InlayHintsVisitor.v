@@ -52,6 +52,26 @@ pub fn (mut v InlayHintsVisitor) process_node(node psi.AstNode, containing_file 
 		return
 	}
 
+	if node.type_name == .const_definition && v.cfg.enable_constant_type_hints {
+		element := psi.create_element(node, containing_file)
+		if element is psi.ConstantDefinition {
+			if element.name() == '_' {
+				return
+			}
+
+			range := element.identifier_text_range()
+
+			v.result << lsp.InlayHint{
+				position: lsp.Position{
+					line: range.line
+					character: range.end_column
+				}
+				label: ': ' + element.get_type().readable_name()
+				kind: .type_
+			}
+		}
+	}
+
 	if v.cfg.enable_type_hints {
 		def := psi.node_to_var_definition(node, containing_file, none)
 		if !isnil(def) && def.name() != '_' {

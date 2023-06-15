@@ -295,6 +295,18 @@ pub fn (n PsiElementImpl) prev_sibling() ?PsiElement {
 	return create_element(sibling, n.containing_file)
 }
 
+pub fn (n PsiElementImpl) prev_sibling_of_type(typ v.NodeType) ?PsiElement {
+	mut res := PsiElement(n)
+	for {
+		res = res.prev_sibling_or_stub() or { return none }
+		if res.element_type() == typ {
+			return res
+		}
+	}
+
+	return none
+}
+
 pub fn (n PsiElementImpl) prev_sibling_or_stub() ?PsiElement {
 	if stub := n.get_stub() {
 		sibling := stub.prev_sibling() or { return none }

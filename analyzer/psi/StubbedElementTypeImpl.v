@@ -460,6 +460,10 @@ pub fn (s &StubbedElementType) create_stub(psi PsiElement, parent_stub &StubElem
 	}
 
 	if psi is ConstantDefinition {
+		if expression := psi.last_child() {
+			text := expression.get_text()
+			return declaration_stub(*psi, parent_stub, .constant_declaration, additional: text)
+		}
 		return declaration_stub(*psi, parent_stub, .constant_declaration)
 	}
 

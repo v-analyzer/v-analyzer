@@ -234,6 +234,8 @@ fn (mut p Provider) const_documentation(element psi.ConstantDefinition) ? {
 	}
 	p.sb.write_string('const ')
 	p.sb.write_string(element.name())
+	p.sb.write_string(' ')
+	p.sb.write_string(element.get_type().readable_name())
 	p.sb.write_string(' = ')
 	if value := element.expression() {
 		p.sb.write_string(value.get_text())
