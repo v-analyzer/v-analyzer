@@ -20,7 +20,7 @@ pub fn (mut v InlayHintsVisitor) accept(root psi.PsiElement) {
 	}
 }
 
-pub fn (mut v InlayHintsVisitor) process_node(node psi.AstNode, containing_file &psi.PsiFileImpl) {
+pub fn (mut v InlayHintsVisitor) process_node(node psi.AstNode, containing_file &psi.PsiFile) {
 	if node.type_name == .range && v.cfg.enable_range_hints {
 		operator := node.child_by_field_name('operator') or { return }
 		start_point := operator.start_point()
@@ -88,7 +88,7 @@ pub fn (mut v InlayHintsVisitor) process_node(node psi.AstNode, containing_file 
 	}
 }
 
-pub fn (mut v InlayHintsVisitor) handle_call_expression(call psi.AstNode, containing_file &psi.PsiFileImpl) {
+pub fn (mut v InlayHintsVisitor) handle_call_expression(call psi.AstNode, containing_file &psi.PsiFile) {
 	if v.lines > 1000 {
 		// don't show this hints for large files
 		return

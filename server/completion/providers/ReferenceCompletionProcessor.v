@@ -6,7 +6,7 @@ import strings
 import server.completion
 
 pub struct ReferenceCompletionProcessor {
-	file       &psi.PsiFileImpl
+	file       &psi.PsiFile
 	module_fqn string
 	root       string
 	ctx        &completion.CompletionContext

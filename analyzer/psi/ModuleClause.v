@@ -34,7 +34,7 @@ pub fn (n ModuleClause) name() string {
 	return identifier.get_text()
 }
 
-pub fn module_qualified_name(file &PsiFileImpl, indexing_root string) string {
+pub fn module_qualified_name(file &PsiFile, indexing_root string) string {
 	module_name := file.module_name() or { '' }
 	if module_name in ['main', 'builtin'] {
 		return module_name

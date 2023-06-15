@@ -35,7 +35,7 @@ pub fn references(element psi.PsiElement, params SearchParams) []psi.PsiElement 
 
 struct ReferencesSearch {
 	params          SearchParams
-	containing_file &psi.PsiFileImpl
+	containing_file &psi.PsiFile
 }
 
 pub fn (r &ReferencesSearch) search(element psi.PsiElement) []psi.PsiElement {

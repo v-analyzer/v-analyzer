@@ -10,7 +10,7 @@ pub struct ResolveSemanticVisitor {
 	with_range bool // whether request range is specified
 }
 
-pub fn new_resolve_semantic_visitor(range lsp.Range, containing_file &psi.PsiFileImpl) ResolveSemanticVisitor {
+pub fn new_resolve_semantic_visitor(range lsp.Range, containing_file &psi.PsiFile) ResolveSemanticVisitor {
 	start := analyzer.compute_offset(containing_file.source_text, range.start.line, range.start.character)
 	end := analyzer.compute_offset(containing_file.source_text, range.end.line, range.end.character)
 

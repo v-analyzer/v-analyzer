@@ -408,7 +408,7 @@ fn (mut p Provider) write_visibility_modifiers(modifiers psi.VisibilityModifiers
 	p.sb.write_string(modifiers.get_text())
 }
 
-fn (mut p Provider) write_module_name(file &psi.PsiFileImpl) {
+fn (mut p Provider) write_module_name(file &psi.PsiFile) {
 	fqn := file.module_fqn()
 	name := if fqn.len == 0 {
 		file.module_name() or { '' }

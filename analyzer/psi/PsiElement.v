@@ -10,13 +10,13 @@ pub type AstNode = tree_sitter.Node[v.NodeType]
 pub interface PsiElement {
 	id ID // unique id of the element
 	node AstNode // base node from Tree Sitter
-	containing_file &PsiFileImpl // file where the element is located
+	containing_file &PsiFile // file where the element is located
 	stub_id StubId
 	get_stub() ?&StubBase
 	stub_list() &StubList
 	element_type() v.NodeType
 	node() AstNode // return base node from Tree Sitter
-	containing_file() &PsiFileImpl // return file where the element is located
+	containing_file() &PsiFile // return file where the element is located
 	is_equal(other PsiElement) bool // return true if the element is equal to the other element
 	// find_element_at returns the leaf node at the specified position relative to the start of the node.
 	// If the node is not found, none is returned.

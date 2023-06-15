@@ -6,13 +6,13 @@ pub struct PsiElementImpl {
 pub:
 	id              ID
 	node            AstNode // base node from Tree Sitter
-	containing_file &PsiFileImpl
+	containing_file &PsiFile
 	// stubs related
 	stub_id    StubId = non_stubbed_element
 	stubs_list &StubList
 }
 
-pub fn new_psi_node(id ID, containing_file &PsiFileImpl, node AstNode) PsiElementImpl {
+pub fn new_psi_node(id ID, containing_file &PsiFile, node AstNode) PsiElementImpl {
 	return PsiElementImpl{
 		id: id
 		node: node
@@ -60,7 +60,7 @@ pub fn (n PsiElementImpl) element_type() v.NodeType {
 	return n.node.type_name
 }
 
-pub fn (n PsiElementImpl) containing_file() &PsiFileImpl {
+pub fn (n PsiElementImpl) containing_file() &PsiFile {
 	if n.stub_based() {
 		path := n.stubs_list.path
 		return new_stub_psi_file(path, n.stubs_list)

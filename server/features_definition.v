@@ -40,7 +40,7 @@ pub:
 	range    psi.TextRange
 }
 
-pub fn new_resolve_result(containing_file &psi.PsiFileImpl, element psi.PsiElement) ?ResolveResult {
+pub fn new_resolve_result(containing_file &psi.PsiFile, element psi.PsiElement) ?ResolveResult {
 	if element is psi.PsiNamedElement {
 		text_range := element.identifier_text_range()
 		return ResolveResult{

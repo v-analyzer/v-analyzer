@@ -13,7 +13,7 @@ pub struct DumbAwareSemanticVisitor {
 	with_range bool // whether request range is specified
 }
 
-pub fn new_dumb_aware_semantic_visitor(range lsp.Range, containing_file &psi.PsiFileImpl) DumbAwareSemanticVisitor {
+pub fn new_dumb_aware_semantic_visitor(range lsp.Range, containing_file &psi.PsiFile) DumbAwareSemanticVisitor {
 	start := analyzer.compute_offset(containing_file.source_text, range.start.line, range.start.character)
 	end := analyzer.compute_offset(containing_file.source_text, range.end.line, range.end.character)
 

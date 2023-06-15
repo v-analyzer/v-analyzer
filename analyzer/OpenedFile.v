@@ -7,7 +7,7 @@ pub struct OpenedFile {
 pub mut:
 	uri      lsp.DocumentUri
 	version  int
-	psi_file &psi.PsiFileImpl
+	psi_file &psi.PsiFile
 }
 
 pub fn (f OpenedFile) find_offset(pos lsp.Position) u32 {

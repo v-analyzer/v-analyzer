@@ -50,7 +50,7 @@ pub fn (tree &StubTree) get_imported_modules() []string {
 	return result
 }
 
-pub fn build_stub_tree(file &psi.PsiFileImpl, indexing_root string) &StubTree {
+pub fn build_stub_tree(file &psi.PsiFile, indexing_root string) &StubTree {
 	root := file.root()
 	stub_root := psi.new_root_stub(file.path())
 	module_fqn := psi.module_qualified_name(file, indexing_root)
@@ -87,7 +87,7 @@ struct NodeInfo {
 }
 
 [direct_array_access]
-pub fn build_stub_tree_iterative(file &psi.PsiFileImpl, mut nodes []NodeInfo) &StubTree {
+pub fn build_stub_tree_iterative(file &psi.PsiFile, mut nodes []NodeInfo) &StubTree {
 	root := file.root()
 	stub_root := psi.new_root_stub(file.path())
 

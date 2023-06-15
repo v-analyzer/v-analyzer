@@ -2,7 +2,7 @@ module psi
 
 struct PsiTreeWalker {
 mut:
-	containing_file &PsiFileImpl
+	containing_file &PsiFile
 	tree_walker     TreeWalker
 }
 

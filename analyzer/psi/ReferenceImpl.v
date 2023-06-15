@@ -5,12 +5,12 @@ import utils
 
 pub struct ReferenceImpl {
 	element        ReferenceExpressionBase
-	file           &PsiFileImpl
+	file           &PsiFile
 	for_types      bool
 	for_attributes bool
 }
 
-pub fn new_reference(file &PsiFileImpl, element ReferenceExpressionBase, for_types bool) &ReferenceImpl {
+pub fn new_reference(file &PsiFile, element ReferenceExpressionBase, for_types bool) &ReferenceImpl {
 	return &ReferenceImpl{
 		element: element
 		file: file
@@ -18,7 +18,7 @@ pub fn new_reference(file &PsiFileImpl, element ReferenceExpressionBase, for_typ
 	}
 }
 
-pub fn new_attribute_reference(file &PsiFileImpl, element ReferenceExpressionBase) &ReferenceImpl {
+pub fn new_attribute_reference(file &PsiFile, element ReferenceExpressionBase) &ReferenceImpl {
 	return &ReferenceImpl{
 		element: element
 		file: file
@@ -50,7 +50,7 @@ pub fn (r &ReferenceImpl) resolve() ?PsiElement {
 }
 
 pub struct SubResolver {
-	containing_file &PsiFileImpl
+	containing_file &PsiFile
 	element         ReferenceExpressionBase
 	for_types       bool
 	for_attributes  bool
@@ -579,7 +579,7 @@ pub fn (r &SubResolver) resolve_attribute(mut processor PsiScopeProcessor) bool 
 }
 
 pub struct ResolveProcessor {
-	containing_file &PsiFileImpl
+	containing_file &PsiFile
 	ref             ReferenceExpressionBase
 mut:
 	result []PsiElement

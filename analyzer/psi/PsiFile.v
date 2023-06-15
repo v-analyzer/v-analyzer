@@ -8,7 +8,7 @@ import analyzer.parser
 import v_tree_sitter.tree_sitter
 
 [heap]
-pub struct PsiFileImpl {
+pub struct PsiFile {
 pub:
 	path      string
 	stub_list &StubList
@@ -18,8 +18,8 @@ pub mut:
 	root        PsiElement
 }
 
-pub fn new_psi_file(path string, tree &tree_sitter.Tree[v.NodeType], source_text string) &PsiFileImpl {
-	mut file := &PsiFileImpl{
+pub fn new_psi_file(path string, tree &tree_sitter.Tree[v.NodeType], source_text string) &PsiFile {
+	mut file := &PsiFile{
 		path: path
 		tree: unsafe { tree }
 		source_text: source_text
@@ -30,8 +30,8 @@ pub fn new_psi_file(path string, tree &tree_sitter.Tree[v.NodeType], source_text
 	return file
 }
 
-pub fn new_stub_psi_file(path string, stub_list &StubList) &PsiFileImpl {
-	return &PsiFileImpl{
+pub fn new_stub_psi_file(path string, stub_list &StubList) &PsiFile {
+	return &PsiFile{
 		path: path
 		tree: unsafe { nil }
 		source_text: unsafe { nil }
@@ -40,21 +40,21 @@ pub fn new_stub_psi_file(path string, stub_list &StubList) &PsiFileImpl {
 }
 
 [inline]
-pub fn (p &PsiFileImpl) is_stub_based() bool {
+pub fn (p &PsiFile) is_stub_based() bool {
 	return isnil(p.tree)
 }
 
 [inline]
-pub fn (p &PsiFileImpl) is_test_file() bool {
+pub fn (p &PsiFile) is_test_file() bool {
 	return p.path.ends_with('_test.v')
 }
 
 [inline]
-pub fn (p &PsiFileImpl) index_sink() ?StubIndexSink {
+pub fn (p &PsiFile) index_sink() ?StubIndexSink {
 	return stubs_index.get_sink_for_file(p.path)
 }
 
-pub fn (mut p PsiFileImpl) reparse(new_code string) {
+pub fn (mut p PsiFile) reparse(new_code string) {
 	now := time.now()
 	// TODO: for some reason if we pass the old tree then trying to get the text
 	// of the node gives the text at the wrong offset.
@@ -70,27 +70,27 @@ pub fn (mut p PsiFileImpl) reparse(new_code string) {
 }
 
 [inline]
-pub fn (p &PsiFileImpl) path() string {
+pub fn (p &PsiFile) path() string {
 	return p.path
 }
 
 [inline]
-pub fn (p &PsiFileImpl) uri() string {
+pub fn (p &PsiFile) uri() string {
 	return lsp.document_uri_from_path(p.path)
 }
 
 [inline]
-pub fn (p &PsiFileImpl) text() string {
+pub fn (p &PsiFile) text() string {
 	return p.source_text
 }
 
-pub fn (p &PsiFileImpl) symbol_at(range TextRange) u8 {
+pub fn (p &PsiFile) symbol_at(range TextRange) u8 {
 	lines := p.source_text.split_into_lines()
 	line := lines[range.line] or { return 0 }
 	return line[range.column - 1] or { return 0 }
 }
 
-pub fn (p &PsiFileImpl) root() PsiElement {
+pub fn (p &PsiFile) root() PsiElement {
 	if p.is_stub_based() {
 		return p.stub_list.root().get_psi() or { return p.root }
 	}
@@ -99,11 +99,11 @@ pub fn (p &PsiFileImpl) root() PsiElement {
 }
 
 [inline]
-pub fn (p &PsiFileImpl) find_element_at(offset u32) ?PsiElement {
+pub fn (p &PsiFile) find_element_at(offset u32) ?PsiElement {
 	return p.root.find_element_at(offset)
 }
 
-pub fn (p &PsiFileImpl) find_reference_at(offset u32) ?ReferenceExpressionBase {
+pub fn (p &PsiFile) find_reference_at(offset u32) ?ReferenceExpressionBase {
 	element := p.find_element_at(offset)?
 	if element is ReferenceExpressionBase {
 		return element
@@ -118,11 +118,11 @@ pub fn (p &PsiFileImpl) find_reference_at(offset u32) ?ReferenceExpressionBase {
 }
 
 [inline]
-pub fn (p &PsiFileImpl) module_fqn() string {
+pub fn (p &PsiFile) module_fqn() string {
 	return stubs_index.get_module_qualified_name(p.path)
 }
 
-pub fn (p &PsiFileImpl) module_name() ?string {
+pub fn (p &PsiFile) module_name() ?string {
 	module_clause := p.root().find_child_by_type_or_stub(.module_clause)?
 
 	if module_clause is ModuleClause {
@@ -132,7 +132,7 @@ pub fn (p &PsiFileImpl) module_name() ?string {
 	return none
 }
 
-pub fn (p &PsiFileImpl) module_clause() ?&ModuleClause {
+pub fn (p &PsiFile) module_clause() ?&ModuleClause {
 	module_clause := p.root().find_child_by_type_or_stub(.module_clause)?
 
 	if module_clause is ModuleClause {
@@ -142,7 +142,7 @@ pub fn (p &PsiFileImpl) module_clause() ?&ModuleClause {
 	return none
 }
 
-pub fn (p &PsiFileImpl) get_imports() []ImportSpec {
+pub fn (p &PsiFile) get_imports() []ImportSpec {
 	import_list := p.root().find_child_by_type_or_stub(.import_list) or { return [] }
 	declarations := import_list.find_children_by_type_or_stub(.import_declaration)
 	mut import_specs := []ImportSpec{cap: declarations.len}
@@ -155,7 +155,7 @@ pub fn (p &PsiFileImpl) get_imports() []ImportSpec {
 	return import_specs
 }
 
-pub fn (p &PsiFileImpl) resolve_import_spec(name string) ?ImportSpec {
+pub fn (p &PsiFile) resolve_import_spec(name string) ?ImportSpec {
 	imports := p.get_imports()
 	if imports.len == 0 {
 		return none
@@ -170,7 +170,7 @@ pub fn (p &PsiFileImpl) resolve_import_spec(name string) ?ImportSpec {
 	return none
 }
 
-pub fn (p &PsiFileImpl) process_declarations(mut processor PsiScopeProcessor) bool {
+pub fn (p &PsiFile) process_declarations(mut processor PsiScopeProcessor) bool {
 	children := p.root.children()
 	for child in children {
 		// if child is PsiNamedElement {

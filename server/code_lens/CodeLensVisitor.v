@@ -11,13 +11,13 @@ import analyzer.psi.search
 pub struct CodeLensVisitor {
 	cfg             config.CodeLensConfig
 	uri             lsp.DocumentUri
-	containing_file &psi.PsiFileImpl
+	containing_file &psi.PsiFile
 mut:
 	run_lens_seen bool
 	result        []lsp.CodeLens
 }
 
-pub fn new_visitor(cfg config.CodeLensConfig, uri lsp.DocumentUri, containing_file &psi.PsiFileImpl) CodeLensVisitor {
+pub fn new_visitor(cfg config.CodeLensConfig, uri lsp.DocumentUri, containing_file &psi.PsiFile) CodeLensVisitor {
 	return CodeLensVisitor{
 		cfg: cfg
 		uri: uri

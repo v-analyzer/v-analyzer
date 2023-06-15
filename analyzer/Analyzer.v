@@ -26,7 +26,7 @@ pub fn (mut a Analyzer) update_stub_indexes_from_sinks(changed_sinks []psi.StubI
 	stubs_index.update_stubs_index(changed_sinks, all_sinks)
 }
 
-pub fn (mut a Analyzer) update_stub_indexes(changed_files []&psi.PsiFileImpl) {
+pub fn (mut a Analyzer) update_stub_indexes(changed_files []&psi.PsiFile) {
 	all_sinks := a.all_sinks()
 	mut changed_sinks := []psi.StubIndexSink{cap: changed_files.len}
 
