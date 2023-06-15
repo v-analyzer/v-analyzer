@@ -162,6 +162,11 @@
 				"command": "spavn-analyzer.restart",
 				"title": "Restart",
 				"category": "spavn-analyzer"
+			},
+			{
+				"command": "spavn-analyzer.showReferences",
+				"title": "Show References",
+				"category": "spavn-analyzer"
 			}
 		],
 		"menus": {

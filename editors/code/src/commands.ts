@@ -1,8 +1,10 @@
 import {ProgressLocation, window} from 'vscode';
 import {runVCommand, runVCommandCallback, runVCommandInBackground} from './exec';
-import {activateSpavnAnalyzer, deactivateSpavnAnalyzer} from './langserver';
+import {activateSpavnAnalyzer, client, deactivateSpavnAnalyzer} from './langserver';
 import {log, spavnAnalyzerOutputChannel, vOutputChannel} from './debug';
 import * as path from "path";
+import vscode from "vscode";
+import * as lc from "vscode-languageclient";
 
 /**
  * Run current directory.
@@ -74,4 +76,34 @@ export function restartSpavnAnalyzer(): void {
 			);
 		}
 	);
+}
+
+export type Cmd = (...args: any[]) => unknown;
+
+export function showReferences(): Cmd {
+	return async (uri: string, positionData: string, locationData: string) => {
+		const locations = JSON.parse(locationData);
+		const position = JSON.parse(positionData);
+		await showReferencesImpl(uri, position, locations);
+	};
+}
+
+export async function showReferencesImpl(
+	uri: string,
+	position: lc.Position,
+	locations: lc.Location[]
+) {
+	if (client) {
+		console.log(vscode.Uri.parse(uri))
+		console.log(position)
+		console.log(client.protocol2CodeConverter.asPosition(position))
+		console.log(locations.map(client.protocol2CodeConverter.asLocation))
+
+		await vscode.commands.executeCommand(
+			"editor.action.showReferences",
+			vscode.Uri.parse(uri),
+			client.protocol2CodeConverter.asPosition(position),
+			locations.map(client.protocol2CodeConverter.asLocation)
+		);
+	}
 }

@@ -8,6 +8,7 @@ const cmds = {
 	'v.ver': commands.ver,
 	'v.prod': commands.prod,
 	'spavn-analyzer.restart': commands.restartSpavnAnalyzer,
+	'spavn-analyzer.showReferences': commands.showReferences(),
 };
 
 /**
