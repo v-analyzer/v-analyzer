@@ -2,7 +2,7 @@ module server
 
 import lsp
 import loglib
-import analyzer.psi
+import server.tform
 import analyzer.psi.search
 
 pub fn (mut ls LanguageServer) rename(params lsp.RenameParams, mut wr ResponseWriter) !lsp.WorkspaceEdit {
@@ -18,29 +18,11 @@ pub fn (mut ls LanguageServer) rename(params lsp.RenameParams, mut wr ResponseWr
 	}
 
 	references := search.references(element, include_declaration: true)
-	edits := elements_to_text_edits(references, params.new_name)
+	edits := tform.elements_to_text_edits(references, params.new_name)
 
 	return lsp.WorkspaceEdit{
 		changes: {
 			uri: edits
 		}
 	}
-}
-
-fn elements_to_text_edits(elements []psi.PsiElement, new_name string) []lsp.TextEdit {
-	mut result := []lsp.TextEdit{cap: elements.len}
-
-	for element in elements {
-		range := if element is psi.PsiNamedElement {
-			element.identifier_text_range()
-		} else {
-			element.text_range()
-		}
-		result << lsp.TextEdit{
-			range: text_range_to_lsp_range(range)
-			new_text: new_name
-		}
-	}
-
-	return result
 }

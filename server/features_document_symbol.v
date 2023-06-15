@@ -2,6 +2,7 @@ module server
 
 import lsp
 import analyzer.psi
+import server.tform
 
 pub fn (mut ls LanguageServer) document_symbol(params lsp.DocumentSymbolParams, mut wr ResponseWriter) ![]lsp.DocumentSymbol {
 	uri := params.text_document.uri.normalize()
@@ -28,8 +29,8 @@ fn document_symbol_presentation(element psi.PsiElement) ?lsp.DocumentSymbol {
 			name: name_presentation(element)
 			detail: detail_presentation(element)
 			kind: symbol_kind(element as psi.PsiElement) or { return none }
-			range: text_range_to_lsp_range(full_text_range)
-			selection_range: text_range_to_lsp_range(text_range)
+			range: tform.text_range_to_lsp_range(full_text_range)
+			selection_range: tform.text_range_to_lsp_range(text_range)
 			children: children
 		}
 	}

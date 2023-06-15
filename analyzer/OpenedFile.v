@@ -23,7 +23,7 @@ pub fn compute_offset(src string, line int, col int) int {
 	for i := 0; i < src_len; i++ {
 		byt := src[i]
 		is_lf := byt == `\n`
-		is_crlf := i + 1 < src_len && unsafe { byt == `\r` && src[i + 1] == `\n` }
+		is_crlf := i + 1 < src_len && byt == `\r` && src[i + 1] == `\n`
 		is_eol := is_lf || is_crlf
 		if src_line == line && src_col == col {
 			return offset

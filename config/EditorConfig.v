@@ -17,6 +17,14 @@ pub mut:
 	enable_parameter_name_hints bool = true
 }
 
+pub struct CodeLensConfig {
+pub mut:
+	enable                       bool = true
+	enable_run_lens              bool = true
+	enable_inheritors_lens       bool = true
+	enable_super_interfaces_lens bool = true
+}
+
 pub struct EditorConfig {
 pub:
 	root string
@@ -26,6 +34,7 @@ pub mut:
 	custom_cache_dir       string
 	inlay_hints            InlayHintsConfig
 	enable_semantic_tokens SemanticTokensMode = SemanticTokensMode.full
+	code_lens              CodeLensConfig
 }
 
 pub fn from_toml(root string, path string, content string) !EditorConfig {
@@ -90,6 +99,35 @@ pub fn from_toml(root string, path string, content string) !EditorConfig {
 		true // default to true
 	} else {
 		enable_parameter_name_hints.bool()
+	}
+
+	code_lens_table := res.value('code_lens')
+	enable_lens_value := code_lens_table.value('enable')
+	config.code_lens.enable = if enable_lens_value is toml.Null {
+		true // default to true
+	} else {
+		enable_lens_value.bool()
+	}
+
+	enable_run_lens := code_lens_table.value('enable_run_lens')
+	config.code_lens.enable_run_lens = if enable_run_lens is toml.Null {
+		true // default to true
+	} else {
+		enable_run_lens.bool()
+	}
+
+	enable_inheritors_lens := code_lens_table.value('enable_inheritors_lens')
+	config.code_lens.enable_inheritors_lens = if enable_inheritors_lens is toml.Null {
+		true // default to true
+	} else {
+		enable_inheritors_lens.bool()
+	}
+
+	enable_super_interfaces_lens := code_lens_table.value('enable_super_interfaces_lens')
+	config.code_lens.enable_super_interfaces_lens = if enable_super_interfaces_lens is toml.Null {
+		true // default to true
+	} else {
+		enable_super_interfaces_lens.bool()
 	}
 
 	return config

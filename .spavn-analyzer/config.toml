@@ -64,3 +64,33 @@ enable_implicit_err_hints = true
 # foo(a: 1, b: 2)
 #     ^^    ^^
 enable_parameter_name_hints = true
+
+# Specifies code lenses to show.
+[code_lens]
+# Specifies whenever to enable code lenses or not.
+# By default, they are enabled.
+enable = false
+
+# Specifies whenever to show code lenses for main function to run current directory or not.
+# Example:
+# ```
+# ▶ Run
+# fn main() {}
+# ```
+enable_run_lens = true
+
+# Specifies whenever to show code lenses for interface inheritors or not.
+# Example:
+# ```
+# 2 implementations
+# interface Foo {}
+# ```
+enable_inheritors_lens = true
+
+# Specifies whenever to show code lenses for structs implementing interfaces or not.
+# Example:
+# ```
+# implemented 2 interfaces
+# struct Boo {}
+# ```
+enable_super_interfaces_lens = true

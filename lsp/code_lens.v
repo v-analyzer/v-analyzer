@@ -16,9 +16,14 @@ pub:
 
 pub struct CodeLens {
 pub:
-	range   Range
+	// The range in which this code lens is valid. Should only span a single
+	// line.
+	range Range
+	// The command this code lens represents.
 	command Command
-	data    string  [raw]
+	// A data entry field that is preserved on a code lens item between
+	// a code lens and a code lens resolve request.
+	data string [raw]
 }
 
 pub struct CodeLensRegistrationOptions {

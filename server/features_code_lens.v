@@ -1,41 +1,17 @@
 module server
 
 import lsp
-import analyzer.psi
+import server.code_lens
 
-pub fn (mut ls LanguageServer) code_lens(params lsp.CodeLensParams, mut wr ResponseWriter) ?[]lsp.CodeLens {
+pub fn (mut ls LanguageServer) code_lens(params lsp.CodeLensParams) ?[]lsp.CodeLens {
+	if !ls.cfg.code_lens.enable {
+		return []
+	}
+
 	uri := params.text_document.uri.normalize()
 	file := ls.get_file(uri) or { return none }
 
-	mut lenses := []lsp.CodeLens{}
-	mut lenses_ptr := &lenses
-
-	psi.inspect(file.psi_file.root(), fn [mut lenses_ptr, uri] (it psi.PsiElement) bool {
-		if it is psi.FunctionOrMethodDeclaration {
-			if it.name() == 'main' {
-				start := lsp.Position{
-					line: it.text_range().line
-					character: it.text_range().column
-				}
-				lenses_ptr << lsp.CodeLens{
-					range: lsp.Range{
-						start: start
-						end: start
-					}
-					command: lsp.Command{
-						title: '▶ Run'
-						command: 'v.run'
-						arguments: [
-							uri.path(),
-						]
-					}
-				}
-				return false
-			}
-		}
-
-		return true
-	})
-
-	return lenses
+	mut visitor := code_lens.new_visitor(ls.cfg.code_lens, uri, file.psi_file)
+	visitor.accept(file.psi_file.root())
+	return visitor.result()
 }

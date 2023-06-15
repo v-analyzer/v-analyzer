@@ -34,11 +34,10 @@ pub fn (mut ls LanguageServer) semantic_tokens(text_document lsp.TextDocumentIde
 		}
 	}
 
-	dumb_aware_visitor := semantic.new_dumb_aware_semantic_visitor(range, file.psi_file)
-	dumb_aware_tokens := dumb_aware_visitor.accept(file.psi_file.root)
-
-	resolve_visitor := semantic.new_resolve_semantic_visitor(range, file.psi_file)
-	resolve_tokens := resolve_visitor.accept(file.psi_file.root)
+	dumb_aware_tokens := semantic.new_dumb_aware_semantic_visitor(range, file.psi_file)
+		.accept(file.psi_file.root)
+	resolve_tokens := semantic.new_resolve_semantic_visitor(range, file.psi_file)
+		.accept(file.psi_file.root)
 
 	mut result := []semantic.SemanticToken{cap: dumb_aware_tokens.len + resolve_tokens.len}
 	result << dumb_aware_tokens

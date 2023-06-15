@@ -3,6 +3,7 @@ module server
 import lsp
 import server.documentation
 import loglib
+import server.tform
 
 pub fn (mut ls LanguageServer) hover(params lsp.HoverParams, mut wr ResponseWriter) ?lsp.Hover {
 	uri := params.text_document.uri.normalize()
@@ -26,7 +27,7 @@ pub fn (mut ls LanguageServer) hover(params lsp.HoverParams, mut wr ResponseWrit
 	if content := provider.documentation(doc_element) {
 		return lsp.Hover{
 			contents: lsp.hover_markdown_string(content)
-			range: text_range_to_lsp_range(element.text_range())
+			range: tform.text_range_to_lsp_range(element.text_range())
 		}
 	}
 
@@ -40,14 +41,14 @@ pub fn (mut ls LanguageServer) hover(params lsp.HoverParams, mut wr ResponseWrit
 			return lsp.Hover{
 				contents: lsp.hover_markdown_string('```\n' + grand_elem + '\n  ' + parent_elem +
 					'\n   ' + this + '\n```')
-				range: text_range_to_lsp_range(element.text_range())
+				range: tform.text_range_to_lsp_range(element.text_range())
 			}
 		}
 
 		return lsp.Hover{
 			contents: lsp.hover_markdown_string(element.type_name() + ': ' +
 				element.node.type_name.str())
-			range: text_range_to_lsp_range(element.text_range())
+			range: tform.text_range_to_lsp_range(element.text_range())
 		}
 	}
 

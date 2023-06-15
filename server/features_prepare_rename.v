@@ -1,8 +1,9 @@
 module server
 
 import lsp
-import analyzer.psi
 import loglib
+import analyzer.psi
+import server.tform
 
 pub fn (mut ls LanguageServer) prepare_rename(params lsp.PrepareRenameParams, mut wr ResponseWriter) !lsp.PrepareRenameResult {
 	uri := params.text_document.uri.normalize()
@@ -29,7 +30,7 @@ pub fn (mut ls LanguageServer) prepare_rename(params lsp.PrepareRenameParams, mu
 		element_text_range := resolved.identifier_text_range()
 
 		return lsp.PrepareRenameResult{
-			range: text_range_to_lsp_range(element_text_range)
+			range: tform.text_range_to_lsp_range(element_text_range)
 			placeholder: ''
 		}
 	}

@@ -1,6 +1,7 @@
 module server
 
 import lsp
+import server.tform
 import analyzer.psi
 
 pub fn (mut ls LanguageServer) workspace_symbol(_ lsp.WorkspaceSymbolParams, mut _ ResponseWriter) ?[]lsp.WorkspaceSymbol {
@@ -26,7 +27,7 @@ pub fn (mut ls LanguageServer) workspace_symbol(_ lsp.WorkspaceSymbolParams, mut
 				kind: symbol_kind(elem as psi.PsiElement) or { continue }
 				location: lsp.Location{
 					uri: uri
-					range: text_range_to_lsp_range(text_range)
+					range: tform.text_range_to_lsp_range(text_range)
 				}
 			}
 		}

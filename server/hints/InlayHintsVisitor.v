@@ -20,7 +20,6 @@ pub fn (mut v InlayHintsVisitor) accept(root psi.PsiElement) {
 	}
 }
 
-[inline]
 pub fn (mut v InlayHintsVisitor) process_node(node psi.AstNode, containing_file &psi.PsiFileImpl) {
 	if node.type_name == .range && v.cfg.enable_range_hints {
 		operator := node.child_by_field_name('operator') or { return }

@@ -1,9 +1,9 @@
 module server
 
 import lsp
-import analyzer.psi
-import analyzer.psi.search
 import loglib
+import server.tform
+import analyzer.psi.search
 
 pub fn (mut ls LanguageServer) references(params lsp.ReferenceParams, mut wr ResponseWriter) []lsp.Location {
 	uri := params.text_document.uri.normalize()
@@ -18,32 +18,5 @@ pub fn (mut ls LanguageServer) references(params lsp.ReferenceParams, mut wr Res
 	}
 
 	references := search.references(element)
-	return elements_to_locations(references)
-}
-
-fn elements_to_locations(elements []psi.PsiElement) []lsp.Location {
-	return elements.map(fn (element psi.PsiElement) lsp.Location {
-		range := if element is psi.PsiNamedElement {
-			element.identifier_text_range()
-		} else {
-			element.text_range()
-		}
-		return lsp.Location{
-			uri: element.containing_file.uri()
-			range: text_range_to_lsp_range(range)
-		}
-	})
-}
-
-fn text_range_to_lsp_range(pos psi.TextRange) lsp.Range {
-	return lsp.Range{
-		start: lsp.Position{
-			line: pos.line
-			character: pos.column
-		}
-		end: lsp.Position{
-			line: pos.end_line
-			character: pos.end_column
-		}
-	}
+	return tform.elements_to_locations(references)
 }

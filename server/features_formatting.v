@@ -2,6 +2,7 @@ module server
 
 import lsp
 import os
+import server.tform
 
 const temp_formatting_file_path = os.join_path(os.temp_dir(), 'spavn-analyzer-formatting-temp.v')
 
@@ -32,7 +33,7 @@ pub fn (mut ls LanguageServer) formatting(params lsp.DocumentFormattingParams, m
 
 	return [
 		lsp.TextEdit{
-			range: text_range_to_lsp_range(file.psi_file.root().text_range())
+			range: tform.text_range_to_lsp_range(file.psi_file.root().text_range())
 			new_text: output
 		},
 	]

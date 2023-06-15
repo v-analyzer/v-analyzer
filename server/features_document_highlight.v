@@ -1,9 +1,10 @@
 module server
 
 import lsp
-import analyzer.psi.search
 import loglib
+import server.tform
 import analyzer.psi
+import analyzer.psi.search
 
 pub fn (mut ls LanguageServer) document_highlight(params lsp.TextDocumentPositionParams, mut wr ResponseWriter) ?[]lsp.DocumentHighlight {
 	uri := params.text_document.uri.normalize()
@@ -28,7 +29,7 @@ pub fn (mut ls LanguageServer) document_highlight(params lsp.TextDocumentPositio
 			reference.text_range()
 		}
 		highlights << lsp.DocumentHighlight{
-			range: text_range_to_lsp_range(range)
+			range: tform.text_range_to_lsp_range(range)
 			kind: read_write_kind(reference)
 		}
 	}

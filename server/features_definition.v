@@ -3,6 +3,7 @@ module server
 import lsp
 import loglib
 import analyzer.psi
+import server.tform
 
 pub fn (mut ls LanguageServer) definition(params lsp.TextDocumentPositionParams, mut wr ResponseWriter) ?[]lsp.LocationLink {
 	uri := params.text_document.uri.normalize()
@@ -53,10 +54,10 @@ pub fn new_resolve_result(containing_file &psi.PsiFileImpl, element psi.PsiEleme
 }
 
 fn (r &ResolveResult) to_location_link(origin_selection_range psi.TextRange) lsp.LocationLink {
-	range := text_range_to_lsp_range(r.range)
+	range := tform.text_range_to_lsp_range(r.range)
 	return lsp.LocationLink{
 		target_uri: lsp.document_uri_from_path(r.filepath)
-		origin_selection_range: text_range_to_lsp_range(origin_selection_range)
+		origin_selection_range: tform.text_range_to_lsp_range(origin_selection_range)
 		target_range: range
 		target_selection_range: range
 	}
