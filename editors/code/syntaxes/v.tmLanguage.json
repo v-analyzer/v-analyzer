@@ -1,13 +1,10 @@
 {
 	"name": "V",
 	"scopeName": "source.v",
-	"fileTypes": [".v", ".vh", ".vsh", ".vv"],
+	"fileTypes": [".v", ".vsh", ".vv"],
 	"patterns": [
 		{
 			"include": "#comments"
-		},
-		{
-			"include": "#function-decl"
 		},
 		{
 			"include": "#as-is"
@@ -38,12 +35,6 @@
 		},
 		{
 			"include": "#operators"
-		},
-		{
-			"include": "#function-limited-overload-decl"
-		},
-		{
-			"include": "#function-extend-decl"
 		},
 		{
 			"include": "#function-exist"
@@ -86,9 +77,6 @@
 		},
 		{
 			"include": "#variable-assign"
-		},
-		{
-			"include": "#function-decl"
 		}
 	],
 	"repository": {
@@ -364,163 +352,6 @@
 				}
 			]
 		},
-		"function-decl": {
-			"name": "meta.definition.function.v",
-			"match": "^(\\bpub\\b\\s+)?(\\bfn\\b)\\s+(?:\\([^\\)]+\\)\\s+)?(?:(?:C\\.)?)(\\w+)\\s*((?<=[\\w\\s+])(\\<)(\\w+)(\\>))?",
-			"captures": {
-				"1": {
-					"name": "storage.modifier.v"
-				},
-				"2": {
-					"name": "keyword.fn.v"
-				},
-				"3": {
-					"name": "entity.name.function.v"
-				},
-				"4": {
-					"patterns": [
-						{
-							"include": "#generic"
-						}
-					]
-				}
-			}
-		},
-		"function-extend-decl": {
-			"name": "meta.definition.function.v",
-			"match": "^\\s*(pub)?\\s*(fn)\\s*(\\()([^\\)]*)(\\))\\s*(?:(?:C\\.)?)(\\w+)\\s*((?<=[\\w\\s+])(\\<)(\\w+)(\\>))?",
-			"captures": {
-				"1": {
-					"name": "storage.modifier.v"
-				},
-				"2": {
-					"name": "keyword.fn.v"
-				},
-				"3": {
-					"name": "punctuation.definition.bracket.round.begin.v"
-				},
-				"4": {
-					"patterns": [
-						{
-							"include": "#brackets"
-						},
-						{
-							"include": "#storage"
-						},
-						{
-							"include": "#generic"
-						},
-						{
-							"include": "#types"
-						},
-						{
-							"include": "#punctuation"
-						}
-					]
-				},
-				"5": {
-					"name": "punctuation.definition.bracket.round.end.v"
-				},
-				"6": {
-					"patterns": [
-						{
-							"include": "#illegal-name"
-						},
-						{
-							"match": "\\w+",
-							"name": "entity.name.function.v"
-						}
-					]
-				},
-				"7": {
-					"patterns": [
-						{
-							"include": "#generic"
-						}
-					]
-				}
-			}
-		},
-		"function-limited-overload-decl": {
-			"name": "meta.definition.function.v",
-			"match": "^\\s*(pub)?\\s*(fn)\\s*(\\()([^\\)]*)(\\))\\s*([\\+\\-\\*\\/])?\\s*(\\()([^\\)]*)(\\))\\s*(?:(?:C\\.)?)(\\w+)",
-			"captures": {
-				"1": {
-					"name": "storage.modifier.v"
-				},
-				"2": {
-					"name": "keyword.fn.v"
-				},
-				"3": {
-					"name": "punctuation.definition.bracket.round.begin.v"
-				},
-				"4": {
-					"patterns": [
-						{
-							"include": "#brackets"
-						},
-						{
-							"include": "#storage"
-						},
-						{
-							"include": "#generic"
-						},
-						{
-							"include": "#types"
-						},
-						{
-							"include": "#punctuation"
-						}
-					]
-				},
-				"5": {
-					"name": "punctuation.definition.bracket.round.end.v"
-				},
-				"6": {
-					"patterns": [
-						{
-							"include": "#operators"
-						}
-					]
-				},
-				"7": {
-					"name": "punctuation.definition.bracket.round.begin.v"
-				},
-				"8": {
-					"patterns": [
-						{
-							"include": "#brackets"
-						},
-						{
-							"include": "#storage"
-						},
-						{
-							"include": "#generic"
-						},
-						{
-							"include": "#types"
-						},
-						{
-							"include": "#punctuation"
-						}
-					]
-				},
-				"9": {
-					"name": "punctuation.definition.bracket.round.end.v"
-				},
-				"10": {
-					"patterns": [
-						{
-							"include": "#illegal-name"
-						},
-						{
-							"match": "\\w+",
-							"name": "entity.name.function.v"
-						}
-					]
-				}
-			}
-		},
 		"function-exist": {
 			"name": "meta.support.function.v",
 			"match": "(\\w+)((?<=[\\w\\s+])(\\<)(\\w+)(\\>))?(?=\\s*\\()",
@@ -762,7 +593,7 @@
 				},
 				{
 					"name": "keyword.control.v",
-					"match": "(?<!@)\\b(as|it|is|in|or|break|continue|unsafe|match|if|else|for|go|spawn|goto|defer|return|shared|select|rlock|lock|atomic|asm)\\b"
+					"match": "(?<!@)\\b(as|is|in|or|break|continue|unsafe|match|if|else|for|go|spawn|goto|defer|return|shared|select|rlock|lock|atomic|asm|__global|nil)\\b"
 				},
 				{
 					"name": "keyword.$1.v",
@@ -818,27 +649,27 @@
 			"patterns": [
 				{
 					"name": "constant.numeric.exponential.v",
-					"match": "([0-9]+(_?))+(\\.)([0-9]+[eE][-+]?[0-9]+)"
+					"match": "(?<!\\w)([0-9]+(_?))+(\\.)([0-9]+[eE][-+]?[0-9]+)"
 				},
 				{
 					"name": "constant.numeric.float.v",
-					"match": "([0-9]+(_?))+(\\.)([0-9]+)"
+					"match": "(?<!\\w)([0-9]+(_?))+(\\.)([0-9]+)"
 				},
 				{
 					"name": "constant.numeric.binary.v",
-					"match": "(?:0b)(?:(?:[0-1]+)(?:_?))+"
+					"match": "(?<!\\w)(?:0b)(?:(?:[0-1]+)(?:_?))+"
 				},
 				{
 					"name": "constant.numeric.octal.v",
-					"match": "(?:0o)(?:(?:[0-7]+)(?:_?))+"
+					"match": "(?<!\\w)(?:0o)(?:(?:[0-7]+)(?:_?))+"
 				},
 				{
 					"name": "constant.numeric.hex.v",
-					"match": "(?:0x)(?:(?:[0-9a-fA-F]+)(?:_?))+"
+					"match": "(?<!\\w)(?:0x)(?:(?:[0-9a-fA-F]+)(?:_?))+"
 				},
 				{
 					"name": "constant.numeric.integer.v",
-					"match": "(?:(?:[0-9]+)(?:[_]?))+"
+					"match": "(?<!\\w)(?:(?:[0-9]+)(?:[_]?))+"
 				}
 			]
 		},
@@ -966,17 +797,13 @@
 		},
 		"string-interpolation": {
 			"name": "meta.string.interpolation.v",
-			"match": "(\\$([\\w.]+|\\{.*?\\}))",
+			"match": "(\\$(\\{.*?\\}))",
 			"captures": {
 				"1": {
 					"patterns": [
 						{
-							"name": "invalid.illegal.v",
-							"match": "\\$\\d[\\.\\w]+"
-						},
-						{
 							"name": "variable.other.interpolated.v",
-							"match": "\\$([\\.\\w]+|\\{.*?\\})"
+							"match": "\\$(\\{.*?\\})"
 						}
 					]
 				}
