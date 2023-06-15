@@ -42,7 +42,7 @@ pub fn (t &TypeInferer) infer_type(elem ?PsiElement) types.Type {
 			return t.infer_type(left)
 		}
 
-		if operator == '*' {
+		if operator in ['*', '/'] {
 			left := element.first_child() or { return types.unknown_type }
 			if left.node.type_name != .literal {
 				return t.infer_type(left)

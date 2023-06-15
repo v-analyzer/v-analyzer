@@ -88,4 +88,13 @@ enable_type_hints = true
 # }
 # ```
 enable_implicit_err_hints = true
+
+# Specifies whenever to show hints for function parameters in call or not.
+# Example:
+# ```
+# fn foo(a int, b int) int {}
+#
+# foo(a: 1, b: 2)
+#     ^^    ^^
+enable_parameter_name_hints = true
 '

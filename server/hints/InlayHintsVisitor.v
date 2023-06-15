@@ -8,10 +8,13 @@ import analyzer.psi.types
 pub struct InlayHintsVisitor {
 	cfg config.InlayHintsConfig
 pub mut:
+	lines  int
 	result []lsp.InlayHint = []lsp.InlayHint{cap: 1000}
 }
 
 pub fn (mut v InlayHintsVisitor) accept(root psi.PsiElement) {
+	v.lines = root.containing_file.source_text.count('\n')
+
 	for node in psi.new_tree_walker(root.node) {
 		v.process_node(node, root.containing_file)
 	}
@@ -79,6 +82,58 @@ pub fn (mut v InlayHintsVisitor) process_node(node psi.AstNode, containing_file 
 		or_block := node.last_child() or { return }
 		block := or_block.child_by_field_name('block') or { return }
 		v.handle_implicit_error_variable(block)
+	}
+
+	if node.type_name == .call_expression && v.cfg.enable_parameter_name_hints {
+		v.handle_call_expression(node, containing_file)
+	}
+}
+
+pub fn (mut v InlayHintsVisitor) handle_call_expression(call psi.AstNode, containing_file &psi.PsiFileImpl) {
+	if v.lines > 1000 {
+		// don't show this hints for large files
+		return
+	}
+
+	call_expression := psi.create_element(call, containing_file)
+	if call_expression is psi.CallExpression {
+		arguments := call_expression.arguments()
+		called := call_expression.resolve() or { return }
+		if called is psi.SignatureOwner {
+			signature := called.signature() or { return }
+			for i, param in signature.parameters() {
+				name := if param is psi.ParameterDeclaration { param.name() } else { '_' }
+				if name == '_' {
+					continue
+				}
+
+				arg := arguments[i] or { continue }
+				if arg.node.type_name == .keyed_element {
+					// don't show hint for named arguments
+					continue
+				}
+
+				arg_inner := if arg.node.type_name == .mutable_expression {
+					arg.last_child() or { continue }
+				} else {
+					arg
+				}
+				if arg_inner.text_matches(name) {
+					// don't show hint if argument name matches parameter name
+					continue
+				}
+
+				arg_range := arg.text_range()
+				v.result << lsp.InlayHint{
+					position: lsp.Position{
+						line: arg_range.line
+						character: arg_range.column
+					}
+					label: '${name}: '
+					kind: .parameter
+				}
+			}
+		}
 	}
 }
 
