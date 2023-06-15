@@ -77,9 +77,6 @@ fn (_ DumbAwareSemanticVisitor) highlight_node(node psi.AstNode, root psi.PsiEle
 		result << element_to_semantic(first_child, .namespace)
 	} else if node.type_name == .unknown {
 		text := node.text(root.containing_file.source_text)
-		if text == 'mut' || text == '__global' || text == 'nil' {
-			result << element_to_semantic(node, .keyword)
-		}
 
 		if text == 'sql' {
 			if parent := node.parent() {
@@ -101,12 +98,6 @@ fn (_ DumbAwareSemanticVisitor) highlight_node(node psi.AstNode, root psi.PsiEle
 					result << element_to_semantic(node, .keyword)
 				}
 			}
-		}
-		if text == '\$for' {
-			result << element_to_semantic(node, .keyword)
-		}
-		if text == '\$if' {
-			result << element_to_semantic(node, .keyword)
 		}
 	} else if node.type_name == .enum_declaration {
 		identifier := node.child_by_field_name('name') or { return }
@@ -143,14 +134,11 @@ fn (_ DumbAwareSemanticVisitor) highlight_node(node psi.AstNode, root psi.PsiEle
 	} else if node.type_name == .const_definition {
 		name := node.child_by_field_name('name') or { return }
 		result << element_to_semantic(name, .property) // not a best variant...
-	} else if node.type_name == .nil_ {
-		result << element_to_semantic(node, .keyword)
 	} else if node.type_name == .import_path {
 		if last_part := node.last_child() {
 			result << element_to_semantic(last_part, .namespace)
 		}
-	} else if node.type_name == .braced_interpolation_opening
-		|| node.type_name == .braced_interpolation_closing {
+	} else if node.type_name in [.braced_interpolation_opening, .braced_interpolation_closing] {
 		result << element_to_semantic(node, .keyword)
 	} else if node.type_name == .generic_parameter {
 		result << element_to_semantic(node, .type_parameter)
