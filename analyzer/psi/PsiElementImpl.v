@@ -91,7 +91,7 @@ pub fn (n PsiElementImpl) accept_mut(mut visitor MutablePsiElementVisitor) {
 
 pub fn (n PsiElementImpl) find_element_at(offset u32) ?PsiElement {
 	abs_offset := n.node.start_byte() + offset
-	el := n.node.descendant_for_byte_range(abs_offset, abs_offset)
+	el := n.node.descendant_for_byte_range(abs_offset, abs_offset)?
 	return create_element(el, n.containing_file)
 }
 

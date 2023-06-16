@@ -1,7 +1,6 @@
 module psi
 
 import v_tree_sitter.tree_sitter
-import analyzer.psi
 import tree_sitter_v
 
 struct TreeWalker {
@@ -37,7 +36,7 @@ pub fn (mut tw TreeWalker) next() ?AstNode {
 	return node
 }
 
-pub fn new_tree_walker(root_node psi.AstNode) TreeWalker {
+pub fn new_tree_walker(root_node AstNode) TreeWalker {
 	return TreeWalker{
 		cursor: root_node.tree_cursor()
 	}

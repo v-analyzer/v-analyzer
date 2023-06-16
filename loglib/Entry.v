@@ -31,9 +31,14 @@ pub fn (entry &Entry) clone() &Entry {
 }
 
 pub fn (entry &Entry) with_fields(fields Fields) &Entry {
+	mut own_fields := entry.fields.clone()
+	for k, v in fields {
+		own_fields[k] = v
+	}
+
 	return &Entry{
 		logger: entry.logger
-		fields: fields.clone()
+		fields: own_fields
 		time: entry.time
 		level: entry.level
 		message: entry.message
