@@ -91,6 +91,12 @@ fn main() {
 		execute: init_cmd
 	})
 
+	cmd.add_command(cli.Command{
+		name: 'clear-cache'
+		description: 'Clears the analyzer cache.'
+		execute: clear_cache_cmd
+	})
+
 	cmd.add_flags([
 		cli.Flag{
 			flag: .bool
