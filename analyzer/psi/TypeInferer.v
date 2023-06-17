@@ -772,18 +772,33 @@ pub fn (t &TypeInferer) infer_context_type(elem ?PsiElement) types.Type {
 	if parent.element_type() == .expression_list {
 		grand := parent.parent() or { return types.unknown_type }
 		if grand.element_type() == .return_statement {
-			function := grand.parent_of_any_type(.function_declaration, .function_literal) or {
-				return types.unknown_type
-			}
-			if function is SignatureOwner {
-				signature := function.signature() or { return types.unknown_type }
-				typ := signature.get_type()
-				if typ is types.FunctionType {
-					return typ.result
-				}
+			return t.enclosing_function_return_type(grand)
+		}
+	}
+
+	if parent.element_type() == .simple_statement {
+		match_expr := parent.parent_nth(4) or { return types.unknown_type }
+		if match_expr is MatchExpression {
+			return_stmt := match_expr.parent_nth(2) or { return types.unknown_type }
+			if return_stmt.element_type() == .return_statement {
+				return t.enclosing_function_return_type(return_stmt)
 			}
 		}
 	}
 
+	return types.unknown_type
+}
+
+fn (_ &TypeInferer) enclosing_function_return_type(elem PsiElement) types.Type {
+	function := elem.parent_of_any_type(.function_declaration, .function_literal) or {
+		return types.unknown_type
+	}
+	if function is SignatureOwner {
+		signature := function.signature() or { return types.unknown_type }
+		typ := signature.get_type()
+		if typ is types.FunctionType {
+			return typ.result
+		}
+	}
 	return types.unknown_type
 }
