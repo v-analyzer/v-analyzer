@@ -23,14 +23,14 @@ fn document_symbol_presentation(element psi.PsiElement) ?lsp.DocumentSymbol {
 			return none
 		}
 
-		text_range := element.identifier_text_range()
+		identifier_text_range := element.identifier_text_range()
 		children := symbol_children(element)
 		return lsp.DocumentSymbol{
 			name: name_presentation(element)
 			detail: detail_presentation(element)
 			kind: symbol_kind(element as psi.PsiElement) or { return none }
 			range: tform.text_range_to_lsp_range(full_text_range)
-			selection_range: tform.text_range_to_lsp_range(text_range)
+			selection_range: tform.text_range_to_lsp_range(identifier_text_range)
 			children: children
 		}
 	}

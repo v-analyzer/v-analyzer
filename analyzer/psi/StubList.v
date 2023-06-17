@@ -6,10 +6,12 @@ module psi
 [heap]
 pub struct StubList {
 pub mut:
-	module_name string
-	path        string
-	index_map   map[StubId]&StubBase
-	child_map   map[StubId][]int
+	// module_fqn is the fully qualified name of the module from the root, eg `foo.bar` or `foo.bar.baz`,
+	// if no module is defined then the empty string.
+	module_fqn string
+	path       string // absolute path to the file
+	index_map  map[StubId]&StubBase
+	child_map  map[StubId][]int
 }
 
 fn (s StubList) root() &StubBase {

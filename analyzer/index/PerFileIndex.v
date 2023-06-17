@@ -23,7 +23,6 @@ pub fn (mut p PerFileIndex) rename_file(old string, new string) ?FileIndex {
 		return none
 	}
 	if mut cache := p.data[old] {
-		cache.filepath = new
 		cache.stub_list.path = new
 		p.data[new] = cache
 		p.data.delete(old)

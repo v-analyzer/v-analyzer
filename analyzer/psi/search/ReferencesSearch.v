@@ -80,7 +80,7 @@ pub fn (r &ReferencesSearch) search_module_import(element psi.PsiNamedElement) [
 
 	mut result := []psi.PsiElement{cap: 10}
 	file_sink := (element as psi.PsiElement).containing_file.index_sink() or { return [] }
-	module_name := file_sink.module_name
+	module_name := file_sink.module_fqn()
 	depends_sinks := stubs_index.get_all_sink_depends_on(module_name)
 
 	for sink in depends_sinks {
@@ -164,7 +164,7 @@ pub fn (r &ReferencesSearch) search_public_named_element(element psi.PsiNamedEle
 	}
 
 	file_sink := r.containing_file.index_sink() or { return [] }
-	module_name := file_sink.module_name
+	module_name := file_sink.module_fqn()
 
 	// we don't want to search symbol usages in the same module where it is defined
 	// if this is not a workspace module

@@ -57,8 +57,8 @@ pub fn new_stubs_index(sinks []StubIndexSink) &StubIndex {
 }
 
 pub fn (mut s StubIndex) sub_indexes_from_sink(sink StubIndexSink) {
-	s.module_to_files[sink.stub_list.module_name] << sink
-	s.file_to_module[sink.stub_list.path] = sink.stub_list.module_name
+	s.module_to_files[sink.stub_list.module_fqn] << sink
+	s.file_to_module[sink.stub_list.path] = sink.stub_list.module_fqn
 }
 
 pub fn (mut s StubIndex) update_index_from_sink(sink StubIndexSink) {

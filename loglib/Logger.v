@@ -98,3 +98,9 @@ pub fn (mut l Logger) with_duration(dur time.Duration) &Entry {
 	entry := new_entry(l)
 	return entry.with_duration(dur)
 }
+
+[inline]
+pub fn (mut l Logger) with_gc_heap_usage(usage GCHeapUsage) &Entry {
+	entry := new_entry(l)
+	return entry.with_gc_heap_usage(usage)
+}

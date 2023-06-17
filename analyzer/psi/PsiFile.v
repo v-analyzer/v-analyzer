@@ -56,6 +56,7 @@ pub fn (p &PsiFile) index_sink() ?StubIndexSink {
 
 pub fn (mut p PsiFile) reparse(new_code string) {
 	now := time.now()
+	unsafe { p.tree.free() }
 	// TODO: for some reason if we pass the old tree then trying to get the text
 	// of the node gives the text at the wrong offset.
 	res := parser.parse_code_with_tree(new_code, unsafe { nil })

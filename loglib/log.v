@@ -62,3 +62,8 @@ pub fn with_fields(fields Fields) &Entry {
 pub fn with_duration(dur time.Duration) &Entry {
 	return logger.with_duration(dur)
 }
+
+[inline]
+pub fn with_gc_heap_usage(usage GCHeapUsage) &Entry {
+	return logger.with_gc_heap_usage(usage)
+}

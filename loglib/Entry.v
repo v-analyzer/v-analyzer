@@ -51,6 +51,16 @@ pub fn (entry &Entry) with_duration(dur time.Duration) &Entry {
 	})
 }
 
+pub fn (entry &Entry) with_gc_heap_usage(usage GCHeapUsage) &Entry {
+	return entry.with_fields({
+		'heap_size':      usage.heap_size.str()
+		'free_bytes':     usage.free_bytes.str()
+		'total_bytes':    usage.total_bytes.str()
+		'unmapped_bytes': usage.unmapped_bytes.str()
+		'bytes_since_gc': usage.bytes_since_gc.str()
+	})
+}
+
 pub fn (entry &Entry) error(msg ...string) {
 	entry.log(.error, ...msg)
 }

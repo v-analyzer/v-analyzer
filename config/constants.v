@@ -4,6 +4,9 @@ import os
 import utils
 
 pub const (
+	// analyzer_name is the name of the analyzer.
+	analyzer_name               = 'spavn-analyzer'
+
 	// analyzer_config_name is the name of the analyzer's configuration
 	analyzer_config_name        = 'config.toml'
 

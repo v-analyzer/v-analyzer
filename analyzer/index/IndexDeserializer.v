@@ -40,27 +40,21 @@ pub fn (mut d IndexDeserializer) deserialize_file_indexes() map[string]FileIndex
 	mut file_indexes := map[string]FileIndex{}
 	for _ in 0 .. len {
 		file_index := d.deserialize_file_index()
-		file_indexes[file_index.filepath] = file_index
+		file_indexes[file_index.path()] = file_index
 	}
 	return file_indexes
 }
 
 pub fn (mut d IndexDeserializer) deserialize_file_index() FileIndex {
-	filepath := d.d.read_string()
 	kind := unsafe { IndexingRootKind(d.d.read_u8()) }
 	file_last_modified := d.d.read_i64()
-	module_name := d.d.read_string()
-	module_fqn := d.d.read_string()
 
-	stub_list := d.deserialize_stub_list(filepath)
+	stub_list := d.deserialize_stub_list()
 	stub_index_sink := d.deserialize_stub_index_sink(stub_list, kind)
 
 	return FileIndex{
-		filepath: filepath
 		kind: kind
 		file_last_modified: file_last_modified
-		module_name: module_name
-		module_fqn: module_fqn
 		stub_list: stub_list
 		sink: stub_index_sink
 	}
@@ -76,7 +70,6 @@ pub fn (mut d IndexDeserializer) deserialize_stub_index_sink(stub_list &psi.Stub
 		key := d.d.read_int()
 		mut sink_map := d.deserialize_stub_index_sink_map()
 		sink.data[key] = sink_map.move()
-		sink.module_name = stub_list.module_name
 	}
 	count_imported_modules := d.d.read_int()
 	mut imported_modules := []string{cap: count_imported_modules}
@@ -102,8 +95,9 @@ pub fn (mut d IndexDeserializer) deserialize_stub_index_sink_map() map[string][]
 	return sink_map
 }
 
-pub fn (mut d IndexDeserializer) deserialize_stub_list(filepath string) &psi.StubList {
-	module_name := d.d.read_string()
+pub fn (mut d IndexDeserializer) deserialize_stub_list() &psi.StubList {
+	filepath := d.d.read_string()
+	module_fqn := d.d.read_string()
 	mut child_map := map[psi.StubId][]int{}
 	len := d.d.read_int()
 	for _ in 0 .. len {
@@ -128,18 +122,13 @@ pub fn (mut d IndexDeserializer) deserialize_stub_list(filepath string) &psi.Stu
 	}
 
 	mut list := &psi.StubList{}
-	list.module_name = module_name
+	list.module_fqn = module_fqn
 	list.path = filepath
 	list.index_map = index_map.move()
 	list.child_map = child_map.move()
 
 	for _, mut stub in list.index_map {
 		stub.stub_list = list
-
-		if stub.parent_id != -1 {
-			parent := list.index_map[stub.parent_id] or { continue }
-			stub.parent = parent
-		}
 	}
 
 	return list
@@ -174,7 +163,6 @@ pub fn (mut d IndexDeserializer) deserialize_stub() &psi.StubBase {
 			end_column: end_column
 		}
 		parent_id: parent_id
-		parent: unsafe { nil } // will be set later
 		stub_list: unsafe { nil } // will be set later
 		stub_type: stub_type
 		id: id

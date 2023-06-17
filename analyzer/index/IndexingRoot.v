@@ -155,7 +155,7 @@ pub fn (mut i IndexingRoot) index() BuiltIndexStatus {
 	}
 
 	for cache in caches {
-		i.index.per_file.data[cache.filepath] = cache
+		i.index.per_file.data[cache.path()] = cache
 	}
 
 	i.updated_at = time.now()
@@ -169,12 +169,11 @@ pub fn (mut i IndexingRoot) index_file(path string, content string) !FileIndex {
 	last_modified := os.file_last_mod_unix(path)
 	res := parser.parse_code(content)
 	psi_file := psi.new_psi_file(path, res.tree, content)
+	module_fqn := psi.module_qualified_name(psi_file, i.root)
+
 	mut cache := FileIndex{
-		filepath: path
 		kind: i.kind
 		file_last_modified: last_modified
-		module_name: psi_file.module_name() or { '' }
-		module_fqn: psi.module_qualified_name(psi_file, i.root)
 		sink: &psi.StubIndexSink{
 			kind: unsafe { psi.StubIndexLocationKind(u8(i.kind)) }
 			stub_list: unsafe { nil }
@@ -185,8 +184,8 @@ pub fn (mut i IndexingRoot) index_file(path string, content string) !FileIndex {
 
 	stub_type := psi.StubbedElementType{}
 	mut stub_list := stub_tree.root.stub_list
-	stub_list.module_name = cache.module_fqn
-	cache.sink.module_name = cache.module_fqn
+	stub_list.module_fqn = module_fqn
+	stub_list.path = path
 
 	cache.sink.imported_modules = stub_tree.get_imported_modules()
 
@@ -269,7 +268,7 @@ pub fn (mut i IndexingRoot) ensure_indexed() {
 	}
 
 	for cache in caches {
-		i.index.per_file.data[cache.filepath] = cache
+		i.index.per_file.data[cache.path()] = cache
 	}
 
 	if caches.len > 0 {

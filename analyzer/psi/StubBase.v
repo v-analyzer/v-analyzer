@@ -25,7 +25,6 @@ pub:
 	stub_type  StubType
 pub mut:
 	stub_list &StubList
-	parent    &StubElement
 	id        StubId
 }
 
@@ -45,7 +44,6 @@ pub fn new_stub_base(parent &StubElement, stub_type StubType, name string, text_
 		text_range: text_range
 		stub_list: stub_list
 		parent_id: parent_id
-		parent: unsafe { parent }
 		stub_type: stub_type
 	}
 	stub_list.add_stub(mut stub, parent)
@@ -60,7 +58,6 @@ pub fn new_root_stub(path string) &StubBase {
 		name: '<root>'
 		stub_list: stub_list
 		parent_id: -1
-		parent: unsafe { nil }
 		stub_type: .root
 	}
 	stub_list.add_stub(mut stub, unsafe { nil })
@@ -191,11 +188,6 @@ fn (s &StubBase) sibling_of_type_backward(typ StubType) ?StubElement {
 }
 
 fn (s &StubBase) parent_stub() ?&StubElement {
-	is_nil := isnil(s.parent)
-	if !is_nil {
-		return s.parent
-	}
-
 	if s.parent_id == -1 {
 		return none
 	}

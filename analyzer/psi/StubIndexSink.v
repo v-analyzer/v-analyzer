@@ -5,7 +5,6 @@ pub struct StubIndexSink {
 pub mut:
 	stub_id          StubId
 	stub_list        &StubList // List of stubs in the current file for which the index is being built.
-	module_name      string
 	imported_modules []string
 	kind             StubIndexLocationKind
 	data             map[int]map[string][]StubId
@@ -15,13 +14,19 @@ const non_fqn_keys = [StubIndexKey.global_variables, .methods_fingerprint, .fiel
 	.interface_methods_fingerprint, .interface_fields_fingerprint, .methods]
 
 fn (mut s StubIndexSink) occurrence(key StubIndexKey, value string) {
-	resulting_value := if s.module_name != '' && key !in psi.non_fqn_keys {
-		s.module_name + '.' + value
+	module_fqn := s.module_fqn()
+	resulting_value := if module_fqn != '' && key !in psi.non_fqn_keys {
+		'${module_fqn}.${value}'
 	} else {
 		value
 	}
 
-	mut values := s.data[int(key)].move()
-	values[resulting_value] << s.stub_id
-	s.data[int(key)] = values.move()
+	s.data[int(key)][resulting_value] << s.stub_id
+}
+
+pub fn (s StubIndexSink) module_fqn() string {
+	if s.stub_list == unsafe { nil } {
+		return ''
+	}
+	return s.stub_list.module_fqn
 }
