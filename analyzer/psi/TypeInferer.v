@@ -786,6 +786,10 @@ pub fn (t &TypeInferer) infer_context_type(elem ?PsiElement) types.Type {
 		}
 	}
 
+	if parent is FieldDeclaration {
+		return parent.get_type()
+	}
+
 	return types.unknown_type
 }
 
