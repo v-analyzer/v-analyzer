@@ -42,15 +42,15 @@ if a is foo.Bar {
 (source_file
   (simple_statement
     (if_expression
-      (selector_expression
-        (is_expression
-          (reference_expression
-            (identifier))
-          (plain_type
-            (type_reference_expression
-              (identifier))))
+      (is_expression
         (reference_expression
-          (identifier)))
+          (identifier))
+        (plain_type
+          (qualified_type
+            (reference_expression
+              (identifier))
+            (type_reference_expression
+              (identifier)))))
       (block))))
 
 ================================================================================
@@ -104,7 +104,7 @@ if mut run !is Block {
             (argument_list)))))))
 
 ================================================================================
-Is expression with selector expression (TODO)
+Is expression with selector expression
 ================================================================================
 if element is psi.StructDeclaration {
     return
@@ -114,15 +114,15 @@ if element is psi.StructDeclaration {
 (source_file
   (simple_statement
     (if_expression
-      (selector_expression
-        (is_expression
-          (reference_expression
-            (identifier))
-          (plain_type
-            (type_reference_expression
-              (identifier))))
+      (is_expression
         (reference_expression
-          (identifier)))
+          (identifier))
+        (plain_type
+          (qualified_type
+            (reference_expression
+              (identifier))
+            (type_reference_expression
+              (identifier)))))
       (block
         (return_statement)))))
 
@@ -358,28 +358,28 @@ fn test_parse_compact_text() {
             (reference_expression
               (identifier)))
           (expression_list
-            (selector_expression
-              (as_type_cast_expression
-                (call_expression
-                  (selector_expression
-                    (reference_expression
-                      (identifier))
-                    (reference_expression
+            (as_type_cast_expression
+              (call_expression
+                (selector_expression
+                  (reference_expression
+                    (identifier))
+                  (reference_expression
+                    (identifier)))
+                (argument_list
+                  (argument
+                    (literal
+                      (interpreted_string_literal)))))
+              (plain_type
+                (map_type
+                  (plain_type
+                    (type_reference_expression
                       (identifier)))
-                  (argument_list
-                    (argument
-                      (literal
-                        (interpreted_string_literal)))))
-                (plain_type
-                  (map_type
-                    (plain_type
+                  (plain_type
+                    (qualified_type
+                      (reference_expression
+                        (identifier))
                       (type_reference_expression
-                        (identifier)))
-                    (plain_type
-                      (type_reference_expression
-                        (identifier))))))
-              (reference_expression
-                (identifier))))))
+                        (identifier))))))))))
       (simple_statement
         (var_declaration
           (expression_list
@@ -454,25 +454,25 @@ fn test_parse_compact_text() {
             (reference_expression
               (identifier)))
           (expression_list
-            (selector_expression
-              (as_type_cast_expression
-                (call_expression
-                  (selector_expression
-                    (reference_expression
-                      (identifier))
-                    (reference_expression
-                      (identifier)))
-                  (argument_list
-                    (argument
-                      (literal
-                        (interpreted_string_literal)))))
-                (plain_type
-                  (array_type
-                    (plain_type
+            (as_type_cast_expression
+              (call_expression
+                (selector_expression
+                  (reference_expression
+                    (identifier))
+                  (reference_expression
+                    (identifier)))
+                (argument_list
+                  (argument
+                    (literal
+                      (interpreted_string_literal)))))
+              (plain_type
+                (array_type
+                  (plain_type
+                    (qualified_type
+                      (reference_expression
+                        (identifier))
                       (type_reference_expression
-                        (identifier))))))
-              (reference_expression
-                (identifier))))))
+                        (identifier))))))))))
       (assert_statement
         (binary_expression
           (as_type_cast_expression
@@ -673,67 +673,67 @@ fn test_parse_compact_text() {
               (identifier)))
           (expression_list
             (parenthesized_expression
-              (selector_expression
-                (as_type_cast_expression
-                  (call_expression
-                    (selector_expression
+              (as_type_cast_expression
+                (call_expression
+                  (selector_expression
+                    (reference_expression
+                      (identifier))
+                    (reference_expression
+                      (identifier)))
+                  (argument_list
+                    (argument
+                      (literal
+                        (interpreted_string_literal)))))
+                (plain_type
+                  (array_type
+                    (plain_type
+                      (qualified_type
+                        (reference_expression
+                          (identifier))
+                        (type_reference_expression
+                          (identifier)))))))))))
+      (comment)
+      (comment)
+      (simple_statement
+        (var_declaration
+          (expression_list
+            (reference_expression
+              (identifier)))
+          (expression_list
+            (as_type_cast_expression
+              (index_expression
+                (reference_expression
+                  (identifier))
+                (literal
+                  (int_literal)))
+              (plain_type
+                (array_type
+                  (plain_type
+                    (qualified_type
                       (reference_expression
                         (identifier))
-                      (reference_expression
-                        (identifier)))
-                    (argument_list
-                      (argument
-                        (literal
-                          (interpreted_string_literal)))))
-                  (plain_type
-                    (array_type
-                      (plain_type
-                        (type_reference_expression
-                          (identifier))))))
+                      (type_reference_expression
+                        (identifier))))))))))
+      (simple_statement
+        (var_declaration
+          (expression_list
+            (reference_expression
+              (identifier)))
+          (expression_list
+            (as_type_cast_expression
+              (index_expression
                 (reference_expression
-                  (identifier)))))))
-      (comment)
-      (comment)
-      (simple_statement
-        (var_declaration
-          (expression_list
-            (reference_expression
-              (identifier)))
-          (expression_list
-            (selector_expression
-              (as_type_cast_expression
-                (index_expression
-                  (reference_expression
-                    (identifier))
-                  (literal
-                    (int_literal)))
-                (plain_type
-                  (array_type
-                    (plain_type
+                  (identifier))
+                (literal
+                  (int_literal)))
+              (plain_type
+                (array_type
+                  (plain_type
+                    (qualified_type
+                      (reference_expression
+                        (identifier))
                       (type_reference_expression
-                        (identifier))))))
-              (reference_expression
-                (identifier))))))
-      (simple_statement
-        (var_declaration
-          (expression_list
-            (reference_expression
-              (identifier)))
-          (expression_list
-            (selector_expression
-              (as_type_cast_expression
-                (index_expression
-                  (reference_expression
-                    (identifier))
-                  (literal
-                    (int_literal)))
-                (plain_type
-                  (array_type
-                    (plain_type
-                      (type_reference_expression
-                        (identifier))))))
-              (reference_expression
-                (identifier))))))
+                        (identifier))))))))))
       (assert_statement
         (binary_expression
           (call_expression
@@ -799,25 +799,25 @@ fn test_parse_compact_text() {
             (call_expression
               (selector_expression
                 (parenthesized_expression
-                  (selector_expression
-                    (as_type_cast_expression
-                      (call_expression
-                        (selector_expression
-                          (reference_expression
-                            (identifier))
-                          (reference_expression
-                            (identifier)))
-                        (argument_list
-                          (argument
-                            (literal
-                              (interpreted_string_literal)))))
-                      (plain_type
-                        (array_type
-                          (plain_type
+                  (as_type_cast_expression
+                    (call_expression
+                      (selector_expression
+                        (reference_expression
+                          (identifier))
+                        (reference_expression
+                          (identifier)))
+                      (argument_list
+                        (argument
+                          (literal
+                            (interpreted_string_literal)))))
+                    (plain_type
+                      (array_type
+                        (plain_type
+                          (qualified_type
+                            (reference_expression
+                              (identifier))
                             (type_reference_expression
-                              (identifier))))))
-                    (reference_expression
-                      (identifier))))
+                              (identifier))))))))
                 (reference_expression
                   (identifier)))
               (argument_list)))))

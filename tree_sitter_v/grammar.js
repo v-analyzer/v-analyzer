@@ -482,7 +482,7 @@ module.exports = grammar({
       ),
     )),
 
-    type_parameters: ($) => prec(PREC.resolve, seq(
+    type_parameters: ($) => prec.dynamic(2, seq(
       token.immediate('['),
       comma_sep1($.plain_type),
       ']',
@@ -657,7 +657,7 @@ module.exports = grammar({
 
     array_creation: ($) => prec.right(PREC.multiplicative, $._non_empty_array),
 
-    empty_array_creation: () => prec.left(PREC.empty_array, seq('[', ']')),
+    empty_array_creation: () => prec(PREC.empty_array, prec.dynamic(-1, seq('[', ']'))),
 
     fixed_array_creation: ($) => prec.right(PREC.multiplicative,
       seq($._non_empty_array, '!'),
@@ -666,7 +666,7 @@ module.exports = grammar({
     _non_empty_array: ($) =>
       seq('[', repeat1(seq($._expression, optional(','))), ']'),
 
-    selector_expression: ($) => prec(PREC.primary, seq(
+    selector_expression: ($) => prec.dynamic(-1, prec(PREC.primary, seq(
       field('operand', $._expression),
       choice('.', '?.'),
       field(
@@ -675,14 +675,14 @@ module.exports = grammar({
           $.reference_expression,
           $.compile_time_selector_expression,
         ),
-      ))),
+      )))),
 
-    index_expression: ($) => prec.right(PREC.primary, seq(
+    index_expression: ($) => prec.dynamic(-1, prec.right(PREC.primary, seq(
       field('operand', $._expression),
       choice('[', token.immediate('['), token('#[')),
       field('index', $._expression),
       ']',
-    )),
+    ))),
 
     slice_expression: ($) => prec(PREC.primary,
       seq(field('operand', $._expression), choice('[', token.immediate('['), token('#[')), $.range, ']'),
@@ -718,13 +718,13 @@ module.exports = grammar({
       ),
     ),
 
-    is_expression: ($) => prec.left(PREC.comparative, seq(
+    is_expression: ($) => prec.dynamic(2, seq(
       field('left', seq(optional($.mutability_modifiers), $._expression)),
       'is',
       field('right', $.plain_type),
     )),
 
-    not_is_expression: ($) => prec.left(PREC.comparative, seq(
+    not_is_expression: ($) => prec.dynamic(2, seq(
       field('left', seq(optional($.mutability_modifiers), $._expression)),
       '!is',
       field('right', $.plain_type),
@@ -986,9 +986,9 @@ module.exports = grammar({
       field('element', $.plain_type),
     ),
 
-    array_type: ($) => prec.right(PREC.match_arm_type,
+    array_type: ($) => prec(PREC.primary, prec.dynamic(2,
       seq('[', ']', field('element', $.plain_type)),
-    ),
+    )),
 
     variadic_type: ($) => seq('...', $.plain_type),
 

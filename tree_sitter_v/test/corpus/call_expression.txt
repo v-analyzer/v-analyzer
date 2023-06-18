@@ -438,6 +438,23 @@ foo(
               (identifier))))))))
 
 ================================================================================
+Generic function call with type parameter
+================================================================================
+foo[int]()
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (call_expression
+      (reference_expression
+        (identifier))
+      (type_parameters
+        (plain_type
+          (type_reference_expression
+            (identifier))))
+      (argument_list))))
+
+================================================================================
 Generic function call with several type parameters
 ================================================================================
 foo[int, string]()
