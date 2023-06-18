@@ -158,7 +158,11 @@ pub fn (t &TypeInferer) infer_type_impl(elem ?PsiElement) types.Type {
 
 	if element is SelectorExpression {
 		resolved := element.resolve() or { return types.unknown_type }
-		return t.infer_type(resolved)
+		typ := t.infer_type(resolved)
+		if types.is_generic(typ) {
+			return GenericTypeInferer{}.infer_generic_fetch(resolved, element, typ)
+		}
+		return typ
 	}
 
 	if element is ReferenceExpression {

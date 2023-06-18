@@ -10,6 +10,23 @@ fn (g &GenericTypeInferer) infer_generic_call(arg_owner GenericArgumentsOwner, p
 	return result_type.substitute_generics(generic_ts_map)
 }
 
+fn (g &GenericTypeInferer) infer_generic_fetch(resolved PsiElement, expr SelectorExpression, generic_type types.Type) types.Type {
+	if resolved !is FieldDeclaration {
+		return generic_type
+	}
+
+	qualifier := expr.qualifier() or { return generic_type }
+	qualifier_type := infer_type(qualifier)
+	instantiation := g.extract_instantiation(qualifier_type) or { return generic_type }
+
+	qualifier_specialization_map := g.infer_qualifier_generic_ts_map(instantiation)
+	if qualifier_specialization_map.len == 0 {
+		return generic_type
+	}
+
+	return generic_type.substitute_generics(qualifier_specialization_map)
+}
+
 fn (g &GenericTypeInferer) infer_generic_ts_map(arg_owner GenericArgumentsOwner, params_owner GenericParametersOwner) map[string]types.Type {
 	if arg_owner is CallExpression {
 		if ref_expression := arg_owner.ref_expression() {
