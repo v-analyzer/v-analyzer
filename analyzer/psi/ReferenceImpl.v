@@ -462,14 +462,31 @@ pub fn (r &SubResolver) process_enum_fetch(parent PsiElement, mut processor PsiS
 }
 
 pub fn (r &SubResolver) process_type_initializer_field(mut processor PsiScopeProcessor) bool {
-	init_expr := r.element().parent_of_type(.type_initializer) or { return true }
-	if init_expr is PsiTypedElement {
-		typ := types.unwrap_generic_instantiation_type(types.unwrap_pointer_type(infer_type(init_expr as PsiElement)))
-		if typ is types.StructType {
-			if struct_ := r.find_struct(stubs_index, typ.qualified_name()) {
-				fields := struct_.fields()
-				for field in fields {
-					if !processor.execute(field) {
+	if init_expr := r.element().parent_of_type(.type_initializer) {
+		if init_expr is PsiTypedElement {
+			typ := types.unwrap_generic_instantiation_type(types.unwrap_pointer_type(infer_type(init_expr as PsiElement)))
+			if typ is types.StructType {
+				if !r.process_struct_type_fields(typ, mut processor) {
+					return false
+				}
+			}
+		}
+	}
+
+	if call_expr := r.element().parent_of_type(.call_expression) {
+		if call_expr is CallExpression {
+			resolved := call_expr.resolve() or { return true }
+			if resolved is SignatureOwner {
+				signature := resolved.signature() or { return true }
+				parameters := signature.parameters()
+				if parameters.len == 0 {
+					return true
+				}
+
+				last_parameter := parameters.last()
+				param_type := infer_type(last_parameter)
+				if param_type is types.StructType {
+					if !r.process_struct_type_fields(param_type, mut processor) {
 						return false
 					}
 				}
@@ -477,6 +494,18 @@ pub fn (r &SubResolver) process_type_initializer_field(mut processor PsiScopePro
 		}
 	}
 
+	return true
+}
+
+pub fn (r &SubResolver) process_struct_type_fields(struct_type types.StructType, mut processor PsiScopeProcessor) bool {
+	if struct_ := r.find_struct(stubs_index, struct_type.qualified_name()) {
+		fields := struct_.fields()
+		for field in fields {
+			if !processor.execute(field) {
+				return false
+			}
+		}
+	}
 	return true
 }
 
