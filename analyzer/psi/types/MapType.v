@@ -35,3 +35,7 @@ pub fn (s &MapType) accept(mut visitor TypeVisitor) {
 	s.key.accept(mut visitor)
 	s.value.accept(mut visitor)
 }
+
+pub fn (s &MapType) substitute_generics(name_map map[string]Type) Type {
+	return new_map_type(s.module_name, s.key.substitute_generics(name_map), s.value.substitute_generics(name_map))
+}

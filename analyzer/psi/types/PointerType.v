@@ -34,3 +34,7 @@ pub fn (s &PointerType) accept(mut visitor TypeVisitor) {
 
 	s.inner.accept(mut visitor)
 }
+
+pub fn (s &PointerType) substitute_generics(name_map map[string]Type) Type {
+	return new_pointer_type(s.inner.substitute_generics(name_map))
+}

@@ -66,10 +66,17 @@ pub fn (r &ReferencesSearch) search(element psi.PsiElement) []psi.PsiElement {
 	if resolved is psi.ModuleClause {
 		return r.search_module_import(resolved)
 	}
+	if resolved is psi.GenericParameter {
+		return r.search_generic_parameter(resolved)
+	}
 	if resolved is psi.PsiNamedElement {
 		return r.search_named_element(resolved)
 	}
 	return []
+}
+
+pub fn (r &ReferencesSearch) search_generic_parameter(element psi.GenericParameter) []psi.PsiElement {
+	return r.search_private_named_element(element)
 }
 
 pub fn (r &ReferencesSearch) search_module_import(element psi.PsiNamedElement) []psi.PsiElement {

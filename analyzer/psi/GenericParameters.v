@@ -35,3 +35,16 @@ pub fn (n &GenericParameters) text_presentation() string {
 	sb.write_string(']')
 	return sb.str()
 }
+
+pub fn (n &GenericParameters) parameter_names() []string {
+	parameters := n.parameters()
+	if parameters.len == 0 {
+		return []
+	}
+
+	mut result := []string{cap: parameters.len}
+	for parameter in parameters {
+		result << parameter.name()
+	}
+	return result
+}

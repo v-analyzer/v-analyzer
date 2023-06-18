@@ -37,3 +37,7 @@ pub fn (s &PrimitiveType) accept(mut visitor TypeVisitor) {
 		return
 	}
 }
+
+pub fn (s &PrimitiveType) substitute_generics(name_map map[string]Type) Type {
+	return s
+}

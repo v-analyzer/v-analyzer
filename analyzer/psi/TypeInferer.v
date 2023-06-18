@@ -253,9 +253,9 @@ pub fn (t &TypeInferer) infer_type_impl(elem ?PsiElement) types.Type {
 	}
 
 	if element is VarDefinition {
-		parent := element.parent_nth(2) or { return types.unknown_type }
-		if parent.node.type_name == .range_clause {
-			return t.process_range_clause(element, parent)
+		grand := element.parent_nth(2) or { return types.unknown_type }
+		if grand.node.type_name == .range_clause {
+			return t.process_range_clause(element, grand)
 		}
 
 		decl := element.declaration() or { return types.unknown_type }
@@ -268,8 +268,10 @@ pub fn (t &TypeInferer) infer_type_impl(elem ?PsiElement) types.Type {
 			}
 
 			if typ is types.MultiReturnType {
+				parent := element.parent() or { return types.unknown_type }
+
 				mut define_index := 0
-				for index, def in parent.children() {
+				for index, def in parent.find_children_by_type(.reference_expression) {
 					if def.is_equal(element) {
 						define_index = index
 						break
@@ -454,17 +456,32 @@ pub fn (_ &TypeInferer) infer_iterator_struct(typ types.Type) types.Type {
 }
 
 pub fn (t &TypeInferer) infer_call_expr_type(element CallExpression) types.Type {
-	need_unwrap := if _ := element.error_propagation() { true } else { false }
-
 	if element.is_json_decode() {
-		return types.unwrap_result_or_option_type_if(types.new_result_type(element.get_json_decode_type(),
-			false), need_unwrap)
+		return types.new_result_type(element.get_json_decode_type(), false)
 	}
 
 	if resolved := element.resolve() {
-		typ := t.infer_type(resolved)
-		if typ is types.FunctionType {
-			return typ.result
+		expr_type := t.infer_type(resolved)
+		if expr_type is types.FunctionType {
+			result_type := expr_type.result
+			if types.is_generic(result_type) {
+				if resolved is GenericParametersOwner {
+					return GenericTypeInferer{}.infer_generic_call(element, resolved,
+						result_type)
+				}
+			}
+
+			if resolved is FunctionOrMethodDeclaration {
+				if !resolved.is_method() {
+					return result_type
+				}
+
+				if typ := t.process_map_array_method_call(resolved, expr_type, element) {
+					return typ
+				}
+			}
+
+			return result_type
 		}
 	}
 
@@ -479,6 +496,70 @@ pub fn (t &TypeInferer) infer_call_expr_type(element CallExpression) types.Type 
 	}
 
 	return types.unknown_type
+}
+
+pub fn (t &TypeInferer) process_map_array_method_call(element FunctionOrMethodDeclaration, element_type types.FunctionType, expr CallExpression) ?types.Type {
+	receiver_type := types.unwrap_pointer_type(element.receiver_type())
+
+	if types.is_builtin_array_type(receiver_type) {
+		if typ := t.process_array_method_call(element, element_type, expr) {
+			return typ
+		}
+	}
+
+	if types.is_builtin_map_type(receiver_type) {
+		if typ := t.process_map_method_call(element, expr) {
+			return typ
+		}
+	}
+
+	return none
+}
+
+pub fn (_ &TypeInferer) process_array_method_call(element FunctionOrMethodDeclaration, element_type types.FunctionType, expr CallExpression) ?types.Type {
+	return_type := element_type.result
+
+	if return_type is types.VoidPtrType {
+		caller_type := expr.caller_type()
+		if caller_type is types.ArrayType {
+			return caller_type.inner
+		}
+	}
+
+	if types.is_builtin_array_type(return_type) {
+		if element.name() == 'map' {
+			arguments := expr.arguments()
+			first_arg := arguments[0] or { return none }
+			first_arg_type := infer_type(first_arg)
+
+			// map(fn (int) <type> { ... }) -> array<type>
+			if first_arg_type is types.FunctionType {
+				return *types.new_array_type(first_arg_type.result)
+			}
+
+			// map(it > 10) -> array<bool>
+			return *types.new_array_type(first_arg_type)
+		}
+
+		return expr.caller_type()
+	}
+
+	return none
+}
+
+pub fn (_ &TypeInferer) process_map_method_call(element FunctionOrMethodDeclaration, expr CallExpression) ?types.Type {
+	caller_type := expr.caller_type()
+
+	if caller_type is types.MapType {
+		match element.name() {
+			'keys' { return *types.new_array_type(caller_type.key) }
+			'values' { return *types.new_array_type(caller_type.value) }
+			'clone', 'move' { return caller_type }
+			else { return none }
+		}
+	}
+
+	return none
 }
 
 pub fn (_ &TypeInferer) infer_literal_type(element Literal) types.Type {
@@ -675,6 +756,18 @@ fn (t &TypeInferer) infer_type_reference_type(element TypeReferenceExpression, m
 		return types.string_type
 	}
 
+	if text == 'voidptr' {
+		return types.voidptr_type
+	}
+
+	if text == 'array' {
+		return types.builtin_array_type
+	}
+
+	if text == 'map' {
+		return types.builtin_map_type
+	}
+
 	resolved := element.resolve() or { return types.unknown_type }
 	if resolved is StructDeclaration {
 		return resolved.get_type()
@@ -703,7 +796,7 @@ fn (t &TypeInferer) infer_type_reference_type(element TypeReferenceExpression, m
 	}
 
 	if resolved is GenericParameter {
-		return types.new_generic_type(element.name(), element.containing_file.module_fqn())
+		return types.new_generic_type(element.name())
 	}
 
 	return types.unknown_type

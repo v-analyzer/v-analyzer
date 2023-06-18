@@ -244,6 +244,9 @@ pub fn (r &SubResolver) process_unqualified_resolve(mut processor PsiScopeProces
 	if !r.process_module_clause(mut processor) {
 		return false
 	}
+	if !r.process_owner_generic_ts(mut processor) {
+		return false
+	}
 
 	builtin_elements := stubs_index.get_all_declarations_from_module('builtin', r.for_types)
 	for element in builtin_elements {
@@ -468,6 +471,47 @@ pub fn (r &SubResolver) process_type_initializer_field(mut processor PsiScopePro
 				for field in fields {
 					if !processor.execute(field) {
 						return false
+					}
+				}
+			}
+		}
+	}
+
+	return true
+}
+
+pub fn (r &SubResolver) process_owner_generic_ts(mut processor PsiScopeProcessor) bool {
+	element := r.element()
+	if element.text_length() != 1 {
+		// for now V only support single char generic parameters
+		return true
+	}
+
+	method := element.parent_of_type(.function_declaration) or { return true }
+	if method is FunctionOrMethodDeclaration {
+		receiver := method.receiver() or { return true }
+
+		if receiver.is_parent_of(element) {
+			return true
+		}
+
+		receiver_type := types.unwrap_alias_type(types.unwrap_pointer_type(receiver.get_type()))
+		if receiver_type is types.GenericInstantiationType {
+			inner := receiver_type.inner
+			inner_name := inner.qualified_name()
+			elements := stubs_index.get_any_elements_by_name(inner_name)
+			if elements.len == 0 {
+				return true
+			}
+
+			for resolved in elements {
+				if resolved is GenericParametersOwner {
+					params := resolved.generic_parameters() or { continue }
+					parameters := params.parameters()
+					for param in parameters {
+						if !processor.execute(param) {
+							return false
+						}
 					}
 				}
 			}

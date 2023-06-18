@@ -33,3 +33,7 @@ pub fn (s &ThreadType) accept(mut visitor TypeVisitor) {
 
 	s.inner.accept(mut visitor)
 }
+
+pub fn (s &ThreadType) substitute_generics(name_map map[string]Type) Type {
+	return new_thread_type(s.inner.substitute_generics(name_map))
+}

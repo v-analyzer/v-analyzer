@@ -412,3 +412,12 @@ pub fn (n PsiElementImpl) text_range() TextRange {
 		end_column: int(n.node.end_point().column)
 	}
 }
+
+pub fn (n PsiElementImpl) text_length() int {
+	if stub := n.get_stub() {
+		range := stub.text_range
+		return range.end_column - range.column
+	}
+
+	return int(n.node.text_length())
+}

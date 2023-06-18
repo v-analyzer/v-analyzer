@@ -36,3 +36,7 @@ pub fn (s &FixedArrayType) accept(mut visitor TypeVisitor) {
 
 	s.inner.accept(mut visitor)
 }
+
+pub fn (s &FixedArrayType) substitute_generics(name_map map[string]Type) Type {
+	return new_fixed_array_type(s.inner.substitute_generics(name_map), s.size)
+}

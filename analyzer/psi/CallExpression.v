@@ -10,16 +10,12 @@ fn (c &CallExpression) get_type() types.Type {
 	return infer_type(c)
 }
 
-pub fn (c CallExpression) error_propagation() ?PsiElement {
-	parent := c.parent() or { return none }
-	if parent.element_type() in [
-		.or_block_expression,
-		.option_propagation_expression,
-		.result_propagation_expression,
-	] {
-		return parent
+fn (c &CallExpression) caller_type() types.Type {
+	ref_expression := c.ref_expression() or { return types.unknown_type }
+	if qualifier := ref_expression.qualifier() {
+		return infer_type(qualifier)
 	}
-	return none
+	return types.unknown_type
 }
 
 pub fn (c CallExpression) expression() ?PsiElement {
@@ -77,4 +73,12 @@ pub fn (c &CallExpression) get_json_decode_type() types.Type {
 	typ := list.find_child_by_type(.plain_type) or { return types.unknown_type }
 	mut visited := map[string]types.Type{}
 	return TypeInferer{}.convert_type(typ, mut visited)
+}
+
+fn (c &CallExpression) type_arguments() ?&GenericTypeArguments {
+	type_parameters := c.find_child_by_name('type_parameters') or { return none }
+	if type_parameters is GenericTypeArguments {
+		return type_parameters
+	}
+	return none
 }

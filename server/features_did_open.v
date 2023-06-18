@@ -1,10 +1,10 @@
 module server
 
 import lsp
+import loglib
 import analyzer
 import analyzer.psi
 import analyzer.parser
-import loglib
 
 pub fn (mut ls LanguageServer) did_open(params lsp.DidOpenTextDocumentParams, mut wr ResponseWriter) {
 	src := params.text_document.text
@@ -25,7 +25,7 @@ pub fn (mut ls LanguageServer) did_open(params lsp.DidOpenTextDocumentParams, mu
 	// psi_file.root().accept_mut(mut visitor)
 	// visitor.print()
 	//
-	// tree := index.build_stub_tree(psi_file)
+	// tree := index.build_stub_tree(psi_file, '')
 	// tree.print()
 
 	loglib.with_fields({

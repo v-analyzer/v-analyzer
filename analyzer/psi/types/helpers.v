@@ -45,6 +45,20 @@ pub fn unwrap_generic_instantiation_type(typ Type) Type {
 	return typ
 }
 
+pub fn is_builtin_array_type(typ Type) bool {
+	if typ is StructType {
+		return typ.qualified_name() == builtin_array_type.qualified_name()
+	}
+	return false
+}
+
+pub fn is_builtin_map_type(typ Type) bool {
+	if typ is StructType {
+		return typ.qualified_name() == builtin_map_type.qualified_name()
+	}
+	return false
+}
+
 struct IsGenericVisitor {
 mut:
 	is_generic bool
@@ -59,6 +73,10 @@ fn (mut v IsGenericVisitor) enter(typ Type) bool {
 }
 
 pub fn is_generic(typ Type) bool {
+	if typ is GenericType {
+		return true
+	}
+
 	mut v := IsGenericVisitor{}
 	typ.accept(mut v)
 	return v.is_generic

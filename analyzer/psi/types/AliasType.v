@@ -21,3 +21,7 @@ pub fn (s &AliasType) accept(mut visitor TypeVisitor) {
 
 	s.inner.accept(mut visitor)
 }
+
+pub fn (s &AliasType) substitute_generics(name_map map[string]Type) Type {
+	return new_alias_type(s.name, s.module_name, s.inner.substitute_generics(name_map))
+}

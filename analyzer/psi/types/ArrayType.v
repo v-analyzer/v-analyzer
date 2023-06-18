@@ -34,3 +34,7 @@ pub fn (s &ArrayType) accept(mut visitor TypeVisitor) {
 
 	s.inner.accept(mut visitor)
 }
+
+pub fn (s &ArrayType) substitute_generics(name_map map[string]Type) Type {
+	return new_array_type(s.inner.substitute_generics(name_map))
+}

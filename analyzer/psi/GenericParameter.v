@@ -27,8 +27,8 @@ pub fn (n &GenericParameter) name() string {
 	return identifier.get_text()
 }
 
-pub fn (n &GenericParameter) is_public() bool {
+pub fn (_ &GenericParameter) is_public() bool {
 	return true
 }
 
-fn (n &GenericParameter) stub() {}
+fn (_ &GenericParameter) stub() {}

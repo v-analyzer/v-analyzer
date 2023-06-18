@@ -84,3 +84,9 @@ pub fn (s &FunctionType) accept(mut visitor TypeVisitor) {
 
 	s.result.accept(mut visitor)
 }
+
+pub fn (s &FunctionType) substitute_generics(name_map map[string]Type) Type {
+	params := s.params.map(it.substitute_generics(name_map))
+	result := s.result.substitute_generics(name_map)
+	return new_function_type(s.module_name, params, result, s.no_result)
+}

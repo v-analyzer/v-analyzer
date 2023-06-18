@@ -40,3 +40,9 @@ pub fn (s &GenericInstantiationType) accept(mut visitor TypeVisitor) {
 		specialization.accept(mut visitor)
 	}
 }
+
+pub fn (s &GenericInstantiationType) substitute_generics(name_map map[string]Type) Type {
+	inner := s.inner.substitute_generics(name_map)
+	specialization := s.specialization.map(it.substitute_generics(name_map))
+	return new_generic_instantiation_type(inner, specialization)
+}

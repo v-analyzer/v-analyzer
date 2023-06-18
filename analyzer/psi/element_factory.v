@@ -403,6 +403,12 @@ pub fn create_element(node AstNode, containing_file &PsiFile) PsiElement {
 		}
 	}
 
+	if node.type_name == .type_parameters {
+		return GenericTypeArguments{
+			PsiElementImpl: base_node
+		}
+	}
+
 	return base_node
 }
 

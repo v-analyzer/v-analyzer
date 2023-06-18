@@ -22,3 +22,7 @@ pub fn (s &StructType) accept(mut visitor TypeVisitor) {
 		return
 	}
 }
+
+pub fn (s &StructType) substitute_generics(name_map map[string]Type) Type {
+	return s
+}

@@ -106,4 +106,6 @@ pub interface PsiElement {
 	accept_mut(mut visitor MutablePsiElementVisitor)
 	// text_range returns the range of the node in the source file.
 	text_range() TextRange
+	// text_length returns the length of the node's text.
+	text_length() int
 }

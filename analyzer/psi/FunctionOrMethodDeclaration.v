@@ -61,6 +61,15 @@ pub fn (f FunctionOrMethodDeclaration) doc_comment() string {
 	return extract_doc_comment(f)
 }
 
+pub fn (f FunctionOrMethodDeclaration) is_method() bool {
+	return f.has_child_of_type(.receiver)
+}
+
+pub fn (f FunctionOrMethodDeclaration) receiver_type() types.Type {
+	receiver := f.receiver() or { return types.unknown_type }
+	return receiver.get_type()
+}
+
 pub fn (f FunctionOrMethodDeclaration) receiver() ?&Receiver {
 	element := f.find_child_by_type_or_stub(.receiver) or { return none }
 	if element is Receiver {

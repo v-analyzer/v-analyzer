@@ -16,3 +16,7 @@ pub fn (s &InterfaceType) accept(mut visitor TypeVisitor) {
 		return
 	}
 }
+
+pub fn (s &InterfaceType) substitute_generics(name_map map[string]Type) Type {
+	return s
+}

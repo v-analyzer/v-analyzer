@@ -16,3 +16,7 @@ pub fn (s &EnumType) accept(mut visitor TypeVisitor) {
 		return
 	}
 }
+
+pub fn (s &EnumType) substitute_generics(_ map[string]Type) Type {
+	return s
+}
