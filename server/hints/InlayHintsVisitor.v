@@ -106,6 +106,32 @@ pub fn (mut v InlayHintsVisitor) process_node(node psi.AstNode, containing_file 
 	if node.type_name == .call_expression && v.cfg.enable_parameter_name_hints {
 		v.handle_call_expression(node, containing_file)
 	}
+
+	if node.type_name == .enum_field_definition && v.cfg.enable_enum_field_value_hints {
+		v.handle_enum_field(node, containing_file)
+	}
+}
+
+pub fn (mut v InlayHintsVisitor) handle_enum_field(enum_field psi.AstNode, containing_file &psi.PsiFile) {
+	element := psi.create_element(enum_field, containing_file)
+	if element is psi.EnumFieldDeclaration {
+		if _ := element.value() {
+			// don't show hint for enum fields with explicit values
+			return
+		}
+
+		value_presentation := element.value_presentation(true)
+
+		text_range := element.text_range()
+		v.result << lsp.InlayHint{
+			position: lsp.Position{
+				line: int(text_range.line)
+				character: int(text_range.end_column)
+			}
+			label: ' = ${value_presentation}'
+			kind: .type_
+		}
+	}
 }
 
 pub fn (mut v InlayHintsVisitor) handle_call_expression(call psi.AstNode, containing_file &psi.PsiFile) {

@@ -61,4 +61,26 @@ pub fn (e EnumDeclaration) fields() []PsiElement {
 	return e.find_children_by_type(.enum_field_definition)
 }
 
+pub fn (s &EnumDeclaration) attributes() []PsiElement {
+	attributes := s.find_child_by_type_or_stub(.attributes) or { return [] }
+	if attributes is Attributes {
+		return attributes.attributes()
+	}
+
+	return []
+}
+
+pub fn (e EnumDeclaration) is_flag() bool {
+	attributes := e.attributes()
+
+	for attr in attributes {
+		if attr is Attribute {
+			keys := attr.keys()
+			return 'flag' in keys
+		}
+	}
+
+	return false
+}
+
 pub fn (_ EnumDeclaration) stub() {}

@@ -452,6 +452,10 @@ pub fn (s &StubbedElementType) create_stub(psi PsiElement, parent_stub &StubElem
 	}
 
 	if psi is EnumFieldDeclaration {
+		if expression := psi.last_child() {
+			text := expression.get_text()
+			return declaration_stub(*psi, parent_stub, .enum_field_definition, additional: text)
+		}
 		return declaration_stub(*psi, parent_stub, .enum_field_definition)
 	}
 

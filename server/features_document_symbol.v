@@ -114,6 +114,12 @@ fn detail_presentation(element psi.PsiNamedElement) string {
 			return signature.get_text()
 		}
 	}
+	if element is psi.ConstantDefinition {
+		return element.get_type().readable_name()
+	}
+	if element is psi.EnumFieldDeclaration {
+		return '= ' + element.value_presentation(true)
+	}
 	return ''
 }
 

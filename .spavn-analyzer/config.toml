@@ -73,6 +73,18 @@ enable_parameter_name_hints = true
 # ```
 enable_constant_type_hints = true
 
+# Specifies whenever to show hints for enum field values or not.
+# Example:
+# ```
+# enum Foo {
+#   bar = 0
+#       ^^^
+#   baz = 1
+#       ^^^
+# }
+# ```
+enable_enum_field_value_hints = true
+
 # Specifies code lenses to show.
 [code_lens]
 # Specifies whenever to enable code lenses or not.

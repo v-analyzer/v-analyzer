@@ -36,9 +36,8 @@ pub fn (t &TypeInferer) infer_type_impl(elem ?PsiElement) types.Type {
 		return types.new_primitive_type('bool')
 	}
 
-	if element.node.type_name == .binary_expression {
-		operator_element := element.find_child_by_name('operator') or { return types.unknown_type }
-		operator := operator_element.get_text()
+	if element is BinaryExpression {
+		operator := element.operator()
 		if operator in ['&&', '||', '==', '!=', '<', '<=', '>', '>='] {
 			return types.new_primitive_type('bool')
 		}
@@ -50,16 +49,16 @@ pub fn (t &TypeInferer) infer_type_impl(elem ?PsiElement) types.Type {
 		}
 
 		if operator in ['+', '-', '|', '^', '&'] {
-			left := element.first_child() or { return types.unknown_type }
+			left := element.left() or { return types.unknown_type }
 			return t.infer_type(left)
 		}
 
 		if operator in ['*', '/'] {
-			left := element.first_child() or { return types.unknown_type }
+			left := element.left() or { return types.unknown_type }
 			if left.node.type_name != .literal {
 				return t.infer_type(left)
 			}
-			right := element.last_child() or { return types.unknown_type }
+			right := element.right() or { return types.unknown_type }
 			return t.infer_type(right)
 		}
 	}
@@ -68,14 +67,13 @@ pub fn (t &TypeInferer) infer_type_impl(elem ?PsiElement) types.Type {
 		return types.new_primitive_type('bool')
 	}
 
-	if element.node.type_name == .unary_expression {
-		operator_element := element.find_child_by_name('operator') or { return types.unknown_type }
-		operator := operator_element.get_text()
+	if element is UnaryExpression {
+		operator := element.operator()
 		if operator == '!' {
 			return types.new_primitive_type('bool')
 		}
 
-		expression := element.find_child_by_name('operand') or { return types.unknown_type }
+		expression := element.expression() or { return types.unknown_type }
 		expr_type := t.infer_type(expression)
 
 		match operator {
@@ -874,7 +872,15 @@ pub fn (t &TypeInferer) infer_context_type(elem ?PsiElement) types.Type {
 	}
 
 	if parent.element_type() == .simple_statement {
-		match_expr := parent.parent_nth(4) or { return types.unknown_type }
+		if_expr := parent.parent_nth(2) or { return types.unknown_type }
+		if if_expr is IfExpression {
+			return_stmt := if_expr.parent_nth(2) or { return types.unknown_type }
+			if return_stmt.element_type() == .return_statement {
+				return t.enclosing_function_return_type(return_stmt)
+			}
+		}
+
+		match_expr := if_expr.parent_nth(2) or { return types.unknown_type }
 		if match_expr is MatchExpression {
 			return_stmt := match_expr.parent_nth(2) or { return types.unknown_type }
 			if return_stmt.element_type() == .return_statement {
@@ -885,6 +891,27 @@ pub fn (t &TypeInferer) infer_context_type(elem ?PsiElement) types.Type {
 
 	if parent is FieldDeclaration {
 		return parent.get_type()
+	}
+
+	if parent is ArrayCreation {
+		expressions := parent.expressions()
+		first := expressions[0] or { return types.unknown_type }
+
+		if first.element_type() != .enum_fetch {
+			return t.infer_type(first)
+		}
+
+		bin_expr := parent.parent() or { return types.unknown_type }
+		if bin_expr.element_type() in [.binary_expression, .in_expression, .not_in_expression] {
+			left := bin_expr.first_child_or_stub() or { return types.unknown_type }
+			if left.is_parent_of(parent) {
+				return types.unknown_type
+			}
+
+			return t.infer_type(left)
+		}
+
+		return types.unknown_type
 	}
 
 	return types.unknown_type

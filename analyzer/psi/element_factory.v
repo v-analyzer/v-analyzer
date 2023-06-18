@@ -409,6 +409,18 @@ pub fn create_element(node AstNode, containing_file &PsiFile) PsiElement {
 		}
 	}
 
+	if node.type_name == .unary_expression {
+		return UnaryExpression{
+			PsiElementImpl: base_node
+		}
+	}
+
+	if node.type_name == .binary_expression {
+		return BinaryExpression{
+			PsiElementImpl: base_node
+		}
+	}
+
 	return base_node
 }
 

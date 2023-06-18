@@ -36,6 +36,7 @@ pub fn (mut ls LanguageServer) did_change(params lsp.DidChangeTextDocumentParams
 	ls.analyzer_instance.update_stub_indexes([file.psi_file])
 
 	type_cache.clear()
+	enum_fields_cache = map[string]int{}
 
 	loglib.with_fields({
 		'caller':   @METHOD

@@ -331,15 +331,19 @@ fn (mut p Provider) embedded_definition_documentation(element psi.EmbeddedDefini
 
 fn (mut p Provider) enum_field_documentation(element psi.EnumFieldDeclaration) ? {
 	p.sb.write_string('```v\n')
+	p.sb.write_string('enum ')
 
 	if owner := element.owner() {
-		if owner is psi.PsiNamedElement {
-			p.sb.write_string(owner.name())
-			p.sb.write_string('.')
-		}
+		p.sb.write_string(owner.name())
+		p.sb.write_string('.')
 	}
 
 	p.sb.write_string(element.name())
+
+	p.sb.write_string(' = ')
+
+	p.sb.write_string(element.value_presentation(true))
+
 	p.sb.write_string('\n')
 	p.sb.write_string('```')
 	p.write_separator()

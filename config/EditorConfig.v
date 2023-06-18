@@ -10,12 +10,13 @@ pub enum SemanticTokensMode {
 
 pub struct InlayHintsConfig {
 pub mut:
-	enable                      bool = true
-	enable_range_hints          bool = true
-	enable_type_hints           bool = true
-	enable_implicit_err_hints   bool = true
-	enable_parameter_name_hints bool = true
-	enable_constant_type_hints  bool = true
+	enable                        bool = true
+	enable_range_hints            bool = true
+	enable_type_hints             bool = true
+	enable_implicit_err_hints     bool = true
+	enable_parameter_name_hints   bool = true
+	enable_constant_type_hints    bool = true
+	enable_enum_field_value_hints bool = true
 }
 
 pub struct CodeLensConfig {
@@ -107,6 +108,13 @@ pub fn from_toml(root string, path string, content string) !EditorConfig {
 		true // default to true
 	} else {
 		enable_constant_type_hints.bool()
+	}
+
+	enable_enum_field_value_hints := inlay_hints_table.value('enable_enum_field_value_hints')
+	config.inlay_hints.enable_enum_field_value_hints = if enable_enum_field_value_hints is toml.Null {
+		true // default to true
+	} else {
+		enable_enum_field_value_hints.bool()
 	}
 
 	code_lens_table := res.value('code_lens')
