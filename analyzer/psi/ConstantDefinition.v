@@ -69,7 +69,7 @@ pub fn (c &ConstantDefinition) expression() ?PsiElement {
 		first_child := root.first_child() or { return none }
 		next_first_child := first_child.first_child() or { return none }
 		file := new_psi_file(c.containing_file.path, res.tree, res.source_text)
-		return create_element(next_first_child, file)
+		return create_element(AstNode(next_first_child), file)
 	}
 	return c.last_child()
 }

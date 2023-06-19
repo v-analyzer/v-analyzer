@@ -37,7 +37,8 @@ if true {} else {}
       (literal
         (true))
       (block)
-      (block))))
+      (else_branch
+        (block)))))
 
 ================================================================================
 Simple if expression with else if
@@ -51,11 +52,13 @@ if true {} else if false {} else {}
       (literal
         (true))
       (block)
-      (if_expression
-        (literal
-          (false))
-        (block)
-        (block)))))
+      (else_branch
+        (if_expression
+          (literal
+            (false))
+          (block)
+          (else_branch
+            (block)))))))
 
 ================================================================================
 If guard

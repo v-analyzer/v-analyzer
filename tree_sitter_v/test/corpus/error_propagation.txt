@@ -37,7 +37,8 @@ if true {} else {} or {}
         (literal
           (true))
         (block)
-        (block))
+        (else_branch
+          (block)))
       (or_block
         (block)))))
 
@@ -74,7 +75,8 @@ if true {} else {}!
         (literal
           (true))
         (block)
-        (block)))))
+        (else_branch
+          (block))))))
 
 ================================================================================
 ? propagation
@@ -109,4 +111,5 @@ if true {} else {}?
         (literal
           (true))
         (block)
-        (block)))))
+        (else_branch
+          (block))))))

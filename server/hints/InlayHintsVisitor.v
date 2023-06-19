@@ -103,6 +103,10 @@ pub fn (mut v InlayHintsVisitor) process_node(node psi.AstNode, containing_file 
 		v.handle_implicit_error_variable(block)
 	}
 
+	if node.type_name == .else_branch && v.cfg.enable_implicit_err_hints {
+		v.handle_if_unwrapping(node, containing_file)
+	}
+
 	if node.type_name == .call_expression && v.cfg.enable_parameter_name_hints {
 		v.handle_call_expression(node, containing_file)
 	}
@@ -180,6 +184,23 @@ pub fn (mut v InlayHintsVisitor) handle_call_expression(call psi.AstNode, contai
 			}
 		}
 	}
+}
+
+pub fn (mut v InlayHintsVisitor) handle_if_unwrapping(node psi.AstNode, containing_file &psi.PsiFile) {
+	parent_if_expression := node.parent_of_type(.if_expression) or { return }
+
+	guard := parent_if_expression.child_by_field_name('guard') or { return }
+	expression_list := guard.child_by_field_name('expression_list') or { return }
+	expression := expression_list.first_child() or { return }
+	expr_type := psi.infer_type(psi.create_element(expression, containing_file))
+
+	if expr_type !is types.ResultType {
+		// show `err ->` hint only for `Result` type
+		return
+	}
+
+	block := node.child_by_field_name('block') or { return }
+	v.handle_implicit_error_variable(block)
 }
 
 pub fn (mut v InlayHintsVisitor) handle_implicit_error_variable(block psi.AstNode) {

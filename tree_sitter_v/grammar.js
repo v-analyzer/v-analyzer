@@ -695,12 +695,15 @@ module.exports = grammar({
         field('guard', $.var_declaration),
       ),
       field('block', $.block),
-      optional(
-        seq(
-          'else',
-          field('else_branch', choice($.block, $.if_expression)),
-        ),
-      ),
+      optional($.else_branch),
+    ),
+
+    else_branch: ($) => seq(
+      'else',
+      field('else_branch', choice(
+        field('block', $.block),
+        $.if_expression,
+      )),
     ),
 
     compile_time_if_expression: ($) => seq(

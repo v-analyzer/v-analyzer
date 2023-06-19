@@ -1120,6 +1120,32 @@
     }
   },
   {
+    "type": "else_branch",
+    "named": true,
+    "fields": {
+      "block": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "block",
+            "named": true
+          }
+        ]
+      },
+      "else_branch": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "if_expression",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "embedded_definition",
     "named": true,
     "fields": {},
@@ -1780,20 +1806,6 @@
           }
         ]
       },
-      "else_branch": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "block",
-            "named": true
-          },
-          {
-            "type": "if_expression",
-            "named": true
-          }
-        ]
-      },
       "guard": {
         "multiple": false,
         "required": false,
@@ -1804,6 +1816,16 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "else_branch",
+          "named": true
+        }
+      ]
     }
   },
   {

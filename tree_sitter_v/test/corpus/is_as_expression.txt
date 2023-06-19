@@ -18,19 +18,20 @@ if a is []Any {
               (type_reference_expression
                 (identifier))))))
       (block)
-      (if_expression
-        (is_expression
-          (reference_expression
-            (identifier))
-          (plain_type
-            (map_type
-              (plain_type
-                (type_reference_expression
-                  (identifier)))
-              (plain_type
-                (type_reference_expression
-                  (identifier))))))
-        (block)))))
+      (else_branch
+        (if_expression
+          (is_expression
+            (reference_expression
+              (identifier))
+            (plain_type
+              (map_type
+                (plain_type
+                  (type_reference_expression
+                    (identifier)))
+                (plain_type
+                  (type_reference_expression
+                    (identifier))))))
+          (block))))))
 
 ================================================================================
 Is expression with qualified type
@@ -228,53 +229,54 @@ fn test_parse_compact_text() {
               (expression_list
                 (reference_expression
                   (identifier)))))
-          (if_expression
-            (is_expression
-              (reference_expression
-                (identifier))
-              (plain_type
-                (map_type
-                  (plain_type
-                    (type_reference_expression
+          (else_branch
+            (if_expression
+              (is_expression
+                (reference_expression
+                  (identifier))
+                (plain_type
+                  (map_type
+                    (plain_type
+                      (type_reference_expression
+                        (identifier)))
+                    (plain_type
+                      (type_reference_expression
+                        (identifier))))))
+              (block
+                (simple_statement
+                  (var_declaration
+                    (expression_list
+                      (mutable_expression
+                        (mutability_modifiers)
+                        (reference_expression
+                          (identifier))))
+                    (expression_list
+                      (type_initializer
+                        (plain_type
+                          (array_type
+                            (plain_type
+                              (type_reference_expression
+                                (identifier)))))
+                        (type_initializer_body)))))
+                (for_statement
+                  (range_clause
+                    (var_definition_list
+                      (var_definition
+                        (identifier))
+                      (var_definition
+                        (identifier)))
+                    (reference_expression
                       (identifier)))
-                  (plain_type
-                    (type_reference_expression
-                      (identifier))))))
-            (block
-              (simple_statement
-                (var_declaration
-                  (expression_list
-                    (mutable_expression
-                      (mutability_modifiers)
+                  (block
+                    (append_statement
                       (reference_expression
-                        (identifier))))
+                        (identifier))
+                      (reference_expression
+                        (identifier)))))
+                (return_statement
                   (expression_list
-                    (type_initializer
-                      (plain_type
-                        (array_type
-                          (plain_type
-                            (type_reference_expression
-                              (identifier)))))
-                      (type_initializer_body)))))
-              (for_statement
-                (range_clause
-                  (var_definition_list
-                    (var_definition
-                      (identifier))
-                    (var_definition
-                      (identifier)))
-                  (reference_expression
-                    (identifier)))
-                (block
-                  (append_statement
                     (reference_expression
-                      (identifier))
-                    (reference_expression
-                      (identifier)))))
-              (return_statement
-                (expression_list
-                  (reference_expression
-                    (identifier))))))))
+                      (identifier)))))))))
       (return_statement
         (expression_list
           (array_creation

@@ -50,6 +50,7 @@ pub enum NodeType {
 	defer_statement
 	element
 	element_list
+	else_branch
 	embedded_definition
 	empty_array_creation
 	empty_literal_value
@@ -202,7 +203,6 @@ const supertype__expression_nodes = merge(supertype__expression_with_blocks_node
 	.index_expression,
 	.is_expression,
 	.literal,
-	.map_init_expression,
 	.not_in_expression,
 	.not_is_expression,
 	.option_propagation_expression,
@@ -223,6 +223,7 @@ const supertype__expression_with_blocks_nodes = [
 	.compile_time_if_expression,
 	.if_expression,
 	.lock_expression,
+	.map_init_expression,
 	.match_expression,
 	.select_expression,
 	.sql_expression,
@@ -358,6 +359,7 @@ pub fn (nf VNodeTypeFactory) get_type(type_name string) NodeType {
 		'defer_statement' { NodeType.defer_statement }
 		'element' { NodeType.element }
 		'element_list' { NodeType.element_list }
+		'else_branch' { NodeType.else_branch }
 		'embedded_definition' { NodeType.embedded_definition }
 		'empty_array_creation' { NodeType.empty_array_creation }
 		'empty_literal_value' { NodeType.empty_literal_value }
