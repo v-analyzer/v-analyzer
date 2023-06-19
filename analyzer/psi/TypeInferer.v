@@ -164,6 +164,15 @@ pub fn (t &TypeInferer) infer_type_impl(elem ?PsiElement) types.Type {
 	}
 
 	if element is ReferenceExpression {
+		if element.text_matches('it') {
+			call := get_it_call(*element) or { return types.unknown_type }
+			caller_type := call.caller_type()
+			if caller_type is types.ArrayType {
+				return caller_type.inner
+			}
+			return types.unknown_type
+		}
+
 		resolved := element.resolve() or { return types.unknown_type }
 		return t.infer_type(resolved)
 	}
