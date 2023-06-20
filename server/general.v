@@ -67,6 +67,7 @@ pub fn (mut ls LanguageServer) initialize(params lsp.InitializeParams, mut wr Re
 			code_action_provider: lsp.CodeActionOptions{
 				code_action_kinds: [lsp.quick_fix]
 			}
+			folding_range_provider: true
 		}
 		server_info: lsp.ServerInfo{
 			name: 'spavn-analyzer'

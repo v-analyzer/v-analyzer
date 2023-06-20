@@ -204,10 +204,10 @@ pub fn (mut ls LanguageServer) handle_jsonrpc(request &jsonrpc.Request, mut rw j
 				w.write(hover_data)
 			}
 			'textDocument/foldingRange' {
-				// params := json.decode(lsp.FoldingRangeParams, request.params) or {
-				// 	return w.wrap_error(err)
-				// }
-				// w.write(ls.folding_range(params) or { return w.wrap_error(err) })
+				params := json.decode(lsp.FoldingRangeParams, request.params) or {
+					return w.wrap_error(err)
+				}
+				w.write(ls.folding_range(params) or { return w.wrap_error(err) })
 			}
 			'textDocument/definition' {
 				params := json.decode(lsp.TextDocumentPositionParams, request.params) or {

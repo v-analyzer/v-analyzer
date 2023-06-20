@@ -38,7 +38,7 @@ pub mut:
 	document_highlight  Capability                  [json: documentHighlight]
 	document_link       Capability                  [json: documentLink]
 	document_symbol     DocumentSymbolCapability    [json: documentSymbol]
-	folding_range       FoldingRangeCapability      [json: foldingRange]
+	folding_range       FoldingRangeCapabilities    [json: foldingRange]
 	formatting          Capability
 	hover               HoverCapability
 	implementation      LinkCapability
@@ -144,13 +144,6 @@ pub mut:
 	related_information bool     [json: relatedInformation]
 	version_support     bool     [json: versionSupport]
 	tag_support         ValueSet [json: tagSupport]
-}
-
-pub struct FoldingRangeCapability {
-pub mut:
-	dynamic_registration bool [json: dynamicRegistration]
-	range_limit          int  [json: rangeLimit]
-	line_folding_only    bool [json: lineFoldingOnly]
 }
 
 pub struct ClientCapabilities {
