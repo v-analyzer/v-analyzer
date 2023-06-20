@@ -6,7 +6,7 @@ import analyzer
 import analyzer.psi
 import analyzer.parser
 
-pub fn (mut ls LanguageServer) did_open(params lsp.DidOpenTextDocumentParams, mut wr ResponseWriter) {
+pub fn (mut ls LanguageServer) did_open(params lsp.DidOpenTextDocumentParams) {
 	src := params.text_document.text
 	uri := params.text_document.uri.normalize()
 

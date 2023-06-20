@@ -3,7 +3,7 @@ module server
 import lsp
 import server.hints
 
-pub fn (mut ls LanguageServer) inlay_hints(params lsp.InlayHintParams, mut wr ResponseWriter) ?[]lsp.InlayHint {
+pub fn (mut ls LanguageServer) inlay_hints(params lsp.InlayHintParams) ?[]lsp.InlayHint {
 	if !ls.cfg.inlay_hints.enable {
 		return none
 	}

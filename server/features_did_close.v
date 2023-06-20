@@ -3,7 +3,7 @@ module server
 import lsp
 import loglib
 
-pub fn (mut ls LanguageServer) did_close(params lsp.DidCloseTextDocumentParams, mut wr ResponseWriter) {
+pub fn (mut ls LanguageServer) did_close(params lsp.DidCloseTextDocumentParams) {
 	uri := params.text_document.uri.normalize()
 	if file := ls.opened_files[uri] {
 		unsafe { file.psi_file.tree.free() }

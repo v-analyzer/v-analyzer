@@ -5,7 +5,7 @@ import analyzer
 import time
 import loglib
 
-pub fn (mut ls LanguageServer) did_change(params lsp.DidChangeTextDocumentParams, mut wr ResponseWriter) {
+pub fn (mut ls LanguageServer) did_change(params lsp.DidChangeTextDocumentParams) {
 	uri := params.text_document.uri.normalize()
 	mut file := ls.opened_files[uri] or {
 		loglib.with_fields({

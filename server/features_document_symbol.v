@@ -4,7 +4,7 @@ import lsp
 import analyzer.psi
 import server.tform
 
-pub fn (mut ls LanguageServer) document_symbol(params lsp.DocumentSymbolParams, mut wr ResponseWriter) ![]lsp.DocumentSymbol {
+pub fn (mut ls LanguageServer) document_symbol(params lsp.DocumentSymbolParams) ![]lsp.DocumentSymbol {
 	uri := params.text_document.uri.normalize()
 	mut file_symbols := []lsp.DocumentSymbol{}
 

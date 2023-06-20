@@ -5,7 +5,7 @@ import loglib
 import server.tform
 import analyzer.psi.search
 
-pub fn (mut ls LanguageServer) references(params lsp.ReferenceParams, mut wr ResponseWriter) []lsp.Location {
+pub fn (mut ls LanguageServer) references(params lsp.ReferenceParams) []lsp.Location {
 	uri := params.text_document.uri.normalize()
 	file := ls.get_file(uri) or { return [] }
 

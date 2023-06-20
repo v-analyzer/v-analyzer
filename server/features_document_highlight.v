@@ -6,7 +6,7 @@ import server.tform
 import analyzer.psi
 import analyzer.psi.search
 
-pub fn (mut ls LanguageServer) document_highlight(params lsp.TextDocumentPositionParams, mut wr ResponseWriter) ?[]lsp.DocumentHighlight {
+pub fn (mut ls LanguageServer) document_highlight(params lsp.TextDocumentPositionParams) ?[]lsp.DocumentHighlight {
 	uri := params.text_document.uri.normalize()
 	file := ls.get_file(uri) or { return none }
 
@@ -37,6 +37,11 @@ pub fn (mut ls LanguageServer) document_highlight(params lsp.TextDocumentPositio
 	return highlights
 }
 
+// read_write_kind returns the kind of the highlight for the given element.
+//
+// - `DocumentHighlightKind.read` means that the highlight is a read access,
+// - `DocumentHighlightKind.write` means that the highlight is a write access.
+// - `DocumentHighlightKind.text` means that the highlight is neither a read nor a write access.
 fn read_write_kind(element psi.PsiElement) lsp.DocumentHighlightKind {
 	parent := element.parent() or { return .text }
 

@@ -9,7 +9,7 @@ const (
 	max_line_for_any_semantic_tokens     = 10000
 )
 
-pub fn (mut ls LanguageServer) semantic_tokens(text_document lsp.TextDocumentIdentifier, range lsp.Range, mut wr ResponseWriter) ?lsp.SemanticTokens {
+pub fn (mut ls LanguageServer) semantic_tokens(text_document lsp.TextDocumentIdentifier, range lsp.Range) ?lsp.SemanticTokens {
 	if ls.cfg.enable_semantic_tokens == .none_ {
 		return none
 	}
@@ -26,21 +26,21 @@ pub fn (mut ls LanguageServer) semantic_tokens(text_document lsp.TextDocumentIde
 
 	if lines > server.max_line_for_resolve_semantic_tokens
 		|| ls.cfg.enable_semantic_tokens == .syntax {
-		// We don't want to send too many tokens, so we just send dumb-aware tokens for large files.
+		// We don't want to send too many tokens (and compute it), so we just
+		// send dumb-aware tokens for large files.
 		dumb_aware_visitor := semantic.new_dumb_aware_semantic_visitor(range, file.psi_file)
+		tokens := dumb_aware_visitor.accept(file.psi_file.root)
 		return lsp.SemanticTokens{
 			result_id: time.now().unix_time().str()
-			data: semantic.encode(dumb_aware_visitor.accept(file.psi_file.root))
+			data: semantic.encode(tokens)
 		}
 	}
 
-	dumb_aware_tokens := semantic.new_dumb_aware_semantic_visitor(range, file.psi_file)
+	mut result := semantic.new_dumb_aware_semantic_visitor(range, file.psi_file)
 		.accept(file.psi_file.root)
 	resolve_tokens := semantic.new_resolve_semantic_visitor(range, file.psi_file)
 		.accept(file.psi_file.root)
 
-	mut result := []semantic.SemanticToken{cap: dumb_aware_tokens.len + resolve_tokens.len}
-	result << dumb_aware_tokens
 	result << resolve_tokens
 
 	return lsp.SemanticTokens{

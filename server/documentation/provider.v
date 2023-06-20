@@ -452,7 +452,7 @@ pub fn (mut p Provider) find_documentation_element(element psi.PsiElement) ?psi.
 			return parent.resolve() or {
 				loglib.with_fields({
 					'name': element.get_text()
-				}).log(.warn, 'cannot resolve reference for documentation')
+				}).log(.warn, 'Cannot resolve reference for documentation')
 				return element
 			}
 		}

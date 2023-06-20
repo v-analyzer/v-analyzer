@@ -6,7 +6,7 @@ import server.tform
 
 const temp_formatting_file_path = os.join_path(os.temp_dir(), 'spavn-analyzer-formatting-temp.v')
 
-pub fn (mut ls LanguageServer) formatting(params lsp.DocumentFormattingParams, mut wr ResponseWriter) ![]lsp.TextEdit {
+pub fn (mut ls LanguageServer) formatting(params lsp.DocumentFormattingParams) ![]lsp.TextEdit {
 	uri := params.text_document.uri.normalize()
 	file := ls.get_file(uri) or { return error('Cannot format not opened file') }
 

@@ -7,14 +7,9 @@ import server.completion
 import server.completion.providers
 import loglib
 
-pub fn (mut ls LanguageServer) completion(params lsp.CompletionParams, mut wr ResponseWriter) ![]lsp.CompletionItem {
+pub fn (mut ls LanguageServer) completion(params lsp.CompletionParams) ![]lsp.CompletionItem {
 	uri := params.text_document.uri.normalize()
-	file := ls.get_file(uri) or {
-		loglib.with_fields({
-			'uri': uri.str()
-		}).warn('Cannot find file')
-		return []
-	}
+	file := ls.get_file(uri) or { return [] }
 
 	offset := file.find_offset(params.position)
 
@@ -47,6 +42,8 @@ pub fn (mut ls LanguageServer) completion(params lsp.CompletionParams, mut wr Re
 		return []
 	}
 
+	// We use CompletionContext in order not to calculate the current partial context
+	// in each provider, but to calculate it once and pass it to all providers.
 	mut ctx := &completion.CompletionContext{
 		element: element
 		position: params.position

@@ -3,7 +3,7 @@ module server
 import lsp
 import loglib
 
-pub fn (mut ls LanguageServer) did_change_watched_files(params lsp.DidChangeWatchedFilesParams, mut wr ResponseWriter) {
+pub fn (mut ls LanguageServer) did_change_watched_files(params lsp.DidChangeWatchedFilesParams) {
 	changes := params.changes
 	mut is_rename := false
 

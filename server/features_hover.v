@@ -5,7 +5,7 @@ import server.documentation
 import loglib
 import server.tform
 
-pub fn (mut ls LanguageServer) hover(params lsp.HoverParams, mut wr ResponseWriter) ?lsp.Hover {
+pub fn (mut ls LanguageServer) hover(params lsp.HoverParams) ?lsp.Hover {
 	uri := params.text_document.uri.normalize()
 	file := ls.get_file(uri) or { return none }
 

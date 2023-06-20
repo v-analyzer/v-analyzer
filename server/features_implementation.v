@@ -6,7 +6,7 @@ import server.tform
 import analyzer.psi
 import analyzer.psi.search
 
-pub fn (mut ls LanguageServer) implementation(params lsp.TextDocumentPositionParams, mut _ ResponseWriter) ?[]lsp.Location {
+pub fn (mut ls LanguageServer) implementation(params lsp.TextDocumentPositionParams) ?[]lsp.Location {
 	uri := params.text_document.uri.normalize()
 	file := ls.get_file(uri) or { return none }
 
@@ -37,5 +37,6 @@ pub fn (mut ls LanguageServer) implementation(params lsp.TextDocumentPositionPar
 		'text_range':   element.text_range().str()
 		'element_type': element.element_type().str()
 	}).warn('Element is not inside an interface or struct declaration')
+
 	return none
 }

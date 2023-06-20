@@ -5,7 +5,7 @@ import loglib
 import analyzer.psi
 import server.tform
 
-pub fn (mut ls LanguageServer) prepare_rename(params lsp.PrepareRenameParams, mut wr ResponseWriter) !lsp.PrepareRenameResult {
+pub fn (mut ls LanguageServer) prepare_rename(params lsp.PrepareRenameParams) !lsp.PrepareRenameResult {
 	uri := params.text_document.uri.normalize()
 	file := ls.get_file(uri) or { return error('cannot rename element from not opened file') }
 

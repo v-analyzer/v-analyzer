@@ -5,7 +5,7 @@ import loglib
 import server.tform
 import analyzer.psi.search
 
-pub fn (mut ls LanguageServer) rename(params lsp.RenameParams, mut wr ResponseWriter) !lsp.WorkspaceEdit {
+pub fn (mut ls LanguageServer) rename(params lsp.RenameParams) !lsp.WorkspaceEdit {
 	uri := params.text_document.uri.normalize()
 	file := ls.get_file(uri) or { return error('cannot rename element from not opened file') }
 

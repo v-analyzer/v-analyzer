@@ -4,7 +4,7 @@ import lsp
 import server.tform
 import analyzer.psi
 
-pub fn (mut ls LanguageServer) workspace_symbol(_ lsp.WorkspaceSymbolParams, mut _ ResponseWriter) ?[]lsp.WorkspaceSymbol {
+pub fn (mut ls LanguageServer) workspace_symbol(_ lsp.WorkspaceSymbolParams) ?[]lsp.WorkspaceSymbol {
 	workspace_elements := ls.analyzer_instance.stub_index.get_all_elements_from(.workspace)
 
 	mut workspace_symbols := []lsp.WorkspaceSymbol{cap: workspace_elements.len}

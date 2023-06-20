@@ -5,7 +5,7 @@ import loglib
 import analyzer.psi
 import server.tform
 
-pub fn (mut ls LanguageServer) definition(params lsp.TextDocumentPositionParams, mut wr ResponseWriter) ?[]lsp.LocationLink {
+pub fn (mut ls LanguageServer) definition(params lsp.TextDocumentPositionParams) ?[]lsp.LocationLink {
 	uri := params.text_document.uri.normalize()
 	file := ls.get_file(uri) or { return none }
 
@@ -13,23 +13,21 @@ pub fn (mut ls LanguageServer) definition(params lsp.TextDocumentPositionParams,
 	element := file.psi_file.find_reference_at(offset) or {
 		loglib.with_fields({
 			'offset': offset.str()
-		}).warn('cannot find reference')
+		}).warn('Cannot find reference')
 		return none
 	}
-
-	element_text_range := element.text_range()
 
 	resolved := element.resolve() or {
 		loglib.with_fields({
 			'caller': @METHOD
 			'name':   element.name()
-		}).warn('cannot resolve reference')
+		}).warn('Cannot resolve reference')
 		return none
 	}
 
 	data := new_resolve_result(resolved.containing_file(), resolved) or { return [] }
 	return [
-		data.to_location_link(element_text_range),
+		data.to_location_link(element.text_range()),
 	]
 }
 
