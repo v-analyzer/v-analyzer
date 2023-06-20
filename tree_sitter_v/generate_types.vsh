@@ -171,19 +171,19 @@ sb.writeln('\n')
 sb.writeln('pub struct ${node_type_factory_sym_name} {}')
 sb.writeln('\n')
 sb.writeln('pub fn (nf ${node_type_factory_sym_name}) get_type(type_name string) ${node_type_enum_name} {')
-sb.writeln('   return match type_name {')
-sb.writeln("      'ERROR' { ${node_type_enum_name}.error }")
+sb.writeln('   return tree_sitter_v.node_type_name_to_enum[type_name] or { NodeType.unknown }')
+sb.writeln('}')
+sb.writeln('\n')
+sb.writeln('const node_type_name_to_enum = {')
 
 for node_type in node_types {
 	if node_type.is_anon() {
 		continue
 	}
-	sb.write_string("      '${node_type.name}' { ")
+	sb.write_string("      '${node_type.name}': ")
 	write_enum_member(mut sb, node_type_enum_name, node_type.name)
-	sb.writeln(' }')
+	sb.writeln('')
 }
-sb.writeln('       else { ${node_type_enum_name}.unknown }')
-sb.writeln('   }')
 sb.writeln('}')
 
 file.write(sb)!
