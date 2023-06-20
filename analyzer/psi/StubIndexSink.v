@@ -24,6 +24,7 @@ fn (mut s StubIndexSink) occurrence(key StubIndexKey, value string) {
 	s.data[int(key)][resulting_value] << s.stub_id
 }
 
+[inline]
 pub fn (s StubIndexSink) module_fqn() string {
 	if s.stub_list == unsafe { nil } {
 		return ''

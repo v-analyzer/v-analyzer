@@ -111,7 +111,7 @@ fn (s &StubList) next_sibling(id StubId) ?&StubElement {
 	return s.index_map[prev_id] or { return none }
 }
 
-fn (s StubList) get_stub(id StubId) ?&StubBase {
+fn (s &StubList) get_stub(id StubId) ?&StubBase {
 	stub := s.index_map[id] or { return none }
 	if isnil(stub) {
 		return none

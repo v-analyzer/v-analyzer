@@ -8,7 +8,6 @@ pub type ID = int
 pub type AstNode = tree_sitter.Node[v.NodeType]
 
 pub interface PsiElement {
-	id ID // unique id of the element
 	node AstNode // base node from Tree Sitter
 	containing_file &PsiFile // file where the element is located
 	stub_id StubId

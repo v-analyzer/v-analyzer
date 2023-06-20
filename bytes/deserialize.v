@@ -6,8 +6,8 @@ mut:
 	data  []u8
 }
 
-pub fn new_deserializer(data []u8) &Deserializer {
-	return &Deserializer{
+pub fn new_deserializer(data []u8) Deserializer {
+	return Deserializer{
 		data: data
 	}
 }

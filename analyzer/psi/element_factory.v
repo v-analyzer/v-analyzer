@@ -1,11 +1,7 @@
-[translated]
 module psi
 
-__global psi_counter = 0
-
 pub fn create_element(node AstNode, containing_file &PsiFile) PsiElement {
-	base_node := new_psi_node(psi_counter, containing_file, node)
-	psi_counter++
+	base_node := new_psi_node(containing_file, node)
 
 	if node.type_name == .module_clause {
 		return ModuleClause{
@@ -428,7 +424,7 @@ pub fn create_element(node AstNode, containing_file &PsiFile) PsiElement {
 pub fn node_to_var_definition(node AstNode, containing_file &PsiFile, base_node ?PsiElementImpl) &VarDefinition {
 	if node.type_name == .var_definition {
 		return &VarDefinition{
-			PsiElementImpl: base_node or { new_psi_node(psi_counter, containing_file, node) }
+			PsiElementImpl: base_node or { new_psi_node(containing_file, node) }
 		}
 	}
 
@@ -444,18 +440,14 @@ pub fn node_to_var_definition(node AstNode, containing_file &PsiFile, base_node 
 			var_list := grand.child_by_field_name('var_list') or { return unsafe { nil } }
 			if var_list.is_parent_of(node) {
 				return &VarDefinition{
-					PsiElementImpl: base_node or {
-						new_psi_node(psi_counter, containing_file, node)
-					}
+					PsiElementImpl: base_node or { new_psi_node(containing_file, node) }
 				}
 			}
 		}
 		if grand_grand := grand.parent() {
 			if grand_grand.type_name == .var_declaration && parent.type_name == .mutable_expression {
 				return &VarDefinition{
-					PsiElementImpl: base_node or {
-						new_psi_node(psi_counter, containing_file, node)
-					}
+					PsiElementImpl: base_node or { new_psi_node(containing_file, node) }
 				}
 			}
 		}

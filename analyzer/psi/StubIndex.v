@@ -33,12 +33,18 @@ pub mut:
 	// data defines the index data that allows you to get the description of the element
 	// in 2 accesses to the array elements and one lookup by key.
 	data [count_stub_index_location_keys][count_index_keys]map[string]StubResult
+	// all_elements_by_modules contains all top-level elements in the module.
+	all_elements_by_modules [count_stub_index_location_keys]map[string][]PsiElement
+	// types_by_modules contains all top-level types in the module.
+	types_by_modules [count_stub_index_location_keys]map[string][]PsiElement
 }
 
 pub fn new_stubs_index(sinks []StubIndexSink) &StubIndex {
 	mut index := &StubIndex{
 		sinks: sinks
 		module_to_files: map[string][]StubIndexSink{}
+		all_elements_by_modules: [psi.count_stub_index_location_keys]map[string][]PsiElement{}
+		types_by_modules: [psi.count_stub_index_location_keys]map[string][]PsiElement{}
 	}
 
 	for i in 0 .. psi.count_stub_index_location_keys {
@@ -72,16 +78,46 @@ pub fn (mut s StubIndex) update_index_from_sink(sink StubIndexSink) {
 		for name, ids in datum {
 			mut stubs_result := []&StubBase{cap: ids.len}
 			mut psi_result := []PsiElement{cap: ids.len}
+			mut top_level_elements_psi_result := []PsiElement{cap: ids.len}
+			mut top_level_types_elements_psi_result := []PsiElement{cap: ids.len}
+
 			for stub_id in ids {
 				stub := sink.stub_list.index_map[stub_id] or { continue }
 				stubs_result << stub
-				psi_result << element_type.create_psi(stub) or { continue }
+				element := element_type.create_psi(stub) or { continue }
+				psi_result << element
+
+				if stub.stub_type in [
+					.function_declaration,
+					.constant_declaration,
+					.global_variable,
+				] {
+					top_level_elements_psi_result << element
+				}
+
+				if stub.stub_type in [
+					.struct_declaration,
+					.interface_declaration,
+					.enum_declaration,
+					.type_alias_declaration,
+				] {
+					top_level_types_elements_psi_result << element
+				}
 			}
 
 			mut data_by_name := mp[name]
 			data_by_name.stubs << stubs_result
 			data_by_name.psis << psi_result
 			mp[name] = data_by_name
+
+			module_fqn := sink.module_fqn()
+			// V treat different '' (different cap) as different keys
+			module_key := if module_fqn == '' { '' } else { module_fqn }
+
+			s.types_by_modules[kind][module_key] << top_level_types_elements_psi_result
+
+			s.all_elements_by_modules[kind][module_key] << top_level_elements_psi_result
+			s.all_elements_by_modules[kind][module_key] << top_level_types_elements_psi_result
 		}
 		s.data[kind][index_id] = mp.move()
 	}
@@ -113,6 +149,9 @@ pub fn (mut s StubIndex) update_stubs_index(changed_sinks []StubIndexSink, all_s
 	for i in 0 .. psi.count_index_keys {
 		s.data[StubIndexLocationKind.workspace][i] = map[string]StubResult{}
 	}
+
+	s.all_elements_by_modules[StubIndexLocationKind.workspace] = map[string][]PsiElement{}
+	s.types_by_modules[StubIndexLocationKind.workspace] = map[string][]PsiElement{}
 
 	for sink in all_sinks {
 		if sink.kind != .workspace {
@@ -189,20 +228,33 @@ pub fn (s &StubIndex) get_all_elements_from_file(file string) []PsiElement {
 
 // get_all_declarations_from_module returns a list of all PSI elements defined in the given module.
 pub fn (s &StubIndex) get_all_declarations_from_module(module_fqn string, only_types bool) []PsiElement {
-	files := s.module_to_files[module_fqn] or { return []PsiElement{} }
+	if only_types {
+		if elements := s.types_by_modules[StubIndexLocationKind.workspace][module_fqn] {
+			return elements
+		}
 
-	mut elements := []PsiElement{cap: files.len * 10}
-	for sink in files {
-		$for key in StubIndexKey.values {
-			if key.value !in [.methods, .attributes, .methods_fingerprint, .fields_fingerprint] {
-				if !only_types
-					|| (only_types && key.value !in [.functions, .constants, .global_variables]) {
-					elements << s.get_all_elements_from_sink_by_key(key.value, sink)
+		$for value in StubIndexLocationKind.values {
+			if value.value != StubIndexLocationKind.workspace {
+				if elements := s.types_by_modules[value.value][module_fqn] {
+					return elements
 				}
 			}
 		}
 	}
-	return elements
+
+	// first try to get the elements from the workspace, if not found, try to get them from the other locations
+	if elements := s.all_elements_by_modules[StubIndexLocationKind.workspace][module_fqn] {
+		return elements
+	}
+
+	$for value in StubIndexLocationKind.values {
+		if value.value != StubIndexLocationKind.workspace {
+			if elements := s.all_elements_by_modules[value.value][module_fqn] {
+				return elements
+			}
+		}
+	}
+	return []
 }
 
 pub fn (s &StubIndex) get_all_sinks_from_module(module_fqn string) []StubIndexSink {
