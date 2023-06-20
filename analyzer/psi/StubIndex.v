@@ -220,7 +220,9 @@ pub fn (s &StubIndex) get_all_elements_from_file(file string) []PsiElement {
 		}
 
 		$for key in StubIndexKey.values {
-			elements << s.get_all_elements_from_sink_by_key(key.value, sink)
+			if key.value !in [.attributes, .fields_fingerprint, .methods_fingerprint] {
+				elements << s.get_all_elements_from_sink_by_key(key.value, sink)
+			}
 		}
 	}
 	return elements
