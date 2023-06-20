@@ -40,13 +40,21 @@ pub fn (r &ReferenceImpl) resolve() ?PsiElement {
 	mut processor := ResolveProcessor{
 		containing_file: r.file
 		ref: r.element
+		ref_name: r.element.name()
 	}
-	sub.process_resolve_variants(mut processor)
 
-	if processor.result.len > 0 {
-		return processor.result.first()
+	if from_cache := resolve_cache.get(r.element()) {
+		return from_cache
 	}
-	return none
+
+	sub.process_resolve_variants(mut processor)
+	if processor.result.len == 0 {
+		return none
+	}
+
+	result := processor.result.first()
+	resolve_cache.put(r.element(), result)
+	return result
 }
 
 pub struct SubResolver {
@@ -233,9 +241,6 @@ pub fn (r &SubResolver) process_unqualified_resolve(mut processor PsiScopeProces
 	}
 
 	if !r.process_block(mut processor) {
-		return false
-	}
-	if !r.process_file(mut processor) {
 		return false
 	}
 	if !r.process_imported_modules(mut processor) {
@@ -430,14 +435,6 @@ pub fn (r &SubResolver) process_block(mut processor PsiScopeProcessor) bool {
 	// }
 
 	return r.walk_up(r.element as PsiElement, mut processor)
-}
-
-pub fn (r &SubResolver) process_file(mut processor PsiScopeProcessor) bool {
-	if r.containing_file.is_stub_based() {
-		return true
-	}
-
-	return r.containing_file.process_declarations(mut processor)
 }
 
 pub fn (r &SubResolver) process_module_clause(mut processor PsiScopeProcessor) bool {
@@ -654,6 +651,7 @@ pub fn (r &SubResolver) resolve_attribute(mut processor PsiScopeProcessor) bool 
 pub struct ResolveProcessor {
 	containing_file &PsiFile
 	ref             ReferenceExpressionBase
+	ref_name        string
 mut:
 	result []PsiElement
 }
@@ -668,8 +666,7 @@ fn (mut r ResolveProcessor) execute(element PsiElement) bool {
 		if name.ends_with('Attribute') {
 			name = utils.pascal_case_to_snake_case(name.trim_string_right('Attribute'))
 		}
-		ref_name := r.ref.name()
-		if name == ref_name {
+		if name == r.ref_name {
 			r.result << element as PsiElement
 			return false
 		}
