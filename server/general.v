@@ -64,6 +64,9 @@ pub fn (mut ls LanguageServer) initialize(params lsp.InitializeParams, mut wr Re
 			workspace_symbol_provider: true
 			implementation_provider: true
 			document_highlight_provider: true
+			code_action_provider: lsp.CodeActionOptions{
+				code_action_kinds: [lsp.quick_fix]
+			}
 		}
 		server_info: lsp.ServerInfo{
 			name: 'spavn-analyzer'

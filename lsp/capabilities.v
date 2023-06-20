@@ -187,7 +187,7 @@ pub mut:
 	document_highlight_provider          bool                            [json: documentHighlightProvider]
 	document_symbol_provider             bool                            [json: documentSymbolProvider]
 	workspace_symbol_provider            bool                            [json: workspaceSymbolProvider]
-	code_action_provider                 bool                            [json: codeActionProvider]
+	code_action_provider                 CodeActionOptions               [json: codeActionProvider]
 	code_lens_provider                   CodeLensOptions                 [json: codeLensProvider]
 	document_formatting_provider         bool                            [json: documentFormattingProvider]
 	document_on_type_formatting_provider DocumentOnTypeFormattingOptions [json: documentOnTypeFormattingProvider]
