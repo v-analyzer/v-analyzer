@@ -11,6 +11,12 @@ pub fn (n IfExpression) var_definition() ?&VarDefinition {
 	if expr is VarDefinition {
 		return expr
 	}
+	if expr is MutExpression {
+		var := expr.last_child()?
+		if var is VarDefinition {
+			return var
+		}
+	}
 	return none
 }
 
