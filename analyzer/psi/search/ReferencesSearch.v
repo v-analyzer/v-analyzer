@@ -271,11 +271,11 @@ pub fn (r &ReferencesSearch) search_in(element psi.PsiNamedElement, search_root 
 }
 
 fn resolve_identifier(element psi.PsiElement) ?psi.PsiElement {
-	parent := element.parent() or { return none }
+	parent := element.parent()?
 	resolved := if parent is psi.ReferenceExpression {
-		parent.resolve() or { return none }
+		parent.resolve()?
 	} else if parent is psi.TypeReferenceExpression {
-		parent.resolve() or { return none }
+		parent.resolve()?
 	} else {
 		parent
 	}

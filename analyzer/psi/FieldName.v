@@ -5,7 +5,7 @@ pub struct FieldName {
 }
 
 pub fn (n FieldName) reference_expression() ?&ReferenceExpression {
-	first_child := n.first_child() or { return none }
+	first_child := n.first_child()?
 	if first_child is ReferenceExpression {
 		return first_child
 	}

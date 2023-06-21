@@ -5,7 +5,7 @@ pub struct KeyedElement {
 }
 
 pub fn (n KeyedElement) field() ?&FieldName {
-	first_child := n.first_child() or { return none }
+	first_child := n.first_child()?
 	if first_child is FieldName {
 		return first_child
 	}

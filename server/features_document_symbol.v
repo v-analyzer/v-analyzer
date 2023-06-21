@@ -28,7 +28,7 @@ fn document_symbol_presentation(element psi.PsiElement) ?lsp.DocumentSymbol {
 		return lsp.DocumentSymbol{
 			name: name_presentation(element)
 			detail: detail_presentation(element)
-			kind: symbol_kind(element as psi.PsiElement) or { return none }
+			kind: symbol_kind(element as psi.PsiElement)?
 			range: tform.text_range_to_lsp_range(full_text_range)
 			selection_range: tform.text_range_to_lsp_range(identifier_text_range)
 			children: children

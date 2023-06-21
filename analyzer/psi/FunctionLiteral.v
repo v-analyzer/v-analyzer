@@ -5,7 +5,7 @@ pub struct FunctionLiteral {
 }
 
 pub fn (f FunctionLiteral) signature() ?&Signature {
-	signature := f.find_child_by_type_or_stub(.signature) or { return none }
+	signature := f.find_child_by_type_or_stub(.signature)?
 	if signature is Signature {
 		return signature
 	}

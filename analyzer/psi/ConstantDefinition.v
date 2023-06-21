@@ -53,7 +53,7 @@ pub fn (c ConstantDefinition) doc_comment() string {
 }
 
 pub fn (c ConstantDefinition) visibility_modifiers() ?&VisibilityModifiers {
-	decl := c.parent() or { return none }
+	decl := c.parent()?
 	modifiers := decl.find_child_by_type_or_stub(.visibility_modifiers)?
 	if modifiers is VisibilityModifiers {
 		return modifiers
@@ -66,8 +66,8 @@ pub fn (c &ConstantDefinition) expression() ?PsiElement {
 		// pretty hacky but it works
 		res := parser.parse_code(stub.additional)
 		root := res.tree.root_node()
-		first_child := root.first_child() or { return none }
-		next_first_child := first_child.first_child() or { return none }
+		first_child := root.first_child()?
+		next_first_child := first_child.first_child()?
 		file := new_psi_file(c.containing_file.path, res.tree, res.source_text)
 		return create_element(AstNode(next_first_child), file)
 	}

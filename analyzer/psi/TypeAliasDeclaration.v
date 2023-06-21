@@ -11,7 +11,7 @@ pub fn (a &TypeAliasDeclaration) get_type() types.Type {
 }
 
 pub fn (a &TypeAliasDeclaration) generic_parameters() ?&GenericParameters {
-	generic_parameters := a.find_child_by_type_or_stub(.generic_parameters) or { return none }
+	generic_parameters := a.find_child_by_type_or_stub(.generic_parameters)?
 	if generic_parameters is GenericParameters {
 		return generic_parameters
 	}
@@ -46,7 +46,7 @@ pub fn (a &TypeAliasDeclaration) types() []PlainType {
 }
 
 pub fn (a TypeAliasDeclaration) identifier() ?PsiElement {
-	return a.find_child_by_type(.identifier) or { return none }
+	return a.find_child_by_type(.identifier)
 }
 
 pub fn (a &TypeAliasDeclaration) identifier_text_range() TextRange {

@@ -4,7 +4,7 @@ import lsp
 
 pub fn (mut ls LanguageServer) code_actions(params lsp.CodeActionParams) ?[]lsp.CodeAction {
 	// uri := params.text_document.uri.normalize()
-	// file := ls.get_file(uri) or { return none }
+	// file := ls.get_file(uri)?
 
 	// mut actions := []lsp.CodeAction{}
 

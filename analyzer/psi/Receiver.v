@@ -35,7 +35,7 @@ pub fn (r &Receiver) name() string {
 pub fn (r &Receiver) type_element() ?PsiElement {
 	if stub := r.get_stub() {
 		if receiver_stub := stub.get_child_by_type(.plain_type) {
-			psi := receiver_stub.get_psi() or { return none }
+			psi := receiver_stub.get_psi()?
 			if psi is PlainType {
 				return psi
 			}

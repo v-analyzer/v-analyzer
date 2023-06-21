@@ -8,7 +8,7 @@ import analyzer.psi.search
 
 pub fn (mut ls LanguageServer) implementation(params lsp.TextDocumentPositionParams) ?[]lsp.Location {
 	uri := params.text_document.uri.normalize()
-	file := ls.get_file(uri) or { return none }
+	file := ls.get_file(uri)?
 
 	offset := file.find_offset(params.position)
 	element := file.psi_file.find_element_at(offset) or {

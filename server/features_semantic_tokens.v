@@ -15,7 +15,7 @@ pub fn (mut ls LanguageServer) semantic_tokens(text_document lsp.TextDocumentIde
 	}
 
 	uri := text_document.uri.normalize()
-	file := ls.get_file(uri) or { return none }
+	file := ls.get_file(uri)?
 
 	lines := file.psi_file.source_text.count('\n')
 

@@ -37,10 +37,10 @@ pub fn (c CallExpression) ref_expression() ?ReferenceExpressionBase {
 }
 
 pub fn (c CallExpression) resolve() ?PsiElement {
-	expr := c.ref_expression() or { return none }
+	expr := c.ref_expression()?
 
 	if expr is ReferenceExpressionBase {
-		resolved := expr.resolve() or { return none }
+		resolved := expr.resolve()?
 		return resolved
 	}
 
@@ -76,7 +76,7 @@ pub fn (c &CallExpression) get_json_decode_type() types.Type {
 }
 
 fn (c &CallExpression) type_arguments() ?&GenericTypeArguments {
-	type_parameters := c.find_child_by_name('type_parameters') or { return none }
+	type_parameters := c.find_child_by_name('type_parameters')?
 	if type_parameters is GenericTypeArguments {
 		return type_parameters
 	}

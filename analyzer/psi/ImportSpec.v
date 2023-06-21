@@ -16,7 +16,7 @@ fn (n &ImportSpec) identifier_text_range() TextRange {
 }
 
 fn (n &ImportSpec) identifier() ?PsiElement {
-	last_part := n.last_part() or { return none }
+	last_part := n.last_part()?
 	if last_part is ImportName {
 		return last_part
 	}
@@ -41,7 +41,7 @@ pub fn (n ImportSpec) path() ?PsiElement {
 }
 
 pub fn (n ImportSpec) last_part() ?PsiElement {
-	path := n.path() or { return none }
+	path := n.path()?
 	return path.last_child_or_stub()
 }
 

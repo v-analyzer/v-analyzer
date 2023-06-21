@@ -7,7 +7,7 @@ import server.tform
 
 pub fn (mut ls LanguageServer) definition(params lsp.TextDocumentPositionParams) ?[]lsp.LocationLink {
 	uri := params.text_document.uri.normalize()
-	file := ls.get_file(uri) or { return none }
+	file := ls.get_file(uri)?
 
 	offset := file.find_offset(params.position)
 	element := file.psi_file.find_reference_at(offset) or {

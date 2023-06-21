@@ -18,7 +18,7 @@ pub fn (c SliceExpression) resolve() ?PsiElement {
 	}
 
 	if expr is ReferenceExpressionBase {
-		resolved := expr.resolve() or { return none }
+		resolved := expr.resolve()?
 		return resolved
 	}
 

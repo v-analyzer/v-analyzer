@@ -66,8 +66,8 @@ pub fn (f &EnumFieldDeclaration) value() ?PsiElement {
 
 		res := parser.parse_code(stub.additional)
 		root := res.tree.root_node()
-		first_child := root.first_child() or { return none }
-		next_first_child := first_child.first_child() or { return none }
+		first_child := root.first_child()?
+		next_first_child := first_child.first_child()?
 		file := new_psi_file(f.containing_file.path, res.tree, res.source_text)
 		return create_element(next_first_child, file)
 	}
@@ -89,7 +89,7 @@ pub fn (f &EnumFieldDeclaration) owner() ?&EnumDeclaration {
 		return none
 	}
 
-	psi := f.parent_of_type(.enum_declaration) or { return none }
+	psi := f.parent_of_type(.enum_declaration)?
 	if psi is EnumDeclaration {
 		return psi
 	}
@@ -168,11 +168,11 @@ fn (f &EnumFieldDeclaration) calculate_value(value PsiElement) ?i64 {
 	if value is BinaryExpression {
 		operator := value.operator()
 		if operator == '<<' {
-			left := value.left() or { return none }
-			right := value.right() or { return none }
+			left := value.left()?
+			right := value.right()?
 
-			left_val := f.calculate_value(left) or { return none }
-			right_val := f.calculate_value(right) or { return none }
+			left_val := f.calculate_value(left)?
+			right_val := f.calculate_value(right)?
 
 			return left_val << right_val
 		}

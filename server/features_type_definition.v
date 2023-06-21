@@ -7,7 +7,7 @@ import loglib
 
 pub fn (mut ls LanguageServer) type_definition(params lsp.TextDocumentPositionParams) ?[]lsp.LocationLink {
 	uri := params.text_document.uri.normalize()
-	file := ls.get_file(uri) or { return none }
+	file := ls.get_file(uri)?
 
 	offset := file.find_offset(params.position)
 	element := file.psi_file.find_reference_at(offset) or {
@@ -28,7 +28,7 @@ pub fn (mut ls LanguageServer) type_definition(params lsp.TextDocumentPositionPa
 	}
 
 	typ := types.unwrap_generic_instantiation_type(types.unwrap_pointer_type(psi.infer_type(resolved)))
-	type_element := psi.find_element(typ.qualified_name()) or { return none }
+	type_element := psi.find_element(typ.qualified_name())?
 
 	data := new_resolve_result(type_element.containing_file(), type_element) or { return [] }
 	return [

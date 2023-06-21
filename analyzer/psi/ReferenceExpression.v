@@ -33,10 +33,10 @@ pub fn (r &ReferenceExpression) name() string {
 }
 
 pub fn (r ReferenceExpression) qualifier() ?PsiElement {
-	parent := r.parent() or { return none }
+	parent := r.parent()?
 
 	if parent is SelectorExpression {
-		left := parent.left() or { return none }
+		left := parent.left()?
 		if left.is_equal(r) {
 			return none
 		}

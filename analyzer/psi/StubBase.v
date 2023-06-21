@@ -150,7 +150,7 @@ fn (s &StubBase) parent_of_type(typ StubType) ?StubElement {
 		...s
 	}
 	for {
-		parent := res.parent_stub() or { return none }
+		parent := res.parent_stub()?
 
 		if parent is StubBase {
 			res = parent
@@ -171,7 +171,7 @@ fn (s &StubBase) sibling_of_type_backward(typ StubType) ?StubElement {
 		...s
 	}
 	for {
-		prev := res.prev_sibling() or { return none }
+		prev := res.prev_sibling()?
 
 		if prev is StubBase {
 			res = prev

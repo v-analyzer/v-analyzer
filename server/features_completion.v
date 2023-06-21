@@ -94,7 +94,7 @@ pub fn (mut ls LanguageServer) completion(params lsp.CompletionParams) ![]lsp.Co
 		result_set.add_element(el)
 	}
 
-	unsafe { res.tree.free() }
+	// unsafe { res.tree.free() }
 
 	return result_set.elements()
 }

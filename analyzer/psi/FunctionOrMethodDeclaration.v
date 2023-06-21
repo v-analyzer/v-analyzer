@@ -7,7 +7,7 @@ pub struct FunctionOrMethodDeclaration {
 }
 
 pub fn (f &FunctionOrMethodDeclaration) generic_parameters() ?&GenericParameters {
-	generic_parameters := f.find_child_by_type_or_stub(.generic_parameters) or { return none }
+	generic_parameters := f.find_child_by_type_or_stub(.generic_parameters)?
 	if generic_parameters is GenericParameters {
 		return generic_parameters
 	}
@@ -25,7 +25,7 @@ fn (f &FunctionOrMethodDeclaration) get_type() types.Type {
 }
 
 pub fn (f FunctionOrMethodDeclaration) identifier() ?PsiElement {
-	return f.find_child_by_type(.identifier) or { return none }
+	return f.find_child_by_type(.identifier)
 }
 
 pub fn (f FunctionOrMethodDeclaration) identifier_text_range() TextRange {
@@ -38,7 +38,7 @@ pub fn (f FunctionOrMethodDeclaration) identifier_text_range() TextRange {
 }
 
 pub fn (f FunctionOrMethodDeclaration) signature() ?&Signature {
-	signature := f.find_child_by_type_or_stub(.signature) or { return none }
+	signature := f.find_child_by_type_or_stub(.signature)?
 	if signature is Signature {
 		return signature
 	}
@@ -71,7 +71,7 @@ pub fn (f FunctionOrMethodDeclaration) receiver_type() types.Type {
 }
 
 pub fn (f FunctionOrMethodDeclaration) receiver() ?&Receiver {
-	element := f.find_child_by_type_or_stub(.receiver) or { return none }
+	element := f.find_child_by_type_or_stub(.receiver)?
 	if element is Receiver {
 		return element
 	}
@@ -87,14 +87,14 @@ pub fn (f FunctionOrMethodDeclaration) visibility_modifiers() ?&VisibilityModifi
 }
 
 pub fn (f FunctionOrMethodDeclaration) owner() ?PsiElement {
-	receiver := f.receiver() or { return none }
+	receiver := f.receiver()?
 	typ := receiver.get_type()
 	unwrapped := types.unwrap_generic_instantiation_type(types.unwrap_pointer_type(typ))
 	if unwrapped is types.StructType {
-		return *find_struct(unwrapped.qualified_name()) or { return none }
+		return *find_struct(unwrapped.qualified_name())?
 	}
 	if unwrapped is types.AliasType {
-		return *find_alias(unwrapped.qualified_name()) or { return none }
+		return *find_alias(unwrapped.qualified_name())?
 	}
 	return none
 }

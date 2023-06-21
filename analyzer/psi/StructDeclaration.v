@@ -7,7 +7,7 @@ pub struct StructDeclaration {
 }
 
 pub fn (s &StructDeclaration) generic_parameters() ?&GenericParameters {
-	generic_parameters := s.find_child_by_type_or_stub(.generic_parameters) or { return none }
+	generic_parameters := s.find_child_by_type_or_stub(.generic_parameters)?
 	if generic_parameters is GenericParameters {
 		return generic_parameters
 	}

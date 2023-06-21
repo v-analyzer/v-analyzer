@@ -1,7 +1,7 @@
 module psi
 
 pub fn get_it_call(element PsiElement) ?&CallExpression {
-	mut parent_call := element.parent_of_type(.call_expression) or { return none }
+	mut parent_call := element.parent_of_type(.call_expression)?
 	if mut parent_call is CallExpression {
 		for {
 			expression := parent_call.expression() or { break }

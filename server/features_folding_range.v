@@ -5,7 +5,7 @@ import analyzer.psi
 
 pub fn (mut ls LanguageServer) folding_range(params lsp.FoldingRangeParams) ?[]lsp.FoldingRange {
 	uri := params.text_document.uri.normalize()
-	file := ls.get_file(uri) or { return none }
+	file := ls.get_file(uri)?
 
 	mut result := []lsp.FoldingRange{}
 

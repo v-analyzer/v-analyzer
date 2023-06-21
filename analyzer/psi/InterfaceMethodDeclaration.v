@@ -9,7 +9,7 @@ pub fn (_ InterfaceMethodDeclaration) is_public() bool {
 }
 
 pub fn (m InterfaceMethodDeclaration) identifier() ?PsiElement {
-	return m.find_child_by_type(.identifier) or { return none }
+	return m.find_child_by_type(.identifier)
 }
 
 pub fn (m InterfaceMethodDeclaration) identifier_text_range() TextRange {
@@ -22,7 +22,7 @@ pub fn (m InterfaceMethodDeclaration) identifier_text_range() TextRange {
 }
 
 pub fn (m InterfaceMethodDeclaration) signature() ?&Signature {
-	signature := m.find_child_by_type_or_stub(.signature) or { return none }
+	signature := m.find_child_by_type_or_stub(.signature)?
 	if signature is Signature {
 		return signature
 	}
@@ -39,7 +39,7 @@ pub fn (m InterfaceMethodDeclaration) name() string {
 }
 
 pub fn (m &InterfaceMethodDeclaration) owner() ?&InterfaceDeclaration {
-	parent := m.parent_of_type(.interface_declaration) or { return none }
+	parent := m.parent_of_type(.interface_declaration)?
 	if parent is InterfaceDeclaration {
 		return parent
 	}
