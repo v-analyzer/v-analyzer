@@ -70,10 +70,7 @@ fn super_candidates_by_methods(methods []psi.PsiElement) []psi.PsiNamedElement {
 
 			for interface_method in interface_methods {
 				if interface_method is psi.InterfaceMethodDeclaration {
-					owner := interface_method.owner() or { continue }
-					if owner is psi.PsiNamedElement {
-						candidates << owner
-					}
+					candidates << interface_method.owner() or { continue }
 				}
 			}
 		}

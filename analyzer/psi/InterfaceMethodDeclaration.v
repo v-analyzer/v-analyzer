@@ -38,11 +38,12 @@ pub fn (m InterfaceMethodDeclaration) name() string {
 	return identifier.get_text()
 }
 
-pub fn (m &InterfaceMethodDeclaration) owner() ?PsiElement {
-	if struct_ := m.parent_of_type(.struct_declaration) {
-		return struct_
+pub fn (m &InterfaceMethodDeclaration) owner() ?&InterfaceDeclaration {
+	parent := m.parent_of_type(.interface_declaration) or { return none }
+	if parent is InterfaceDeclaration {
+		return parent
 	}
-	return m.parent_of_type(.interface_declaration)
+	return none
 }
 
 pub fn (m &InterfaceMethodDeclaration) scope() ?&StructFieldScope {

@@ -69,10 +69,39 @@ pub fn (r &ReferencesSearch) search(element psi.PsiElement) []psi.PsiElement {
 	if resolved is psi.GenericParameter {
 		return r.search_generic_parameter(resolved)
 	}
+	if resolved is psi.FunctionOrMethodDeclaration {
+		if resolved.is_method() {
+			return r.search_method(resolved)
+		}
+	}
 	if resolved is psi.PsiNamedElement {
 		return r.search_named_element(resolved)
 	}
 	return []
+}
+
+// search_method searches references of a method.
+//
+// If the struct of the method implements some interface, we must also look for the use of the
+// interface method, since the method of the struct for which we are looking for references is
+// also implicitly called through it.
+//
+// This is important for renaming, because if we rename a struct method, we must also rename the
+// interface method so that the struct continues to implement it.
+pub fn (r &ReferencesSearch) search_method(element psi.FunctionOrMethodDeclaration) []psi.PsiElement {
+	iface_super_methods := super_methods(element)
+	if iface_super_methods.len == 0 {
+		return r.search_named_element(element)
+	}
+
+	mut result := r.search_named_element(element)
+	for super_method in iface_super_methods {
+		if super_method is psi.PsiNamedElement {
+			result << r.search_named_element(super_method)
+		}
+	}
+
+	return result
 }
 
 pub fn (r &ReferencesSearch) search_generic_parameter(element psi.GenericParameter) []psi.PsiElement {

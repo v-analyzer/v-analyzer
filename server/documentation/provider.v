@@ -196,10 +196,8 @@ fn (mut p Provider) interface_method_declaration_documentation(element psi.Inter
 	p.sb.write_string('pub fn ')
 
 	if owner := element.owner() {
-		if owner is psi.PsiNamedElement {
-			p.sb.write_string(owner.name())
-			p.sb.write_string('.')
-		}
+		p.sb.write_string(owner.name())
+		p.sb.write_string('.')
 	}
 
 	p.sb.write_string(element.name())

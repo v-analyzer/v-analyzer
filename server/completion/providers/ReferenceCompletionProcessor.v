@@ -215,11 +215,7 @@ fn (mut c ReferenceCompletionProcessor) execute(element psi.PsiElement) bool {
 		}
 
 		owner_name := if owner := element.owner() {
-			if owner is psi.InterfaceDeclaration {
-				' of ${owner.name()}'
-			} else {
-				''
-			}
+			' of ${owner.name()}'
 		} else {
 			''
 		}

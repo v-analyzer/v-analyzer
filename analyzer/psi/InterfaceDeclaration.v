@@ -81,4 +81,17 @@ pub fn (s InterfaceDeclaration) methods() []PsiElement {
 	return s.find_children_by_type_or_stub(.interface_method_definition)
 }
 
+pub fn (s InterfaceDeclaration) find_method(name string) ?&InterfaceMethodDeclaration {
+	methods := s.methods()
+	for method in methods {
+		if method is InterfaceMethodDeclaration {
+			if name == method.name() {
+				return method
+			}
+		}
+	}
+
+	return none
+}
+
 pub fn (_ InterfaceDeclaration) stub() {}
