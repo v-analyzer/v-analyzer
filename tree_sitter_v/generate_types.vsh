@@ -131,7 +131,6 @@ sb.write_string('   return ')
 supertype_ordered_names := [
 	'top_level_declaration',
 	'expression',
-	'expression_with_blocks',
 	'statement',
 	'unknown',
 ]
@@ -175,7 +174,7 @@ sb.writeln('   return tree_sitter_v.node_type_name_to_enum[type_name] or { NodeT
 sb.writeln('}')
 sb.writeln('\n')
 sb.writeln('const node_type_name_to_enum = {')
-
+sb.write_string("      'ERROR': ${node_type_enum_name}.error")
 for node_type in node_types {
 	if node_type.is_anon() {
 		continue

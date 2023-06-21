@@ -13,7 +13,7 @@ pub fn (s &Signature) get_type() types.Type {
 pub fn (n Signature) parameters() []PsiElement {
 	list := n.find_child_by_type_or_stub(.parameter_list) or { return [] }
 	parameters := list.find_children_by_type_or_stub(.parameter_declaration)
-	return parameters.filter(it is ParameterDeclaration)
+	return parameters
 }
 
 pub fn (n Signature) result() ?PsiElement {
