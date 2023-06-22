@@ -47,6 +47,13 @@ pub fn get_zero_value_for(typ types.Type) string {
 		types.OptionType {
 			return 'none'
 		}
+		types.ResultType {
+			if !typ.no_inner {
+				return get_zero_value_for(typ.inner)
+			}
+
+			return "error('')"
+		}
 		else {
 			return '0'
 		}
