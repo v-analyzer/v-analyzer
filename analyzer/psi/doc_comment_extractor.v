@@ -27,6 +27,7 @@ pub fn extract_doc_comment(el PsiElement) string {
 	lines := comments.map(it.get_text()
 		.trim_string_left('//')
 		.trim_string_left(' ')
+		.trim_string_left(' ')
 		.trim_right(' \t'))
 
 	mut res := strings.new_builder(lines.len * 40)
@@ -61,16 +62,17 @@ pub fn extract_doc_comment(el PsiElement) string {
 			res.write_string(without_example_label)
 			res.write_string('\n')
 			res.write_string('```\n')
+		} else {
+			res.write_string(line)
 		}
-		res.write_string(line)
 
 		if inside_code_block || is_code_block || is_table {
 			res.write_string('\n')
 		}
 
-		if is_end_of_sentence || is_list || is_header || is_example {
+		if (is_end_of_sentence || is_list || is_header || is_example) && !inside_code_block {
 			res.write_string('\n')
-		} else if !inside_code_block {
+		} else if !inside_code_block && !is_code_block {
 			res.write_string(' ')
 		}
 
