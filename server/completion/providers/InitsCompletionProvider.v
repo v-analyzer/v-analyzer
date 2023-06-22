@@ -6,7 +6,7 @@ import lsp
 pub struct InitsCompletionProvider {}
 
 fn (_ &InitsCompletionProvider) is_available(ctx &completion.CompletionContext) bool {
-	return ctx.is_expression && !ctx.after_dot && !ctx.after_at
+	return ctx.expression()
 }
 
 fn (mut _ InitsCompletionProvider) add_completion(ctx &completion.CompletionContext, mut result completion.CompletionResultSet) {

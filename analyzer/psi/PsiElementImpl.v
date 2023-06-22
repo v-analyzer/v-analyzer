@@ -241,6 +241,23 @@ pub fn (n &PsiElementImpl) children() []PsiElement {
 	return result
 }
 
+pub fn (n &PsiElementImpl) named_children() []PsiElement {
+	if stub := n.get_stub() {
+		children := stub.children_stubs()
+		return children.get_psi()
+	}
+
+	mut result := []PsiElement{}
+	mut child := n.node.first_child() or { return [] }
+	for {
+		if child.type_name != .unknown {
+			result << create_element(child, n.containing_file)
+		}
+		child = child.next_sibling() or { break }
+	}
+	return result
+}
+
 pub fn (n &PsiElementImpl) first_child() ?PsiElement {
 	child := n.node.first_child()?
 	return create_element(child, n.containing_file)

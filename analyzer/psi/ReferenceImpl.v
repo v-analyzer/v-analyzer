@@ -467,6 +467,16 @@ pub fn (r &SubResolver) process_type_initializer_field(mut processor PsiScopePro
 					return false
 				}
 			}
+			if typ is types.ArrayType {
+				if !r.process_struct_type_fields(types.array_init_type, mut processor) {
+					return false
+				}
+			}
+			if typ is types.ChannelType {
+				if !r.process_struct_type_fields(types.chan_init_type, mut processor) {
+					return false
+				}
+			}
 		}
 	}
 

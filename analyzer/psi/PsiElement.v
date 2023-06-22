@@ -49,6 +49,8 @@ pub interface PsiElement {
 	parent_of_type_or_self(typ v.NodeType) ?PsiElement
 	// children returns all child nodes.
 	children() []PsiElement
+	// named_children returns child nodes except unknown nodes.
+	named_children() []PsiElement
 	// first_child returns the first child node.
 	// If the node has no children, none is returned.
 	first_child() ?PsiElement

@@ -22,7 +22,7 @@ const compile_time_constant = {
 pub struct CompileTimeConstantCompletionProvider {}
 
 fn (_ &CompileTimeConstantCompletionProvider) is_available(ctx &completion.CompletionContext) bool {
-	return ctx.is_expression && !ctx.after_dot && ctx.after_at
+	return ctx.after_at
 }
 
 fn (mut _ CompileTimeConstantCompletionProvider) add_completion(ctx &completion.CompletionContext, mut result completion.CompletionResultSet) {

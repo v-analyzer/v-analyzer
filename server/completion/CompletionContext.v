@@ -24,6 +24,13 @@ pub mut:
 	inside_loop         bool
 	after_dot           bool
 	after_at            bool
+	// if the struct is initialized with keys
+	// struct Foo { a: int, b: int }
+	inside_struct_init_with_keys bool
+}
+
+pub fn (c CompletionContext) expression() bool {
+	return c.is_expression && !c.after_dot && !c.after_at && !c.inside_struct_init_with_keys
 }
 
 pub fn (mut c CompletionContext) compute() {
@@ -49,7 +56,19 @@ pub fn (mut c CompletionContext) compute() {
 		if grand := parent.parent() {
 			// do not consider as reference_expression if it is inside an attribute
 			c.is_expression = grand !is psi.ValueAttribute
+
+			if grand.node.type_name == .element_list {
+				c.inside_struct_init_with_keys = true
+			}
+
+			if _ := grand.prev_sibling_of_type(.keyed_element) {
+				c.inside_struct_init_with_keys = true
+			}
 		}
+	}
+
+	if parent.node.type_name == .keyed_element {
+		c.inside_struct_init_with_keys = true
 	}
 
 	if parent.node.type_name == .type_reference_expression {

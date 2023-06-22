@@ -4,6 +4,7 @@ import analyzer.psi
 import lsp
 import strings
 import server.completion
+import analyzer.lang
 
 pub struct ReferenceCompletionProcessor {
 	file       &psi.PsiFile
@@ -189,6 +190,14 @@ fn (mut c ReferenceCompletionProcessor) execute(element psi.PsiElement) bool {
 	}
 
 	if element is psi.FieldDeclaration {
+		zero_value := lang.get_zero_value_for(element.get_type()).replace('}', '\\}')
+
+		insert_text := if c.ctx.inside_struct_init_with_keys {
+			element.name() + ': \${1:${zero_value}}'
+		} else {
+			element.name()
+		}
+
 		c.result << lsp.CompletionItem{
 			label: element.name()
 			kind: .field
@@ -197,8 +206,8 @@ fn (mut c ReferenceCompletionProcessor) execute(element psi.PsiElement) bool {
 				description: element.get_type().readable_name()
 			}
 			documentation: element.doc_comment()
-			insert_text: element.name()
-			insert_text_format: .plain_text
+			insert_text: insert_text
+			insert_text_format: .snippet
 		}
 	}
 

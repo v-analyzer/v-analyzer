@@ -245,10 +245,9 @@ Foo{name}
         (type_reference_expression
           (identifier)))
       (type_initializer_body
-        (short_element_list
-          (element
-            (reference_expression
-              (identifier))))))))
+        (element_list
+          (reference_expression
+            (identifier)))))))
 
 ================================================================================
 Simple type initializer with just values

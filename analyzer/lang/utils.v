@@ -1,5 +1,6 @@
 module lang
 
+import analyzer.psi
 import analyzer.psi.types
 
 pub fn get_zero_value_for(typ types.Type) string {
@@ -58,4 +59,10 @@ pub fn get_zero_value_for(typ types.Type) string {
 			return '0'
 		}
 	}
+}
+
+pub fn is_same_module(context psi.PsiElement, element psi.PsiElement) bool {
+	context_module_fqn := context.containing_file.module_fqn()
+	element_module_fqn := element.containing_file.module_fqn()
+	return context_module_fqn == element_module_fqn
 }

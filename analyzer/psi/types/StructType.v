@@ -1,10 +1,12 @@
 module types
 
-pub const string_type = new_struct_type('string', 'builtin')
-
-pub const builtin_array_type = new_struct_type('array', 'builtin')
-
-pub const builtin_map_type = new_struct_type('map', 'builtin')
+pub const (
+	string_type        = new_struct_type('string', 'builtin')
+	builtin_array_type = new_struct_type('array', 'builtin')
+	builtin_map_type   = new_struct_type('map', 'builtin')
+	array_init_type    = new_struct_type('ArrayInit', 'stubs')
+	chan_init_type     = new_struct_type('ChanInit', 'stubs')
+)
 
 pub struct StructType {
 	BaseNamedType

@@ -1113,6 +1113,10 @@
           "named": true
         },
         {
+          "type": "reference_expression",
+          "named": true
+        },
+        {
           "type": "spread_expression",
           "named": true
         }

@@ -114,6 +114,7 @@ module.exports = grammar({
     [$.is_expression],
     [$.not_is_expression],
     [$._type_union_list],
+    [$._expression_without_blocks, $.element_list],
   ],
 
   rules: {
@@ -530,7 +531,7 @@ module.exports = grammar({
     ),
 
     element_list: ($) => repeat1(seq(
-      choice($.spread_expression, $.keyed_element),
+      choice($.spread_expression, $.keyed_element, $.reference_expression),
       optional(list_separator),
     )),
 

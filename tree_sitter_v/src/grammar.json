@@ -2870,6 +2870,10 @@
               {
                 "type": "SYMBOL",
                 "name": "keyed_element"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "reference_expression"
               }
             ]
           },
@@ -8360,6 +8364,10 @@
     ],
     [
       "_type_union_list"
+    ],
+    [
+      "_expression_without_blocks",
+      "element_list"
     ]
   ],
   "precedences": [],
