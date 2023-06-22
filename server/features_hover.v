@@ -22,6 +22,16 @@ pub fn (mut ls LanguageServer) hover(params lsp.HoverParams) ?lsp.Hover {
 		return none
 	}
 
+	if element.element_type() == .unknown {
+		mut provider := documentation.KeywordProvider{}
+		if content := provider.documentation(element) {
+			return lsp.Hover{
+				contents: lsp.hover_markdown_string(content)
+				range: tform.text_range_to_lsp_range(element.text_range())
+			}
+		}
+	}
+
 	mut provider := documentation.Provider{}
 	doc_element := provider.find_documentation_element(element)?
 	if content := provider.documentation(doc_element) {

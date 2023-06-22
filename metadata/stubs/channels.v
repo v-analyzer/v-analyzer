@@ -1,11 +1,29 @@
 module stubs
 
-// ChanInit describes a chan type initializer.
-// Example:
+// `chan` keyword defines a typed channel that is used for communication between
+// several threads in multithreaded programs.
+//
+// Channels are a typed conduit through which you can send and receive values
+// with the channel (`<-`) operator.
+//
 // ```
-// ch := chan int{}
-// buf_chan := chan int{cap: 10}
+// ch := chan int{} // channel of ints
+// ch2 := chan f64{} // channel of f64s
 // ```
+//
+// Values can be sent to a channel using the arrow operator <-:
+//
+// ```
+// ch <- 5
+// ```
+//
+// Or obtained from a channel:
+//
+// ```
+// i := <-ch
+// ```
+//
+// Learn more about channels in the [documentation](https://docs.vosca.dev/concepts/concurrency/channels.html).
 pub struct ChanInit {
 pub:
 	// cap fields describes the size of the buffered channel.
