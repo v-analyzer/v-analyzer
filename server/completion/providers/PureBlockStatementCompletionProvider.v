@@ -6,7 +6,7 @@ import lsp
 pub struct PureBlockStatementCompletionProvider {}
 
 fn (k &PureBlockStatementCompletionProvider) is_available(ctx &completion.CompletionContext) bool {
-	return ctx.is_statement
+	return ctx.is_statement && !ctx.after_dot && !ctx.after_at
 }
 
 fn (mut k PureBlockStatementCompletionProvider) add_completion(ctx &completion.CompletionContext, mut result completion.CompletionResultSet) {

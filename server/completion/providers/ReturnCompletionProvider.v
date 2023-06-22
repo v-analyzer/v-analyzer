@@ -9,7 +9,7 @@ import lsp
 pub struct ReturnCompletionProvider {}
 
 fn (_ &ReturnCompletionProvider) is_available(ctx &completion.CompletionContext) bool {
-	return ctx.is_statement
+	return ctx.is_statement && !ctx.after_at
 }
 
 fn (mut _ ReturnCompletionProvider) add_completion(ctx &completion.CompletionContext, mut result completion.CompletionResultSet) {

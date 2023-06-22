@@ -23,6 +23,7 @@ pub mut:
 	is_assert_statement bool
 	inside_loop         bool
 	after_dot           bool
+	after_at            bool
 }
 
 pub fn (mut c CompletionContext) compute() {
@@ -34,9 +35,9 @@ pub fn (mut c CompletionContext) compute() {
 	if line < 3 {
 		c.is_start_of_file = true
 	}
-	if containing_file.symbol_at(range) == `.` {
-		c.after_dot = true
-	}
+	symbol_at := containing_file.symbol_at(range)
+	c.after_dot = symbol_at == `.`
+	c.after_at = c.element.get_text().starts_with('@')
 
 	parent := c.element.parent() or { return }
 
