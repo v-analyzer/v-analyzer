@@ -18,6 +18,7 @@ pub fn (mut ls LanguageServer) initialize(params lsp.InitializeParams, mut wr Re
 	ls.client_pid = params.process_id
 	ls.client = protocol.new_client(mut wr)
 	ls.progress = progress.new_tracker(mut ls.client)
+	ls.bg.start()
 
 	ls.root_uri = params.root_uri
 	ls.status = .initialized
@@ -27,12 +28,15 @@ pub fn (mut ls LanguageServer) initialize(params lsp.InitializeParams, mut wr Re
 
 	ls.print_info(params.process_id, params.client_info)
 	ls.setup()
+	ls.reporter.compiler_path = ls.compiler_path() or { 'v' }
 
 	return lsp.InitializeResult{
 		capabilities: lsp.ServerCapabilities{
 			text_document_sync: lsp.TextDocumentSyncOptions{
 				open_close: true
 				change: .full
+				will_save: true
+				save: lsp.SaveOptions{}
 			}
 			hover_provider: true
 			definition_provider: true
@@ -41,7 +45,7 @@ pub fn (mut ls LanguageServer) initialize(params lsp.InitializeParams, mut wr Re
 			document_formatting_provider: true
 			completion_provider: lsp.CompletionOptions{
 				resolve_provider: false
-				trigger_characters: ['.', ':', ',', '(']
+				trigger_characters: ['.', ':', '(', '@']
 			}
 			signature_help_provider: lsp.SignatureHelpOptions{
 				trigger_characters: ['(', ',']
@@ -326,6 +330,7 @@ fn (mut ls LanguageServer) setup_stubs() {
 // shutdown sets the state to shutdown but does not exit
 [noreturn]
 pub fn (mut ls LanguageServer) shutdown() {
+	ls.bg.stop()
 	ls.status = .shutdown
 	ls.exit()
 }

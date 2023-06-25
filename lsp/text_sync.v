@@ -10,10 +10,16 @@ pub:
 	// TextDocumentSyncKind.Incremental. If omitted it defaults to
 	// TextDocumentSyncKind.None.
 	change TextDocumentSyncKind [omitempty] = TextDocumentSyncKind.full
+	// If present will save notifications are sent to the server. If omitted
+	// the notification should not be sent.
+	will_save bool [json: 'willSave']
+	// If present save notifications are sent to the server. If omitted the
+	// notification should not be sent.
+	save SaveOptions
 }
 
 pub struct SaveOptions {
-	include_text bool [json: includeText]
+	include_text bool [json: 'includeText']
 }
 
 // method: ‘textDocument/didOpen’

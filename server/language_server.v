@@ -43,6 +43,11 @@ pub mut:
 	initialization_options []string
 
 	cfg config.EditorConfig
+	// bg is a background thread that is designed to perform long-running operations,
+	// such as file analyze with third-party tools.
+	bg BackgroundThread
+	// reporter is used to report diagnostics to the client.
+	reporter &DiagnosticReporter = &DiagnosticReporter{}
 
 	progress          &progress.Tracker
 	analyzer_instance analyzer.Analyzer

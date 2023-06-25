@@ -3,9 +3,10 @@
 // that can be found in the LICENSE file.
 module jsonrpc
 
-import json
-import strings
 import io
+import json
+import sync
+import strings
 
 // Server represents a JSONRPC server that sends/receives data
 // from a stream (an io.ReaderWriter), inspects data with interceptors
@@ -174,7 +175,8 @@ mut:
 // ResponseWriter constructs and sends a JSONRPC response to the stream.
 pub struct ResponseWriter {
 mut:
-	sb strings.Builder
+	mutex sync.Mutex
+	sb    strings.Builder
 pub mut:
 	req_id string = 'null' // raw JSON
 	server &Server
@@ -188,6 +190,11 @@ fn (mut rw ResponseWriter) flush() {
 
 // write sends the given payload to the stream.
 pub fn (mut rw ResponseWriter) write[T](payload T) {
+	rw.mutex.@lock()
+	defer {
+		rw.mutex.unlock()
+	}
+
 	final_resp := Response[T]{
 		id: rw.req_id
 		result: payload
@@ -203,6 +210,11 @@ pub fn (mut rw ResponseWriter) write_empty() {
 // write_notify sends the given method and params as
 // a server notification to the stream.
 pub fn (mut rw ResponseWriter) write_notify[T](method string, params T) {
+	rw.mutex.@lock()
+	defer {
+		rw.mutex.unlock()
+	}
+
 	notif := NotificationMessage[T]{
 		method: method
 		params: params
@@ -213,6 +225,11 @@ pub fn (mut rw ResponseWriter) write_notify[T](method string, params T) {
 
 // write_error sends a ResponseError to the stream.
 pub fn (mut rw ResponseWriter) write_error(err &ResponseError) {
+	rw.mutex.@lock()
+	defer {
+		rw.mutex.unlock()
+	}
+
 	final_resp := Response[string]{
 		id: rw.req_id
 		error: err

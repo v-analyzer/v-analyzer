@@ -19,6 +19,8 @@ pub fn (mut ls LanguageServer) did_open(params lsp.DidOpenTextDocumentParams) {
 		psi_file: psi_file
 	}
 
+	ls.run_diagnostics_in_bg(uri)
+
 	// Useful for debugging
 	//
 	// mut visitor := psi.PrinterVisitor{}
