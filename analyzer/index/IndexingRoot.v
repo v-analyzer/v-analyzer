@@ -99,7 +99,7 @@ pub fn (mut i IndexingRoot) save_index() ! {
 		loglib.with_fields({
 			'file':  i.cache_file()
 			'error': err.str()
-		}).error('Failed to write index.json')
+		}).error('Failed to write analyzer index file')
 		return err
 	}
 }

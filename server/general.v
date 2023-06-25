@@ -82,6 +82,7 @@ pub fn (mut ls LanguageServer) initialize(params lsp.InitializeParams, mut wr Re
 
 pub fn (mut ls LanguageServer) initialized(mut wr ResponseWriter) {
 	loglib.info('-------- New session -------- ')
+	ls.client.send_server_status(health: 'ok')
 
 	mut work := ls.progress.start('Indexing', 'Indexing roots...', '')
 
@@ -131,9 +132,8 @@ pub fn (mut ls LanguageServer) initialized(mut wr ResponseWriter) {
 
 	ls.analyzer_instance.setup_stub_indexes()
 
-	work.progress('Indexing finished', 100)
 	work.end('Indexing finished')
-	ls.client.show_message('Hello, World!', .info)
+	ls.client.send_server_status(health: 'ok', quiescent: true)
 }
 
 fn (mut ls LanguageServer) setup() {
@@ -184,7 +184,18 @@ fn (mut ls LanguageServer) setup() {
 	}
 
 	if cfg.custom_cache_dir != '' {
-		ls.cache_dir = os.expand_tilde_to_home(cfg.custom_cache_dir)
+		ls.cache_dir = os.abs_path(os.expand_tilde_to_home(cfg.custom_cache_dir))
+
+		if !os.exists(ls.cache_dir) {
+			os.mkdir_all(ls.cache_dir) or {
+				ls.client.log_message('Failed to create custom analyzer caches directory: ${err}',
+					.error)
+
+				loglib.with_fields({
+					'err': err.str()
+				}).error('Failed to create custom analyzer caches directory')
+			}
+		}
 
 		ls.client.log_message("Find custom cache dir path in '${cfg.path()}' config",
 			.info)

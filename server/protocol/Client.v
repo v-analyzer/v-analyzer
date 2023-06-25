@@ -46,3 +46,7 @@ pub fn (mut c Client) show_message_request(message string, actions []lsp.Message
 		actions: actions
 	})
 }
+
+pub fn (mut c Client) send_server_status(params lsp.ServerStatusParams) {
+	c.wr.write_notify('experimental/serverStatus', params)
+}

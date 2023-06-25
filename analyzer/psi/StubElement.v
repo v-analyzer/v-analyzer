@@ -7,6 +7,7 @@ pub interface StubElement {
 	text() string
 	receiver() string
 	stub_type() StubType
+	text_range() TextRange
 	parent_stub() ?&StubElement
 	first_child() ?&StubElement
 	children_stubs() []StubElement

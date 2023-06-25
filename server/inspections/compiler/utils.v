@@ -103,6 +103,12 @@ fn exec_compiler_diagnostics(compiler_path string, uri lsp.DocumentUri) ?[]inspe
 				...report
 				filepath: dir_path[..start_idx] + report.filepath
 			}
+		} else {
+			// reported file appears to be in a parent directory of dir_path
+			report = inspections.Report{
+				...report
+				filepath: os.join_path_single(dir_path, report.filepath)
+			}
 		}
 
 		if report.message.contains('unexpected eof') {

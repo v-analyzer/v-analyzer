@@ -1,7 +1,7 @@
 module lsp
 
-import crypto.md5
 import rand
+import crypto.md5
 
 pub type ProgressToken = string
 

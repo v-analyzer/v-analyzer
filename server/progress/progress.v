@@ -11,7 +11,6 @@ pub mut:
 
 pub fn new_tracker(mut client protocol.Client) &Tracker {
 	return &Tracker{
-		support_work_done_progress: false
 		client: client
 	}
 }

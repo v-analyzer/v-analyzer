@@ -59,6 +59,13 @@
 					".mod"
 				],
 				"configuration": "vmod-language-configuration.json"
+			},
+			{
+				"id": "stree",
+				"scopeName": "source.stree",
+				"extensions": [
+					".stree"
+				]
 			}
 		],
 		"grammars": [
@@ -71,6 +78,11 @@
 				"language": "v.mod",
 				"scopeName": "source.v.mod",
 				"path": "syntaxes/v.mod.tmLanguage.json"
+			},
+			{
+				"language": "stree",
+				"scopeName": "source.stree",
+				"path": "syntaxes/stree.tmGrammar.json"
 			}
 		],
 		"configuration": {
@@ -87,11 +99,11 @@
 					"default": "",
 					"description": "Custom path to the V installation directory (VROOT).\nNOTE: Setting this won't change the V compiler executable to be used."
 				},
-				"v-analyzer.customPath": {
+				"v-analyzer.serverPath": {
 					"scope": "resource",
 					"type": "string",
 					"default": "",
-					"description": "Custom path to the v-analyzer executable."
+					"description": "Custom path to the v-analyzer executable (if empty uses `v-analyzer` executable from PATH)."
 				},
 				"v-analyzer.connectionMode": {
 					"scope": "resource",
@@ -104,7 +116,7 @@
 					"description": "Specify the mode to be used when connecting to v-analyzer.",
 					"enumDescriptions": [
 						"Connects to the language server via standard input/output. (Default)",
-						"Connects to the language server via TCP"
+						"Connects to the language server via TCP (you need to run analyzer manually with `--socket` flag, debug only!)."
 					]
 				},
 				"v-analyzer.tcpMode.port": {
@@ -112,12 +124,6 @@
 					"type": "number",
 					"default": 5007,
 					"description": "Port to be used when connecting to the language server. (Only in TCP mode)"
-				},
-				"v-analyzer.tcpMode.useRemoteServer": {
-					"scope": "resource",
-					"default": false,
-					"type": "boolean",
-					"description": "Connect to a remote server instead of launching a new local process. (Only in TCP mode)"
 				},
 				"v-analyzer.customArgs": {
 					"scope": "resource",
@@ -154,18 +160,38 @@
 				"category": "V"
 			},
 			{
-				"command": "v.ver",
-				"title": "Show V version",
+				"command": "v-analyzer.version",
+				"title": "Show language version",
 				"category": "V"
 			},
 			{
-				"command": "v-analyzer.restart",
-				"title": "Restart",
+				"command": "v-analyzer.serverVersion",
+				"title": "Show v-analyzer version",
+				"category": "v-analyzer"
+			},
+			{
+				"command": "v-analyzer.startServer",
+				"title": "Start server",
+				"category": "v-analyzer"
+			},
+			{
+				"command": "v-analyzer.stopServer",
+				"title": "Stop server",
+				"category": "v-analyzer"
+			},
+			{
+				"command": "v-analyzer.restartServer",
+				"title": "Restart server",
 				"category": "v-analyzer"
 			},
 			{
 				"command": "v-analyzer.showReferences",
 				"title": "Show References",
+				"category": "v-analyzer"
+			},
+			{
+				"command": "v-analyzer.viewStubTree",
+				"title": "View Stub Tree",
 				"category": "v-analyzer"
 			}
 		],
@@ -173,19 +199,27 @@
 			"commandPalette": [
 				{
 					"command": "v.run",
-					"when": "editorLangId == v"
+					"when": "inVlangProject"
 				},
 				{
 					"command": "v.fmt",
-					"when": "editorLangId == v"
+					"when": "inVlangProject"
 				},
 				{
 					"command": "v.prod",
-					"when": "editorLangId == v"
+					"when": "inVlangProject"
 				},
 				{
-					"command": "v-analyzer.restart",
-					"when": "editorLangId == v"
+					"command": "v-analyzer.serverVersion",
+					"when": "inVlangProject"
+				},
+				{
+					"command": "v-analyzer.stopServer",
+					"when": "inVlangProject"
+				},
+				{
+					"command": "v-analyzer.restartServer",
+					"when": "inVlangProject"
 				}
 			]
 		},
@@ -222,11 +256,12 @@
 		"onLanguage:v",
 		"workspaceContains:**/*.v",
 		"workspaceContains:**/v.mod",
-		"onCommand:v.run",
-		"onCommand:v.fmt",
-		"onCommand:v.prod",
-		"onCommand:v.ver",
-		"onCommand:v-analyzer.restart"
+		"onCommand:v.runWorkspace",
+		"onCommand:v.version",
+		"onCommand:v.serverVersion",
+		"onCommand:v-analyzer.restartServer",
+		"onCommand:v-analyzer.startServer",
+		"onCommand:v-analyzer.stopServer"
 	],
 	"main": "./out/extension.js",
 	"dependencies": {
@@ -236,7 +271,7 @@
 	},
 	"devDependencies": {
 		"@types/node": "12",
-		"@types/vscode": "1.40.0",
+		"@types/vscode": "~1.66.0",
 		"@typescript-eslint/eslint-plugin": "^4.33",
 		"@typescript-eslint/parser": "^4.33",
 		"eslint": "^7.32",

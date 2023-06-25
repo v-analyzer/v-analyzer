@@ -65,7 +65,7 @@ pub fn (mut v CodeLensVisitor) add_run_lens(node psi.AstNode) {
 
 	v.add_lens(node, lsp.Command{
 		title: '▶ Run'
-		command: 'v.run'
+		command: 'v-analyzer.runWorkspace'
 		arguments: [
 			v.uri.path(),
 		]

@@ -141,6 +141,10 @@ pub fn (s StubBase) receiver() string {
 	return s.receiver
 }
 
+pub fn (s StubBase) text_range() TextRange {
+	return s.text_range
+}
+
 fn (s StubBase) get_psi() ?PsiElement {
 	return StubbedElementType{}.create_psi(s)
 }

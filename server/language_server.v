@@ -297,6 +297,12 @@ pub fn (mut ls LanguageServer) handle_jsonrpc(request &jsonrpc.Request, mut rw j
 				}
 				w.write(ls.code_actions(params) or { return w.wrap_error(err) })
 			}
+			'v-analyzer/viewStubTree' {
+				params := json.decode(lsp.TextDocumentIdentifier, request.params) or {
+					return w.wrap_error(err)
+				}
+				w.write(ls.view_stub_tree(params) or { return w.wrap_error(err) })
+			}
 			'$/cancelRequest' {
 				loglib.info('got $/cancelRequest request')
 				return jsonrpc.response_error(error: jsonrpc.method_not_found, data: request.method).err()

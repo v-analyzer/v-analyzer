@@ -1,5 +1,7 @@
 module index
 
+import strings
+import loglib
 import analyzer.psi
 
 // StubTree represents a tree of stubs for a file.
@@ -18,17 +20,19 @@ pub struct StubTree {
 }
 
 pub fn (tree &StubTree) print() {
-	tree.print_stub(tree.root, 0)
+	mut sb := strings.new_builder(100)
+	mut p := StubTreePrinter{
+		sb: &sb
+	}
+	p.print_stub(tree.root, 0)
+	loglib.trace(sb.str())
 }
 
-pub fn (tree &StubTree) print_stub(stub psi.StubElement, indent int) {
-	for i := 0; i < indent; i++ {
-		print('  ')
+pub fn (tree &StubTree) print_to(mut sb strings.Builder) {
+	mut p := StubTreePrinter{
+		sb: unsafe { &sb }
 	}
-	println(stub.stub_type().str() + ' (text: ' + stub.text() + ')')
-	for child in stub.children_stubs() {
-		tree.print_stub(child, indent + 1)
-	}
+	p.print_stub(tree.root, 0)
 }
 
 pub fn (tree &StubTree) get_imported_modules() []string {
@@ -124,5 +128,34 @@ pub fn build_stub_tree_iterative(file &psi.PsiFile, mut nodes []NodeInfo) &StubT
 	}
 	return &StubTree{
 		root: stub_root
+	}
+}
+
+pub struct StubTreePrinter {
+mut:
+	sb &strings.Builder
+}
+
+pub fn (mut p StubTreePrinter) print_stub(stub psi.StubElement, indent int) {
+	for i := 0; i < indent; i++ {
+		p.sb.write_string('  ')
+	}
+	p.sb.write_string(stub.stub_type().str())
+
+	text_range := stub.text_range()
+	p.sb.write_string(' at ')
+	p.sb.write_string((text_range.line + 1).str())
+
+	text := stub.text()
+	if text.len != 0 {
+		p.sb.write_string(' ')
+		p.sb.write_string('"')
+		p.sb.write_string(text)
+		p.sb.write_string('"')
+	}
+	p.sb.write_string('\n')
+
+	for child in stub.children_stubs() {
+		p.print_stub(child, indent + 1)
 	}
 }
