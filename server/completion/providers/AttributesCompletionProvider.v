@@ -54,7 +54,7 @@ fn (mut k AttributesCompletionProvider) add_completion(ctx &completion.Completio
 		result.add_element(lsp.CompletionItem{
 			label: "${attribute}: 'value'"
 			kind: .struct_
-			insert_text: "${attribute}: '$1'$1"
+			insert_text: "${attribute}: '$1'$0"
 			insert_text_format: .snippet
 		})
 	}
