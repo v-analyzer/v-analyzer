@@ -74,7 +74,7 @@ pub fn (mut ls LanguageServer) initialize(params lsp.InitializeParams, mut wr Re
 			folding_range_provider: true
 		}
 		server_info: lsp.ServerInfo{
-			name: 'spavn-analyzer'
+			name: 'v-analyzer'
 			version: '0.0.1-alpha'
 		}
 	}
@@ -228,7 +228,7 @@ fn (mut ls LanguageServer) setup_cache_dir() {
 
 fn (mut ls LanguageServer) find_config() string {
 	root := ls.root_uri.path()
-	local_config_path := os.join_path(root, '.spavn-analyzer', 'config.toml')
+	local_config_path := os.join_path(root, '.v-analyzer', 'config.toml')
 	if os.exists(local_config_path) {
 		return local_config_path
 	}
@@ -356,11 +356,10 @@ fn (mut ls LanguageServer) print_info(process_id int, client_info lsp.ClientInfo
 		'Unknown'
 	}
 
-	ls.client.log_message('spavn-analyzer version: 0.0.1, OS: ${os.user_os()} x${arch}',
-		.info)
-	ls.client.log_message('spavn-analyzer executable path: ${os.executable()}', .info)
-	ls.client.log_message('spavn-analyzer build with V ${@VHASH}', .info)
-	ls.client.log_message('spavn-analyzer build at ${time.now().format_ss()}', .info)
+	ls.client.log_message('v-analyzer version: 0.0.1, OS: ${os.user_os()} x${arch}', .info)
+	ls.client.log_message('v-analyzer executable path: ${os.executable()}', .info)
+	ls.client.log_message('v-analyzer build with V ${@VHASH}', .info)
+	ls.client.log_message('v-analyzer build at ${time.now().format_ss()}', .info)
 	ls.client.log_message('Client / Editor: ${client_name} (PID: ${process_id})', .info)
 
 	loglib.with_fields({
@@ -371,5 +370,5 @@ fn (mut ls LanguageServer) print_info(process_id int, client_info lsp.ClientInfo
 		'executable':  os.executable()
 		'build_with':  @VHASH
 		'build_at':    time.now().format_ss()
-	}).info('spavn-analyzer started')
+	}).info('v-analyzer started')
 }

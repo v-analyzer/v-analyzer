@@ -232,7 +232,7 @@ t.test('module name completion', fn (mut t testing.Test, mut fixture testing.Fix
 	}
 
 	t.assert_has_completion_with_label(items, 'module main')!
-	t.assert_has_completion_with_label(items, 'module spavn_analyzer_test')!
+	t.assert_has_completion_with_label(items, 'module v_analyzer_test')!
 })
 
 t.test('module name completion with module clause', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
@@ -244,7 +244,7 @@ t.test('module name completion with module clause', fn (mut t testing.Test, mut 
 	items := fixture.complete_at_cursor()
 
 	t.assert_no_completion_with_label(items, 'module main')!
-	t.assert_no_completion_with_label(items, 'module spavn_analyzer_test')!
+	t.assert_no_completion_with_label(items, 'module v_analyzer_test')!
 })
 
 t.test('nil keyword completion outside unsafe', fn (mut t testing.Test, mut fixture testing.Fixture) ! {

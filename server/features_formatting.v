@@ -4,7 +4,7 @@ import lsp
 import os
 import server.tform
 
-const temp_formatting_file_path = os.join_path(os.temp_dir(), 'spavn-analyzer-formatting-temp.v')
+const temp_formatting_file_path = os.join_path(os.temp_dir(), 'v-analyzer-formatting-temp.v')
 
 pub fn (mut ls LanguageServer) formatting(params lsp.DocumentFormattingParams) ![]lsp.TextEdit {
 	uri := params.text_document.uri.normalize()

@@ -1,14 +1,14 @@
 import vscode, {ConfigurationChangeEvent, ExtensionContext, workspace} from 'vscode';
 import * as commands from './commands';
-import {activateSpavnAnalyzer, deactivateSpavnAnalyzer} from './langserver';
+import {activateVAnalyzer, deactivateVAnalyzer} from './langserver';
 
 const cmds = {
 	'v.run': commands.run,
 	'v.fmt': commands.fmt,
 	'v.ver': commands.ver,
 	'v.prod': commands.prod,
-	'spavn-analyzer.restart': commands.restartSpavnAnalyzer,
-	'spavn-analyzer.showReferences': commands.showReferences(),
+	'v-analyzer.restart': commands.restartVAnalyzer,
+	'v-analyzer.showReferences': commands.showReferences(),
 };
 
 /**
@@ -23,19 +23,19 @@ export function activate(context: ExtensionContext): void {
 	}
 
 	workspace.onDidChangeConfiguration((e: ConfigurationChangeEvent) => {
-		if (!e.affectsConfiguration('spavn-analyzer')) return;
+		if (!e.affectsConfiguration('v-analyzer')) return;
 
-		void vscode.window.showInformationMessage('spavn-analyzer: Restart is required for changes to take effect. Would you like to proceed?', 'Yes', 'No')
+		void vscode.window.showInformationMessage('v-analyzer: Restart is required for changes to take effect. Would you like to proceed?', 'Yes', 'No')
 			.then(selected => {
 				if (selected == 'Yes') {
-					void vscode.commands.executeCommand('spavn-analyzer.restart');
+					void vscode.commands.executeCommand('v-analyzer.restart');
 				}
 			});
 	});
 
-	void activateSpavnAnalyzer();
+	void activateVAnalyzer();
 }
 
 export function deactivate(): void {
-	deactivateSpavnAnalyzer();
+	deactivateVAnalyzer();
 }

@@ -1,4 +1,4 @@
-# spavn-analyzer support for Visual Studio Code
+# v-analyzer support for Visual Studio Code
 
 ![Cover](./images/cover.png)
 
@@ -29,5 +29,5 @@ npm run package
 
 This project is under the **MIT License**.
 See the
-[LICENSE](https://github.com/vlang-association/spavn-analyzer/editors/blob/master/LICENSE)
+[LICENSE](https://github.com/vlang-association/v-analyzer/editors/blob/master/LICENSE)
 file for the full license text.

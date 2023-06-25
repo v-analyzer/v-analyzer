@@ -95,7 +95,7 @@ fn read_line(file &os.File, mut buf []u8) !int {
 const base_ip = '127.0.0.1'
 
 pub fn new_socket_stream_server(port int, log bool) !io.ReaderWriter {
-	server_label := 'spavn-analyzer-server'
+	server_label := 'v-analyzer-server'
 
 	address := '${streams.base_ip}:${port}'
 	mut listener := net.listen_tcp(.ip, address)!
@@ -131,7 +131,7 @@ fn new_socket_stream_client(port int) !io.ReaderWriter {
 	conn.set_blocking(true) or {}
 
 	mut stream := &SocketStream{
-		log_label: 'spavn-analyzer-client'
+		log_label: 'v-analyzer-client'
 		log: false
 		port: port
 		conn: conn
@@ -141,7 +141,7 @@ fn new_socket_stream_client(port int) !io.ReaderWriter {
 }
 
 struct SocketStream {
-	log_label string = 'spavn-analyzer'
+	log_label string = 'v-analyzer'
 	log       bool   = true
 mut:
 	conn   &net.TcpConn       = &net.TcpConn(net.listen_tcp(.ip, '80')!)

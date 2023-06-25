@@ -1,9 +1,9 @@
 Module {
-	name: 'spavn-analyzer'
+	name: 'v-analyzer'
 	description: 'Language server implementation for V language'
 	version: '0.0.1-alpha'
 	license: 'MIT'
 	dependencies: [
-	    'https://github.com/spavn-analyzer/v-tree-sitter'
+	    'https://github.com/v-analyzer/v-tree-sitter'
 	]
 }

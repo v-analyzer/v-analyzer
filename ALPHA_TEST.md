@@ -3,12 +3,12 @@
 ## Preparation
 
 1. Clone this repository, it contains everything you need for testing.
-2. At the moment, we're testing spavn-analyzer only in VS Code, a bit later we will add support for
+2. At the moment, we're testing v-analyzer only in VS Code, a bit later we will add support for
    other editors like Helix, Neovim, Emacs, etc.
 
-### Installing spavn-analyzer
+### Installing v-analyzer
 
-1. The best option for testing would be if you build spavn-analyzer from source, as this way you can
+1. The best option for testing would be if you build v-analyzer from source, as this way you can
    get the latest version immediately after the changes.
 2. After you get the binary, add the path to the folder in PATH so that the editor can find it.
    Optionally, you can pass the path to the binary in the VS Code settings; for these sees the
@@ -32,13 +32,13 @@ about 30-40%.
    After the indexing is over, you will notice that the code is highlighted a little differently,
    and go to the definition and other functions will also start to work.
 5. If for some reason the analyzer didn't turn on, report it and try to run the command
-   `spavn-analyzer: Restart` using the command palette.
+   `v-analyzer: Restart` using the command palette.
 
 ### Bug reports
 
 If while the analyzer is running, it suddenly crashes, or some other error occurs, then please
 report it in the discord channel (preferred) or in an issue.
-Attach the logs you can find in the `~/.config/spavn-analyzer/logs` folder.
+Attach the logs you can find in the `~/.config/v-analyzer/logs` folder.
 
 If auto-completion, go to definition or some other function doesn't work in some place,
 then report it in the discord channel by attaching a link to the project (if it is an open source)
@@ -54,7 +54,7 @@ The following features are currently available:
    Basic highlighting in VS Code works on the basis of regular expression grammars, which doesn't
    allow, for example, to understand whether an identifier is a variable, a field, or a function
    reference.
-   spavn-analyzer provides two types of additional highlighting:
+   v-analyzer provides two types of additional highlighting:
     1. Highlighting based on the AST tree, this highlighting understands that there are fields of
        structures, that when creating a structure there are fields, and also thanks to it, problems
        in the basic highlighting are corrected.

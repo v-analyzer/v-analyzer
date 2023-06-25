@@ -12,13 +12,13 @@ fn init_cmd(cmd cli.Command) ! {
 		return error('Cannot get current working directory')
 	}
 
-	directory_for_config := os.join_path(pwd, '.spavn-analyzer')
+	directory_for_config := os.join_path(pwd, config.analyzer_local_configs_folder_name)
 	if !os.exists(directory_for_config) {
 		os.mkdir_all(directory_for_config) or {
 			return error("Cannot create '${directory_for_config}' directory for config: ${err}")
 		}
 
-		println("${term.green('✓')} Created '.spavn-analyzer' directory for config")
+		println("${term.green('✓')} Created '${config.analyzer_local_configs_folder_name}' directory for config")
 	}
 
 	config_file := os.join_path(directory_for_config, config.analyzer_config_name)

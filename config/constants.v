@@ -5,33 +5,37 @@ import utils
 
 pub const (
 	// analyzer_name is the name of the analyzer.
-	analyzer_name               = 'spavn-analyzer'
+	analyzer_name                      = 'v-analyzer'
 
 	// analyzer_config_name is the name of the analyzer's configuration
-	analyzer_config_name        = 'config.toml'
+	analyzer_config_name               = 'config.toml'
 
 	// analyzer_configs_path is the path to the directory containing the
 	// root configuration files for the analyzer.
-	analyzer_configs_path       = utils.expand_tilde_to_home('~/.config/spavn-analyzer')
+	analyzer_configs_path              = utils.expand_tilde_to_home('~/.config/v-analyzer')
+
+	// analyzer_local_configs_folder_name is the name of the directory
+	// containing the local configuration files for the analyzer.
+	analyzer_local_configs_folder_name = '.v-analyzer'
 
 	// analyzer_log_file_name is the name of the log file for the analyzer.
-	analyzer_log_file_name      = 'spavn-analyzer.log'
+	analyzer_log_file_name             = 'v-analyzer.log'
 
 	// analyzer_logs_path is the path to the directory containing the
 	// logs for the analyzer.
-	analyzer_logs_path          = os.join_path(analyzer_configs_path, 'logs')
+	analyzer_logs_path                 = os.join_path(analyzer_configs_path, 'logs')
 
 	// analyzer_global_config_path is the path to the global configuration
 	// file for the analyzer.
-	analyzer_global_config_path = os.join_path(analyzer_configs_path, analyzer_config_name)
+	analyzer_global_config_path        = os.join_path(analyzer_configs_path, analyzer_config_name)
 
 	// analyzer_caches_path is the path to the directory containing the
 	// cache files for the analyzer.
-	analyzer_caches_path        = os.join_path(os.cache_dir(), 'spavn-analyzer')
+	analyzer_caches_path               = os.join_path(os.cache_dir(), 'v-analyzer')
 
 	// analyzer_stubs_path is the path to the directory containing the
 	// unpacked stub files for the analyzer.
-	analyzer_stubs_path         = os.join_path(analyzer_configs_path, 'metadata')
+	analyzer_stubs_path                = os.join_path(analyzer_configs_path, 'metadata')
 )
 
 pub const default = '# Specifies the path to the V installation directory with `v` executable.

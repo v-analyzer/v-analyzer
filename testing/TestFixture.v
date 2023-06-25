@@ -7,7 +7,7 @@ import jsonrpc
 import server
 import analyzer
 
-const temp_path = os.join_path(os.temp_dir(), 'spavn-analyzer-test')
+const temp_path = os.join_path(os.temp_dir(), 'v-analyzer-test')
 
 struct TestFile {
 	path    string

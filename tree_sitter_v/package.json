@@ -5,7 +5,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/vlang-association/spavn-analyzer.git"
+    "url": "https://github.com/vlang-association/v-analyzer.git"
   },
   "scripts": {
     "test": "tree-sitter test",

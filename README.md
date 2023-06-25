@@ -1,4 +1,4 @@
-# spavn-analyzer
+# v-analyzer
 
 Bring IDE features for V programming languages in VS Code, Vim, and other editors
 
@@ -22,14 +22,14 @@ Binary will be placed in `bin/` folder.
 
 ## Setup
 
-Add `bin/` folder to your `$PATH` environment variable to use `spavn-analyzer`
+Add `bin/` folder to your `$PATH` environment variable to use `v-analyzer`
 command inside VS Code and other editors.
 
 Or, you can specify the path to the binary in your VS Code settings:
 
 ```json
 {
-  "spavn-analyzer.customPath": "/path/to/spavn-analyzer/bin"
+  "v-analyzer.customPath": "/path/to/v-analyzer/bin"
 }
 ```
 
@@ -45,5 +45,5 @@ Restart VS Code after changing the settings or PATH.
 
 This project is under the **MIT License**.
 See the
-[LICENSE](https://github.com/vlang-association/spavn-analyzer/blob/master/LICENSE)
+[LICENSE](https://github.com/vlang-association/v-analyzer/blob/master/LICENSE)
 file for the full license text.

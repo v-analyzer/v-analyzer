@@ -11,49 +11,49 @@ import {
 } from 'vscode-languageclient/node';
 
 import {getWorkspaceConfig, getWorkspaceFolder} from './utils';
-import {log, spavnAnalyzerOutputChannel} from './debug';
+import {log, vAnalyzerOutputChannel} from './debug';
 import {Message} from "vscode-languageclient";
 
 export let client: LanguageClient;
 
 let crashCount = 0;
-let spavnAnalyzerProcess: cp.ChildProcess;
+let vAnalyzerProcess: cp.ChildProcess;
 
-export async function checkSpavnAnalyzerInstallation(): Promise<boolean> {
+export async function checkVAnalyzerInstallation(): Promise<boolean> {
 	const useRemoteServer = getWorkspaceConfig().get<boolean>('tcpMode.useRemoteServer');
-	// if we use remote server, we don't need to check spavn-analyzer installation
+	// if we use remote server, we don't need to check v-analyzer installation
 	if (useRemoteServer) {
 		return true;
 	}
 
-	const installed = isSpavnAnalyzerInstall();
+	const installed = isVAnalyzerInstall();
 	if (!installed) {
-		await window.showInformationMessage('Cannot find spavn-analyzer in PATH. Please install it and restart VS Code.');
+		await window.showInformationMessage('Cannot find v-analyzer in PATH. Please install it and restart VS Code.');
 	}
 	return true;
 }
 
-function findSpavnAnalyzerPath(): string {
+function findVAnalyzerPath(): string {
 	const config = getWorkspaceConfig();
 	const customPath = config.get<string>('customPath');
-	return customPath ? customPath : 'spavn-analyzer';
+	return customPath ? customPath : 'v-analyzer';
 }
 
-function isSpavnAnalyzerInstall(): boolean {
-	const path = findSpavnAnalyzerPath();
+function isVAnalyzerInstall(): boolean {
+	const path = findVAnalyzerPath();
 	log(path);
 	const res = cp.spawnSync(`${path}`, ['-v']);
 	return res.status === 0;
 }
 
-function runSpavnAnalyzer(args: string[]): cp.ChildProcess {
-	const analyzerPath = findSpavnAnalyzerPath();
+function runVAnalyzer(args: string[]): cp.ChildProcess {
+	const analyzerPath = findVAnalyzerPath();
 	log(`Spawning ${analyzerPath} ${args.join(' ')}...`);
 	const folder = getWorkspaceFolder();
 	return cp.spawn(analyzerPath, args, {shell: true, cwd: folder.uri.fsPath});
 }
 
-function connectSpavnAnalyzerViaTcp(port: number): Promise<StreamInfo> {
+function connectVAnalyzerViaTcp(port: number): Promise<StreamInfo> {
 	const socket = net.connect({port});
 	const result: StreamInfo = {
 		writer: socket,
@@ -62,7 +62,7 @@ function connectSpavnAnalyzerViaTcp(port: number): Promise<StreamInfo> {
 	return Promise.resolve(result);
 }
 
-export function connectSpavnAnalyzer(): void {
+export function connectVAnalyzer(): void {
 	let shouldSpawnProcess = true;
 
 	const config = getWorkspaceConfig();
@@ -83,22 +83,22 @@ export function connectSpavnAnalyzer(): void {
 		args.push('--stdio');
 	}
 
-	killSpavnAnalyzerProcess();
+	killVAnalyzerProcess();
 
 	if (shouldSpawnProcess) {
-		spavnAnalyzerProcess = runSpavnAnalyzer(args);
+		vAnalyzerProcess = runVAnalyzer(args);
 	}
 
 	const serverOptions: ServerOptions = connMode == 'tcp'
-		? () => connectSpavnAnalyzerViaTcp(tcpPort)
-		: () => Promise.resolve(spavnAnalyzerProcess);
+		? () => connectVAnalyzerViaTcp(tcpPort)
+		: () => Promise.resolve(vAnalyzerProcess);
 
 	const clientOptions: LanguageClientOptions = {
 		documentSelector: [{scheme: 'file', language: 'v'}],
 		synchronize: {
 			fileEvents: workspace.createFileSystemWatcher('**/*.v')
 		},
-		outputChannel: spavnAnalyzerOutputChannel,
+		outputChannel: vAnalyzerOutputChannel,
 		errorHandler: {
 			error: (error: Error, _: Message, count: number) => {
 				// taken from: https://github.com/golang/vscode-go/blob/HEAD/src/goLanguageServer.ts#L533-L539
@@ -110,7 +110,7 @@ export function connectSpavnAnalyzer(): void {
 				}
 				void window.showErrorMessage(
 					// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-					`spavn-analyzer: Error communicating with the language server: ${error}: ${error}.`
+					`v-analyzer: Error communicating with the language server: ${error}: ${error}.`
 				);
 
 				return {
@@ -143,31 +143,31 @@ export function connectSpavnAnalyzer(): void {
 	);
 
 	client.start().catch(reason => {
-		window.showWarningMessage(`spavn-analyzer failed to initialize: ${reason}`);
+		window.showWarningMessage(`v-analyzer failed to initialize: ${reason}`);
 		client = null;
 	}).then(() => {
-		window.setStatusBarMessage('spavn-analyzer is ready.', 3000);
+		window.setStatusBarMessage('v-analyzer is ready.', 3000);
 	});
 }
 
-export async function activateSpavnAnalyzer(): Promise<void> {
-	const installed = await checkSpavnAnalyzerInstallation();
+export async function activateVAnalyzer(): Promise<void> {
+	const installed = await checkVAnalyzerInstallation();
 	if (!installed) {
 		return;
 	}
 
-	connectSpavnAnalyzer();
+	connectVAnalyzer();
 }
 
-export function deactivateSpavnAnalyzer(): void {
-	killSpavnAnalyzerProcess();
+export function deactivateVAnalyzer(): void {
+	killVAnalyzerProcess();
 }
 
-function killSpavnAnalyzerProcess(): void {
-	if (!spavnAnalyzerProcess || spavnAnalyzerProcess.killed) {
+function killVAnalyzerProcess(): void {
+	if (!vAnalyzerProcess || vAnalyzerProcess.killed) {
 		return;
 	}
 
-	log('Terminating existing spavn-analyzer process.');
-	spavnAnalyzerProcess.kill("SIGKILL")
+	log('Terminating existing v-analyzer process.');
+	vAnalyzerProcess.kill("SIGKILL")
 }

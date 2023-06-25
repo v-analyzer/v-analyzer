@@ -26,5 +26,5 @@ and after that in 2023 it was heavily modified by the
 
 This project is under the **MIT License**.
 See the
-[LICENSE](https://github.com/vlang-association/spavn-analyzer/tree_sitter_v/blob/master/LICENSE)
+[LICENSE](https://github.com/vlang-association/v-analyzer/tree_sitter_v/blob/master/LICENSE)
 file for the full license text.

@@ -11,11 +11,11 @@ export function getVExecCommand(): string {
 }
 
 /**
- * Get spavn-analyzer configuration.
+ * Get v-analyzer configuration.
  */
 export function getWorkspaceConfig(): WorkspaceConfiguration {
 	const currentWorkspaceFolder = getWorkspaceFolder();
-	return workspace.getConfiguration('spavn-analyzer', currentWorkspaceFolder.uri);
+	return workspace.getConfiguration('v-analyzer', currentWorkspaceFolder.uri);
 }
 
 /** Get workspace of current document.

@@ -1,6 +1,6 @@
 {
-	"name": "vscode-spavn-analyzer",
-	"displayName": "spavn-analyzer",
+	"name": "vscode-v-analyzer",
+	"displayName": "v-analyzer",
 	"description": "V language support (syntax highlighting, formatter, language server) for Visual Studio Code.",
 	"publisher": "VOSCA",
 	"icon": "icons/icon.png",
@@ -11,11 +11,11 @@
 	"homepage": "https://vlang.io/",
 	"license": "MIT",
 	"bugs": {
-		"url": "https://github.com/spavn-analyzer/spavn-analyzer/issues"
+		"url": "https://github.com/v-analyzer/v-analyzer/issues"
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/spavn-analyzer/spavn-analyzer"
+		"url": "https://github.com/v-analyzer/v-analyzer"
 	},
 	"keywords": [
 		"V",
@@ -74,26 +74,26 @@
 			}
 		],
 		"configuration": {
-			"title": "spavn-analyzer",
+			"title": "v-analyzer",
 			"properties": {
 				"v.executablePath": {
 					"scope": "resource",
 					"type": "string",
-					"description": "Custom path to the V compiler executable (`v`).\nNOTE: Setting this won't change the VROOT path in spavn-analyzer."
+					"description": "Custom path to the V compiler executable (`v`).\nNOTE: Setting this won't change the VROOT path in v-analyzer."
 				},
-				"spavn-analyzer.customVrootPath": {
+				"v-analyzer.customVrootPath": {
 					"scope": "resource",
 					"type": "string",
 					"default": "",
 					"description": "Custom path to the V installation directory (VROOT).\nNOTE: Setting this won't change the V compiler executable to be used."
 				},
-				"spavn-analyzer.customPath": {
+				"v-analyzer.customPath": {
 					"scope": "resource",
 					"type": "string",
 					"default": "",
-					"description": "Custom path to the spavn-analyzer executable."
+					"description": "Custom path to the v-analyzer executable."
 				},
-				"spavn-analyzer.connectionMode": {
+				"v-analyzer.connectionMode": {
 					"scope": "resource",
 					"type": "string",
 					"default": "stdio",
@@ -101,28 +101,28 @@
 						"stdio",
 						"tcp"
 					],
-					"description": "Specify the mode to be used when connecting to spavn-analyzer.",
+					"description": "Specify the mode to be used when connecting to v-analyzer.",
 					"enumDescriptions": [
 						"Connects to the language server via standard input/output. (Default)",
 						"Connects to the language server via TCP"
 					]
 				},
-				"spavn-analyzer.tcpMode.port": {
+				"v-analyzer.tcpMode.port": {
 					"scope": "resource",
 					"type": "number",
 					"default": 5007,
 					"description": "Port to be used when connecting to the language server. (Only in TCP mode)"
 				},
-				"spavn-analyzer.tcpMode.useRemoteServer": {
+				"v-analyzer.tcpMode.useRemoteServer": {
 					"scope": "resource",
 					"default": false,
 					"type": "boolean",
 					"description": "Connect to a remote server instead of launching a new local process. (Only in TCP mode)"
 				},
-				"spavn-analyzer.customArgs": {
+				"v-analyzer.customArgs": {
 					"scope": "resource",
 					"type": "string",
-					"description": "Custom arguments to be passed to the spavn-analyzer executable."
+					"description": "Custom arguments to be passed to the v-analyzer executable."
 				}
 			}
 		},
@@ -159,14 +159,14 @@
 				"category": "V"
 			},
 			{
-				"command": "spavn-analyzer.restart",
+				"command": "v-analyzer.restart",
 				"title": "Restart",
-				"category": "spavn-analyzer"
+				"category": "v-analyzer"
 			},
 			{
-				"command": "spavn-analyzer.showReferences",
+				"command": "v-analyzer.showReferences",
 				"title": "Show References",
-				"category": "spavn-analyzer"
+				"category": "v-analyzer"
 			}
 		],
 		"menus": {
@@ -184,7 +184,7 @@
 					"when": "editorLangId == v"
 				},
 				{
-					"command": "spavn-analyzer.restart",
+					"command": "v-analyzer.restart",
 					"when": "editorLangId == v"
 				}
 			]
@@ -226,7 +226,7 @@
 		"onCommand:v.fmt",
 		"onCommand:v.prod",
 		"onCommand:v.ver",
-		"onCommand:spavn-analyzer.restart"
+		"onCommand:v-analyzer.restart"
 	],
 	"main": "./out/extension.js",
 	"dependencies": {

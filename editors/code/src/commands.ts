@@ -1,7 +1,7 @@
 import {ProgressLocation, window} from 'vscode';
 import {runVCommand, runVCommandCallback, runVCommandInBackground} from './exec';
-import {activateSpavnAnalyzer, client, deactivateSpavnAnalyzer} from './langserver';
-import {log, spavnAnalyzerOutputChannel, vOutputChannel} from './debug';
+import {activateVAnalyzer, client, deactivateVAnalyzer} from './langserver';
+import {log, vAnalyzerOutputChannel, vOutputChannel} from './debug';
 import * as path from "path";
 import vscode from "vscode";
 import * as lc from "vscode-languageclient";
@@ -54,16 +54,16 @@ export function ver(): void {
 	});
 }
 
-export function restartSpavnAnalyzer(): void {
+export function restartVAnalyzer(): void {
 	window.withProgress({
 		location: ProgressLocation.Notification,
 		cancellable: false,
-		title: 'spavn-analyzer'
+		title: 'v-analyzer'
 	}, async (progress) => {
 		progress.report({message: 'Restarting'});
-		deactivateSpavnAnalyzer();
-		spavnAnalyzerOutputChannel.clear();
-		await activateSpavnAnalyzer();
+		deactivateVAnalyzer();
+		vAnalyzerOutputChannel.clear();
+		await activateVAnalyzer();
 	}).then(
 		() => {
 			return;
@@ -72,7 +72,7 @@ export function restartSpavnAnalyzer(): void {
 			log(err);
 			vOutputChannel.show();
 			void window.showErrorMessage(
-				'Failed restarting spavn-analyzer. See output for more information.'
+				'Failed restarting v-analyzer. See output for more information.'
 			);
 		}
 	);

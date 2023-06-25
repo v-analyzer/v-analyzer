@@ -14,27 +14,27 @@ jobs:
         uses: vlang/setup-v@v1.3
         with:
           check-latest: true
-      - name: Checkout spavn-analyzer
+      - name: Checkout v-analyzer
         uses: actions/checkout@v3
         with:
-          path: spavn-analyzer
+          path: v-analyzer
       - name: Install dependencies
         run: |
-          mkdir -p ./spavn-analyzer/modules
-          git clone https://github.com/nedpals/vex ./spavn-analyzer/modules
+          mkdir -p ./v-analyzer/modules
+          git clone https://github.com/nedpals/vex ./v-analyzer/modules
       - name: Compile
         run: |
-          cd spavn-analyzer
+          cd v-analyzer
           v install
-          v ./cmd/spavn-analyzer -o spavn-analyzer
+          v ./cmd/v-analyzer -o v-analyzer
       - name: Create ZIP archive
         run: |
-          zip -r9 spavn-analyzer-linux ./spavn-analyzer/spavn-analyzer
+          zip -r9 v-analyzer-linux ./v-analyzer/v-analyzer
       - name: Create artifact
         uses: actions/upload-artifact@v3.1.2
         with:
-          name: spavn-analyzer-linux.zip
-          path: ./spavn-analyzer-linux.zip
+          name: v-analyzer-linux.zip
+          path: ./v-analyzer-linux.zip
 
   build-macos:
     runs-on: macos-latest
@@ -46,27 +46,27 @@ jobs:
         uses: vlang/setup-v@v1.3
         with:
           check-latest: true
-      - name: Checkout spavn-analyzer
+      - name: Checkout v-analyzer
         uses: actions/checkout@v3
         with:
-          path: spavn-analyzer
+          path: v-analyzer
       - name: Install dependencies
         run: |
-          mkdir -p ./spavn-analyzer/modules
-          git clone https://github.com/nedpals/vex ./spavn-analyzer/modules
+          mkdir -p ./v-analyzer/modules
+          git clone https://github.com/nedpals/vex ./v-analyzer/modules
       - name: Compile
         run: |
-          cd spavn-analyzer
+          cd v-analyzer
           v install
-          v ./cmd/spavn-analyzer -o spavn-analyzer
+          v ./cmd/v-analyzer -o v-analyzer
       - name: Create ZIP archive
         run: |
-          zip -r9 spavn-analyzer-darwin ./spavn-analyzer/spavn-analyzer
+          zip -r9 v-analyzer-darwin ./v-analyzer/v-analyzer
       - name: Create artifact
         uses: actions/upload-artifact@v3.1.2
         with:
-          name: spavn-analyzer-darwin.zip
-          path: ./spavn-analyzer-darwin.zip
+          name: v-analyzer-darwin.zip
+          path: ./v-analyzer-darwin.zip
 
   build-windows:
     runs-on: windows-latest
@@ -79,24 +79,24 @@ jobs:
         uses: vlang/setup-v@v1.3
         with:
           check-latest: true
-      - name: Checkout spavn-analyzer
+      - name: Checkout v-analyzer
         uses: actions/checkout@v3
         with:
-          path: spavn-analyzer
+          path: v-analyzer
       - name: Compile
         run: |
-          cd spavn-analyzer
+          cd v-analyzer
           v install
-          v ./cmd/spavn-analyzer -o spavn-analyzer.exe
+          v ./cmd/v-analyzer -o v-analyzer.exe
       - name: Create ZIP archive
         shell: msys2 {0}
         run: |
-           powershell Compress-Archive ".\spavn-analyzer\spavn-analyzer.exe" spavn-analyzer-windows
+           powershell Compress-Archive ".\v-analyzer\v-analyzer.exe" v-analyzer-windows
         # NB: the powershell Compress-Archive line is from:
         # https://superuser.com/a/1336434/194881
         # It is needed, because `zip` is not installed by default :-|
       - name: Create artifact
         uses: actions/upload-artifact@v3.1.2
         with:
-          name: spavn-analyzer-windows.zip
-          path: ./spavn-analyzer-windows.zip
+          name: v-analyzer-windows.zip
+          path: ./v-analyzer-windows.zip

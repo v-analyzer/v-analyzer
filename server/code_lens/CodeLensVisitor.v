@@ -93,7 +93,7 @@ pub fn (mut v CodeLensVisitor) add_interface_implementations_lens(node psi.AstNo
 
 		v.add_lens(node, lsp.Command{
 			title: lens_title
-			command: 'spavn-analyzer.showReferences'
+			command: 'v-analyzer.showReferences'
 			arguments: [
 				v.uri.path(),
 				json.encode(lsp.Position{
@@ -126,7 +126,7 @@ pub fn (mut v CodeLensVisitor) add_super_interfaces_lens(node psi.AstNode) {
 
 		v.add_lens(node, lsp.Command{
 			title: lens_title
-			command: 'spavn-analyzer.showReferences'
+			command: 'v-analyzer.showReferences'
 			arguments: [
 				v.uri.path(),
 				json.encode(lsp.Position{

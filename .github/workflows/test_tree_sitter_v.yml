@@ -18,13 +18,13 @@ jobs:
       - name: Install Tree-sitter
         run: |
           cargo install tree-sitter-cli
-      - name: Checkout spavn-analyzer
+      - name: Checkout v-analyzer
         uses: actions/checkout@v3
         with:
-          path: spavn-analyzer
+          path: v-analyzer
       - name: Run tests
         run: |
-          cd spavn-analyzer/tree_sitter_v
+          cd v-analyzer/tree_sitter_v
           tree-sitter test
 
   test-macos:
@@ -40,13 +40,13 @@ jobs:
       - name: Install Tree-sitter
         run: |
           cargo install tree-sitter-cli
-      - name: Checkout spavn-analyzer
+      - name: Checkout v-analyzer
         uses: actions/checkout@v3
         with:
-          path: spavn-analyzer
+          path: v-analyzer
       - name: Run tests
         run: |
-          cd spavn-analyzer/tree_sitter_v
+          cd v-analyzer/tree_sitter_v
           tree-sitter test
 
 # TODO: some msvc error for Rust
@@ -65,11 +65,11 @@ jobs:
 #      - name: Install Tree-sitter
 #        run: |
 #          cargo install tree-sitter-cli
-#      - name: Checkout spavn-analyzer
+#      - name: Checkout v-analyzer
 #        uses: actions/checkout@v3
 #        with:
-#          path: spavn-analyzer
+#          path: v-analyzer
 #      - name: Run tests
 #        run: |
-#          cd spavn-analyzer/tree_sitter_v
+#          cd v-analyzer/tree_sitter_v
 #          tree-sitter test

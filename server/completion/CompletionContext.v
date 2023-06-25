@@ -3,7 +3,7 @@ module completion
 import analyzer.psi
 import lsp
 
-pub const dummy_identifier = 'spavnAnalyzerRulezzz'
+pub const dummy_identifier = 'vAnalyzerRulezzz'
 
 pub struct CompletionContext {
 pub:
