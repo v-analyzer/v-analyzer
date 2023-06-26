@@ -354,7 +354,7 @@
 		},
 		"function-exist": {
 			"name": "meta.support.function.v",
-			"match": "(\\w+)((?<=[\\w\\s+])(\\<)(\\w+)(\\>))?(?=\\s*\\()",
+			"match": "(\\w+)((?<=[\\w\\s+])(\\[)([\\w, ]+)(\\]))?(?=\\s*\\()",
 			"captures": {
 				"0": {
 					"name": "meta.function.call.v"
