@@ -28,7 +28,7 @@ fn (c &ConstantDefinition) identifier() ?PsiElement {
 
 pub fn (c ConstantDefinition) identifier_text_range() TextRange {
 	if stub := c.get_stub() {
-		return stub.text_range
+		return stub.identifier_text_range
 	}
 
 	identifier := c.identifier() or { return TextRange{} }

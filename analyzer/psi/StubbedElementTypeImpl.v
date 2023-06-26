@@ -370,11 +370,8 @@ pub fn (_ &StubbedElementType) get_receiver_type(psi FunctionOrMethodDeclaration
 
 pub fn (s &StubbedElementType) create_stub(psi PsiElement, parent_stub &StubElement, module_fqn string) ?&StubBase {
 	if psi is FunctionOrMethodDeclaration {
-		text_range := if identifier := psi.identifier() {
-			identifier.text_range()
-		} else {
-			psi.text_range()
-		}
+		text_range := psi.text_range()
+		identifier_text_range := psi.identifier_text_range()
 		comment := psi.doc_comment()
 
 		mut receiver_type := s.get_receiver_type(psi)
@@ -397,7 +394,8 @@ pub fn (s &StubbedElementType) create_stub(psi PsiElement, parent_stub &StubElem
 			''
 		}
 
-		return new_stub_base(parent_stub, stub_type, psi.name(), text_range,
+		return new_stub_base(parent_stub, stub_type, psi.name(), identifier_text_range,
+			text_range,
 			comment: comment
 			receiver: receiver_type
 			additional: fingerprint
@@ -405,18 +403,16 @@ pub fn (s &StubbedElementType) create_stub(psi PsiElement, parent_stub &StubElem
 	}
 
 	if psi is StructDeclaration {
-		text_range := if identifier := psi.identifier() {
-			identifier.text_range()
-		} else {
-			psi.text_range()
-		}
+		text_range := psi.text_range()
+		identifier_text_range := psi.identifier_text_range()
 		comment := psi.doc_comment()
 		name := if psi.is_attribute() {
 			psi.name() + 'Attribute'
 		} else {
 			psi.name()
 		}
-		return new_stub_base(parent_stub, .struct_declaration, name, text_range,
+		return new_stub_base(parent_stub, .struct_declaration, name, identifier_text_range,
+			text_range,
 			comment: comment
 		)
 	}
@@ -480,7 +476,8 @@ pub fn (s &StubbedElementType) create_stub(psi PsiElement, parent_stub &StubElem
 	}
 
 	if psi is Attributes {
-		return new_stub_base(parent_stub, .attributes, '', psi.text_range())
+		text_range := psi.text_range()
+		return new_stub_base(parent_stub, .attributes, '', text_range, text_range)
 	}
 
 	if psi is Attribute {
@@ -554,12 +551,9 @@ struct StubParams {
 
 [inline]
 pub fn declaration_stub(psi PsiNamedElement, parent_stub &StubElement, stub_type StubType, params StubParams) ?&StubBase {
-	text_range := if identifier := psi.identifier() {
-		identifier.text_range()
-	} else {
-		(psi as PsiElement).text_range()
-	}
-	return new_stub_base(parent_stub, stub_type, psi.name(), text_range,
+	text_range := (psi as PsiElement).text_range()
+	identifier_text_range := psi.identifier_text_range()
+	return new_stub_base(parent_stub, stub_type, psi.name(), identifier_text_range, text_range,
 		comment: if psi is PsiDocCommentOwner { psi.doc_comment() } else { '' }
 		text: if params.include_text { (psi as PsiElement).get_text() } else { '' }
 		additional: params.additional
@@ -573,7 +567,8 @@ struct TestStubParams {
 
 [inline]
 pub fn text_based_stub(psi PsiElement, parent_stub &StubElement, stub_type StubType, params TestStubParams) ?&StubBase {
-	return new_stub_base(parent_stub, stub_type, '', psi.text_range(),
+	text_range := psi.text_range()
+	return new_stub_base(parent_stub, stub_type, '', text_range, text_range,
 		text: if params.include_text { psi.get_text() } else { '' }
 	)
 }

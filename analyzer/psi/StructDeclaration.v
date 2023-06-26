@@ -42,7 +42,7 @@ pub fn (s StructDeclaration) identifier() ?PsiElement {
 
 pub fn (s StructDeclaration) identifier_text_range() TextRange {
 	if stub := s.get_stub() {
-		return stub.text_range
+		return stub.identifier_text_range
 	}
 
 	identifier := s.identifier() or { return TextRange{} }

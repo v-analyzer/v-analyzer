@@ -16,7 +16,7 @@ pub fn (r ReferenceExpression) identifier() ?PsiElement {
 
 pub fn (r &ReferenceExpression) identifier_text_range() TextRange {
 	if stub := r.get_stub() {
-		return stub.text_range
+		return stub.identifier_text_range
 	}
 
 	identifier := r.identifier() or { return TextRange{} }

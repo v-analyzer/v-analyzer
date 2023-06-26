@@ -12,7 +12,7 @@ pub fn (r &Receiver) is_public() bool {
 
 fn (r &Receiver) identifier_text_range() TextRange {
 	if stub := r.get_stub() {
-		return stub.text_range
+		return stub.identifier_text_range
 	}
 
 	identifier := r.identifier() or { return TextRange{} }

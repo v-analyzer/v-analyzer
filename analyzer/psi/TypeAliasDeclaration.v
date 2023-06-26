@@ -51,7 +51,7 @@ pub fn (a TypeAliasDeclaration) identifier() ?PsiElement {
 
 pub fn (a &TypeAliasDeclaration) identifier_text_range() TextRange {
 	if stub := a.get_stub() {
-		return stub.text_range
+		return stub.identifier_text_range
 	}
 
 	identifier := a.identifier() or { return TextRange{} }

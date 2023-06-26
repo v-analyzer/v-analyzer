@@ -19,16 +19,17 @@ pub:
 pub struct StubBase {
 	StubData
 pub:
-	name       string
-	text_range TextRange
-	parent_id  StubId
-	stub_type  StubType
+	name                  string
+	identifier_text_range TextRange
+	text_range            TextRange
+	parent_id             StubId
+	stub_type             StubType
 pub mut:
 	stub_list &StubList
 	id        StubId
 }
 
-pub fn new_stub_base(parent &StubElement, stub_type StubType, name string, text_range TextRange, data StubData) &StubBase {
+pub fn new_stub_base(parent &StubElement, stub_type StubType, name string, identifier_text_range TextRange, text_range TextRange, data StubData) &StubBase {
 	mut stub_list := if parent is StubBase {
 		if !isnil(parent.stub_list) { parent.stub_list } else { &StubList{} }
 	} else {
@@ -41,6 +42,7 @@ pub fn new_stub_base(parent &StubElement, stub_type StubType, name string, text_
 		comment: data.comment
 		receiver: data.receiver
 		additional: data.additional
+		identifier_text_range: identifier_text_range
 		text_range: text_range
 		stub_list: stub_list
 		parent_id: parent_id
@@ -142,7 +144,7 @@ pub fn (s StubBase) receiver() string {
 }
 
 pub fn (s StubBase) text_range() TextRange {
-	return s.text_range
+	return s.identifier_text_range
 }
 
 fn (s StubBase) get_psi() ?PsiElement {

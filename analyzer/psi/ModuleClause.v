@@ -18,7 +18,7 @@ fn (n &ModuleClause) identifier() ?PsiElement {
 
 pub fn (n &ModuleClause) identifier_text_range() TextRange {
 	if stub := n.get_stub() {
-		return stub.text_range
+		return stub.identifier_text_range
 	}
 
 	identifier := n.identifier() or { return TextRange{} }

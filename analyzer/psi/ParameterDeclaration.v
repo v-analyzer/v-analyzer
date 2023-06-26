@@ -22,7 +22,7 @@ pub fn (p &ParameterDeclaration) identifier() ?PsiElement {
 
 pub fn (p &ParameterDeclaration) identifier_text_range() TextRange {
 	if stub := p.get_stub() {
-		return stub.text_range
+		return stub.identifier_text_range
 	}
 
 	identifier := p.identifier() or { return TextRange{} }

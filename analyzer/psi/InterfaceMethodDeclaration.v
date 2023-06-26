@@ -14,7 +14,7 @@ pub fn (m InterfaceMethodDeclaration) identifier() ?PsiElement {
 
 pub fn (m InterfaceMethodDeclaration) identifier_text_range() TextRange {
 	if stub := m.get_stub() {
-		return stub.text_range
+		return stub.identifier_text_range
 	}
 
 	identifier := m.identifier() or { return TextRange{} }

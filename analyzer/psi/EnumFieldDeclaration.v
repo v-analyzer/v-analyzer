@@ -32,7 +32,7 @@ pub fn (f &EnumFieldDeclaration) identifier() ?PsiElement {
 
 pub fn (f EnumFieldDeclaration) identifier_text_range() TextRange {
 	if stub := f.get_stub() {
-		return stub.text_range
+		return stub.identifier_text_range
 	}
 
 	identifier := f.identifier() or { return TextRange{} }

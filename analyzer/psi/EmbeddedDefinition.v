@@ -15,7 +15,7 @@ pub fn (n &EmbeddedDefinition) owner() ?PsiElement {
 
 pub fn (n &EmbeddedDefinition) identifier_text_range() TextRange {
 	if stub := n.get_stub() {
-		return stub.text_range
+		return stub.identifier_text_range
 	}
 
 	identifier := n.identifier() or { return TextRange{} }

@@ -22,7 +22,7 @@ pub fn (e EnumDeclaration) identifier() ?PsiElement {
 
 pub fn (e EnumDeclaration) identifier_text_range() TextRange {
 	if stub := e.get_stub() {
-		return stub.text_range
+		return stub.identifier_text_range
 	}
 
 	identifier := e.identifier() or { return TextRange{} }

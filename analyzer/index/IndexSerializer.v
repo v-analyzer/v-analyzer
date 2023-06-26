@@ -79,6 +79,11 @@ pub fn (mut s IndexSerializer) serialize_stub(stub psi.StubBase) {
 	s.s.write_string(stub.additional)
 	s.s.write_string(stub.name)
 
+	s.s.write_int(stub.identifier_text_range.line)
+	s.s.write_int(stub.identifier_text_range.column)
+	s.s.write_int(stub.identifier_text_range.end_line)
+	s.s.write_int(stub.identifier_text_range.end_column)
+
 	s.s.write_int(stub.text_range.line)
 	s.s.write_int(stub.text_range.column)
 	s.s.write_int(stub.text_range.end_line)
