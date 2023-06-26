@@ -23,6 +23,18 @@ export function runWorkspace(
 	}
 }
 
+export function runFile(
+	_: ContextInit
+): Command {
+	return async () => {
+		const document = vscode.window.activeTextEditor.document;
+		await document.save();
+		const fileName = document.fileName
+
+		runVCommand(['run', fileName]);
+	}
+}
+
 /**
  * Show version info.
  */

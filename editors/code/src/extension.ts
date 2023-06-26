@@ -92,6 +92,7 @@ function createCommands(): Record<string, CommandFactory> {
 			},
 		},
 		runWorkspace: {enabled: commands.runWorkspace},
+		runFile: {enabled: commands.runFile},
 		version: {enabled: commands.version},
 		serverVersion: {enabled: commands.serverVersion},
 		showReferences: {enabled: commands.showReferences},

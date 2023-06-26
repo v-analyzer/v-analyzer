@@ -257,6 +257,7 @@
 		"workspaceContains:**/*.v",
 		"workspaceContains:**/v.mod",
 		"onCommand:v.runWorkspace",
+		"onCommand:v.runFile",
 		"onCommand:v.version",
 		"onCommand:v.serverVersion",
 		"onCommand:v-analyzer.restartServer",
