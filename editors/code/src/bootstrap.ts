@@ -1,6 +1,7 @@
 import {getWorkspaceConfig} from "./utils";
 import cp from "child_process";
 import {log} from "./log";
+import * as os from "os";
 
 /**
  * bootstrap returns the path to the v-analyzer binary.
@@ -33,7 +34,13 @@ export async function bootstrap(): Promise<string> {
 function getAnalyzerPath(): string {
 	const config = getWorkspaceConfig();
 	const explicitPath = config.get<string>('serverPath');
-	return explicitPath ? explicitPath : 'v-analyzer';
+	const path = explicitPath ? explicitPath : 'v-analyzer';
+
+	if (path.startsWith('~/') || path.startsWith('~\\')) {
+		return path.replace('~', os.homedir());
+	}
+
+	return path;
 }
 
 function isAnalyzerExecutableValid(path: string): boolean {
