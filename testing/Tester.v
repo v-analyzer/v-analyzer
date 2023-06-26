@@ -7,7 +7,7 @@ import loglib
 pub struct Tester {
 mut:
 	tests        []&Test
-	last_fixture &Fixture
+	last_fixture &Fixture = unsafe { nil }
 }
 
 pub fn (mut t Tester) create_or_reuse_fixture() &Fixture {
@@ -25,6 +25,8 @@ pub fn (mut t Tester) create_or_reuse_fixture() &Fixture {
 		println('Cannot run initialized request: ${err}')
 		return fixture
 	}
+
+	loglib.set_level(.warn) // we don't want to see info messages in tests
 
 	t.last_fixture = fixture
 	return fixture
@@ -59,8 +61,6 @@ pub fn (mut t Tester) stats() {
 }
 
 pub fn (mut t Tester) test(name string, test_func fn (mut test Test, mut fixture Fixture) !) {
-	loglib.set_level(.warn) // we don't want to see info messages in tests
-
 	watch := time.new_stopwatch(auto_start: true)
 	mut fixture := t.create_or_reuse_fixture()
 

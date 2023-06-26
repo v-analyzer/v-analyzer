@@ -6,15 +6,15 @@ import server.completion.providers
 mut t := testing.Tester{}
 
 t.test('struct field completion', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
-	fixture.configure_by_text('4.v', '
-		module field_completion
+	fixture.configure_by_text('1.v', '
+		module main
 
-		struct FooStruct {
+		struct Foo {
 			name string
 		}
 
 		fn main() {
-			foo := FooStruct{}
+			foo := Foo{}
 			foo./*caret*/
 		}
 	'.trim_indent())!
@@ -24,24 +24,22 @@ t.test('struct field completion', fn (mut t testing.Test, mut fixture testing.Fi
 })
 
 t.test('struct method completion', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
-	fixture.configure_by_text('3.v', '
-		module method_completion
+	fixture.configure_by_text('1.v', '
+		module main
 
-		struct FooStruct {
-			name string
-		}
+		struct Foo {}
 
-		fn (foo FooStruct) bar() {
+		fn (foo Foo) bar() {
 		}
 
 		fn main() {
-			foo := FooStruct{}
+			foo := Foo{}
 			foo./*caret*/
 		}
 	'.trim_indent())!
 
 	items := fixture.complete_at_cursor()
-	t.assert_has_only_completion_with_labels(items, 'name', 'bar()')!
+	t.assert_has_only_completion_with_labels(items, 'bar')!
 })
 
 t.test('variables completion', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
@@ -407,7 +405,7 @@ t.test('struct as type completion', fn (mut t testing.Test, mut fixture testing.
 	fixture.configure_by_text('foo/foo.v', '
 		module foo
 
-		pub struct StructAsTypeFoo {}
+		pub struct Foo {}
 	'.trim_indent())!
 
 	fixture.configure_by_text('1.v', '
@@ -420,15 +418,15 @@ t.test('struct as type completion', fn (mut t testing.Test, mut fixture testing.
 
 	items := fixture.complete_at_cursor()
 
-	t.assert_has_completion_with_insert_text(items, 'StructAsTypeFoo')!
-	t.assert_no_completion_with_insert_text(items, 'StructAsTypeFoo{$1}$0')!
+	t.assert_has_completion_with_insert_text(items, 'Foo')!
+	t.assert_no_completion_with_insert_text(items, 'Foo{$1}$0')!
 })
 
 t.test('struct as expression completion', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
 	fixture.configure_by_text('foo/foo.v', '
 		module foo
 
-		pub struct StructAsTypeFoo {}
+		pub struct Foo {}
 	'.trim_indent())!
 
 	fixture.configure_by_text('1.v', '
@@ -441,8 +439,8 @@ t.test('struct as expression completion', fn (mut t testing.Test, mut fixture te
 
 	items := fixture.complete_at_cursor()
 
-	t.assert_has_completion_with_insert_text(items, 'StructAsTypeFoo{$1}$0')!
-	t.assert_no_completion_with_insert_text(items, 'StructAsTypeFoo')!
+	t.assert_has_completion_with_insert_text(items, 'Foo{$1}$0')!
+	t.assert_no_completion_with_insert_text(items, 'Foo')!
 })
 
 t.test('imported modules completion', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
@@ -466,8 +464,8 @@ t.test('imported modules completion', fn (mut t testing.Test, mut fixture testin
 })
 
 t.test('function without params completion', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
-	fixture.configure_by_text('2.v', '
-		module function_without_params_test
+	fixture.configure_by_text('1.v', '
+		module main
 
 		fn function_without_params() {}
 

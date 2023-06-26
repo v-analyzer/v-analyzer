@@ -175,9 +175,9 @@ pub fn (_ &StubbedElementType) index_stub(stub &StubBase, mut sink IndexSink) {
 	if stub.stub_type == .field_declaration {
 		if parent := stub.parent_stub() {
 			if parent.stub_type() == .struct_declaration {
-				sink.occurrence(.fields_fingerprint, stub.additional)
+				sink.occurrence(.fields_fingerprint, stub.name)
 			} else if parent.stub_type() == .interface_declaration {
-				sink.occurrence(.interface_fields_fingerprint, stub.additional)
+				sink.occurrence(.interface_fields_fingerprint, stub.name)
 			}
 		}
 	}

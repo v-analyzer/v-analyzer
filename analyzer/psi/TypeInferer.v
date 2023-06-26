@@ -615,6 +615,9 @@ pub fn (t &TypeInferer) infer_index_type(typ types.Type) types.Type {
 	if typ is types.ArrayType {
 		return typ.inner
 	}
+	if typ is types.FixedArrayType {
+		return typ.inner
+	}
 	if typ is types.MapType {
 		return typ.value
 	}

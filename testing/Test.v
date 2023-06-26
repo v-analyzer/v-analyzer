@@ -13,7 +13,7 @@ pub enum TestState {
 
 pub struct Test {
 mut:
-	fixture  &Fixture
+	fixture  &Fixture = unsafe { nil }
 	name     string
 	state    TestState
 	message  string
@@ -125,6 +125,27 @@ pub fn (mut t Test) assert_no_implementation_with_name(items []lsp.Location, nam
 		if link_text == name {
 			t.fail('unexpected implementation "${name}" found')
 			return error('unexpected implementation "${name}" found')
+		}
+	}
+}
+
+pub fn (mut t Test) assert_has_super_with_name(items []lsp.Location, name string) ! {
+	for item in items {
+		link_text := t.fixture.text_at_range(item.range)
+		if link_text == name {
+			return
+		}
+	}
+
+	t.fail('expected super "${name}" not found')
+}
+
+pub fn (mut t Test) assert_no_super_with_name(items []lsp.Location, name string) ! {
+	for item in items {
+		link_text := t.fixture.text_at_range(item.range)
+		if link_text == name {
+			t.fail('unexpected super "${name}" found')
+			return error('unexpected super "${name}" found')
 		}
 	}
 }

@@ -16,7 +16,7 @@ struct TestFile {
 }
 
 pub fn (t TestFile) uri() lsp.DocumentUri {
-	return lsp.document_uri_from_path(filepath)
+	return lsp.document_uri_from_path(t.path)
 }
 
 [noinit]
@@ -101,7 +101,8 @@ pub fn (mut t Fixture) configure_by_file(path string) ! {
 }
 
 pub fn (mut t Fixture) configure_by_text(filename string, text string) ! {
-	content := text.replace('/*caret*/', '')
+	prepared_text := text + '\n\n' // add extra lines to make sure the caret is not at the end of the file
+	content := prepared_text.replace('/*caret*/', '')
 	abs_path := os.join_path(testing.temp_path, filename)
 	abs_path_without_name := os.dir(abs_path)
 	os.mkdir_all(abs_path_without_name)!
@@ -114,7 +115,7 @@ pub fn (mut t Fixture) configure_by_text(filename string, text string) ! {
 	t.current_file = TestFile{
 		path: abs_path
 		content: content.split_into_lines()
-		caret: t.caret_pos(text)
+		caret: t.caret_pos(prepared_text)
 	}
 
 	t.send_open_current_file_request()!
@@ -129,6 +130,19 @@ fn (mut t Fixture) send_open_current_file_request() ! {
 			version: 1
 			text: t.current_file.content.join('\n')
 		}
+	}) or {}
+
+	t.test_client.send[lsp.DidChangeTextDocumentParams, jsonrpc.Null]('textDocument/didChange',
+		lsp.DidChangeTextDocumentParams{
+		text_document: lsp.VersionedTextDocumentIdentifier{
+			uri: lsp.document_uri_from_path(t.current_file.path)
+			version: 1
+		}
+		content_changes: [
+			lsp.TextDocumentContentChangeEvent{
+				text: t.current_file.content.join('\n')
+			},
+		]
 	}) or {}
 }
 
@@ -205,11 +219,19 @@ pub fn (mut t Fixture) implementation(pos lsp.Position) []lsp.Location {
 	return links
 }
 
+pub fn (mut t Fixture) supers_at_cursor() []lsp.Location {
+	return t.supers(t.current_caret_pos())
+}
+
+pub fn (mut t Fixture) supers(pos lsp.Position) []lsp.Location {
+	return t.implementation(pos)
+}
+
 pub fn (mut t Fixture) close_file(path string) {
 	t.test_client.send[lsp.DidCloseTextDocumentParams, jsonrpc.Null]('textDocument/didClose',
 		lsp.DidCloseTextDocumentParams{
 		text_document: lsp.TextDocumentIdentifier{
-			uri: lsp.document_uri_from_path(filepath)
+			uri: lsp.document_uri_from_path(path)
 		}
 	}) or {}
 }

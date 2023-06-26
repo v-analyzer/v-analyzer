@@ -29,5 +29,6 @@ pub fn (n IfExpression) block() ?&Block {
 }
 
 pub fn (n IfExpression) else_branch() ?PsiElement {
-	return n.find_child_by_name('else_branch')
+	else_branch := n.find_child_by_type(.else_branch)?
+	return else_branch.last_child()
 }
