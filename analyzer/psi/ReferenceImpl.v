@@ -371,6 +371,12 @@ pub fn (r &SubResolver) walk_up(element PsiElement, mut processor PsiScopeProces
 			}
 		}
 
+		if mut run is SourceFile {
+			if !run.process_declarations(mut processor, last_parent) {
+				return false
+			}
+		}
+
 		if mut run is GenericParametersOwner {
 			if parameters := run.generic_parameters() {
 				params := parameters.parameters()

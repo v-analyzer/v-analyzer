@@ -417,6 +417,12 @@ pub fn create_element(node AstNode, containing_file &PsiFile) PsiElement {
 		}
 	}
 
+	if node.type_name == .source_file {
+		return SourceFile{
+			PsiElementImpl: base_node
+		}
+	}
+
 	return base_node
 }
 

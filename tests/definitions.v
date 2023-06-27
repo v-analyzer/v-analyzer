@@ -182,4 +182,34 @@ t.test('method definition', fn (mut t testing.Test, mut fixture testing.Fixture)
 	t.assert_definition_name(first, 'get_name')
 })
 
+t.test('top level variable', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+	fixture.configure_by_text('1.v', '
+		name := 100
+		println(na/*caret*/me)
+	'.trim_indent())!
+
+	locations := fixture.definition_at_cursor()
+	t.assert_has_definition(locations)!
+
+	first := locations.first()
+	t.assert_uri(first.target_uri, fixture.current_file_uri())
+	t.assert_definition_name(first, 'name')
+})
+
+t.test('top level variable from outer scope', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+	fixture.configure_by_text('1.v', '
+		name := 100
+		if true {
+			println(na/*caret*/me)
+		}
+	'.trim_indent())!
+
+	locations := fixture.definition_at_cursor()
+	t.assert_has_definition(locations)!
+
+	first := locations.first()
+	t.assert_uri(first.target_uri, fixture.current_file_uri())
+	t.assert_definition_name(first, 'name')
+})
+
 t.stats()
