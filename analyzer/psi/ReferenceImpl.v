@@ -252,6 +252,9 @@ pub fn (r &SubResolver) process_unqualified_resolve(mut processor PsiScopeProces
 	if !r.process_owner_generic_ts(mut processor) {
 		return false
 	}
+	if !r.process_os_module(mut processor) {
+		return false
+	}
 
 	builtin_elements := stubs_index.get_all_declarations_from_module('builtin', r.for_types)
 	for element in builtin_elements {
@@ -520,6 +523,16 @@ pub fn (r &SubResolver) process_struct_type_fields(struct_type types.StructType,
 		}
 	}
 	return true
+}
+
+pub fn (r &SubResolver) process_os_module(mut processor PsiScopeProcessor) bool {
+	if !r.containing_file.is_shell_script() {
+		return true
+	}
+
+	// In shell scripts OS module is imported implicitly, so we need to process it elements.
+	os_elements := stubs_index.get_all_declarations_from_module('os', r.for_types)
+	return r.process_elements(os_elements, mut processor)
 }
 
 pub fn (r &SubResolver) process_owner_generic_ts(mut processor PsiScopeProcessor) bool {

@@ -50,6 +50,11 @@ pub fn (p &PsiFile) is_test_file() bool {
 }
 
 [inline]
+pub fn (p &PsiFile) is_shell_script() bool {
+	return p.path.ends_with('.vsh')
+}
+
+[inline]
 pub fn (p &PsiFile) index_sink() ?StubIndexSink {
 	return stubs_index.get_sink_for_file(p.path)
 }

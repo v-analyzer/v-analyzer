@@ -150,9 +150,22 @@ pub fn (mut t Test) assert_no_super_with_name(items []lsp.Location, name string)
 	}
 }
 
-pub fn (mut t Test) assert_uri(left lsp.DocumentUri, right lsp.DocumentUri) {
+pub fn (mut t Test) assert_uri(left lsp.DocumentUri, right lsp.DocumentUri) ! {
 	if left.compare(right) != 0 {
 		t.fail('expected ${left}, but got ${right}')
+		return error('expected ${left}, but got ${right}')
+	}
+}
+
+pub fn (mut t Test) assert_uri_from_stdlib(left lsp.DocumentUri, filename string) ! {
+	if !left.contains('vlib') {
+		t.fail('expected ${left} to be inside "vlib"')
+		return error('expected ${left} to be inside "vlib"')
+	}
+
+	if !left.ends_with(filename) {
+		t.fail('expected ${left} to end with ${filename} but got ${left}')
+		return error('expected ${left} to end with ${filename} but got ${left}')
 	}
 }
 

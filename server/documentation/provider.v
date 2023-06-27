@@ -420,7 +420,9 @@ fn (mut p Provider) write_module_name(file &psi.PsiFile) {
 		fqn
 	}
 
-	p.sb.write_string('Module: **${name}**\n')
+	if name != '' {
+		p.sb.write_string('Module: **${name}**\n')
+	}
 }
 
 fn (mut p Provider) write_generic_parameters(element psi.GenericParametersOwner) {

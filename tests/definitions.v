@@ -16,7 +16,7 @@ t.test('simple variable definition', fn (mut t testing.Test, mut fixture testing
 	t.assert_has_definition(locations)!
 
 	first := locations.first()
-	t.assert_uri(first.target_uri, fixture.current_file_uri())
+	t.assert_uri(first.target_uri, fixture.current_file_uri())!
 	t.assert_definition_name(first, 'name')
 })
 
@@ -34,7 +34,7 @@ t.test('variable definition from outer scope', fn (mut t testing.Test, mut fixtu
 	t.assert_has_definition(locations)!
 
 	first := locations.first()
-	t.assert_uri(first.target_uri, fixture.current_file_uri())
+	t.assert_uri(first.target_uri, fixture.current_file_uri())!
 	t.assert_definition_name(first, 'name')
 })
 
@@ -65,7 +65,7 @@ t.test('variable definition from for loop', fn (mut t testing.Test, mut fixture 
 	t.assert_has_definition(locations)!
 
 	first := locations.first()
-	t.assert_uri(first.target_uri, fixture.current_file_uri())
+	t.assert_uri(first.target_uri, fixture.current_file_uri())!
 	t.assert_definition_name(first, 'index')
 })
 
@@ -82,7 +82,7 @@ t.test('variable definition from for in loop', fn (mut t testing.Test, mut fixtu
 	t.assert_has_definition(locations)!
 
 	first := locations.first()
-	t.assert_uri(first.target_uri, fixture.current_file_uri())
+	t.assert_uri(first.target_uri, fixture.current_file_uri())!
 	t.assert_definition_name(first, 'index')
 })
 
@@ -99,7 +99,7 @@ t.test('variable definition from if unwrapping', fn (mut t testing.Test, mut fix
 	t.assert_has_definition(locations)!
 
 	first := locations.first()
-	t.assert_uri(first.target_uri, fixture.current_file_uri())
+	t.assert_uri(first.target_uri, fixture.current_file_uri())!
 	t.assert_definition_name(first, 'value')
 })
 
@@ -119,7 +119,7 @@ t.test('variable definition from if unwrapping in else', fn (mut t testing.Test,
 	t.assert_has_definition(locations)!
 
 	first := locations.first()
-	t.assert_uri(first.target_uri, fixture.current_file_uri())
+	t.assert_uri(first.target_uri, fixture.current_file_uri())!
 	t.assert_definition_name(first, 'value')
 })
 
@@ -153,7 +153,7 @@ t.test('field definition', fn (mut t testing.Test, mut fixture testing.Fixture) 
 	locations := fixture.definition_at_cursor()
 	t.assert_has_definition(locations)!
 	first := locations.first()
-	t.assert_uri(first.target_uri, fixture.current_file_uri())
+	t.assert_uri(first.target_uri, fixture.current_file_uri())!
 	t.assert_definition_name(first, 'name')
 })
 
@@ -178,7 +178,7 @@ t.test('method definition', fn (mut t testing.Test, mut fixture testing.Fixture)
 	locations := fixture.definition_at_cursor()
 	t.assert_has_definition(locations)!
 	first := locations.first()
-	t.assert_uri(first.target_uri, fixture.current_file_uri())
+	t.assert_uri(first.target_uri, fixture.current_file_uri())!
 	t.assert_definition_name(first, 'get_name')
 })
 
@@ -192,7 +192,7 @@ t.test('top level variable', fn (mut t testing.Test, mut fixture testing.Fixture
 	t.assert_has_definition(locations)!
 
 	first := locations.first()
-	t.assert_uri(first.target_uri, fixture.current_file_uri())
+	t.assert_uri(first.target_uri, fixture.current_file_uri())!
 	t.assert_definition_name(first, 'name')
 })
 
@@ -208,8 +208,32 @@ t.test('top level variable from outer scope', fn (mut t testing.Test, mut fixtur
 	t.assert_has_definition(locations)!
 
 	first := locations.first()
-	t.assert_uri(first.target_uri, fixture.current_file_uri())
+	t.assert_uri(first.target_uri, fixture.current_file_uri())!
 	t.assert_definition_name(first, 'name')
+})
+
+t.test('shell script implicit os module', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+	fixture.configure_by_text('1.vsh', '
+		abs_/*caret*/path()
+	'.trim_indent())!
+
+	locations := fixture.definition_at_cursor()
+	t.assert_has_definition(locations)!
+
+	first := locations.first()
+	t.assert_uri_from_stdlib(first.target_uri, 'filepath.v')!
+})
+
+t.test('shell script implicit os module contstant', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+	fixture.configure_by_text('1.vsh', '
+		ar/*caret*/gs
+	'.trim_indent())!
+
+	locations := fixture.definition_at_cursor()
+	t.assert_has_definition(locations)!
+
+	first := locations.first()
+	t.assert_uri_from_stdlib(first.target_uri, 'os.c.v')!
 })
 
 t.stats()
