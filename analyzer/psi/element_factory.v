@@ -423,6 +423,18 @@ pub fn create_element(node AstNode, containing_file &PsiFile) PsiElement {
 		}
 	}
 
+	if node.type_name == .static_method_declaration {
+		return StaticMethodDeclaration{
+			PsiElementImpl: base_node
+		}
+	}
+
+	if node.type_name == .static_receiver {
+		return StaticReceiver{
+			PsiElementImpl: base_node
+		}
+	}
+
 	return base_node
 }
 

@@ -79,6 +79,8 @@ pub fn (s &StubBase) element_type() v.NodeType {
 		.root { .unknown }
 		.function_declaration { .function_declaration }
 		.method_declaration { .function_declaration }
+		.static_method_declaration { .static_method_declaration }
+		.static_receiver { .static_receiver }
 		.receiver { .receiver }
 		.signature { .signature }
 		.parameter_list { .parameter_list }

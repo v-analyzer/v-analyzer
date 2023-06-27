@@ -171,6 +171,7 @@ module.exports = grammar({
       $.global_var_declaration,
       $.type_declaration,
       $.function_declaration,
+      $.static_method_declaration,
       $.struct_declaration,
       $.enum_declaration,
       $.interface_declaration,
@@ -223,17 +224,30 @@ module.exports = grammar({
     // int | string | Foo
     _type_union_list: ($) => seq($.plain_type, repeat(seq(optional(terminator), '|', $.plain_type))),
 
-    function_declaration: ($) => prec.right(PREC.resolve,
-      seq(
-        field('attributes', optional($.attributes)),
-        optional($.visibility_modifiers),
-        'fn',
-        field('receiver', optional($.receiver)),
-        field('name', $._function_name),
-        field('generic_parameters', optional($.generic_parameters)),
-        field('signature', $.signature),
-        field('body', optional($.block)),
-      )),
+    function_declaration: ($) => prec.right(PREC.resolve, seq(
+      field('attributes', optional($.attributes)),
+      optional($.visibility_modifiers),
+      'fn',
+      field('receiver', optional($.receiver)),
+      field('name', $._function_name),
+      field('generic_parameters', optional($.generic_parameters)),
+      field('signature', $.signature),
+      field('body', optional($.block)),
+    )),
+
+    static_method_declaration: ($) => prec.right(PREC.resolve, seq(
+      field('attributes', optional($.attributes)),
+      optional($.visibility_modifiers),
+      'fn',
+      field('static_receiver', $.static_receiver),
+      '.',
+      field('name', $._function_name),
+      field('generic_parameters', optional($.generic_parameters)),
+      field('signature', $.signature),
+      field('body', optional($.block)),
+    )),
+
+    static_receiver: ($) => $.reference_expression,
 
     _function_name: ($) => choice($.identifier, $.overridable_operator),
 

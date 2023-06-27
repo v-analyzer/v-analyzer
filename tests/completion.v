@@ -497,4 +497,22 @@ t.test('function with params completion', fn (mut t testing.Test, mut fixture te
 	t.assert_no_completion_with_insert_text(items, 'function_with_params()$0')!
 })
 
+t.test('static method completion', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+	fixture.configure_by_text('1.v', '
+		module main
+
+		struct TestStruct {}
+
+		fn TestStruct.static_method() {}
+
+		fn main() {
+			TestStruct./*caret*/
+		}
+	'.trim_indent())!
+
+	items := fixture.complete_at_cursor()
+
+	t.assert_has_completion_with_insert_text(items, 'static_method()$0')!
+})
+
 t.stats()

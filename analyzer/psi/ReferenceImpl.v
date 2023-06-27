@@ -106,6 +106,13 @@ pub fn (r &SubResolver) process_qualifier_expression(qualifier PsiElement, mut p
 				}
 			}
 		}
+
+		if resolved is StructDeclaration {
+			methods := static_methods_list(resolved.get_type())
+			if !r.process_elements(methods, mut processor) {
+				return false
+			}
+		}
 	}
 
 	return true

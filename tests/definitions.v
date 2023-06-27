@@ -266,4 +266,25 @@ t.test('shell script local constant', fn (mut t testing.Test, mut fixture testin
 	t.assert_definition_name(first, 'some_constant')
 })
 
+t.test('static methods', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+	fixture.configure_by_text('1.vsh', '
+		module main
+
+		struct TestStruct {}
+
+		fn TestStruct.static_method() {}
+
+		fn main() {
+			TestStruct.static/*caret*/_method()
+		}
+	'.trim_indent())!
+
+	locations := fixture.definition_at_cursor()
+	t.assert_has_definition(locations)!
+
+	first := locations.first()
+	t.assert_uri(first.target_uri, fixture.current_file_uri())!
+	t.assert_definition_name(first, 'static_method')
+})
+
 t.stats()

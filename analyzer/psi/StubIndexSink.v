@@ -11,7 +11,7 @@ pub mut:
 }
 
 const non_fqn_keys = [StubIndexKey.global_variables, .methods_fingerprint, .fields_fingerprint,
-	.interface_methods_fingerprint, .interface_fields_fingerprint, .methods]
+	.interface_methods_fingerprint, .interface_fields_fingerprint, .methods, .static_methods]
 
 fn (mut s StubIndexSink) occurrence(key StubIndexKey, value string) {
 	module_fqn := s.module_fqn()

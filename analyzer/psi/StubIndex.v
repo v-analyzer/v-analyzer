@@ -8,7 +8,7 @@ import loglib
 __global stubs_index = StubIndex{}
 
 const (
-	count_index_keys               = 13 // StubIndexKey
+	count_index_keys               = 14 // StubIndexKey
 	count_stub_index_location_keys = 5 // StubIndexLocationKind
 )
 

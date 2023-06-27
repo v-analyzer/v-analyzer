@@ -6,6 +6,7 @@ module psi
 pub enum StubIndexKey as u8 {
 	functions
 	methods
+	static_methods
 	structs
 	interfaces
 	constants

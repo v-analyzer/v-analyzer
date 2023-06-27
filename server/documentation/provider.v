@@ -21,6 +21,11 @@ pub fn (mut p Provider) documentation(element psi.PsiElement) ?string {
 		return p.sb.str()
 	}
 
+	if element is psi.StaticMethodDeclaration {
+		p.static_method_documentation(element)?
+		return p.sb.str()
+	}
+
 	if element is psi.StructDeclaration {
 		p.struct_documentation(element)?
 		return p.sb.str()
@@ -147,6 +152,28 @@ fn (mut p Provider) function_documentation(element psi.FunctionOrMethodDeclarati
 	if receiver := element.receiver() {
 		p.sb.write_string(receiver.get_text())
 		p.sb.write_string(' ')
+	}
+	p.sb.write_string(element.name())
+	p.write_generic_parameters(element)
+	p.write_signature(signature)
+	p.sb.write_string('\n')
+	p.sb.write_string('```')
+	p.write_separator()
+	p.sb.write_string(element.doc_comment())
+}
+
+fn (mut p Provider) static_method_documentation(element psi.StaticMethodDeclaration) ? {
+	p.write_module_name(element.containing_file)
+	signature := element.signature()?
+	p.sb.write_string('```v\n')
+	if modifiers := element.visibility_modifiers() {
+		p.write_visibility_modifiers(modifiers)
+		p.sb.write_string(' ')
+	}
+	p.sb.write_string('fn ')
+	if receiver := element.receiver() {
+		p.sb.write_string(receiver.get_text())
+		p.sb.write_string('.')
 	}
 	p.sb.write_string(element.name())
 	p.write_generic_parameters(element)

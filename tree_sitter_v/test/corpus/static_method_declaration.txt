@@ -1,0 +1,87 @@
+================================================================================
+Simple static method
+================================================================================
+fn Foo.method() {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (static_method_declaration
+    (static_receiver
+      (reference_expression
+        (identifier)))
+    (identifier)
+    (signature
+      (parameter_list))
+    (block)))
+
+================================================================================
+Static method with attributes
+================================================================================
+[unsafe]
+fn Foo.method() {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (static_method_declaration
+    (attributes
+      (attribute
+        (attribute_expression
+          (value_attribute
+            (reference_expression)))))
+    (static_receiver
+      (reference_expression
+        (identifier)))
+    (identifier)
+    (signature
+      (parameter_list))
+    (block)))
+
+================================================================================
+Public static method
+================================================================================
+pub fn Foo.method() {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (static_method_declaration
+    (visibility_modifiers)
+    (static_receiver
+      (reference_expression
+        (identifier)))
+    (identifier)
+    (signature
+      (parameter_list))
+    (block)))
+
+================================================================================
+Static method with generics
+================================================================================
+fn Foo.method[T]() {}
+fn Foo.method[T, R]() {}
+--------------------------------------------------------------------------------
+
+(source_file
+  (static_method_declaration
+    (static_receiver
+      (reference_expression
+        (identifier)))
+    (identifier)
+    (generic_parameters
+      (generic_parameter
+        (identifier)))
+    (signature
+      (parameter_list))
+    (block))
+  (static_method_declaration
+    (static_receiver
+      (reference_expression
+        (identifier)))
+    (identifier)
+    (generic_parameters
+      (generic_parameter
+        (identifier))
+      (generic_parameter
+        (identifier)))
+    (signature
+      (parameter_list))
+    (block)))

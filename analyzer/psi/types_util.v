@@ -61,3 +61,15 @@ pub fn find_method(typ types.Type, name string) ?PsiElement {
 	}
 	return none
 }
+
+pub fn static_methods_list(typ types.Type) []PsiElement {
+	module_name := typ.module_name()
+	name := typ.name()
+	if module_name == '' || name == '' {
+		return []
+	}
+
+	key := '${module_name}.${name}'
+	methods := stubs_index.get_elements_by_name(.static_methods, key)
+	return methods
+}

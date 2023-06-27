@@ -146,6 +146,66 @@ fn (mut c ReferenceCompletionProcessor) execute(element psi.PsiElement) bool {
 		}
 	}
 
+	if element is psi.StaticMethodDeclaration {
+		receiver_text := if receiver := element.receiver() {
+			receiver.get_text() + ' '
+		} else {
+			''
+		}
+
+		mut insert_name := element.name()
+		if name.starts_with('$') {
+			insert_name = insert_name[1..]
+		}
+
+		signature := element.signature() or { return true }
+		has_params := signature.parameters().len > 0
+
+		generic_parameters_text := if generic_parameters := element.generic_parameters() {
+			generic_parameters.text_presentation()
+		} else {
+			''
+		}
+
+		text_ranga := c.ctx.element.text_range()
+		symbol := c.ctx.element.containing_file.symbol_at(psi.TextRange{
+			line: text_ranga.line
+			column: text_ranga.end_column + 1
+		})
+		paren_after_cursor := symbol == `(`
+
+		mut insert_text_builder := strings.new_builder(20)
+		insert_text_builder.write_string(insert_name)
+
+		// we don't want add extra parentheses if the cursor is before the parentheses
+		// It happens when user replaces the function name in the call, for example:
+		// 1. foo()
+		// 2. remove foo, type bar and autocomplete
+		// 3. bar()
+		// without this check we would get bar()()
+		if !paren_after_cursor {
+			if has_params {
+				insert_text_builder.write_string('($1)')
+			} else {
+				insert_text_builder.write_string('()')
+			}
+		}
+		insert_text_builder.write_string('$0')
+
+		c.result << lsp.CompletionItem{
+			label: '${name}'
+			kind: .method
+			label_details: lsp.CompletionItemLabelDetails{
+				detail: signature.get_text()
+			}
+			detail: 'fn ${receiver_text}${element.name()}${generic_parameters_text}${signature.get_text()}'
+			documentation: element.doc_comment()
+			insert_text: insert_text_builder.str()
+			insert_text_format: .snippet
+			sort_text: '1${name}' // functions should go second
+		}
+	}
+
 	if element is psi.StructDeclaration {
 		if name == 'map' || name == 'array' {
 			// it makes no sense to create these structures directly

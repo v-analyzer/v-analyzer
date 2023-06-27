@@ -192,3 +192,5 @@ res := os.execute('v fmt -w ${file_path}')
 if res.exit_code != 0 {
 	panic('v fmt failed:\n\n${res.output}')
 }
+
+println('Successfully generated `${file_path}`')

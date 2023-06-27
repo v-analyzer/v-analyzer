@@ -7,6 +7,8 @@ pub enum StubType as u8 {
 	root
 	function_declaration
 	method_declaration
+	static_method_declaration
+	static_receiver
 	receiver
 	signature
 	parameter_list
@@ -62,6 +64,8 @@ pub fn node_type_to_stub_type(typ tree_sitter_v.NodeType) StubType {
 	return match typ {
 		.function_declaration { .function_declaration }
 		.receiver { .receiver }
+		.static_method_declaration { .static_method_declaration }
+		.static_receiver { .static_receiver }
 		.signature { .signature }
 		.parameter_list { .parameter_list }
 		.parameter_declaration { .parameter_declaration }
@@ -136,6 +140,11 @@ pub fn (_ &StubbedElementType) index_stub(stub &StubBase, mut sink IndexSink) {
 		sink.occurrence(.methods_fingerprint, stub.additional)
 	}
 
+	if stub.stub_type == .static_method_declaration {
+		receiver := stub.receiver()
+		sink.occurrence(.static_methods, receiver)
+	}
+
 	if stub.stub_type == .struct_declaration {
 		name := stub.name()
 		if name.ends_with('Attribute') {
@@ -189,6 +198,16 @@ pub fn (_ &StubbedElementType) create_psi(stub &StubBase) ?PsiElement {
 
 	if stub_type == .function_declaration || stub_type == .method_declaration {
 		return FunctionOrMethodDeclaration{
+			PsiElementImpl: base_psi
+		}
+	}
+	if stub_type == .static_method_declaration {
+		return StaticMethodDeclaration{
+			PsiElementImpl: base_psi
+		}
+	}
+	if stub_type == .static_receiver {
+		return StaticReceiver{
 			PsiElementImpl: base_psi
 		}
 	}
@@ -355,9 +374,17 @@ pub fn (_ &StubbedElementType) create_psi(stub &StubBase) ?PsiElement {
 	return base_psi
 }
 
-pub fn (_ &StubbedElementType) get_receiver_type(psi FunctionOrMethodDeclaration) string {
-	receiver := psi.receiver() or { return '' }
-	typ := receiver.type_element() or { return '' }
+pub fn (_ &StubbedElementType) get_receiver_type(psi PsiNamedElement) string {
+	typ := if psi is FunctionOrMethodDeclaration {
+		receiver := psi.receiver() or { return '' }
+		receiver.type_element() or { return '' }
+	} else if psi is StaticMethodDeclaration {
+		receiver := psi.receiver() or { return '' }
+		PsiElement(receiver.PsiElementImpl)
+	} else {
+		return ''
+	}
+
 	text := typ.get_text().trim_string_left('&')
 
 	if text.contains('[') && !text.contains('map[') && !text.starts_with('[') {
@@ -402,6 +429,25 @@ pub fn (s &StubbedElementType) create_stub(psi PsiElement, parent_stub &StubElem
 		)
 	}
 
+	if psi is StaticMethodDeclaration {
+		text_range := psi.text_range()
+		identifier_text_range := psi.identifier_text_range()
+		comment := psi.doc_comment()
+
+		mut receiver_type := s.get_receiver_type(psi)
+		if receiver_type != '' {
+			if module_fqn != '' {
+				receiver_type = module_fqn + '.' + receiver_type
+			}
+		}
+
+		return new_stub_base(parent_stub, .static_method_declaration, psi.name(), identifier_text_range,
+			text_range,
+			comment: comment
+			receiver: receiver_type
+		)
+	}
+
 	if psi is StructDeclaration {
 		text_range := psi.text_range()
 		identifier_text_range := psi.identifier_text_range()
@@ -425,6 +471,10 @@ pub fn (s &StubbedElementType) create_stub(psi PsiElement, parent_stub &StubElem
 		return declaration_stub(*psi, parent_stub, .interface_method_declaration,
 			additional: psi.fingerprint()
 		)
+	}
+
+	if psi is StaticReceiver {
+		return declaration_stub(*psi, parent_stub, .static_receiver, include_text: true)
 	}
 
 	if psi is Receiver {

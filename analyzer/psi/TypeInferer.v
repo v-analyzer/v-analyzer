@@ -328,6 +328,11 @@ pub fn (t &TypeInferer) infer_type_impl(elem ?PsiElement) types.Type {
 		return t.process_signature(signature)
 	}
 
+	if element is StaticMethodDeclaration {
+		signature := element.signature() or { return types.unknown_type }
+		return t.process_signature(signature)
+	}
+
 	if element is InterfaceMethodDeclaration {
 		signature := element.signature() or { return types.unknown_type }
 		return t.process_signature(signature)
