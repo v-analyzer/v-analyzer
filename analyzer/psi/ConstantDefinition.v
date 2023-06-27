@@ -14,12 +14,7 @@ pub fn (c &ConstantDefinition) is_public() bool {
 
 pub fn (c &ConstantDefinition) get_type() types.Type {
 	expr := c.expression() or { return types.unknown_type }
-
-	if expr is PsiTypedElement {
-		return expr.get_type()
-	}
-
-	return types.unknown_type
+	return infer_type(expr)
 }
 
 fn (c &ConstantDefinition) identifier() ?PsiElement {
