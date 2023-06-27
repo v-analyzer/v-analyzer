@@ -339,3 +339,23 @@ String literal with escape sequences
   (simple_statement
     (literal
       (interpreted_string_literal))))
+
+================================================================================
+String literal with interpolation after \n
+================================================================================
+'v fmt failed:\n\n${res.output}'
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (literal
+      (interpreted_string_literal
+        (string_interpolation
+          (braced_interpolation_opening)
+          (interpolated_expression
+            (selector_expression
+              (reference_expression
+                (identifier))
+              (reference_expression
+                (identifier))))
+          (braced_interpolation_closing))))))

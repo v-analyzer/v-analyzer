@@ -359,10 +359,6 @@ bool scan_string_content(Scanner *scanner, TSLexer *lexer) {
                 advance(lexer);
             }
 
-            if (lexer->lookahead == '$') {
-                advance(lexer);
-            }
-
             continue;
         }
 
