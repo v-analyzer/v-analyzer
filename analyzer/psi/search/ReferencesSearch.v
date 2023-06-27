@@ -42,7 +42,7 @@ pub fn (r &ReferencesSearch) search(element psi.PsiElement) []psi.PsiElement {
 	resolved := resolve_identifier(element) or { return [] }
 	if resolved is psi.VarDefinition {
 		// variables cannot be used outside the scope where they are defined
-		scope := element.parent_of_type(.block) or { return [] }
+		scope := element.parent_of_any_type(.block, .source_file) or { return [] }
 		return r.search_in_scope(resolved, scope)
 	}
 	if resolved is psi.ParameterDeclaration {

@@ -328,12 +328,9 @@ pub fn (r &SubResolver) process_unqualified_resolve(mut processor PsiScopeProces
 		}
 	}
 
-	current_module_elements := stubs_index.get_all_declarations_from_module(module_name,
-		r.for_types)
-	for elem in current_module_elements {
-		if !processor.execute(elem) {
-			return false
-		}
+	mod_decls := stubs_index.get_all_declarations_from_module(module_name, r.for_types)
+	if !r.process_elements(mod_decls, mut processor) {
+		return false
 	}
 
 	return true

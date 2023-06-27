@@ -224,7 +224,7 @@ t.test('shell script implicit os module', fn (mut t testing.Test, mut fixture te
 	t.assert_uri_from_stdlib(first.target_uri, 'filepath.v')!
 })
 
-t.test('shell script implicit os module contstant', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+t.test('shell script implicit os module constant', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
 	fixture.configure_by_text('1.vsh', '
 		ar/*caret*/gs
 	'.trim_indent())!
@@ -234,6 +234,36 @@ t.test('shell script implicit os module contstant', fn (mut t testing.Test, mut 
 
 	first := locations.first()
 	t.assert_uri_from_stdlib(first.target_uri, 'os.c.v')!
+})
+
+t.test('shell script local function', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+	fixture.configure_by_text('1.vsh', '
+		fn some_fn() {}
+
+		/*caret*/some_fn()
+	'.trim_indent())!
+
+	locations := fixture.definition_at_cursor()
+	t.assert_has_definition(locations)!
+
+	first := locations.first()
+	t.assert_uri(first.target_uri, fixture.current_file_uri())!
+	t.assert_definition_name(first, 'some_fn')
+})
+
+t.test('shell script local constant', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+	fixture.configure_by_text('1.vsh', '
+		const some_constant = 100
+
+		/*caret*/some_constant
+	'.trim_indent())!
+
+	locations := fixture.definition_at_cursor()
+	t.assert_has_definition(locations)!
+
+	first := locations.first()
+	t.assert_uri(first.target_uri, fixture.current_file_uri())!
+	t.assert_definition_name(first, 'some_constant')
 })
 
 t.stats()

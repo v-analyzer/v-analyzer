@@ -108,6 +108,10 @@ pub fn (mut i IndexingRoot) save_index() ! {
 //
 // We deliberately do not index some of test files to speed up the indexing and searching process.
 fn (mut _ IndexingRoot) need_index(path string) bool {
+	if path.ends_with('.vsh') {
+		return true
+	}
+
 	if !path.ends_with('.v') {
 		return false
 	}

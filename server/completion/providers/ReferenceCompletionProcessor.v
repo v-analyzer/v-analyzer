@@ -1,10 +1,10 @@
 module providers
 
-import analyzer.psi
 import lsp
 import strings
-import server.completion
+import analyzer.psi
 import analyzer.lang
+import server.completion
 
 pub struct ReferenceCompletionProcessor {
 	file       &psi.PsiFile
