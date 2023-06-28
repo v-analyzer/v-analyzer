@@ -4,127 +4,63 @@ on:
   push:
 
 jobs:
-  build-linux:
-    runs-on: ubuntu-20.04
-    env:
-      CC: gcc
-    steps:
-      - name: Install V
-        id: install-v
-        uses: vlang/setup-v@v1.3
-        with:
-          check-latest: true
-      - name: Checkout v-analyzer
-        uses: actions/checkout@v3
-        with:
-          path: v-analyzer
-      - name: Install dependencies
-        run: |
-          mkdir -p ./v-analyzer/modules
-          git clone https://github.com/nedpals/vex ./v-analyzer/modules
-      - name: Compile
-        run: |
-          cd v-analyzer
-          v install
-          v ./cmd/v-analyzer -o v-analyzer
-      - name: Create ZIP archive
-        run: |
-          zip -r9 v-analyzer-linux ./v-analyzer/v-analyzer
-      - name: Create artifact
-        uses: actions/upload-artifact@v3.1.2
-        with:
-          name: v-analyzer-linux.zip
-          path: ./v-analyzer-linux.zip
+  dist:
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            target: windows-x86_64
+            bin_ext: .exe
+            cc: msvc
+          - os: ubuntu-20.04
+            target: linux-x86_64
+            cc: gcc
+          - os: macos-latest
+            target: darwin-x86_64
+            cc: clang
+          - os: self-hosted
+            target: darwin-arm64
+            cc: clang
 
-  build-macos:
-    runs-on: macos-latest
+    name: dist (${{ matrix.target }})
+    runs-on: ${{ matrix.os }}
     env:
-      CC: clang
-    steps:
-      - name: Install V
-        id: install-v
-        uses: vlang/setup-v@v1.3
-        with:
-          check-latest: true
-      - name: Checkout v-analyzer
-        uses: actions/checkout@v3
-        with:
-          path: v-analyzer
-      - name: Install dependencies
-        run: |
-          mkdir -p ./v-analyzer/modules
-          git clone https://github.com/nedpals/vex ./v-analyzer/modules
-      - name: Compile
-        run: |
-          cd v-analyzer
-          v install
-          v ./cmd/v-analyzer -o v-analyzer
-      - name: Create ZIP archive
-        run: |
-          zip -r9 v-analyzer-darwin ./v-analyzer/v-analyzer
-      - name: Create artifact
-        uses: actions/upload-artifact@v3.1.2
-        with:
-          name: v-analyzer-darwin.zip
-          path: ./v-analyzer-darwin.zip
+      CC: ${{ matrix.cc }}
 
-  build-macos-arm64:
-    runs-on: self-hosted
-    env:
-      CC: clang
     steps:
       - name: Install V
         id: install-v
         uses: vlang/setup-v@v1.3
         with:
           check-latest: true
-      - name: Checkout v-analyzer
-        uses: actions/checkout@v3
-        with:
-          path: v-analyzer
-      - name: Compile
-        run: |
-          cd v-analyzer
-          v install
-          v ./cmd/v-analyzer -o v-analyzer
-      - name: Create ZIP archive
-        run: |
-          zip -r9 v-analyzer-darwin-amd64 ./v-analyzer/v-analyzer
-      - name: Create artifact
-        uses: actions/upload-artifact@v3.1.2
-        with:
-          name: v-analyzer-darwin-amd64.zip
-          path: ./v-analyzer-darwin-amd64.zip
 
-  build-windows:
-    runs-on: windows-latest
-    env:
-      CC: msvc
-    steps:
-      - uses: msys2/setup-msys2@v2
-      - name: Install V
-        id: install-v
-        uses: vlang/setup-v@v1.3
-        with:
-          check-latest: true
       - name: Checkout v-analyzer
         uses: actions/checkout@v3
         with:
           path: v-analyzer
+
       - name: Compile
         run: |
           cd v-analyzer
           v install
-          v ./cmd/v-analyzer -o v-analyzer.exe
+          v ./cmd/v-analyzer -o v-analyzer${{ matrix.bin_ext }}
+
       - name: Create ZIP archive
+        if: matrix.os != 'windows-latest'
+        run: |
+          zip -r9 v-analyzer-${{ matrix.target }} ./v-analyzer/v-analyzer
+
+      - name: Create ZIP archive
+        if: matrix.os == 'windows-latest'
         shell: msys2 {0}
         run: |
-           powershell Compress-Archive ".\v-analyzer\v-analyzer.exe" v-analyzer-windows
-        # NB: the powershell Compress-Archive line is from:
+          powershell Compress-Archive ".\v-analyzer\v-analyzer.exe" v-analyzer-${{ matrix.target }}.zip
+        # Note: the powershell Compress-Archive line is from:
         # https://superuser.com/a/1336434/194881
         # It is needed, because `zip` is not installed by default :-|
+
       - name: Create artifact
         uses: actions/upload-artifact@v3.1.2
         with:
-          name: v-analyzer-windows.zip
-          path: ./v-analyzer-windows.zip
+          name: v-analyzer-${{ matrix.target }}.zip
+          path: ./v-analyzer-${{ matrix.target }}.zip

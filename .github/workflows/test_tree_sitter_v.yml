@@ -5,45 +5,33 @@ on:
   pull_request:
 
 jobs:
-  test-linux:
-    runs-on: ubuntu-20.04
-    env:
-      CC: gcc
-    steps:
-      - name: Install minimal stable Rust
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-      - name: Install Tree-sitter
-        run: |
-          cargo install tree-sitter-cli
-      - name: Checkout v-analyzer
-        uses: actions/checkout@v3
-        with:
-          path: v-analyzer
-      - name: Run tests
-        run: |
-          cd v-analyzer/tree_sitter_v
-          tree-sitter test
+  test:
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-20.04
+          - os: macos-latest
+          - os: self-hosted
 
-  test-macos:
-    runs-on: macos-latest
-    env:
-      CC: clang
+    name: test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+
     steps:
-      - name: Install minimal stable Rust
-        uses: actions-rs/toolchain@v1
+      - name: Install V
+        id: install-v
+        uses: vlang/setup-v@v1.3
         with:
-          profile: minimal
-          toolchain: stable
+          check-latest: true
+
       - name: Install Tree-sitter
         run: |
           cargo install tree-sitter-cli
+
       - name: Checkout v-analyzer
         uses: actions/checkout@v3
         with:
           path: v-analyzer
+
       - name: Run tests
         run: |
           cd v-analyzer/tree_sitter_v
