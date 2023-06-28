@@ -68,6 +68,34 @@ jobs:
           name: v-analyzer-darwin.zip
           path: ./v-analyzer-darwin.zip
 
+  build-macos-arm64:
+    runs-on: self-hosted
+    env:
+      CC: clang
+    steps:
+      - name: Install V
+        id: install-v
+        uses: vlang/setup-v@v1.3
+        with:
+          check-latest: true
+      - name: Checkout v-analyzer
+        uses: actions/checkout@v3
+        with:
+          path: v-analyzer
+      - name: Compile
+        run: |
+          cd v-analyzer
+          v install
+          v ./cmd/v-analyzer -o v-analyzer
+      - name: Create ZIP archive
+        run: |
+          zip -r9 v-analyzer-darwin-amd64 ./v-analyzer/v-analyzer
+      - name: Create artifact
+        uses: actions/upload-artifact@v3.1.2
+        with:
+          name: v-analyzer-darwin-amd64.zip
+          path: ./v-analyzer-darwin-amd64.zip
+
   build-windows:
     runs-on: windows-latest
     env:
