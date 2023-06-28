@@ -38,7 +38,7 @@ Or, you can specify the path to the binary in your VS Code settings:
 
 ```json
 {
-  "v-analyzer.serverPath": "/path/to/v-analyzer/bin"
+  "v-analyzer.serverPath": "/path/to/v-analyzer/bin/v-analyzer"
 }
 ```
 
