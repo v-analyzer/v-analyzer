@@ -25,6 +25,7 @@ pub mut:
 	enable_run_lens              bool = true
 	enable_inheritors_lens       bool = true
 	enable_super_interfaces_lens bool = true
+	enable_run_tests_lens        bool = true
 }
 
 pub struct EditorConfig {
@@ -144,6 +145,13 @@ pub fn from_toml(root string, path string, content string) !EditorConfig {
 		true // default to true
 	} else {
 		enable_super_interfaces_lens.bool()
+	}
+
+	enable_run_tests_lens := code_lens_table.value('enable_run_tests_lens')
+	config.code_lens.enable_run_tests_lens = if enable_run_tests_lens is toml.Null {
+		true // default to true
+	} else {
+		enable_run_tests_lens.bool()
 	}
 
 	return config

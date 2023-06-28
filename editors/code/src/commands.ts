@@ -3,7 +3,7 @@ import * as path from "path";
 import * as lc from "vscode-languageclient";
 import * as ra from "./lsp_ext";
 import {runVCommand, runVCommandCallback} from './exec';
-import {ContextInit, Command} from "./ctx";
+import {Command, ContextInit} from "./ctx";
 import {LanguageClient} from "vscode-languageclient/node";
 import {spawnSync} from "child_process";
 import {isVlangDocument, isVlangEditor, sleep} from "./utils";
@@ -35,6 +35,18 @@ export function runFile(
 	}
 }
 
+export function runTests(
+	_: ContextInit
+): Command {
+	return async (uri: string, name?: string) => {
+		const args = ['test', uri];
+		if (name) {
+			args.push('-run-only', `"*.${name}"`);
+		}
+		runVCommand(args);
+	};
+}
+
 /**
  * Show version info.
  */
@@ -62,7 +74,7 @@ export function serverVersion(
 			void vscode.window.showWarningMessage(`v-analyzer server is not running`);
 			return;
 		}
-		const { stdout } = spawnSync(ctx.serverPath, ["--version"], { encoding: "utf8" });
+		const {stdout} = spawnSync(ctx.serverPath, ["--version"], {encoding: "utf8"});
 		const versionString = stdout.slice(`v-analyzer version`.length).trim();
 
 		void vscode.window.showInformationMessage(`v-analyzer version: ${versionString}`);
@@ -96,6 +108,7 @@ export function viewStubTree(ctx: ContextInit): Command {
 	const tdcp = new (class implements vscode.TextDocumentContentProvider {
 		readonly uri = vscode.Uri.parse("v-analyzer-file-stub-tree://viewStubTree/file.stree");
 		readonly eventEmitter = new vscode.EventEmitter<vscode.Uri>();
+
 		constructor() {
 			vscode.workspace.onDidChangeTextDocument(
 				this.onDidChangeTextDocument,
@@ -116,6 +129,7 @@ export function viewStubTree(ctx: ContextInit): Command {
 				void sleep(10).then(() => this.eventEmitter.fire(this.uri));
 			}
 		}
+
 		private onDidChangeActiveTextEditor(editor: vscode.TextEditor | undefined) {
 			if (editor && isVlangEditor(editor)) {
 				this.eventEmitter.fire(this.uri);

@@ -12,9 +12,11 @@ pub struct CodeLensVisitor {
 	cfg             config.CodeLensConfig
 	uri             lsp.DocumentUri
 	containing_file &psi.PsiFile
+	is_test_file    bool
 mut:
-	run_lens_seen bool
-	result        []lsp.CodeLens
+	run_lens_seen   bool
+	first_test_seen bool
+	result          []lsp.CodeLens
 }
 
 pub fn new_visitor(cfg config.CodeLensConfig, uri lsp.DocumentUri, containing_file &psi.PsiFile) CodeLensVisitor {
@@ -22,6 +24,7 @@ pub fn new_visitor(cfg config.CodeLensConfig, uri lsp.DocumentUri, containing_fi
 		cfg: cfg
 		uri: uri
 		containing_file: containing_file
+		is_test_file: containing_file.is_test_file()
 	}
 }
 
@@ -41,6 +44,10 @@ pub fn (mut v CodeLensVisitor) process_node(node psi.AstNode) {
 		v.add_run_lens(node)
 	}
 
+	if node.type_name == .function_declaration && v.is_test_file && v.cfg.enable_run_tests_lens {
+		v.add_run_test_lens(node)
+	}
+
 	if node.type_name == .interface_declaration && v.cfg.enable_inheritors_lens {
 		v.add_interface_implementations_lens(node)
 	}
@@ -48,6 +55,37 @@ pub fn (mut v CodeLensVisitor) process_node(node psi.AstNode) {
 	if node.type_name == .struct_declaration && v.cfg.enable_super_interfaces_lens {
 		v.add_super_interfaces_lens(node)
 	}
+}
+
+// add_run_test_lens adds a CodeLens for running the test function or whole file.
+pub fn (mut v CodeLensVisitor) add_run_test_lens(node psi.AstNode) {
+	name_node := node.child_by_field_name('name') or { return }
+	name := name_node.text(v.containing_file.source_text)
+
+	if !name.starts_with('test_') {
+		return
+	}
+
+	v.add_lens(node, lsp.Command{
+		title: '▶ Run test'
+		command: 'v-analyzer.runTests'
+		arguments: [
+			v.uri.path(),
+			name,
+		]
+	})
+
+	if !v.first_test_seen {
+		v.add_lens(node, lsp.Command{
+			title: 'all file tests'
+			command: 'v-analyzer.runTests'
+			arguments: [
+				v.uri.path(),
+			]
+		})
+	}
+
+	v.first_test_seen = true
 }
 
 // add_run_lens adds a CodeLens for running the main function.

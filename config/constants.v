@@ -154,4 +154,13 @@ enable_inheritors_lens = true
 # struct Boo {}
 # ```
 enable_super_interfaces_lens = true
+
+# Specifies whenever to show code lenses for test functions to run test or whole file or not.
+# Example:
+# ```
+# ▶ Run test | all file tests
+# fn test_foo() {}
+# ```
+# Note: "all file tests" is shown only for the first test function in the file.
+enable_run_tests_lens = true
 '

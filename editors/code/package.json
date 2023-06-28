@@ -258,6 +258,7 @@
 		"workspaceContains:**/v.mod",
 		"onCommand:v.runWorkspace",
 		"onCommand:v.runFile",
+		"onCommand:v.runTests",
 		"onCommand:v.version",
 		"onCommand:v.serverVersion",
 		"onCommand:v-analyzer.restartServer",
