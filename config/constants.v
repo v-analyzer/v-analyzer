@@ -36,6 +36,9 @@ pub const (
 	// analyzer_stubs_path is the path to the directory containing the
 	// unpacked stub files for the analyzer.
 	analyzer_stubs_path                = os.join_path(analyzer_configs_path, 'metadata')
+
+	// analyzer_stubs_version_path is the path to the file containing the version of the stubs.
+	analyzer_stubs_version_path        = os.join_path(analyzer_stubs_path, 'version.txt')
 )
 
 pub const default = '# Specifies the path to the V installation directory with `v` executable.

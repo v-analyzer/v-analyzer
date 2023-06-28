@@ -39,6 +39,10 @@ pub mut:
 	vmodules_root string
 	vroot         string
 	cache_dir     string
+	// stubs_version incremented on each change in stubs
+	//
+	// See also `LanguageServer.setup_stubs()`
+	stubs_version int = 1
 
 	initialization_options []string
 

@@ -63,7 +63,7 @@ fn (_ ResolveSemanticVisitor) highlight_node(node psi.PsiElement, root psi.PsiEl
 	} else if res is psi.ConstantDefinition {
 		result << element_to_semantic(first_child, .property)
 	} else if res is psi.StructDeclaration {
-		if res.name() != 'string' {
+		if res.name() != 'string' && res.module_name() != 'metadata.stubs.attributes' {
 			result << element_to_semantic(first_child, .struct_)
 		}
 	} else if res is psi.EnumDeclaration {

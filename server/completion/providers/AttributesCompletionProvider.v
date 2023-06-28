@@ -24,6 +24,7 @@ const attributes = [
 	'console',
 	'keep_args_alive',
 	'omitempty',
+	'json_as_number',
 ]
 
 const attributes_with_colon = [

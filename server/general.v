@@ -324,8 +324,32 @@ fn (mut ls LanguageServer) setup_config_dir() {
 
 fn (mut ls LanguageServer) setup_stubs() {
 	if os.exists(config.analyzer_stubs_path) {
-		// TODO: check if the stubs are up to date
-		return
+		if os.exists(config.analyzer_stubs_version_path) {
+			version_string := os.read_file(config.analyzer_stubs_version_path) or {
+				ls.client.log_message('Failed to read stubs version: ${err}', .error)
+
+				loglib.with_fields({
+					'err': err.str()
+				}).error('Failed to read stubs version')
+				'0'
+			}
+			version := version_string.int()
+
+			if version == ls.stubs_version {
+				return
+			}
+		}
+
+		ls.client.log_message('Stubs version mismatch, unpacking new stubs', .info)
+		loglib.info('Stubs version mismatch, unpacking new stubs')
+
+		os.rmdir_all(config.analyzer_stubs_path) or {
+			ls.client.log_message('Failed to remove old stubs: ${err}', .error)
+
+			loglib.with_fields({
+				'err': err.str()
+			}).error('Failed to remove old stubs')
+		}
 	}
 
 	stubs := metadata.embed_fs()
@@ -335,6 +359,14 @@ fn (mut ls LanguageServer) setup_stubs() {
 		loglib.with_fields({
 			'err': err.str()
 		}).error('Failed to unpack stubs')
+	}
+
+	os.write_file(config.analyzer_stubs_version_path, ls.stubs_version.str()) or {
+		ls.client.log_message('Failed to write stubs version: ${err}', .error)
+
+		loglib.with_fields({
+			'err': err.str()
+		}).error('Failed to write stubs version')
 	}
 }
 
