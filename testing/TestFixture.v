@@ -19,7 +19,7 @@ pub fn (t TestFile) uri() lsp.DocumentUri {
 	return lsp.document_uri_from_path(t.path)
 }
 
-[noinit]
+[heap; noinit]
 pub struct Fixture {
 mut:
 	ls           &server.LanguageServer
@@ -54,8 +54,13 @@ pub fn new_fixture() &Fixture {
 	}
 }
 
-pub fn (mut t Fixture) initialize() !lsp.InitializeResult {
+pub fn (mut t Fixture) initialize(with_stdlib bool) !lsp.InitializeResult {
 	os.mkdir_all(testing.temp_path)!
+
+	mut options := ['no-index-save', 'no-diagnostics']
+	if !with_stdlib {
+		options << 'no-stdlib'
+	}
 
 	result := t.test_client.send[lsp.InitializeParams, lsp.InitializeResult]('initialize',
 		lsp.InitializeParams{
@@ -66,7 +71,7 @@ pub fn (mut t Fixture) initialize() !lsp.InitializeResult {
 		}
 		root_uri: lsp.document_uri_from_path(testing.temp_path)
 		root_path: testing.temp_path
-		initialization_options: 'no-index-save'
+		initialization_options: options.join(' ')
 		capabilities: lsp.ClientCapabilities{}
 		trace: ''
 		workspace_folders: []

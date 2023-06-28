@@ -12,7 +12,7 @@ pub fn (mut b BenchmarkRunner) create_or_reuse_fixture() &Fixture {
 	}
 
 	mut fixture := new_fixture()
-	fixture.initialize() or {
+	fixture.initialize(false) or {
 		println('Cannot initialize fixture: ${err}')
 		return fixture
 	}

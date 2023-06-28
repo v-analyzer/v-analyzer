@@ -5,6 +5,8 @@ import lsp
 import time
 import strings
 
+pub type TestFunc = fn (mut test Test, mut fixture Fixture) !
+
 pub enum TestState {
 	passed
 	failed
@@ -13,11 +15,21 @@ pub enum TestState {
 
 pub struct Test {
 mut:
-	fixture  &Fixture = unsafe { nil }
-	name     string
-	state    TestState
-	message  string
-	duration time.Duration
+	fixture     &Fixture = unsafe { nil }
+	name        string
+	func        TestFunc
+	state       TestState
+	message     string
+	with_stdlib bool
+	duration    time.Duration
+}
+
+pub fn (mut t Test) run(mut fixture Fixture) {
+	watch := time.new_stopwatch(auto_start: true)
+	t.fixture = fixture
+	t.func(mut t, mut fixture) or {}
+	t.duration = watch.elapsed()
+	t.print()
 }
 
 pub fn (mut t Test) fail(msg string) {
@@ -189,7 +201,7 @@ pub fn (t Test) print() {
 		sb.write_string(term.red('[FAILED] '))
 		sb.write_string(t.name)
 		sb.write_string('\n')
-		sb.write_string('  ${t.message}\n')
+		sb.write_string('      ${t.message}\n')
 	} else if t.state == .passed {
 		sb.write_string(term.green('[PASSED] '))
 		sb.write_string(t.name)

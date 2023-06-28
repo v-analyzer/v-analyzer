@@ -2,10 +2,11 @@ module main
 
 import testing
 
-mut t := testing.Tester{}
+fn supers() testing.Tester {
+	mut t := testing.with_name('supers')
 
-t.test('super interface with method', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
-	fixture.configure_by_text('1.v', '
+	t.test('super interface with method', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+		fixture.configure_by_text('1.v', '
 		module main
 
 		interface IFoo {
@@ -15,14 +16,14 @@ t.test('super interface with method', fn (mut t testing.Test, mut fixture testin
 		struct /*caret*/FooImpl {}
 
 		fn (f FooImpl) foo() {}
-	'.trim_indent())!
+		'.trim_indent())!
 
-	locations := fixture.supers_at_cursor()
-	t.assert_has_super_with_name(locations, 'IFoo')!
-})
+		locations := fixture.supers_at_cursor()
+		t.assert_has_super_with_name(locations, 'IFoo')!
+	})
 
-t.test('super interface with field', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
-	fixture.configure_by_text('1.v', '
+	t.test('super interface with field', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+		fixture.configure_by_text('1.v', '
 		module main
 
 		interface IFoo {
@@ -32,14 +33,14 @@ t.test('super interface with field', fn (mut t testing.Test, mut fixture testing
 		struct /*caret*/FooImpl {
 			foo string
 		}
-	'.trim_indent())!
+		'.trim_indent())!
 
-	locations := fixture.supers_at_cursor()
-	t.assert_has_super_with_name(locations, 'IFoo')!
-})
+		locations := fixture.supers_at_cursor()
+		t.assert_has_super_with_name(locations, 'IFoo')!
+	})
 
-t.test('super interface with method and field', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
-	fixture.configure_by_text('1.v', '
+	t.test('super interface with method and field', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+		fixture.configure_by_text('1.v', '
 		module main
 
 		interface IFoo {
@@ -52,14 +53,14 @@ t.test('super interface with method and field', fn (mut t testing.Test, mut fixt
 		}
 
 		fn (f FooImpl) foo() {}
-	'.trim_indent())!
+		'.trim_indent())!
 
-	locations := fixture.supers_at_cursor()
-	t.assert_has_super_with_name(locations, 'IFoo')!
-})
+		locations := fixture.supers_at_cursor()
+		t.assert_has_super_with_name(locations, 'IFoo')!
+	})
 
-t.test('super interface with method and field with mismatched type', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
-	fixture.configure_by_text('1.v', '
+	t.test('super interface with method and field with mismatched type', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+		fixture.configure_by_text('1.v', '
 		module main
 
 		interface IFoo {
@@ -72,14 +73,14 @@ t.test('super interface with method and field with mismatched type', fn (mut t t
 		}
 
 		fn (f FooImpl) foo() {}
-	'.trim_indent())!
+		'.trim_indent())!
 
-	locations := fixture.supers_at_cursor()
-	t.assert_no_super_with_name(locations, 'IFoo')!
-})
+		locations := fixture.supers_at_cursor()
+		t.assert_no_super_with_name(locations, 'IFoo')!
+	})
 
-t.test('super method', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
-	fixture.configure_by_text('1.v', '
+	t.test('super method', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+		fixture.configure_by_text('1.v', '
 		module main
 
 		interface IFoo {
@@ -89,10 +90,11 @@ t.test('super method', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
 		struct FooImpl {}
 
 		fn (f FooImpl) /*caret*/foo() {}
-	'.trim_indent())!
+		'.trim_indent())!
 
-	locations := fixture.supers_at_cursor()
-	t.assert_has_super_with_name(locations, 'foo')!
-})
+		locations := fixture.supers_at_cursor()
+		t.assert_has_super_with_name(locations, 'foo')!
+	})
 
-t.stats()
+	return t
+}

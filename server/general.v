@@ -93,13 +93,14 @@ pub fn (mut ls LanguageServer) initialized(mut wr ResponseWriter) {
 		if vmodules_root := ls.vmodules_root() {
 			ls.analyzer_instance.indexer.add_indexing_root(vmodules_root, .modules, ls.cache_dir)
 		}
-		if stubs_root := ls.stubs_root() {
-			ls.analyzer_instance.indexer.add_indexing_root(stubs_root, .stubs, ls.cache_dir)
-		}
 		if vlib_root := ls.vlib_root() {
 			ls.analyzer_instance.indexer.add_indexing_root(vlib_root, .standard_library,
 				ls.cache_dir)
 		}
+	}
+
+	if stubs_root := ls.stubs_root() {
+		ls.analyzer_instance.indexer.add_indexing_root(stubs_root, .stubs, ls.cache_dir)
 	}
 
 	ls.analyzer_instance.indexer.add_indexing_root(ls.root_uri.path(), .workspace, ls.cache_dir)

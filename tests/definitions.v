@@ -2,110 +2,111 @@ module main
 
 import testing
 
-mut t := testing.Tester{}
+fn definitions() testing.Tester {
+	mut t := testing.with_name('definitions')
 
-t.test('simple variable definition', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
-	fixture.configure_by_text('1.v', '
+	t.test('simple variable definition', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+		fixture.configure_by_text('1.v', '
 		fn main() {
 			name := 100
 			println(na/*caret*/me)
 		}
-	'.trim_indent())!
+		'.trim_indent())!
 
-	locations := fixture.definition_at_cursor()
-	t.assert_has_definition(locations)!
+		locations := fixture.definition_at_cursor()
+		t.assert_has_definition(locations)!
 
-	first := locations.first()
-	t.assert_uri(first.target_uri, fixture.current_file_uri())!
-	t.assert_definition_name(first, 'name')
-})
+		first := locations.first()
+		t.assert_uri(first.target_uri, fixture.current_file_uri())!
+		t.assert_definition_name(first, 'name')
+	})
 
-t.test('variable definition from outer scope', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
-	fixture.configure_by_text('1.v', '
+	t.test('variable definition from outer scope', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+		fixture.configure_by_text('1.v', '
 		fn main() {
 			name := 100
 			if true {
 				println(na/*caret*/me)
 			}
 		}
-	'.trim_indent())!
+		'.trim_indent())!
 
-	locations := fixture.definition_at_cursor()
-	t.assert_has_definition(locations)!
+		locations := fixture.definition_at_cursor()
+		t.assert_has_definition(locations)!
 
-	first := locations.first()
-	t.assert_uri(first.target_uri, fixture.current_file_uri())!
-	t.assert_definition_name(first, 'name')
-})
+		first := locations.first()
+		t.assert_uri(first.target_uri, fixture.current_file_uri())!
+		t.assert_definition_name(first, 'name')
+	})
 
-t.test('variable definition from outer scope after inner scope', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
-	fixture.configure_by_text('1.v', '
+	t.test('variable definition from outer scope after inner scope', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+		fixture.configure_by_text('1.v', '
 		fn main() {
 			if true {
-				println(na/*caret*/me)
+				println(so/*caret*/me_variable)
 			}
-			name := 100
+			some_variable := 100
 		}
-	'.trim_indent())!
+		'.trim_indent())!
 
-	locations := fixture.definition_at_cursor()
-	t.assert_no_definition(locations)!
-})
+		locations := fixture.definition_at_cursor()
+		t.assert_no_definition(locations)!
+	})
 
-t.test('variable definition from for loop', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
-	fixture.configure_by_text('1.v', '
+	t.test('variable definition from for loop', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+		fixture.configure_by_text('1.v', '
 		fn main() {
 			for index := 0; index < 100; index++ {
 				println(inde/*caret*/x)
 			}
 		}
-	'.trim_indent())!
+		'.trim_indent())!
 
-	locations := fixture.definition_at_cursor()
-	t.assert_has_definition(locations)!
+		locations := fixture.definition_at_cursor()
+		t.assert_has_definition(locations)!
 
-	first := locations.first()
-	t.assert_uri(first.target_uri, fixture.current_file_uri())!
-	t.assert_definition_name(first, 'index')
-})
+		first := locations.first()
+		t.assert_uri(first.target_uri, fixture.current_file_uri())!
+		t.assert_definition_name(first, 'index')
+	})
 
-t.test('variable definition from for in loop', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
-	fixture.configure_by_text('1.v', '
+	t.test('variable definition from for in loop', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+		fixture.configure_by_text('1.v', '
 		fn main() {
 			for index in 0 .. 100 {
 				println(inde/*caret*/x)
 			}
 		}
-	'.trim_indent())!
+		'.trim_indent())!
 
-	locations := fixture.definition_at_cursor()
-	t.assert_has_definition(locations)!
+		locations := fixture.definition_at_cursor()
+		t.assert_has_definition(locations)!
 
-	first := locations.first()
-	t.assert_uri(first.target_uri, fixture.current_file_uri())!
-	t.assert_definition_name(first, 'index')
-})
+		first := locations.first()
+		t.assert_uri(first.target_uri, fixture.current_file_uri())!
+		t.assert_definition_name(first, 'index')
+	})
 
-t.test('variable definition from if unwrapping', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
-	fixture.configure_by_text('1.v', '
+	t.test('variable definition from if unwrapping', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+		fixture.configure_by_text('1.v', '
 		fn main() {
 			if value := foo() {
 				println(val/*caret*/ue)
 			}
 		}
-	'.trim_indent())!
+		'.trim_indent())!
 
-	locations := fixture.definition_at_cursor()
-	t.assert_has_definition(locations)!
+		locations := fixture.definition_at_cursor()
+		t.assert_has_definition(locations)!
 
-	first := locations.first()
-	t.assert_uri(first.target_uri, fixture.current_file_uri())!
-	t.assert_definition_name(first, 'value')
-})
+		first := locations.first()
+		t.assert_uri(first.target_uri, fixture.current_file_uri())!
+		t.assert_definition_name(first, 'value')
+	})
 
-// TODO: This probably should be prohibited
-t.test('variable definition from if unwrapping in else', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
-	fixture.configure_by_text('1.v', '
+	// TODO: This probably should be prohibited
+	t.test('variable definition from if unwrapping in else', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+		fixture.configure_by_text('1.v', '
 		fn main() {
 			if value := foo() {
 
@@ -113,53 +114,53 @@ t.test('variable definition from if unwrapping in else', fn (mut t testing.Test,
 				println(val/*caret*/ue)
 			}
  		}
-	'.trim_indent())!
+		'.trim_indent())!
 
-	locations := fixture.definition_at_cursor()
-	t.assert_has_definition(locations)!
+		locations := fixture.definition_at_cursor()
+		t.assert_has_definition(locations)!
 
-	first := locations.first()
-	t.assert_uri(first.target_uri, fixture.current_file_uri())!
-	t.assert_definition_name(first, 'value')
-})
+		first := locations.first()
+		t.assert_uri(first.target_uri, fixture.current_file_uri())!
+		t.assert_definition_name(first, 'value')
+	})
 
-t.test('variable definition from if unwrapping from outside', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
-	fixture.configure_by_text('1.v', '
+	t.test('variable definition from if unwrapping from outside', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+		fixture.configure_by_text('1.v', '
 		fn main() {
-			if value := foo() {}
+			if some_variable := foo() {}
 
-			println(val/*caret*/ue)
+			println(some/*caret*/_variable)
  		}
-	'.trim_indent())!
+		'.trim_indent())!
 
-	locations := fixture.definition_at_cursor()
-	t.assert_no_definition(locations)!
-})
+		locations := fixture.definition_at_cursor()
+		t.assert_no_definition(locations)!
+	})
 
-t.test('field definition', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
-	fixture.configure_by_text('1.v', '
-		module field_definition_test
+	t.test('field definition', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+		fixture.configure_by_text('1.v', '
+		module main
 
-		struct Foo {
+		struct FooStruct {
 			name string
 		}
 
 		fn main() {
-			foo := Foo{}
+			foo := FooStruct{}
 			println(foo.na/*caret*/me)
 		}
-	'.trim_indent())!
+		'.trim_indent())!
 
-	locations := fixture.definition_at_cursor()
-	t.assert_has_definition(locations)!
-	first := locations.first()
-	t.assert_uri(first.target_uri, fixture.current_file_uri())!
-	t.assert_definition_name(first, 'name')
-})
+		locations := fixture.definition_at_cursor()
+		t.assert_has_definition(locations)!
+		first := locations.first()
+		t.assert_uri(first.target_uri, fixture.current_file_uri())!
+		t.assert_definition_name(first, 'name')
+	})
 
-t.test('method definition', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
-	fixture.configure_by_text('1.v', '
-		module method_definition_test
+	t.test('method definition', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+		fixture.configure_by_text('1.v', '
+		module main
 
 		struct Foo {
 			name string
@@ -173,101 +174,101 @@ t.test('method definition', fn (mut t testing.Test, mut fixture testing.Fixture)
 			foo := Foo{}
 			println(foo.get_na/*caret*/me())
 		}
-	'.trim_indent())!
+		'.trim_indent())!
 
-	locations := fixture.definition_at_cursor()
-	t.assert_has_definition(locations)!
-	first := locations.first()
-	t.assert_uri(first.target_uri, fixture.current_file_uri())!
-	t.assert_definition_name(first, 'get_name')
-})
+		locations := fixture.definition_at_cursor()
+		t.assert_has_definition(locations)!
+		first := locations.first()
+		t.assert_uri(first.target_uri, fixture.current_file_uri())!
+		t.assert_definition_name(first, 'get_name')
+	})
 
-t.test('top level variable', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
-	fixture.configure_by_text('1.v', '
+	t.test('top level variable', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+		fixture.configure_by_text('1.v', '
 		name := 100
 		println(na/*caret*/me)
-	'.trim_indent())!
+		'.trim_indent())!
 
-	locations := fixture.definition_at_cursor()
-	t.assert_has_definition(locations)!
+		locations := fixture.definition_at_cursor()
+		t.assert_has_definition(locations)!
 
-	first := locations.first()
-	t.assert_uri(first.target_uri, fixture.current_file_uri())!
-	t.assert_definition_name(first, 'name')
-})
+		first := locations.first()
+		t.assert_uri(first.target_uri, fixture.current_file_uri())!
+		t.assert_definition_name(first, 'name')
+	})
 
-t.test('top level variable from outer scope', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
-	fixture.configure_by_text('1.v', '
+	t.test('top level variable from outer scope', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+		fixture.configure_by_text('1.v', '
 		name := 100
 		if true {
 			println(na/*caret*/me)
 		}
-	'.trim_indent())!
+		'.trim_indent())!
 
-	locations := fixture.definition_at_cursor()
-	t.assert_has_definition(locations)!
+		locations := fixture.definition_at_cursor()
+		t.assert_has_definition(locations)!
 
-	first := locations.first()
-	t.assert_uri(first.target_uri, fixture.current_file_uri())!
-	t.assert_definition_name(first, 'name')
-})
+		first := locations.first()
+		t.assert_uri(first.target_uri, fixture.current_file_uri())!
+		t.assert_definition_name(first, 'name')
+	})
 
-t.test('shell script implicit os module', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
-	fixture.configure_by_text('1.vsh', '
+	t.slow_test('shell script implicit os module', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+		fixture.configure_by_text('1.vsh', '
 		abs_/*caret*/path()
-	'.trim_indent())!
+		'.trim_indent())!
 
-	locations := fixture.definition_at_cursor()
-	t.assert_has_definition(locations)!
+		locations := fixture.definition_at_cursor()
+		t.assert_has_definition(locations)!
 
-	first := locations.first()
-	t.assert_uri_from_stdlib(first.target_uri, 'filepath.v')!
-})
+		first := locations.first()
+		t.assert_uri_from_stdlib(first.target_uri, 'filepath.v')!
+	})
 
-t.test('shell script implicit os module constant', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
-	fixture.configure_by_text('1.vsh', '
-		ar/*caret*/gs
-	'.trim_indent())!
+	t.test('shell script implicit os module constant', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+		fixture.configure_by_text('1.vsh', '
+			ar/*caret*/gs
+		'.trim_indent())!
 
-	locations := fixture.definition_at_cursor()
-	t.assert_has_definition(locations)!
+		locations := fixture.definition_at_cursor()
+		t.assert_has_definition(locations)!
 
-	first := locations.first()
-	t.assert_uri_from_stdlib(first.target_uri, 'os.c.v')!
-})
+		first := locations.first()
+		t.assert_uri_from_stdlib(first.target_uri, 'os.c.v')!
+	})
 
-t.test('shell script local function', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
-	fixture.configure_by_text('1.vsh', '
+	t.slow_test('shell script local function', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+		fixture.configure_by_text('1.vsh', '
 		fn some_fn() {}
 
 		/*caret*/some_fn()
-	'.trim_indent())!
+		'.trim_indent())!
 
-	locations := fixture.definition_at_cursor()
-	t.assert_has_definition(locations)!
+		locations := fixture.definition_at_cursor()
+		t.assert_has_definition(locations)!
 
-	first := locations.first()
-	t.assert_uri(first.target_uri, fixture.current_file_uri())!
-	t.assert_definition_name(first, 'some_fn')
-})
+		first := locations.first()
+		t.assert_uri(first.target_uri, fixture.current_file_uri())!
+		t.assert_definition_name(first, 'some_fn')
+	})
 
-t.test('shell script local constant', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
-	fixture.configure_by_text('1.vsh', '
+	t.slow_test('shell script local constant', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+		fixture.configure_by_text('1.vsh', '
 		const some_constant = 100
 
 		/*caret*/some_constant
-	'.trim_indent())!
+		'.trim_indent())!
 
-	locations := fixture.definition_at_cursor()
-	t.assert_has_definition(locations)!
+		locations := fixture.definition_at_cursor()
+		t.assert_has_definition(locations)!
 
-	first := locations.first()
-	t.assert_uri(first.target_uri, fixture.current_file_uri())!
-	t.assert_definition_name(first, 'some_constant')
-})
+		first := locations.first()
+		t.assert_uri(first.target_uri, fixture.current_file_uri())!
+		t.assert_definition_name(first, 'some_constant')
+	})
 
-t.test('static methods', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
-	fixture.configure_by_text('1.vsh', '
+	t.test('static methods', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+		fixture.configure_by_text('1.vsh', '
 		module main
 
 		struct TestStruct {}
@@ -277,18 +278,18 @@ t.test('static methods', fn (mut t testing.Test, mut fixture testing.Fixture) ! 
 		fn main() {
 			TestStruct.static/*caret*/_method()
 		}
-	'.trim_indent())!
+		'.trim_indent())!
 
-	locations := fixture.definition_at_cursor()
-	t.assert_has_definition(locations)!
+		locations := fixture.definition_at_cursor()
+		t.assert_has_definition(locations)!
 
-	first := locations.first()
-	t.assert_uri(first.target_uri, fixture.current_file_uri())!
-	t.assert_definition_name(first, 'static_method')
-})
+		first := locations.first()
+		t.assert_uri(first.target_uri, fixture.current_file_uri())!
+		t.assert_definition_name(first, 'static_method')
+	})
 
-t.test('enum inside special flag field method call', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
-	fixture.configure_by_text('1.vsh', '
+	t.test('enum inside special flag field method call', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+		fixture.configure_by_text('1.vsh', '
 		module main
 
 		[flag]
@@ -301,18 +302,18 @@ t.test('enum inside special flag field method call', fn (mut t testing.Test, mut
 			mut color := Colors.green
 			color.has(.r/*caret*/ed)
 		}
-	'.trim_indent())!
+		'.trim_indent())!
 
-	locations := fixture.definition_at_cursor()
-	t.assert_has_definition(locations)!
+		locations := fixture.definition_at_cursor()
+		t.assert_has_definition(locations)!
 
-	first := locations.first()
-	t.assert_uri(first.target_uri, fixture.current_file_uri())!
-	t.assert_definition_name(first, 'red')
-})
+		first := locations.first()
+		t.assert_uri(first.target_uri, fixture.current_file_uri())!
+		t.assert_definition_name(first, 'red')
+	})
 
-t.test('enum fields or', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
-	fixture.configure_by_text('1.vsh', '
+	t.test('enum fields or', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+		fixture.configure_by_text('1.vsh', '
 		module main
 
 		[flag]
@@ -324,18 +325,18 @@ t.test('enum fields or', fn (mut t testing.Test, mut fixture testing.Fixture) ! 
 		fn main() {
 			mut color := Colors.green | .r/*caret*/ed
 		}
-	'.trim_indent())!
+		'.trim_indent())!
 
-	locations := fixture.definition_at_cursor()
-	t.assert_has_definition(locations)!
+		locations := fixture.definition_at_cursor()
+		t.assert_has_definition(locations)!
 
-	first := locations.first()
-	t.assert_uri(first.target_uri, fixture.current_file_uri())!
-	t.assert_definition_name(first, 'red')
-})
+		first := locations.first()
+		t.assert_uri(first.target_uri, fixture.current_file_uri())!
+		t.assert_definition_name(first, 'red')
+	})
 
-t.test('implicit str method', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
-	fixture.configure_by_text('1.vsh', '
+	t.test('implicit str method', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+		fixture.configure_by_text('1.vsh', '
 		module main
 
 		struct Foo {}
@@ -344,13 +345,14 @@ t.test('implicit str method', fn (mut t testing.Test, mut fixture testing.Fixtur
 			mut foo := Foo{}
 			foo.s/*caret*/tr()
 		}
-	'.trim_indent())!
+		'.trim_indent())!
 
-	locations := fixture.definition_at_cursor()
-	t.assert_has_definition(locations)!
+		locations := fixture.definition_at_cursor()
+		t.assert_has_definition(locations)!
 
-	first := locations.first()
-	t.assert_uri_from_stubs(first.target_uri, 'implicit.v')!
-})
+		first := locations.first()
+		t.assert_uri_from_stubs(first.target_uri, 'implicit.v')!
+	})
 
-t.stats()
+	return t
+}

@@ -2,10 +2,11 @@ module main
 
 import testing
 
-mut t := testing.Tester{}
+fn implementations() testing.Tester {
+	mut t := testing.with_name('implementations')
 
-t.test('method interface implementation', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
-	fixture.configure_by_text('1.v', '
+	t.test('method interface implementation', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+		fixture.configure_by_text('1.v', '
 		module main
 
 		interface /*caret*/IFoo {
@@ -15,14 +16,14 @@ t.test('method interface implementation', fn (mut t testing.Test, mut fixture te
 		struct FooImpl {}
 
 		fn (f FooImpl) foo() {}
-	'.trim_indent())!
+		'.trim_indent())!
 
-	locations := fixture.implementation_at_cursor()
-	t.assert_has_implementation_with_name(locations, 'FooImpl')!
-})
+		locations := fixture.implementation_at_cursor()
+		t.assert_has_implementation_with_name(locations, 'FooImpl')!
+	})
 
-t.test('method interface implementation with return type', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
-	fixture.configure_by_text('1.v', '
+	t.test('method interface implementation with return type', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+		fixture.configure_by_text('1.v', '
 		module main
 
 		interface /*caret*/IFoo {
@@ -32,14 +33,14 @@ t.test('method interface implementation with return type', fn (mut t testing.Tes
 		struct FooImpl {}
 
 		fn (f FooImpl) foo() string {}
-	'.trim_indent())!
+		'.trim_indent())!
 
-	locations := fixture.implementation_at_cursor()
-	t.assert_has_implementation_with_name(locations, 'FooImpl')!
-})
+		locations := fixture.implementation_at_cursor()
+		t.assert_has_implementation_with_name(locations, 'FooImpl')!
+	})
 
-t.test('method interface implementation with parameters', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
-	fixture.configure_by_text('1.v', '
+	t.test('method interface implementation with parameters', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+		fixture.configure_by_text('1.v', '
 		module main
 
 		interface /*caret*/IFoo {
@@ -49,14 +50,15 @@ t.test('method interface implementation with parameters', fn (mut t testing.Test
 		struct FooImpl {}
 
 		fn (f FooImpl) foo(age int, name string) string {}
-	'.trim_indent())!
+		'.trim_indent())!
 
-	locations := fixture.implementation_at_cursor()
-	t.assert_has_implementation_with_name(locations, 'FooImpl')!
-})
+		locations := fixture.implementation_at_cursor()
+		t.assert_has_implementation_with_name(locations, 'FooImpl')!
+	})
 
-t.test('method interface implementation with parameters, parameters types mismatch', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
-	fixture.configure_by_text('1.v', '
+	t.test('method interface implementation with parameters, parameters types mismatch',
+		fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+		fixture.configure_by_text('1.v', '
 		module main
 
 		interface /*caret*/IFoo {
@@ -66,14 +68,14 @@ t.test('method interface implementation with parameters, parameters types mismat
 		struct FooImpl {}
 
 		fn (f FooImpl) foo(age int, name string) string {}
-	'.trim_indent())!
+		'.trim_indent())!
 
-	locations := fixture.implementation_at_cursor()
-	t.assert_no_implementation_with_name(locations, 'FooImpl')!
-})
+		locations := fixture.implementation_at_cursor()
+		t.assert_no_implementation_with_name(locations, 'FooImpl')!
+	})
 
-t.test('method interface implementation with fields', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
-	fixture.configure_by_text('1.v', '
+	t.test('method interface implementation with fields', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+		fixture.configure_by_text('1.v', '
 		module main
 
 		interface /*caret*/IFoo {
@@ -83,14 +85,14 @@ t.test('method interface implementation with fields', fn (mut t testing.Test, mu
 		struct FooImpl {
 			foo string
 		}
-	'.trim_indent())!
+		'.trim_indent())!
 
-	locations := fixture.implementation_at_cursor()
-	t.assert_has_implementation_with_name(locations, 'FooImpl')!
-})
+		locations := fixture.implementation_at_cursor()
+		t.assert_has_implementation_with_name(locations, 'FooImpl')!
+	})
 
-t.test('method interface implementation with fields, types mismatch', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
-	fixture.configure_by_text('1.v', '
+	t.test('method interface implementation with fields, types mismatch', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+		fixture.configure_by_text('1.v', '
 		module main
 
 		interface /*caret*/IFoo {
@@ -100,14 +102,14 @@ t.test('method interface implementation with fields, types mismatch', fn (mut t 
 		struct FooImpl {
 			foo string
 		}
-	'.trim_indent())!
+		'.trim_indent())!
 
-	locations := fixture.implementation_at_cursor()
-	t.assert_no_implementation_with_name(locations, 'FooImpl')!
-})
+		locations := fixture.implementation_at_cursor()
+		t.assert_no_implementation_with_name(locations, 'FooImpl')!
+	})
 
-t.test('method implementation', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
-	fixture.configure_by_text('1.v', '
+	t.test('method implementation', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+		fixture.configure_by_text('1.v', '
 		module main
 
 		interface IFoo {
@@ -117,10 +119,11 @@ t.test('method implementation', fn (mut t testing.Test, mut fixture testing.Fixt
 		struct FooImpl {}
 
 		fn (f FooImpl) foo() {}
-	'.trim_indent())!
+		'.trim_indent())!
 
-	locations := fixture.implementation_at_cursor()
-	t.assert_has_implementation_with_name(locations, 'foo')!
-})
+		locations := fixture.implementation_at_cursor()
+		t.assert_has_implementation_with_name(locations, 'foo')!
+	})
 
-t.stats()
+	return t
+}

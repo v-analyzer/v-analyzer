@@ -19,7 +19,9 @@ pub fn (mut ls LanguageServer) did_open(params lsp.DidOpenTextDocumentParams) {
 		psi_file: psi_file
 	}
 
-	ls.run_diagnostics_in_bg(uri)
+	if 'no-diagnostics' !in ls.initialization_options {
+		ls.run_diagnostics_in_bg(uri)
+	}
 
 	// Useful for debugging
 	//
