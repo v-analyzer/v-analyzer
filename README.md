@@ -18,13 +18,13 @@ Debug version will be slower, but faster to compile.
 Debug build:
 
 ```bash
-make build-debug
+v build.vsh debug
 ```
 
 Release build:
 
 ```bash
-make build-prod
+v build.vsh release
 ```
 
 Binary will be placed in `bin/` folder.

@@ -9,6 +9,7 @@ main
 
 # Ignore binary output folders
 bin/
+build
 
 # Ignore common editor/system specific metadata
 .DS_Store
