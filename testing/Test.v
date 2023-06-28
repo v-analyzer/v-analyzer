@@ -169,6 +169,18 @@ pub fn (mut t Test) assert_uri_from_stdlib(left lsp.DocumentUri, filename string
 	}
 }
 
+pub fn (mut t Test) assert_uri_from_stubs(left lsp.DocumentUri, filename string) ! {
+	if !left.contains('stubs') {
+		t.fail('expected ${left} to be inside "stubs"')
+		return error('expected ${left} to be inside "stubs"')
+	}
+
+	if !left.ends_with(filename) {
+		t.fail('expected ${left} to end with ${filename} but got ${left}')
+		return error('expected ${left} to end with ${filename} but got ${left}')
+	}
+}
+
 pub fn (t Test) print() {
 	mut sb := strings.new_builder(100)
 	sb.write_string('${t.duration:10} ')

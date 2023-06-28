@@ -334,4 +334,23 @@ t.test('enum fields or', fn (mut t testing.Test, mut fixture testing.Fixture) ! 
 	t.assert_definition_name(first, 'red')
 })
 
+t.test('implicit str method', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+	fixture.configure_by_text('1.vsh', '
+		module main
+
+		struct Foo {}
+
+		fn main() {
+			mut foo := Foo{}
+			foo.s/*caret*/tr()
+		}
+	'.trim_indent())!
+
+	locations := fixture.definition_at_cursor()
+	t.assert_has_definition(locations)!
+
+	first := locations.first()
+	t.assert_uri_from_stubs(first.target_uri, 'implicit.v')!
+})
+
 t.stats()

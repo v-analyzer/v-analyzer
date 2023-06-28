@@ -141,7 +141,7 @@ pub fn (r &SubResolver) process_type(typ types.Type, mut processor PsiScopeProce
 			// If it is a call, then most likely it is a method call, but it
 			// could be a function call that is stored in a structure field.
 			if is_method_ref {
-				if !r.process_elements(methods_list(typ), mut processor) {
+				if !r.process_methods(typ, mut processor) {
 					return false
 				}
 				if !r.process_elements(struct_.fields(), mut processor) {
@@ -151,7 +151,7 @@ pub fn (r &SubResolver) process_type(typ types.Type, mut processor PsiScopeProce
 				if !r.process_elements(struct_.fields(), mut processor) {
 					return false
 				}
-				if !r.process_elements(methods_list(typ), mut processor) {
+				if !r.process_methods(typ, mut processor) {
 					return false
 				}
 			}
@@ -164,12 +164,16 @@ pub fn (r &SubResolver) process_type(typ types.Type, mut processor PsiScopeProce
 			}
 		}
 
+		if !r.process_any_type(mut processor) {
+			return false
+		}
+
 		return true
 	}
 
 	if typ is types.InterfaceType {
 		if interface_ := r.find_interface(stubs_index, typ.qualified_name()) {
-			if !r.process_elements(methods_list(typ), mut processor) {
+			if !r.process_methods(typ, mut processor) {
 				return false
 			}
 			if !r.process_elements(interface_.fields(), mut processor) {
@@ -178,6 +182,10 @@ pub fn (r &SubResolver) process_type(typ types.Type, mut processor PsiScopeProce
 			if !r.process_elements(interface_.methods(), mut processor) {
 				return false
 			}
+		}
+
+		if !r.process_any_type(mut processor) {
+			return false
 		}
 
 		return true
@@ -189,7 +197,7 @@ pub fn (r &SubResolver) process_type(typ types.Type, mut processor PsiScopeProce
 			return false
 		}
 
-		if !r.process_elements(methods_list(typ), mut processor) {
+		if !r.process_methods(typ, mut processor) {
 			return false
 		}
 
@@ -199,48 +207,118 @@ pub fn (r &SubResolver) process_type(typ types.Type, mut processor PsiScopeProce
 			}
 		}
 
+		if !r.process_any_type(mut processor) {
+			return false
+		}
+
 		return true
 	}
 
 	if typ is types.ArrayType {
-		if !r.process_elements(methods_list(typ), mut processor) {
+		if !r.process_methods(typ, mut processor) {
 			return false
 		}
-		return r.process_type(types.builtin_array_type, mut processor)
+
+		if !r.process_type(types.builtin_array_type, mut processor) {
+			return false
+		}
+
+		if !r.process_any_type(mut processor) {
+			return false
+		}
+
+		return true
 	}
 
 	if typ is types.MapType {
-		if !r.process_elements(methods_list(typ), mut processor) {
+		if !r.process_methods(typ, mut processor) {
 			return false
 		}
-		return r.process_type(types.builtin_map_type, mut processor)
+
+		if !r.process_type(types.builtin_map_type, mut processor) {
+			return false
+		}
+
+		if !r.process_any_type(mut processor) {
+			return false
+		}
+
+		return true
 	}
 
 	if typ is types.PointerType {
-		return r.process_type(typ.inner, mut processor)
+		if !r.process_type(typ.inner, mut processor) {
+			return false
+		}
+		if !r.process_any_type(mut processor) {
+			return false
+		}
+		return true
 	}
 
 	if typ is types.OptionType {
-		return r.process_type(typ.inner, mut processor)
+		if !r.process_type(typ.inner, mut processor) {
+			return false
+		}
+		if !r.process_any_type(mut processor) {
+			return false
+		}
+		return true
 	}
 
 	if typ is types.ResultType {
-		return r.process_type(typ.inner, mut processor)
+		if !r.process_type(typ.inner, mut processor) {
+			return false
+		}
+		if !r.process_any_type(mut processor) {
+			return false
+		}
+		return true
 	}
 
 	if typ is types.AliasType {
-		if !r.process_elements(methods_list(typ), mut processor) {
+		if !r.process_methods(typ, mut processor) {
 			return false
 		}
 
-		return r.process_type(typ.inner, mut processor)
+		if !r.process_type(typ.inner, mut processor) {
+			return false
+		}
+
+		if !r.process_any_type(mut processor) {
+			return false
+		}
+
+		return true
 	}
 
 	if typ is types.GenericInstantiationType {
-		return r.process_type(typ.inner, mut processor)
+		if !r.process_type(typ.inner, mut processor) {
+			return false
+		}
+		if !r.process_any_type(mut processor) {
+			return false
+		}
+		return true
+	}
+
+	if !r.process_methods(typ, mut processor) {
+		return false
+	}
+
+	if !r.process_any_type(mut processor) {
+		return false
 	}
 
 	return true
+}
+
+pub fn (r &SubResolver) process_any_type(mut processor PsiScopeProcessor) bool {
+	return r.process_methods(types.any_type, mut processor)
+}
+
+pub fn (r &SubResolver) process_methods(typ types.Type, mut processor PsiScopeProcessor) bool {
+	return r.process_elements(methods_list(typ), mut processor)
 }
 
 pub fn (r &SubResolver) process_unqualified_resolve(mut processor PsiScopeProcessor) bool {

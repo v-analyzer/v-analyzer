@@ -7,6 +7,7 @@ pub const (
 	array_init_type    = new_struct_type('ArrayInit', 'stubs')
 	chan_init_type     = new_struct_type('ChanInit', 'stubs')
 	flag_enum_type     = new_enum_type('FlagEnum', 'stubs')
+	any_type           = new_alias_type('Any', 'stubs', unknown_type)
 )
 
 pub struct StructType {
