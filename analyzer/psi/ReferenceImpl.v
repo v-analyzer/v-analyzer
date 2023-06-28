@@ -80,7 +80,9 @@ pub fn (r &SubResolver) process_qualifier_expression(qualifier PsiElement, mut p
 	if qualifier is PsiTypedElement {
 		typ := infer_type(qualifier as PsiElement)
 		if typ !is types.UnknownType {
-			r.process_type(typ, mut processor)
+			if !r.process_type(typ, mut processor) {
+				return false
+			}
 		}
 	}
 
@@ -182,8 +184,17 @@ pub fn (r &SubResolver) process_type(typ types.Type, mut processor PsiScopeProce
 	}
 
 	if typ is types.EnumType {
-		if enum_ := r.find_enum(stubs_index, typ.qualified_name()) {
-			if !r.process_elements(enum_.fields(), mut processor) {
+		enum_ := r.find_enum(stubs_index, typ.qualified_name()) or { return true }
+		if !r.process_elements(enum_.fields(), mut processor) {
+			return false
+		}
+
+		if !r.process_elements(methods_list(typ), mut processor) {
+			return false
+		}
+
+		if enum_.is_flag() {
+			if !r.process_type(types.flag_enum_type, mut processor) {
 				return false
 			}
 		}

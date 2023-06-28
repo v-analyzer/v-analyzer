@@ -515,4 +515,60 @@ t.test('static method completion', fn (mut t testing.Test, mut fixture testing.F
 	t.assert_has_completion_with_insert_text(items, 'static_method()$0')!
 })
 
+t.test('enum methods', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+	fixture.configure_by_text('1.v', '
+		module main
+
+		enum Colors {
+			red
+			green
+		}
+
+		fn (c Colors) some_method() {}
+
+		fn main() {
+			c := Colors.red
+			c./*caret*/
+		}
+	'.trim_indent())!
+
+	items := fixture.complete_at_cursor()
+
+	t.assert_has_completion_with_insert_text(items, 'red')!
+	t.assert_has_completion_with_insert_text(items, 'green')!
+	t.assert_has_completion_with_insert_text(items, 'some_method()$0')!
+	t.assert_no_completion_with_insert_text(items, 'all($1)$0')!
+	t.assert_no_completion_with_insert_text(items, 'has($1)$0')!
+	t.assert_no_completion_with_insert_text(items, 'clear($1)$0')!
+	t.assert_no_completion_with_insert_text(items, 'set($1)$0')!
+	t.assert_no_completion_with_insert_text(items, 'toggle($1)$0')!
+})
+
+t.test('enum flag methods', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+	fixture.configure_by_text('1.v', '
+		module main
+
+		[flag]
+		enum Colors {
+			red
+			green
+		}
+
+		fn main() {
+			c := Colors.red
+			c./*caret*/
+		}
+	'.trim_indent())!
+
+	items := fixture.complete_at_cursor()
+
+	t.assert_has_completion_with_insert_text(items, 'red')!
+	t.assert_has_completion_with_insert_text(items, 'green')!
+	t.assert_has_completion_with_insert_text(items, 'all($1)$0')!
+	t.assert_has_completion_with_insert_text(items, 'has($1)$0')!
+	t.assert_has_completion_with_insert_text(items, 'clear($1)$0')!
+	t.assert_has_completion_with_insert_text(items, 'set($1)$0')!
+	t.assert_has_completion_with_insert_text(items, 'toggle($1)$0')!
+})
+
 t.stats()

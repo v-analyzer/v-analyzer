@@ -6,6 +6,7 @@ pub const (
 	builtin_map_type   = new_struct_type('map', 'builtin')
 	array_init_type    = new_struct_type('ArrayInit', 'stubs')
 	chan_init_type     = new_struct_type('ChanInit', 'stubs')
+	flag_enum_type     = new_enum_type('FlagEnum', 'stubs')
 )
 
 pub struct StructType {

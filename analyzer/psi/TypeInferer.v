@@ -871,6 +871,15 @@ pub fn (t &TypeInferer) infer_context_type(elem ?PsiElement) types.Type {
 		call_expression := parent.parent_nth(2) or { return types.unknown_type }
 		if call_expression is CallExpression {
 			called := call_expression.resolve() or { return types.unknown_type }
+
+			if called is FunctionOrMethodDeclaration {
+				if called.is_method()
+					&& called.receiver_type().qualified_name() == types.flag_enum_type.qualified_name() {
+					// when color.has(.red)
+					return call_expression.caller_type()
+				}
+			}
+
 			typ := t.infer_type(called)
 
 			if typ is types.FunctionType {

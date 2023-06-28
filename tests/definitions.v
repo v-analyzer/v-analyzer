@@ -287,4 +287,51 @@ t.test('static methods', fn (mut t testing.Test, mut fixture testing.Fixture) ! 
 	t.assert_definition_name(first, 'static_method')
 })
 
+t.test('enum inside special flag field method call', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+	fixture.configure_by_text('1.vsh', '
+		module main
+
+		[flag]
+		enum Colors {
+			red
+			green
+		}
+
+		fn main() {
+			mut color := Colors.green
+			color.has(.r/*caret*/ed)
+		}
+	'.trim_indent())!
+
+	locations := fixture.definition_at_cursor()
+	t.assert_has_definition(locations)!
+
+	first := locations.first()
+	t.assert_uri(first.target_uri, fixture.current_file_uri())!
+	t.assert_definition_name(first, 'red')
+})
+
+t.test('enum fields or', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
+	fixture.configure_by_text('1.vsh', '
+		module main
+
+		[flag]
+		enum Colors {
+			red
+			green
+		}
+
+		fn main() {
+			mut color := Colors.green | .r/*caret*/ed
+		}
+	'.trim_indent())!
+
+	locations := fixture.definition_at_cursor()
+	t.assert_has_definition(locations)!
+
+	first := locations.first()
+	t.assert_uri(first.target_uri, fixture.current_file_uri())!
+	t.assert_definition_name(first, 'red')
+})
+
 t.stats()
