@@ -1,9 +1,9 @@
 module testing
 
-import analyzer.psi
 import time
-import loglib
 import term
+import loglib
+import analyzer.psi
 
 pub struct TesterStats {
 pub:
@@ -78,10 +78,15 @@ pub fn (mut t Tester) create_or_reuse_fixture(with_stdlib bool) &Fixture {
 	return fixture
 }
 
-pub fn (mut t Tester) run() {
+pub fn (mut t Tester) run(run_only string) {
 	mut fixture := t.create_or_reuse_fixture(false)
 
 	for mut test in t.tests {
+		if run_only != '' && test.name != run_only {
+			test.state = .skipped
+			continue
+		}
+
 		if test.with_stdlib {
 			mut fixture_with_stdlib := t.create_or_reuse_fixture(true)
 			test.run(mut fixture_with_stdlib)

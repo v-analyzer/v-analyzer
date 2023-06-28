@@ -2,23 +2,25 @@ name: Build binary artifacts
 
 on:
   push:
+    branches:
+      - main
 
 jobs:
   dist:
     strategy:
       matrix:
         include:
-          - os: windows-latest
-            target: windows-x86_64
-            bin_ext: .exe
-            cc: msvc
+#          - os: windows-latest
+#            target: windows-x86_64
+#            bin_ext: .exe
+#            cc: msvc
           - os: ubuntu-20.04
             target: linux-x86_64
             cc: gcc
           - os: macos-latest
             target: darwin-x86_64
             cc: clang
-          - os: self-hosted
+          - os: macos-arm64
             target: darwin-arm64
             cc: clang
 

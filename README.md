@@ -2,6 +2,10 @@
 
 # v-analyzer
 
+[![Analyzer tests](https://github.com/v-analyzer/v-analyzer/actions/workflows/analyzer_tests.yml/badge.svg)](https://github.com/v-analyzer/v-analyzer/actions/workflows/analyzer_tests.yml)
+[![Test tree-sitter-v](https://github.com/v-analyzer/v-analyzer/actions/workflows/test_tree_sitter_v.yml/badge.svg)](https://github.com/v-analyzer/v-analyzer/actions/workflows/test_tree_sitter_v.yml)
+[![VS Code extension tests](https://github.com/v-analyzer/v-analyzer/actions/workflows/vscode_extension_tests.yml/badge.svg)](https://github.com/v-analyzer/v-analyzer/actions/workflows/vscode_extension_tests.yml)
+
 Bring IDE features for V programming languages in VS Code, Vim, and other editors
 
 ## Building from source

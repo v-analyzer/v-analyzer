@@ -1,9 +1,16 @@
 module main
 
+import os
 import term
 import testing
 
 fn main() {
+	defer {
+		os.rmdir_all(testing.temp_path) or {
+			println('Failed to remove temp path: ${testing.temp_path}')
+		}
+	}
+
 	mut testers := []testing.Tester{}
 
 	testers << definitions()
@@ -12,9 +19,11 @@ fn main() {
 	testers << completion()
 	testers << types()
 
+	run_only := ''
+
 	for mut tester in testers {
 		println('Running ${term.bg_blue(' ' + tester.name + ' ')}')
-		tester.run()
+		tester.run(run_only)
 		println('')
 		tester.stats().print()
 		println('')
@@ -37,5 +46,7 @@ fn main() {
 				failed_test.print()
 			}
 		}
+
+		exit(1)
 	}
 }

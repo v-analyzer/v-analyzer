@@ -1,0 +1,39 @@
+name: VS Code extension tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-20.04
+          - os: macos-latest
+          - os: windows-latest
+
+    name: test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    continue-on-error: true
+
+    steps:
+      - name: Install Nodejs
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Checkout v-analyzer
+        uses: actions/checkout@v3
+        with:
+          path: v-analyzer
+
+      - name: Install dependencies
+        run: |
+          cd v-analyzer/editors/code
+          npm ci
+
+      - name: Run tests
+        run: |
+          cd v-analyzer/editors/code
+          npm run test

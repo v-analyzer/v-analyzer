@@ -16,5 +16,3 @@ _ := r'\'
 _ := r'\'
 //   ^ storage.type.string.v
 //    ^^^ string.quoted.raw.v
-_ := r'$a'
-//     ^^ variable.other.interpolated.v

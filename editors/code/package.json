@@ -29,6 +29,7 @@
 	"scripts": {
 		"compile": "node ./scripts/build.js",
 		"compile-dev": "node ./scripts/build.js --watch",
+		"test": "npm run testgrammar",
 		"lint": "eslint .",
 		"lintmd": "markdownlint *.md -i CHANGELOG.md",
 		"vscode:prepublish": "node ./scripts/minify_json.js && cross-env NODE_ENV=production node ./scripts/build.js",

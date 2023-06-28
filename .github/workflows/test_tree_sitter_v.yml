@@ -11,17 +11,16 @@ jobs:
         include:
           - os: ubuntu-20.04
           - os: macos-latest
-          - os: self-hosted
 
     name: test (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
 
     steps:
-      - name: Install V
-        id: install-v
-        uses: vlang/setup-v@v1.3
+      - name: Install minimal stable Rust
+        uses: actions-rs/toolchain@v1
         with:
-          check-latest: true
+          profile: minimal
+          toolchain: stable
 
       - name: Install Tree-sitter
         run: |

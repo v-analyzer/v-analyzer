@@ -7,7 +7,7 @@ import jsonrpc
 import server
 import analyzer
 
-const temp_path = os.join_path(os.temp_dir(), 'v-analyzer-test')
+pub const temp_path = os.join_path(os.temp_dir(), 'v-analyzer-test')
 
 struct TestFile {
 	path    string
@@ -146,6 +146,16 @@ fn (mut t Fixture) send_open_current_file_request() ! {
 		content_changes: [
 			lsp.TextDocumentContentChangeEvent{
 				text: t.current_file.content.join('\n')
+			},
+		]
+	}) or {}
+
+	t.test_client.send[lsp.DidChangeWatchedFilesParams, jsonrpc.Null]('workspace/didChangeWatchedFiles',
+		lsp.DidChangeWatchedFilesParams{
+		changes: [
+			lsp.FileEvent{
+				uri: lsp.document_uri_from_path(t.current_file.path)
+				typ: lsp.FileChangeType.created
 			},
 		]
 	}) or {}
