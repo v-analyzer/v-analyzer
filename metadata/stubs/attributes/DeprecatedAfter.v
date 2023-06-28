@@ -1,4 +1,4 @@
-// Copyright (c) 2022 Petr Makhnev. All rights reserved.
+// Copyright (c) 2022-2023 Petr Makhnev. All rights reserved.
 // Use of this source code is governed by a MIT
 // license that can be found in the LICENSE file.
 module attributes
@@ -27,9 +27,9 @@ module attributes
 // ```
 [attribute]
 pub struct DeprecatedAfter {
-	name            string   = 'deprecated_after'
-	with_arg        bool     = true
-	arg_is_optional bool     = false
+	name            string = 'deprecated_after'
+	with_arg        bool   = true
+	arg_is_optional bool
 	target          []Target = [Target.struct_, Target.function, Target.field, Target.constant,
 	Target.type_alias]
 }

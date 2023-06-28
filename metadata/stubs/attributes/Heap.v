@@ -3,12 +3,12 @@
 // license that can be found in the LICENSE file.
 module attributes
 
-// Table attribute sets a custom table name (case-sensitive).
-// By default ORM uses default struct name.
+// Heap attribute mark struct as always heap-allocated,
+// so any struct creation will happen on the heap.
 [attribute]
-pub struct Table {
-	name            string = 'table'
-	with_arg        bool   = true
+pub struct Heap {
+	name            string = 'heap'
+	with_arg        bool
 	arg_is_optional bool
 	target          []Target = [Target.struct_]
 }
