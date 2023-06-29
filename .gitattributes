@@ -5,3 +5,5 @@
 **/*.vv linguist-language=V
 **/*.vsh linguist-language=V
 **/v.mod linguist-language=V
+
+tree_sitter_v/** linguist-vendored
