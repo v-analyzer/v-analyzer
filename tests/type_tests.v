@@ -24,6 +24,7 @@ fn types() testing.Tester {
 	t.type_test('json decode', 'types/json_decode.v')
 	t.type_test('generics', 'types/generics.v')
 	t.type_test('constants', 'types/constants.v')
+	t.type_test('for loop', 'types/for_loop.v')
 
 	return t
 }

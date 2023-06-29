@@ -396,7 +396,7 @@ pub fn (t &TypeInferer) process_signature(signature Signature) types.Type {
 
 pub fn (t &TypeInferer) process_range_clause(element PsiElement, range PsiElement) types.Type {
 	right := range.find_child_by_name('right') or { return types.unknown_type }
-	right_type := t.infer_type(right)
+	right_type := types.unwrap_alias_type(t.infer_type(right))
 	var_definition_list := range.find_child_by_name('left') or { return types.unknown_type }
 	var_definitions := var_definition_list.find_children_by_type(.var_definition)
 
