@@ -29,5 +29,5 @@ npm run package
 
 This project is under the **MIT License**.
 See the
-[LICENSE](https://github.com/vlang-association/v-analyzer/editors/blob/master/LICENSE)
+[LICENSE](https://github.com/v-analyzer/v-analyzer/blob/main/editors/code/LICENSE)
 file for the full license text.
