@@ -1,3 +1,9 @@
+// This script is used to build the v-analyzer binary.
+//
+// Usage:
+//  v build.vsh [debug|release]
+//
+// By default, used debug mode.
 import os
 import term
 import cli
@@ -6,6 +12,11 @@ pub const (
 	code_path          = './cmd/v-analyzer'
 	bin_path           = './bin/v-analyzer'
 	base_build_command = '${@VEXE} ${code_path} -o ${bin_path}'
+	compiler_flag      = $if windows {
+		'-cc gcc' // TCC cannot build tree-sitter on Windows
+	} $else {
+		''
+	}
 )
 
 fn errorln(msg string) {
@@ -17,14 +28,15 @@ fn errorln(msg string) {
 // Thanks to -d use_libbacktrace, the binary will print beautiful stack traces,
 // which is very useful for debugging.
 fn debug() os.Result {
-	return os.execute('${base_build_command} -g -d use_libbacktrace')
+	libbacktrace := $if windows { '' } $else { '-d use_libbacktrace' }
+	return os.execute('${base_build_command} ${compiler_flag} -g ${libbacktrace}')
 }
 
 // release builds the v-analyzer binary in release mode.
 // This is the recommended mode for production use.
 // It is about 30-40% faster than debug mode.
 fn release() os.Result {
-	return os.execute('${base_build_command} -w -cflags "-O3 -DNDEBUG" -prod')
+	return os.execute('${base_build_command} ${compiler_flag} -w -cflags "-O3 -DNDEBUG" -prod')
 }
 
 fn prepare_output_dir() {
@@ -56,6 +68,7 @@ fn build(explicit_debug bool, release_mode bool) {
 	if res.exit_code != 0 {
 		errorln('Failed to build v-analyzer')
 		eprintln(res.output)
+		return
 	}
 
 	println('${term.green('✓')} Successfully built v-analyzer!')
