@@ -2,6 +2,7 @@
 
 # v-analyzer
 
+[![Association Official Project][AssociationOfficialBadge]][AssociationUrl]
 [![Analyzer tests](https://github.com/v-analyzer/v-analyzer/actions/workflows/analyzer_tests.yml/badge.svg)](https://github.com/v-analyzer/v-analyzer/actions/workflows/analyzer_tests.yml)
 [![Test tree-sitter-v](https://github.com/v-analyzer/v-analyzer/actions/workflows/test_tree_sitter_v.yml/badge.svg)](https://github.com/v-analyzer/v-analyzer/actions/workflows/test_tree_sitter_v.yml)
 [![VS Code extension tests](https://github.com/v-analyzer/v-analyzer/actions/workflows/vscode_extension_tests.yml/badge.svg)](https://github.com/v-analyzer/v-analyzer/actions/workflows/vscode_extension_tests.yml)
@@ -61,3 +62,6 @@ This project is under the **MIT License**.
 See the
 [LICENSE](https://github.com/vlang-association/v-analyzer/blob/master/LICENSE)
 file for the full license text.
+
+[AssociationOfficialBadge]: https://vosca.dev/badge.svg
+[AssociationUrl]: https://vosca.dev
