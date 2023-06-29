@@ -564,7 +564,7 @@ pub fn (_ &TypeInferer) process_array_method_call(element FunctionOrMethodDeclar
 }
 
 pub fn (_ &TypeInferer) process_map_method_call(element FunctionOrMethodDeclaration, expr CallExpression) ?types.Type {
-	caller_type := expr.caller_type()
+	caller_type := types.unwrap_alias_type(expr.caller_type())
 
 	if caller_type is types.MapType {
 		match element.name() {
