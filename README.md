@@ -1,4 +1,5 @@
-<img width="200px" src="./docs/cover.png">
+<img width="200px" src="./docs/cover-light.png#gh-light-mode-only">
+<img width="200px" src="./docs/cover-dark.png#gh-dark-mode-only">
 
 # v-analyzer
 
@@ -87,6 +88,16 @@ v-analyzer up --nightly
 - `jsonrpc`, `lsp`, `tree_sitter_v` modules written initially by
   [VLS authors](https://github.com/vlang/vls) and after that in 2023 it was modified by the
   [VOSCA](https://github.com/vlang-association).
+
+## Thanks
+
+- [VLS](https://github.com/vlang/vls) authors for the initial Language Server implementation!
+- [vscode-vlang](https://github.com/vlang/vscode-vlang) authors for the first VS Code extension!
+- [rust-analyzer](https://github.com/rust-lang/rust-analyzer)
+  and
+  [gopls](https://github.com/golang/tools/tree/master/gopls)
+  for the inspiration!
+- [Tree-sitter](https://github.com/tree-sitter/tree-sitter) authors for the cool parsing library!
 
 ## License
 
