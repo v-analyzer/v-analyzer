@@ -258,9 +258,9 @@ fn install_from_sources() ! {
 		return
 	}
 
-	if os.exists(analyzer_sources_path) {
+	if already_cloned() {
 		os.rmdir_all(analyzer_sources_path) or {
-			errorln('Failed to remove directory: ${analyzer_sources_path}')
+			errorln('Failed to remove directory: ${analyzer_sources_path}: ${err}')
 			return
 		}
 	}
@@ -278,7 +278,7 @@ fn install_from_sources() ! {
 fn clone_repository() ! {
 	println('Cloning ${term.bold('v-analyzer')} repository...')
 
-	exit_code := run_command('git clone https://github.com/v-analyzer/v-analyzer.git  ${analyzer_sources_path} 2>&1') or {
+	exit_code := run_command('git clone https://github.com/v-analyzer/v-analyzer.git ${analyzer_sources_path} 2>&1') or {
 		errorln('Failed to clone v-analyzer repository: ${err}')
 		return
 	}
@@ -293,7 +293,10 @@ fn clone_repository() ! {
 fn build_from_sources() ! {
 	println('Building ${term.bold('v-analyzer')}...')
 
-	install_deps_cmd := os.execute('cd ${analyzer_sources_path} && v install')
+	compiler_flag := $if windows { '-cc gcc' } $else { '' }
+
+	chdir(analyzer_sources_path)!
+	install_deps_cmd := os.execute('v ${compiler_flag} install')
 	if install_deps_cmd.exit_code != 0 {
 		errorln('Failed to install dependencies for ${term.bold('v-analyzer')}')
 		eprintln(install_deps_cmd.output)
@@ -302,7 +305,8 @@ fn build_from_sources() ! {
 
 	println('${term.green('✓')} Dependencies for ${term.bold('v-analyzer')} installed successfully')
 
-	exit_code := run_command('cd ${analyzer_sources_path} && v build.vsh 1>/dev/null') or {
+	chdir(analyzer_sources_path)!
+	exit_code := run_command('v ${compiler_flag} build.vsh 1>/dev/null') or {
 		errorln('Failed to build ${term.bold('v-analyzer')}: ${err}')
 		return
 	}
@@ -386,8 +390,13 @@ fn arch_name() ?string {
 
 fn run_command(cmd string) !int {
 	$if windows {
-		res := os.execute(cmd)
+		fixed_command := cmd
+			.trim_string_right('2>&1')
+			.trim_string_right('1>/dev/null')
+
+		res := os.execute(fixed_command)
 		println(res.output)
+
 		return res.exit_code
 	}
 

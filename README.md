@@ -10,6 +10,20 @@
 
 Bring IDE features for V programming languages in VS Code, Vim, and other editors
 
+## Installation
+
+### Linux and macOS
+
+```
+v -e "$(curl -fsSL https://raw.githubusercontent.com/v-analyzer/v-analyzer/master/install.vsh)"
+```
+
+### Windows
+
+```
+curl 'https://raw.githubusercontent.com/v-analyzer/v-analyzer/master/install.vsh' | %{ v -e $_ }
+```
+
 ## Building from source
 
 Install dependencies:
@@ -50,6 +64,23 @@ Or, you can specify the path to the binary in your VS Code settings:
 
 > **Note**
 > Restart VS Code after changing the settings or PATH.
+
+## Updating
+
+To update `v-analyzer` to the latest version, run:
+
+```bash
+v-analyzer up
+```
+
+You can also update to a nightly version:
+
+```bash
+v-analyzer up --nightly
+```
+
+> **Note**
+> In the nightly version you will get the latest changes, but they may not be stable!
 
 ## Authors
 
