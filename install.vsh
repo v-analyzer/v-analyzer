@@ -278,20 +278,11 @@ fn install_from_sources() ! {
 fn clone_repository() ! {
 	println('Cloning ${term.bold('v-analyzer')} repository...')
 
-	mut clone_command := os.Command{
-		path: 'git clone https://github.com/v-analyzer/v-analyzer.git  ${analyzer_sources_path} 2>&1'
-		redirect_stdout: true
+	exit_code := run_command('git clone https://github.com/v-analyzer/v-analyzer.git  ${analyzer_sources_path} 2>&1') or {
+		errorln('Failed to clone v-analyzer repository: ${err}')
+		return
 	}
-
-	clone_command.start()!
-
-	for !clone_command.eof {
-		println(clone_command.read_line())
-	}
-
-	clone_command.close()!
-
-	if clone_command.exit_code != 0 {
+	if exit_code != 0 {
 		errorln('Failed to clone v-analyzer repository')
 		return
 	}
@@ -311,20 +302,11 @@ fn build_from_sources() ! {
 
 	println('${term.green('✓')} Dependencies for ${term.bold('v-analyzer')} installed successfully')
 
-	mut command := os.Command{
-		path: 'cd ${analyzer_sources_path} && v build.vsh 1>/dev/null'
-		redirect_stdout: true
+	exit_code := run_command('cd ${analyzer_sources_path} && v build.vsh 1>/dev/null') or {
+		errorln('Failed to build ${term.bold('v-analyzer')}: ${err}')
+		return
 	}
-
-	command.start()!
-
-	for !command.eof {
-		println(command.read_line())
-	}
-
-	command.close()!
-
-	if command.exit_code != 0 {
+	if exit_code != 0 {
 		errorln('Failed to build ${term.bold('v-analyzer')}')
 		return
 	}
@@ -400,6 +382,29 @@ fn arch_name() ?string {
 	}
 
 	return none
+}
+
+fn run_command(cmd string) !int {
+	$if windows {
+		res := os.execute(cmd)
+		println(res.output)
+		return res.exit_code
+	}
+
+	mut command := os.Command{
+		path: cmd
+		redirect_stdout: true
+	}
+
+	command.start()!
+
+	for !command.eof {
+		println(command.read_line())
+	}
+
+	command.close()!
+
+	return command.exit_code
 }
 
 fn norm_expand_tilde_to_home(path string) string {
