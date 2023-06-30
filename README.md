@@ -9,7 +9,18 @@
 [![Test tree-sitter-v](https://github.com/v-analyzer/v-analyzer/actions/workflows/test_tree_sitter_v.yml/badge.svg)](https://github.com/v-analyzer/v-analyzer/actions/workflows/test_tree_sitter_v.yml)
 [![VS Code extension tests](https://github.com/v-analyzer/v-analyzer/actions/workflows/vscode_extension_tests.yml/badge.svg)](https://github.com/v-analyzer/v-analyzer/actions/workflows/vscode_extension_tests.yml)
 
-Bring IDE features for V programming languages in VS Code, Vim, and other editors
+Bring IDE features for V programming languages in VS Code, Vim, and other editors.
+
+v-analyzer provides the following features:
+
+- code completion/IntelliSense
+- go to definition, type definition
+- find all references, document symbol, symbol renaming
+- types and documentation on hover
+- inlay hints for types and some construction like `or` block
+- semantic syntax highlighting
+- formatting
+- signature help
 
 ## Installation
 
