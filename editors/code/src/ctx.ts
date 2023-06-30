@@ -5,12 +5,14 @@ import {
 	getWorkspaceConfig,
 	getWorkspaceFolder,
 	isVlangDocument,
-	isVlangEditor, VlangEditor
+	isVlangEditor,
+	VlangEditor
 } from "./utils";
 import {createClient} from "./client";
 import {bootstrap} from "./bootstrap";
 import {connectAnalyzerViaTcp} from "./tcp";
 import {log} from "./log";
+import {runVCommandCallback} from "./exec";
 
 // Most of the file taken from `rust-analyzer/editors/code/src/ctx.ts` <3
 
@@ -49,6 +51,7 @@ export type ContextInit = Context & {
 
 export class Context {
 	readonly statusBar: vscode.StatusBarItem;
+	readonly langStatusBar: vscode.StatusBarItem;
 	private _client: lc.LanguageClient | undefined;
 	private _serverPath: string | undefined;
 	private outputChannel: vscode.OutputChannel | undefined;
@@ -79,11 +82,13 @@ export class Context {
 	) {
 		extCtx.subscriptions.push(this);
 
-		this.statusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
+		this.statusBar = vscode.window.createStatusBarItem("v-analyzer-status", vscode.StatusBarAlignment.Left, 50);
+		this.langStatusBar = vscode.window.createStatusBarItem("v-version", vscode.StatusBarAlignment.Left, 60);
 
 		this.clientSubscriptions = [];
 		this.commandDisposables = [];
 
+		this.showLanguageStatusBar()
 		this.updateCommands("disable");
 		this.setServerStatus({
 			health: "stopped",
@@ -92,6 +97,7 @@ export class Context {
 
 	dispose() {
 		this.statusBar.dispose();
+		this.langStatusBar.dispose();
 		void this.disposeClient();
 		this.commandDisposables.forEach((disposable) => disposable.dispose());
 	}
@@ -223,6 +229,19 @@ export class Context {
 		}
 	}
 
+	showLanguageStatusBar() {
+		const statusBar = this.langStatusBar;
+		statusBar.text = "V"
+		statusBar.show();
+		runVCommandCallback(['-version'], (err, stdout) => {
+			if (err) {
+				return;
+			}
+			const version = stdout.trim().replace("V ", "");
+			statusBar.text = `V ${version}`;
+		});
+	}
+
 	setServerStatus(status: ra.ServerStatusParams | { health: "stopped" }) {
 		let icon = "";
 		const statusBar = this.statusBar;
@@ -235,6 +254,7 @@ export class Context {
 				statusBar.color = undefined;
 				statusBar.backgroundColor = undefined;
 				statusBar.command = "v-analyzer.stopServer";
+				icon = "$(zap) "
 				break;
 			case "warning":
 				if (status.message) {
