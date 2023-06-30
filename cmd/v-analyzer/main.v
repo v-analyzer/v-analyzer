@@ -97,6 +97,20 @@ fn main() {
 		execute: clear_cache_cmd
 	})
 
+	cmd.add_command(cli.Command{
+		name: 'up'
+		description: 'Updates the analyzer to the latest version.'
+		execute: up_cmd
+		posix_mode: true
+		flags: [
+			cli.Flag{
+				flag: .bool
+				name: 'nightly'
+				description: 'Install the latest nightly build'
+			},
+		]
+	})
+
 	cmd.add_flags([
 		cli.Flag{
 			flag: .bool
