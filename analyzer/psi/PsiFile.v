@@ -34,7 +34,7 @@ pub fn new_stub_psi_file(path string, stub_list &StubList) &PsiFile {
 	return &PsiFile{
 		path: path
 		tree: unsafe { nil }
-		source_text: unsafe { nil }
+		source_text: ''
 		stub_list: stub_list
 	}
 }
