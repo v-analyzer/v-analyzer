@@ -106,7 +106,7 @@ jobs:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           automatic_release_tag: "latest"
           prerelease: false
-          title: "Latest Nightly Build"
+          title: "nightly release"
           files: |
             v-analyzer-linux-x86_64.zip
             v-analyzer-darwin-x86_64.zip

@@ -27,16 +27,16 @@ jobs:
         with:
           check-latest: true
 
-      - name: Install via command
+      - name: Install via command (Linux and macOS)
         if: matrix.os != 'windows-latest'
         run: |
           v -e "$(curl -fsSL https://raw.githubusercontent.com/v-analyzer/v-analyzer/master/install.vsh)"
 
-      - name: Install via command
+      - name: Install via command (Windows)
         if: matrix.os == 'windows-latest'
         shell: msys2 {0}
         run: |
-          curl 'https://raw.githubusercontent.com/v-analyzer/v-analyzer/master/install.vsh' | %{ v -e $_ }
+          v -e "$(curl https://raw.githubusercontent.com/v-analyzer/v-analyzer/master/install.vsh)"
 
       - name: Check if the build is successful
         run: |
