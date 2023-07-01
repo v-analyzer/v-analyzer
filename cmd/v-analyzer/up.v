@@ -20,6 +20,16 @@ fn up_cmd(cmd cli.Command) ! {
 	is_nightly := cmd.flags.get_bool('nightly') or { false }
 	nightly_flag := if is_nightly { '--nightly' } else { '' }
 
+	$if windows {
+		// On Windows we cannot use `os.Command` because it doesn't support Windows
+		res := os.execute('v ${analyzer_install_script_path} up ${nightly_flag}')
+		if res.exit_code != 0 {
+			errorln('Failed to update ${term.bold('v-analyzer')}')
+			return
+		}
+		return
+	}
+
 	mut command := os.Command{
 		path: 'v ${analyzer_install_script_path} up ${nightly_flag}'
 		redirect_stdout: true
