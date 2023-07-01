@@ -35,6 +35,38 @@ struct ReleaseInfo {
 	assets   []ReleaseAsset
 }
 
+fn current_version() !string {
+	version_res := os.execute('v-analyzer --version')
+	if version_res.exit_code != 0 {
+		return error('Failed to get current version: ${version_res.output}')
+	}
+
+	return version_res.output.trim_string_left('v-analyzer version ').trim_space()
+}
+
+fn check_updates() ! {
+	asset := find_latest_asset() or {
+		if err.msg().starts_with('Unsupported') {
+			update_from_sources(true, false)!
+			return
+		}
+		errorln('Failed to find latest release: ${err}')
+		return
+	}
+
+	cur_version := current_version() or {
+		errorln('${err}')
+		return
+	}
+
+	if cur_version == asset.tag_name {
+		println('You already have the latest version of ${term.bold('v-analyzer')}: ${cur_version}')
+		return
+	}
+
+	println('New version of ${term.bold('v-analyzer')} is available: ${term.bold(asset.tag_name)}')
+}
+
 fn update(nightly bool) ! {
 	if nightly {
 		println('Installing latest nightly version...')
@@ -54,17 +86,14 @@ fn update(nightly bool) ! {
 		return
 	}
 
-	version_res := os.execute('v-analyzer --version')
-	if version_res.exit_code != 0 {
-		errorln('Failed to get current version: ${version_res.output}')
+	cur_version := current_version() or {
+		errorln('${err}')
 		return
 	}
-
-	current_version := version_res.output.trim_string_left('v-analyzer version ').trim_space()
 	asset_version := asset.tag_name
 
-	if current_version == asset_version {
-		println('You already have the latest version of ${term.bold('v-analyzer')}: ${current_version}')
+	if cur_version == asset_version {
+		println('You already have the latest version of ${term.bold('v-analyzer')}: ${cur_version}')
 		return
 	}
 
@@ -459,7 +488,7 @@ cmd.add_command(cli.Command{
 
 cmd.add_command(cli.Command{
 	name: 'check-availability'
-	description: 'Check if v-analyzer binary is available for the current platform'
+	description: 'Check if v-analyzer binary is available for the current platform (service command for editors)'
 	posix_mode: true
 	execute: fn (_ cli.Command) ! {
 		find_latest_asset() or {
@@ -468,6 +497,15 @@ cmd.add_command(cli.Command{
 		}
 
 		println('${term.green('✓')} Prebuild v-analyzer binary is available for your platform')
+	}
+})
+
+cmd.add_command(cli.Command{
+	name: 'check-updates'
+	description: 'Checks for v-analyzer updates.'
+	posix_mode: true
+	execute: fn (_ cli.Command) ! {
+		check_updates()!
 	}
 })
 

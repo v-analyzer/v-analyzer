@@ -11,6 +11,11 @@ import time
 import config
 import lsp.log
 
+// version is the current version of the analyzer.
+// When you release a new version, make sure to update this constant and
+// and any other places that need to be updated (use search across the project).
+const version = '0.0.1-beta.1'
+
 // default_tcp_port is default TCP port that the analyzer uses to connect to the socket
 // when the --socket flag is passed at startup.
 // See also the `--port` flag to specify a custom port.
@@ -79,7 +84,7 @@ fn setup_logger(to_file bool) {
 fn main() {
 	mut cmd := cli.Command{
 		name: 'v-analyzer'
-		version: '0.0.1-beta.1'
+		version: version
 		description: 'Language server implementation for V language'
 		execute: run
 		posix_mode: true
@@ -109,6 +114,14 @@ fn main() {
 				description: 'Install the latest nightly build'
 			},
 		]
+	})
+
+	cmd.add_command(cli.Command{
+		name: 'check-updates'
+		description: 'Checks for v-analyzer updates.'
+		execute: check_updates_cmd
+		posix_mode: true
+		version: version
 	})
 
 	cmd.add_flags([
