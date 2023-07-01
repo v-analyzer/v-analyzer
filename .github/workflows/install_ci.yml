@@ -1,0 +1,42 @@
+name: Install CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-20.04
+          - os: macos-latest
+
+    name: Install v-analyzer on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    continue-on-error: true
+
+    steps:
+      - uses: msys2/setup-msys2@v2
+        if: matrix.os == 'windows-latest'
+
+      - name: Install V
+        id: install-v
+        uses: vlang/setup-v@v1.3
+        with:
+          check-latest: true
+
+      - name: Install via command (Linux and macOS)
+        if: matrix.os != 'windows-latest'
+        run: |
+          v -e "$(curl -fsSL https://raw.githubusercontent.com/v-analyzer/v-analyzer/master/install.vsh)"
+
+      - name: Install via command (Windows)
+        if: matrix.os == 'windows-latest'
+        shell: msys2 {0}
+        run: |
+          v -e "$(curl https://raw.githubusercontent.com/v-analyzer/v-analyzer/master/install.vsh)"
+
+      - name: Check if the build is successful
+        run: |
+          ~/.config/v-analyzer/bin/v-analyzer --version

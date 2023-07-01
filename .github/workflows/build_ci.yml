@@ -1,4 +1,4 @@
-name: Analyzer tests
+name: Build CI
 
 on:
   push:
@@ -11,8 +11,9 @@ jobs:
         include:
           - os: ubuntu-20.04
           - os: macos-latest
+          - os: windows-latest
 
-    name: Analyzer tests on ${{ matrix.os }}
+    name: Build on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     continue-on-error: true
 
@@ -33,12 +34,22 @@ jobs:
           cd v-analyzer
           v install
 
-      - name: Run tests
-        run: |
-          cd v-analyzer/tests
-          v run .
-
-      - name: Run other V tests
+      - name: Build Debug
         run: |
           cd v-analyzer
-          v test .
+          v build.vsh
+
+      - name: Check if the build is successful
+        run: |
+          cd v-analyzer
+          ./bin/v-analyzer --version
+
+      - name: Build Release
+        run: |
+          cd v-analyzer
+          v build.vsh release
+
+      - name: Check if the build is successful
+        run: |
+          cd v-analyzer
+          ./bin/v-analyzer --version

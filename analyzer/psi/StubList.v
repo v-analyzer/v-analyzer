@@ -15,7 +15,10 @@ pub mut:
 }
 
 fn (s StubList) root() &StubBase {
-	return s.index_map[0]
+	return s.index_map[0] or {
+		// should never happen
+		return new_root_stub('unknown file')
+	}
 }
 
 fn (mut s StubList) add_stub(mut stub StubBase, parent &StubElement) {

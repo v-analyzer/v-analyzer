@@ -3,7 +3,9 @@ module main
 import testing
 
 fn bench() testing.BenchmarkRunner {
-	mut b := testing.BenchmarkRunner{}
+	mut b := testing.BenchmarkRunner{
+		last_fixture: unsafe { nil }
+	}
 
 	b.bench('inlay hints', fn (mut b testing.Benchmark, mut fixture testing.Fixture) ! {
 		fixture.configure_by_file('benchmarks/checker.v')!
