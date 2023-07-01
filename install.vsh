@@ -131,7 +131,7 @@ fn install_from_binary(asset ReleaseAsset, update bool) ! {
 }
 
 fn find_latest_asset() !ReleaseAsset {
-	text := http.get_text('https://api.github.com/repos/i582/simple_package/releases/latest')
+	text := http.get_text('https://api.github.com/repos/v-analyzer/v-analyzer/releases/latest')
 	res := json.decode(ReleaseInfo, text) or {
 		errorln('Failed to decode JSON response from GitHub: ${err}')
 		return error('Failed to decode JSON response from GitHub: ${err}')
