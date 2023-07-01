@@ -274,7 +274,7 @@ fn install_from_sources(no_interaction bool) ! {
 	println('${term.yellow('[WARNING]')} Currently ${term.bold('v-analyzer')} has no prebuilt binaries for your platform')
 
 	// Used primarily for VS Code extension
-	if no_interaction {
+	if !no_interaction {
 		mut answer := os.input('Do you want to build it from sources? (y/n) ')
 		if answer != 'y' {
 			println('')
