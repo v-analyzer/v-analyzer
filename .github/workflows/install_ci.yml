@@ -18,6 +18,9 @@ jobs:
     continue-on-error: true
 
     steps:
+      - uses: msys2/setup-msys2@v2
+        if: matrix.os == 'windows-latest'
+
       - name: Install V
         id: install-v
         uses: vlang/setup-v@v1.3
@@ -31,6 +34,7 @@ jobs:
 
       - name: Install via command
         if: matrix.os == 'windows-latest'
+        shell: msys2 {0}
         run: |
           curl 'https://raw.githubusercontent.com/v-analyzer/v-analyzer/master/install.vsh' | %{ v -e $_ }
 
