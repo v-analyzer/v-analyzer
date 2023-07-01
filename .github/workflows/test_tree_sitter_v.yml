@@ -12,7 +12,7 @@ jobs:
           - os: ubuntu-20.04
           - os: macos-latest
 
-    name: test (${{ matrix.os }})
+    name: Test tree-sitter on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
 
     steps:

@@ -27,7 +27,7 @@ jobs:
             target: darwin-arm64
             cc: clang
 
-    name: dist (${{ matrix.target }})
+    name: Build binary artifact for ${{ matrix.target }}
     runs-on: ${{ matrix.os }}
     env:
       CC: ${{ matrix.cc }}
