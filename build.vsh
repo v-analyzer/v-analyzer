@@ -10,7 +10,11 @@ import cli
 
 pub const (
 	code_path          = './cmd/v-analyzer'
-	bin_path           = './bin/v-analyzer'
+	bin_path           = './bin/v-analyzer' + $if windows {
+		'.exe'
+	} $else {
+		''
+	}
 	base_build_command = '${@VEXE} ${code_path} -o ${bin_path}'
 	compiler_flag      = $if windows {
 		'-cc gcc' // TCC cannot build tree-sitter on Windows
