@@ -105,7 +105,7 @@ jobs:
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           automatic_release_tag: "latest"
-          prerelease: false
+          prerelease: true
           title: "nightly release"
           files: |
             v-analyzer-linux-x86_64.zip
