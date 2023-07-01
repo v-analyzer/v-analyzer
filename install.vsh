@@ -101,12 +101,12 @@ fn update(nightly bool) ! {
 	install_from_binary(asset, true)!
 }
 
-fn install() ! {
+fn install(no_interaction bool) ! {
 	println('Downloading ${term.bold('v-analyzer')}...')
 
 	println('Fetching latest release info from GitHub...')
 	asset := find_latest_asset() or {
-		install_from_sources()!
+		install_from_sources(no_interaction)!
 		return
 	}
 
@@ -270,22 +270,26 @@ fn get_latest_commit_hash() !string {
 	return hash_res.output.trim_space()
 }
 
-fn install_from_sources() ! {
+fn install_from_sources(no_interaction bool) ! {
 	println('${term.yellow('[WARNING]')} Currently ${term.bold('v-analyzer')} has no prebuilt binaries for your platform')
-	mut answer := os.input('Do you want to build it from sources? (y/n) ')
-	if answer != 'y' {
-		println('')
-		println('Ending the update process')
-		warnln('${term.bold('v-analyzer')} is not installed!')
-		println('')
-		println('${term.bold('[NOTE]')} If you want to build it from sources manually, run the following commands:')
-		println('git clone https://github.com/vlang-association/v-analyzer.git')
-		println('cd v-analyzer')
-		println('v build.vsh')
-		println(term.gray('# Optionally you can move the binary to the standard location:'))
-		println('mkdir -p ${analyzer_bin_path}')
-		println('cp ./bin/v-analyzer ${analyzer_bin_path}')
-		return
+
+	// Used primarily for VS Code extension
+	if no_interaction {
+		mut answer := os.input('Do you want to build it from sources? (y/n) ')
+		if answer != 'y' {
+			println('')
+			println('Ending the update process')
+			warnln('${term.bold('v-analyzer')} is not installed!')
+			println('')
+			println('${term.bold('[NOTE]')} If you want to build it from sources manually, run the following commands:')
+			println('git clone https://github.com/vlang-association/v-analyzer.git')
+			println('cd v-analyzer')
+			println('v build.vsh')
+			println(term.gray('# Optionally you can move the binary to the standard location:'))
+			println('mkdir -p ${analyzer_bin_path}')
+			println('cp ./bin/v-analyzer ${analyzer_bin_path}')
+			return
+		}
 	}
 
 	if already_cloned() {
@@ -464,9 +468,17 @@ mut cmd := cli.Command{
 	version: '0.0.1-beta.1'
 	description: 'Install and update v-analyzer'
 	posix_mode: true
-	execute: fn (_ cli.Command) ! {
-		install()!
+	execute: fn (cmd cli.Command) ! {
+		no_interaction := cmd.flags.get_bool('no-interaction') or { false }
+		install(no_interaction)!
 	}
+	flags: [
+		cli.Flag{
+			flag: .bool
+			name: 'no-interaction' // Used primarily for VS Code extension, to install v-analyzer from sources
+			description: 'Do not ask any questions, use default values'
+		},
+	]
 }
 
 cmd.add_command(cli.Command{
