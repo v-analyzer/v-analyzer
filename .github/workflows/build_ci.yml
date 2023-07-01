@@ -36,6 +36,7 @@ jobs:
 
       - name: Build Debug
         run: |
+          cd v-analyzer
           v build.vsh
 
       - name: Check if the build is successful
@@ -45,6 +46,7 @@ jobs:
 
       - name: Build Release
         run: |
+          cd v-analyzer
           v build.vsh release
 
       - name: Check if the build is successful
