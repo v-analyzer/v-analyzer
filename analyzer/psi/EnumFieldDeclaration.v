@@ -174,7 +174,12 @@ fn (f &EnumFieldDeclaration) calculate_value(value PsiElement) ?i64 {
 			left_val := f.calculate_value(left)?
 			right_val := f.calculate_value(right)?
 
-			return left_val << right_val
+			if left_val < 0 {
+				// -1 << 1 is prohibited by V
+				return none
+			}
+
+			return i64(u64(left_val) << right_val)
 		}
 	}
 
