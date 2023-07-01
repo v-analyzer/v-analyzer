@@ -1,9 +1,12 @@
-name: Build binary artifacts
+name: Build nightly release
 
 on:
   push:
     branches:
       - main
+
+permissions:
+  contents: write
 
 jobs:
   dist:
@@ -53,7 +56,7 @@ jobs:
       - name: Create ZIP archive
         if: matrix.os != 'windows-latest'
         run: |
-          zip -9 v-analyzer-${{ matrix.target }} ./v-analyzer/bin/v-analyzer
+          zip -j9 v-analyzer-${{ matrix.target }} ./v-analyzer/bin/v-analyzer
 
       - name: Create ZIP archive
         if: matrix.os == 'windows-latest'
@@ -69,3 +72,43 @@ jobs:
         with:
           name: v-analyzer-${{ matrix.target }}.zip
           path: ./v-analyzer-${{ matrix.target }}.zip
+
+  nightly-release:
+    name: Create Nightly GitHub Release
+    needs: [ dist ]
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v1
+      - name: Fetch linux-x86_64
+        uses: actions/download-artifact@v1
+        with:
+          name: v-analyzer-linux-x86_64.zip
+          path: ./
+      - name: Fetch darwin-x86_64
+        uses: actions/download-artifact@v1
+        with:
+          name: v-analyzer-darwin-x86_64.zip
+          path: ./
+      - name: Fetch darwin-arm64
+        uses: actions/download-artifact@v1
+        with:
+          name: v-analyzer-darwin-arm64.zip
+          path: ./
+      - name: Fetch windows-x86_64
+        uses: actions/download-artifact@v1
+        with:
+          name: v-analyzer-windows-x86_64.zip
+          path: ./
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        name: Create Release and Upload Assets
+        id: create_release
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "latest"
+          prerelease: false
+          title: "Latest Nightly Build"
+          files: |
+            v-analyzer-linux-x86_64.zip
+            v-analyzer-darwin-x86_64.zip
+            v-analyzer-darwin-arm64.zip
+            v-analyzer-windows-x86_64.zip
