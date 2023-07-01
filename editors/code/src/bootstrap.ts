@@ -1,7 +1,8 @@
-import {getWorkspaceConfig} from "./utils";
 import cp from "child_process";
+import os from "os";
 import {log} from "./log";
-import * as os from "os";
+import {getWorkspaceConfig} from "./utils";
+import {AnalyzerNotInstalledError} from "./ctx";
 
 /**
  * bootstrap returns the path to the v-analyzer binary.
@@ -11,11 +12,6 @@ import * as os from "os";
  */
 export async function bootstrap(): Promise<string> {
 	const path = getAnalyzerPath();
-	if (!path) {
-		throw new Error("v-analyzer binary is not available, make sure the v-analyzer is installed and available in the PATH");
-	}
-
-	log.info("Using server binary at", path);
 
 	if (!isAnalyzerExecutableValid(path)) {
 		const config = getWorkspaceConfig();
@@ -25,8 +21,10 @@ export async function bootstrap(): Promise<string> {
             Consider removing this config or making a valid server binary available at that path.`);
 		}
 
-		throw new Error(`Failed to execute ${path} -v, make sure the v-analyzer is installed and available in the PATH`);
+		throw new AnalyzerNotInstalledError(`Failed to execute ${path} -v, make sure the v-analyzer is installed and available in the PATH`);
 	}
+
+	log.info("Using server binary at", path);
 
 	return path;
 }

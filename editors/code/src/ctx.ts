@@ -1,6 +1,10 @@
 import * as lc from "vscode-languageclient/node";
 import * as ra from "./lsp_ext";
 import * as vscode from "vscode";
+import * as fs from "fs";
+import * as https from "https";
+import * as path from "path";
+import * as cp from "child_process";
 import {
 	getWorkspaceConfig,
 	getWorkspaceFolder,
@@ -8,6 +12,7 @@ import {
 	isVlangEditor,
 	VlangEditor
 } from "./utils";
+import {Progress} from "vscode";
 import {createClient} from "./client";
 import {bootstrap} from "./bootstrap";
 import {connectAnalyzerViaTcp} from "./tcp";
@@ -48,6 +53,19 @@ export type CommandFactory = {
 export type ContextInit = Context & {
 	readonly client: lc.LanguageClient;
 };
+
+export class AnalyzerNotInstalledError implements Error {
+	constructor(additionalMessage?: string) {
+		this.message = "v-analyzer is not installed";
+		if (additionalMessage) {
+			this.message += `: ${additionalMessage}`;
+		}
+		this.name = "AnalyzerNotInstalled";
+	}
+
+	message: string;
+	name: string;
+}
 
 export class Context {
 	readonly statusBar: vscode.StatusBarItem;
@@ -126,10 +144,19 @@ export class Context {
 			this._serverPath = await bootstrap()
 				.catch(
 					(err) => {
-						let message = "bootstrap error. ";
-						message += 'See the logs in "OUTPUT > V Analyzer Client" (should open automatically). ';
-						log.error("Bootstrap error", err);
-						throw new Error(message);
+						if (err instanceof AnalyzerNotInstalledError) {
+							log.info("v-analyzer is not installed");
+
+							const msg = 'v-analyzer is not installed. Do you want to install it?'
+							void vscode.window.showInformationMessage(msg, 'Yes', 'No')
+								.then(selected => {
+									if (selected == 'Yes') {
+										this.installAnalyzerWithProgress()
+									}
+								});
+						}
+
+						throw new AnalyzerNotInstalledError();
 					}
 				);
 			const newEnv = Object.assign({}, process.env);
@@ -304,6 +331,114 @@ export class Context {
 
 	private pushClientCleanup(d: Disposable) {
 		this.clientSubscriptions.push(d);
+	}
+
+	private getScriptPath(): string {
+		const globalFolder = this.extCtx.globalStorageUri.fsPath;
+		if (!fs.existsSync(globalFolder)) {
+			fs.mkdirSync(globalFolder);
+		}
+
+		return path.join(globalFolder, 'install.vsh');
+	}
+
+	private installAnalyzerWithProgress() {
+		return vscode.window.withProgress({
+			title: "Installing v-analyzer...",
+			location: vscode.ProgressLocation.Notification,
+		}, async (progress) => {
+			return this.installAnalyzer(progress)
+		})
+	}
+
+	private cleanOutput(value: string): string {
+		if (!value) {
+			return '';
+		}
+
+		return value.replace(/\u001b\[[0-9;]*m/g, '');
+	}
+
+	private async startInstallation(progress: Progress<{
+		message?: string;
+		increment?: number
+	}>, fromSources: boolean) {
+		const progressMessage = fromSources ? "Installing v-analyzer from sources..." : "Installing v-analyzer binary...";
+		progress.report({message: progressMessage});
+
+		const scriptPath = this.getScriptPath();
+		const buf = cp.spawnSync(`v`, ['run', scriptPath, '--no-interaction'], {encoding: 'utf-8'})
+
+		log.debug(this.cleanOutput(buf.stdout));
+		log.debug(this.cleanOutput(buf.stderr));
+
+		if (buf.error) {
+			log.error(buf.error);
+			return;
+		}
+
+		void vscode.window.showInformationMessage('v-analyzer binary has been installed successfully');
+
+		progress.report({message: "v-analyzer binary has been installed successfully"});
+
+		const config = vscode.workspace.getConfiguration();
+		config.update('v-analyzer.serverPath', '~/.config/v-analyzer/bin/v-analyzer', vscode.ConfigurationTarget.Global)
+			.then(() => {
+				log.info('v-analyzer.serverPath has been updated to ~/.config/v-analyzer/bin/v-analyzer');
+			});
+	}
+
+	private async installAnalyzer(progress: Progress<{
+		message?: string;
+		increment?: number
+	}>) {
+		await this.downloadScriptIfNeeded()
+
+		progress.report({message: "Check prebuilt binary availability..."});
+
+		const scriptPath = this.getScriptPath();
+
+		const result = cp.execSync(`v run '${scriptPath}' check-availability`, {encoding: 'utf-8'});
+		if (result.trim().includes('v-analyzer binary is available for your platform')) {
+			progress.report({message: "Found prebuilt binary for your platform, starting downloading..."});
+			return this.startInstallation(progress, false)
+		}
+
+		return vscode.window.showInformationMessage('v-analyzer binary is not available for your platform. Do you want to build it from source?', 'Yes', 'No')
+			.then(async selected => {
+				if (selected == 'Yes') {
+					await this.startInstallation(progress, true)
+				}
+			})
+	}
+
+	private async downloadScriptIfNeeded() {
+		return new Promise<void>((resolve, reject) => {
+			const destinationPath = this.getScriptPath();
+			if (fs.existsSync(destinationPath)) {
+				// Do nothing if a script already exists
+				resolve();
+				return;
+			}
+
+			log.info('Downloading install script...');
+
+			const file = fs.createWriteStream(destinationPath);
+
+			https.get('https://raw.githubusercontent.com/v-analyzer/v-analyzer/main/install.vsh', (response) => {
+				response.pipe(file);
+				file.on('finish', () => {
+					file.close();
+					log.info('Install script has been downloaded successfully');
+					resolve();
+				});
+			}).on('error', (err) => {
+				fs.unlink(destinationPath, () => {
+					log.error(`Failed to download install script: ${err}`)
+					reject(err);
+				});
+			});
+		})
 	}
 }
 

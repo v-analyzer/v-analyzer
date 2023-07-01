@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import {setContextValue} from "./utils";
-import {CommandFactory, Context, fetchWorkspace} from "./ctx";
+import {AnalyzerNotInstalledError, CommandFactory, Context, fetchWorkspace} from "./ctx";
 import * as commands from "./commands";
 
 const V_PROJECT_CONTEXT_NAME = "inVlangProject";
@@ -27,10 +27,15 @@ export async function activate(context: vscode.ExtensionContext): Promise<Contex
 	const ctx = new Context(context, createCommands(), fetchWorkspace());
 
 	const api = await activateServer(ctx).catch((err) => {
-		void vscode.window.showErrorMessage(
-			`Cannot activate v-analyzer extension: ${err.message}`
-		);
-		throw err;
+		if (!(err instanceof AnalyzerNotInstalledError)) {
+			void vscode.window.showErrorMessage(
+				`Cannot activate v-analyzer extension: ${err.message}`
+			);
+			throw err;
+		}
+
+		// If v-analyzer is not installed, we still want to activate the extension.
+		return ctx;
 	});
 
 	// Set the context variable inVlangProject which can be referenced when configuring,
@@ -38,13 +43,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<Contex
 	// See https://code.visualstudio.com/docs/getstarted/keybindings#_when-clause-contexts
 	setContextValue(V_PROJECT_CONTEXT_NAME, true);
 
-	// void activateVAnalyzer();
 	return api;
 }
 
 export function deactivate(): void {
 	setContextValue(V_PROJECT_CONTEXT_NAME, undefined);
-	// deactivateVAnalyzer();
 }
 
 async function activateServer(ctx: Context): Promise<Context> {
