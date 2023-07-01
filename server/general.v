@@ -289,7 +289,7 @@ fn (mut ls LanguageServer) setup_vmodules() {
 
 fn (mut ls LanguageServer) setup_config_dir() {
 	if !os.exists(config.analyzer_configs_path) {
-		os.mkdir(config.analyzer_configs_path) or {
+		os.mkdir_all(config.analyzer_configs_path) or {
 			ls.client.log_message('Failed to create analyzer configs directory: ${err}',
 				.error)
 
