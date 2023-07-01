@@ -432,7 +432,7 @@ pub fn warnln(msg string) {
 
 mut cmd := cli.Command{
 	name: 'v-analyzer-installer-updated'
-	version: '0.0.1-alpha'
+	version: '0.0.1-beta.1'
 	description: 'Install and update v-analyzer'
 	posix_mode: true
 	execute: fn (_ cli.Command) ! {

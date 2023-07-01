@@ -8,7 +8,7 @@
 # You can set it to `./` to store the cache in the project's directory, this is useful
 # if you want to debug the analyzer.
 # Basically, you don't need to set it.
-custom_cache_dir = "./"
+custom_cache_dir = "./cache"
 
 # Specifies whenever to enable semantic tokens or not.
 # - `full` — enables all semantic tokens. In this mode analyzer resolves all symbols

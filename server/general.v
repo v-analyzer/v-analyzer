@@ -75,7 +75,7 @@ pub fn (mut ls LanguageServer) initialize(params lsp.InitializeParams, mut wr Re
 		}
 		server_info: lsp.ServerInfo{
 			name: 'v-analyzer'
-			version: '0.0.1-alpha'
+			version: '0.0.1-beta.1'
 		}
 	}
 }

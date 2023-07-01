@@ -81,7 +81,7 @@ fn build(explicit_debug bool, release_mode bool) {
 
 mut cmd := cli.Command{
 	name: 'v-analyzer-builder'
-	version: '0.0.1-alpha'
+	version: '0.0.1-beta.1'
 	description: 'Builds the v-analyzer binary.'
 	posix_mode: true
 	execute: fn (_ cli.Command) ! {

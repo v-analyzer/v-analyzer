@@ -79,7 +79,7 @@ fn setup_logger(to_file bool) {
 fn main() {
 	mut cmd := cli.Command{
 		name: 'v-analyzer'
-		version: '0.0.1-alpha'
+		version: '0.0.1-beta.1'
 		description: 'Language server implementation for V language'
 		execute: run
 		posix_mode: true
