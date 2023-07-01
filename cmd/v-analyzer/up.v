@@ -7,7 +7,7 @@ import utils
 import net.http
 
 pub const (
-	analyzer_install_script_download_path = 'https://gist.githubusercontent.com/i582/51bfe16a6c51b7dbb0748ea93a1c8bb8/raw/471e8e4d931aecc14311ef7029180b7b5544f156/install.vsh'
+	analyzer_install_script_download_path = 'https://raw.githubusercontent.com/v-analyzer/v-analyzer/main/install.vsh'
 	analyzer_install_script_path          = utils.expand_tilde_to_home('~/.config/v-analyzer/install.vsh')
 )
 
