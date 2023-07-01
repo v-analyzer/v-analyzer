@@ -504,7 +504,7 @@ cmd.add_command(cli.Command{
 	posix_mode: true
 	execute: fn (_ cli.Command) ! {
 		find_latest_asset() or {
-			errorln('Prebuild v-analyzer binary is not available for your platform')
+			println('Prebuild v-analyzer binary is not available for your platform')
 			return
 		}
 
