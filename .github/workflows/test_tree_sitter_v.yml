@@ -35,28 +35,3 @@ jobs:
         run: |
           cd v-analyzer/tree_sitter_v
           tree-sitter test
-
-# TODO: some msvc error for Rust
-#  test-windows:
-#    runs-on: windows-latest
-#    env:
-#      CC: msvc
-#    steps:
-#      - uses: msys2/setup-msys2@v2
-#      - uses: ilammy/msvc-dev-cmd@v1.4.1
-#      - name: Install minimal stable Rust
-#        uses: actions-rs/toolchain@v1
-#        with:
-#          profile: minimal
-#          toolchain: stable
-#      - name: Install Tree-sitter
-#        run: |
-#          cargo install tree-sitter-cli
-#      - name: Checkout v-analyzer
-#        uses: actions/checkout@v3
-#        with:
-#          path: v-analyzer
-#      - name: Run tests
-#        run: |
-#          cd v-analyzer/tree_sitter_v
-#          tree-sitter test
