@@ -457,4 +457,18 @@ cmd.add_command(cli.Command{
 	]
 })
 
+cmd.add_command(cli.Command{
+	name: 'check-availability'
+	description: 'Check if v-analyzer binary is available for the current platform'
+	posix_mode: true
+	execute: fn (_ cli.Command) ! {
+		find_latest_asset() or {
+			errorln('Prebuild v-analyzer binary is NOT available for your platform')
+			exit(100)
+		}
+
+		println('${term.green('✓')} Prebuild v-analyzer binary is available for your platform')
+	}
+})
+
 cmd.parse(os.args)
