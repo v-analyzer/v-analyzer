@@ -56,6 +56,10 @@ pub mut:
 	// intentions is a map of all intentions that are available in the editor.
 	// Use `LanguageServer.register_intention()` to register a new intention.
 	intentions map[string]intentions.Intention
+	// compiler_quick_fixes is a map of all quick fixes for compiler errors
+	// that are available in the editor.
+	// Use `LanguageServer.register_compiler_quick_fix()` to register a new quick fix.
+	compiler_quick_fixes map[string]intentions.CompilerQuickFix
 
 	progress          &progress.Tracker
 	analyzer_instance analyzer.Analyzer
@@ -356,6 +360,10 @@ pub fn (mut ls LanguageServer) handle_jsonrpc(request &jsonrpc.Request, mut rw j
 
 pub fn (mut ls LanguageServer) register_intention(intention intentions.Intention) {
 	ls.intentions[intention.id] = intention
+}
+
+pub fn (mut ls LanguageServer) register_compiler_quick_fix(quickfix intentions.CompilerQuickFix) {
+	ls.compiler_quick_fixes[quickfix.id] = quickfix
 }
 
 // launch_tool launches a tool with the same vroot as the language server

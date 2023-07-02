@@ -22,3 +22,13 @@ fn find_declaration_at_pos(file &psi.PsiFile, pos psi.Position) ?psi.PsiNamedEle
 
 	return none
 }
+
+fn find_reference_at_pos(file &psi.PsiFile, pos psi.Position) ?&psi.ReferenceExpression {
+	element := file.find_element_at_pos(pos) or { return none }
+	parent := element.parent() or { return none }
+	if parent is psi.ReferenceExpression {
+		return parent
+	}
+
+	return none
+}

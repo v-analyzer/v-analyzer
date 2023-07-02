@@ -12,24 +12,36 @@ pub:
 }
 
 pub fn (mut ls LanguageServer) execute_command(params lsp.ExecuteCommandParams) ? {
-	if mut intention := ls.intentions[params.command] {
-		arguments := json.decode([]string, params.arguments) or { []string{} }
+	mut intention := ls.find_intention_or_quickfix(params.command)?
 
-		argument := json.decode(IntentionData, arguments[0]) or {
-			loglib.with_fields({
-				'command':  params.command
-				'argument': params.arguments
-			}).warn('Got invalid argument')
-			return
-		}
+	arguments := json.decode([]string, params.arguments) or { []string{} }
 
-		file_uri := argument.file_uri
-		file := ls.get_file(file_uri)?
-		pos := argument.position
-
-		ctx := intentions.IntentionContext.from(file.psi_file, pos)
-		edits := intention.invoke(ctx) or { return }
-
-		ls.client.apply_edit(edit: edits)
+	argument := json.decode(IntentionData, arguments[0]) or {
+		loglib.with_fields({
+			'command':  params.command
+			'argument': params.arguments
+		}).warn('Got invalid argument')
+		return
 	}
+
+	file_uri := argument.file_uri
+	file := ls.get_file(file_uri)?
+	pos := argument.position
+
+	ctx := intentions.IntentionContext.from(file.psi_file, pos)
+	edits := intention.invoke(ctx) or { return }
+
+	ls.client.apply_edit(edit: edits)
+}
+
+pub fn (mut ls LanguageServer) find_intention_or_quickfix(name string) ?intentions.Intention {
+	if i := ls.intentions[name] {
+		return i
+	}
+
+	if qf := ls.compiler_quick_fixes[name] {
+		return qf as intentions.Intention
+	}
+
+	return none
 }

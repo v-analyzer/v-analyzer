@@ -125,6 +125,11 @@ pub fn (_ &StubbedElementType) index_stub(stub &StubBase, mut sink IndexSink) {
 		return
 	}
 
+	if stub.stub_type == .module_clause {
+		sink.occurrence(.modules_fingerprint, stub.name())
+		return
+	}
+
 	if stub.stub_type == .function_declaration {
 		name := stub.name()
 		if name == 'main' || name.starts_with('test_') {

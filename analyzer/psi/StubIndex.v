@@ -8,7 +8,7 @@ import loglib
 __global stubs_index = StubIndex{}
 
 const (
-	count_index_keys               = 14 // StubIndexKey
+	count_index_keys               = 15 // StubIndexKey
 	count_stub_index_location_keys = 5 // StubIndexLocationKind
 )
 
@@ -338,6 +338,19 @@ pub fn (s &StubIndex) get_module_root(module_fqn string) string {
 	files := s.module_to_files[module_fqn] or { return '' }
 	first := files[0] or { return '' }
 	return os.dir(first.stub_list.path)
+}
+
+pub fn (s &StubIndex) get_modules_by_name(name string) []PsiElement {
+	mut elements := []PsiElement{cap: 5}
+
+	$for value in StubIndexLocationKind.values {
+		data := s.data[value.value]
+		res := data[int(StubIndexKey.modules_fingerprint)]
+		if found := res[name] {
+			elements << found.psis
+		}
+	}
+	return elements
 }
 
 // get_all_modules returns all known modules.

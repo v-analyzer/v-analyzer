@@ -18,6 +18,7 @@ pub enum StubIndexKey as u8 {
 	fields_fingerprint
 	interface_methods_fingerprint
 	interface_fields_fingerprint
+	modules_fingerprint
 	// See count_index_keys
 }
 

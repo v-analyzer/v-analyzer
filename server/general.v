@@ -6,6 +6,7 @@ import os
 import project
 import metadata
 import time
+import arrays
 import config
 import loglib
 import analyzer.index
@@ -34,6 +35,9 @@ pub fn (mut ls LanguageServer) initialize(params lsp.InitializeParams, mut wr Re
 	ls.register_intention(intentions.AddFlagAttributeIntention{})
 	ls.register_intention(intentions.AddHeapAttributeIntention{})
 	ls.register_intention(intentions.MakePublicIntention{})
+
+	ls.register_compiler_quick_fix(intentions.MakeMutableQuickFix{})
+	ls.register_compiler_quick_fix(intentions.ImportModuleQuickFix{})
 
 	return lsp.InitializeResult{
 		capabilities: lsp.ServerCapabilities{
@@ -78,7 +82,7 @@ pub fn (mut ls LanguageServer) initialize(params lsp.InitializeParams, mut wr Re
 			}
 			folding_range_provider: true
 			execute_command_provider: lsp.ExecuteCommandOptions{
-				commands: ls.intentions.values().map(it.id)
+				commands: arrays.concat(ls.intentions.values().map(it.id), ...ls.compiler_quick_fixes.values().map(it.id))
 			}
 		}
 		server_info: lsp.ServerInfo{

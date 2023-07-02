@@ -45,6 +45,7 @@ pub const (
 // Contains additional diagnostic information about the context in which
 // a code action is run.
 pub struct CodeActionContext {
+pub:
 	// An array of diagnostics known on the client side overlapping the range
 	// provided to the `textDocument/codeAction` request. They are provided so
 	// that the server knows which errors are currently presented to the user
