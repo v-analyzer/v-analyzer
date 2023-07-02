@@ -62,6 +62,7 @@ pub struct CodeActionContext {
 }
 
 pub struct CodeAction {
+pub:
 	// A short, human-readable, title for this code action.
 	title string
 	// The kind of the code action.

@@ -1,7 +1,7 @@
 module semantic
 
 import lsp
-import analyzer
+import utils
 import analyzer.psi
 
 pub struct ResolveSemanticVisitor {
@@ -11,8 +11,8 @@ pub struct ResolveSemanticVisitor {
 }
 
 pub fn new_resolve_semantic_visitor(range lsp.Range, containing_file &psi.PsiFile) ResolveSemanticVisitor {
-	start := analyzer.compute_offset(containing_file.source_text, range.start.line, range.start.character)
-	end := analyzer.compute_offset(containing_file.source_text, range.end.line, range.end.character)
+	start := utils.compute_offset(containing_file.source_text, range.start.line, range.start.character)
+	end := utils.compute_offset(containing_file.source_text, range.end.line, range.end.character)
 
 	return ResolveSemanticVisitor{
 		with_range: !range.is_empty()

@@ -50,3 +50,7 @@ pub fn (mut c Client) show_message_request(message string, actions []lsp.Message
 pub fn (mut c Client) send_server_status(params lsp.ServerStatusParams) {
 	c.wr.write_notify('experimental/serverStatus', params)
 }
+
+pub fn (mut c Client) apply_edit(params lsp.ApplyWorkspaceEditParams) {
+	c.wr.write_request('workspace/applyEdit', params)
+}

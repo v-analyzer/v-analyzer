@@ -132,4 +132,17 @@ pub fn (s &StructDeclaration) is_attribute() bool {
 	return false
 }
 
+pub fn (e StructDeclaration) is_heap() bool {
+	attributes := e.attributes()
+
+	for attr in attributes {
+		if attr is Attribute {
+			keys := attr.keys()
+			return 'heap' in keys
+		}
+	}
+
+	return false
+}
+
 pub fn (_ StructDeclaration) stub() {}

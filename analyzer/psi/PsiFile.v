@@ -2,6 +2,7 @@ module psi
 
 import lsp
 import time
+import utils
 import loglib
 import tree_sitter_v as v
 import analyzer.parser
@@ -108,6 +109,12 @@ pub fn (p &PsiFile) root() PsiElement {
 [inline]
 pub fn (p &PsiFile) find_element_at(offset u32) ?PsiElement {
 	return p.root.find_element_at(offset)
+}
+
+[inline]
+pub fn (p &PsiFile) find_element_at_pos(pos Position) ?PsiElement {
+	offset := utils.compute_offset(p.source_text, pos.line, pos.character)
+	return p.root.find_element_at(u32(offset))
 }
 
 pub fn (p &PsiFile) find_reference_at(offset u32) ?ReferenceExpressionBase {

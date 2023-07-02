@@ -52,3 +52,17 @@ pub fn elements_to_text_edits(elements []psi.PsiElement, new_name string) []lsp.
 
 	return result
 }
+
+pub fn position_to_lsp_position(pos psi.Position) lsp.Position {
+	return lsp.Position{
+		line: pos.line
+		character: pos.character
+	}
+}
+
+pub fn lsp_position_to_position(pos lsp.Position) psi.Position {
+	return psi.Position{
+		line: pos.line
+		character: pos.character
+	}
+}

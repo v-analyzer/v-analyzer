@@ -19,7 +19,7 @@ pub fn (r Range) is_empty() bool {
 pub struct TextEdit {
 pub:
 	range    Range
-	new_text string [json: newText]
+	new_text string [json: 'newText']
 }
 
 pub struct TextDocumentIdentifier {

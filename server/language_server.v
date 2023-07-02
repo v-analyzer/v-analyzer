@@ -10,6 +10,7 @@ import config
 import loglib
 import server.progress
 import server.protocol
+import server.intentions
 
 pub enum ServerStatus {
 	off
@@ -52,6 +53,9 @@ pub mut:
 	bg BackgroundThread
 	// reporter is used to report diagnostics to the client.
 	reporter &DiagnosticReporter = &DiagnosticReporter{}
+	// intentions is a map of all intentions that are available in the editor.
+	// Use `LanguageServer.register_intention()` to register a new intention.
+	intentions map[string]intentions.Intention
 
 	progress          &progress.Tracker
 	analyzer_instance analyzer.Analyzer
@@ -301,6 +305,12 @@ pub fn (mut ls LanguageServer) handle_jsonrpc(request &jsonrpc.Request, mut rw j
 				}
 				w.write(ls.code_actions(params) or { return w.wrap_error(err) })
 			}
+			'workspace/executeCommand' {
+				params := json.decode(lsp.ExecuteCommandParams, request.params) or {
+					return w.wrap_error(err)
+				}
+				ls.execute_command(params)
+			}
 			'v-analyzer/viewStubTree' {
 				params := json.decode(lsp.TextDocumentIdentifier, request.params) or {
 					return w.wrap_error(err)
@@ -342,6 +352,10 @@ pub fn (mut ls LanguageServer) handle_jsonrpc(request &jsonrpc.Request, mut rw j
 		'method':   request.method
 		'duration': watch.elapsed().str()
 	}).log_one(.info, 'Request finished')
+}
+
+pub fn (mut ls LanguageServer) register_intention(intention intentions.Intention) {
+	ls.intentions[intention.id] = intention
 }
 
 // launch_tool launches a tool with the same vroot as the language server

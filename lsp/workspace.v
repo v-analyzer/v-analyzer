@@ -158,7 +158,10 @@ pub struct WorkspaceSymbolParams {
 // method: ‘workspace/executeCommand’
 // response: any | null
 pub struct ExecuteCommandParams {
-	command   string
+pub:
+	// The identifier of the actual command handler.
+	command string
+	// Arguments that the command should be invoked with.
 	arguments string [raw]
 }
 
@@ -170,8 +173,13 @@ pub struct ExecuteCommandRegistrationOptions {
 // response: ApplyWorkspaceEditResponse
 //
 pub struct ApplyWorkspaceEditParams {
-	label string
-	edit  WorkspaceEdit
+pub:
+	// An optional label of the workspace edit. This label is
+	// presented in the user interface for example on an undo
+	// stack to undo the workspace edit.
+	label string [omitempty]
+	// The edits to apply.
+	edit WorkspaceEdit
 }
 
 pub struct ApplyWorkspaceEditResponse {

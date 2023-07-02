@@ -156,6 +156,17 @@ fn encode_notification[T](notif NotificationMessage[T], mut writer io.Writer) {
 	writer.write([u8(`}`)]) or {}
 }
 
+fn encode_request[T](notif NotificationMessage[T], mut writer io.Writer) {
+	writer.write('{"jsonrpc":"${jsonrpc.version}","id": 1, "method":"${notif.method}","params":'.bytes()) or {}
+	$if T is Null {
+		writer.write(jsonrpc.null_in_u8) or {}
+	} $else {
+		res := json.encode(notif.params)
+		writer.write(res.bytes()) or {}
+	}
+	writer.write([u8(`}`)]) or {}
+}
+
 // ResponseError is a representation of an error when a rpc call encounters an error.
 // When a rpc call encounters an error, the Response Object MUST contain the error member
 // with a value that is a Object with the following members:

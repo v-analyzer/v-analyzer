@@ -8,10 +8,11 @@ import metadata
 import time
 import config
 import loglib
+import analyzer.index
 import server.protocol
 import server.semantic
 import server.progress
-import analyzer.index
+import server.intentions
 
 // initialize sends the server capabilities to the client
 pub fn (mut ls LanguageServer) initialize(params lsp.InitializeParams, mut wr ResponseWriter) lsp.InitializeResult {
@@ -29,6 +30,10 @@ pub fn (mut ls LanguageServer) initialize(params lsp.InitializeParams, mut wr Re
 	ls.print_info(params.process_id, params.client_info)
 	ls.setup()
 	ls.reporter.compiler_path = ls.compiler_path() or { 'v' }
+
+	ls.register_intention(intentions.AddFlagAttributeIntention{})
+	ls.register_intention(intentions.AddHeapAttributeIntention{})
+	ls.register_intention(intentions.MakePublicIntention{})
 
 	return lsp.InitializeResult{
 		capabilities: lsp.ServerCapabilities{
@@ -72,6 +77,9 @@ pub fn (mut ls LanguageServer) initialize(params lsp.InitializeParams, mut wr Re
 				code_action_kinds: [lsp.quick_fix]
 			}
 			folding_range_provider: true
+			execute_command_provider: lsp.ExecuteCommandOptions{
+				commands: ls.intentions.values().map(it.id)
+			}
 		}
 		server_info: lsp.ServerInfo{
 			name: 'v-analyzer'

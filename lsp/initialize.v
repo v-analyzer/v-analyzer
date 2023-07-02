@@ -66,6 +66,8 @@ pub enum FailureHandlingKind {
 }
 
 pub struct ExecuteCommandOptions {
+pub:
+	// The commands to be executed on the server
 	commands []string
 }
 

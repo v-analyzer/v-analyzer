@@ -223,6 +223,20 @@ pub fn (mut rw ResponseWriter) write_notify[T](method string, params T) {
 	rw.flush()
 }
 
+pub fn (mut rw ResponseWriter) write_request[T](method string, params T) {
+	rw.mutex.@lock()
+	defer {
+		rw.mutex.unlock()
+	}
+
+	notif := NotificationMessage[T]{
+		method: method
+		params: params
+	}
+	encode_request[T](notif, mut rw.sb)
+	rw.flush()
+}
+
 // write_error sends a ResponseError to the stream.
 pub fn (mut rw ResponseWriter) write_error(err &ResponseError) {
 	rw.mutex.@lock()
