@@ -94,6 +94,14 @@ v-analyzer up --nightly
 > **Note**
 > In the nightly version you will get the latest changes, but they may not be stable!
 
+## VS Code extension
+
+This repository also contains the source code for the VS Code extension in the
+[`editors/code`](https://github.com/v-analyzer/v-analyzer/tree/main/editors/code)
+folder.
+See also extension page in
+[VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=VOSCA.vscode-v-analyzer).
+
 ## Authors
 
 - `jsonrpc`, `lsp`, `tree_sitter_v` modules written initially by
@@ -118,4 +126,5 @@ See the
 file for the full license text.
 
 [AssociationOfficialBadge]: https://vosca.dev/badge.svg
+
 [AssociationUrl]: https://vosca.dev
