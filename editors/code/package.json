@@ -199,6 +199,12 @@
 				"command": "v-analyzer.uploadToPlayground",
 				"title": "Upload to V Playground",
 				"category": "v-analyzer"
+			},
+			{
+				"command": "v-analyzer.showWelcome",
+				"title": "Show Welcome",
+				"description": "Open the welcome page for the v-analyzer extension.",
+				"category": "v-analyzer"
 			}
 		],
 		"menus": {
@@ -280,11 +286,13 @@
 		"axios": "^1.4.0",
 		"cross-env": "^7.0.3",
 		"esbuild": "^0.15.7",
-		"vscode-languageclient": "^8.1.0"
+		"vscode-languageclient": "^8.1.0",
+		"semver": "7.3.4"
 	},
 	"devDependencies": {
 		"@types/node": "12",
 		"@types/vscode": "~1.66.0",
+		"@types/semver": "7.3.4",
 		"@typescript-eslint/eslint-plugin": "^4.33",
 		"@typescript-eslint/parser": "^4.33",
 		"eslint": "^7.32",

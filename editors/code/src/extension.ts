@@ -1,7 +1,9 @@
 import * as vscode from 'vscode';
-import {setContextValue} from "./utils";
-import {AnalyzerNotInstalledError, CommandFactory, Context, fetchWorkspace} from "./ctx";
 import * as commands from "./commands";
+import {AnalyzerNotInstalledError, CommandFactory, Context, fetchWorkspace} from "./ctx";
+import {WelcomePanel} from "./welcome";
+import {setContextValue} from "./utils";
+import {setGlobalState} from "./stateUtils";
 
 const V_PROJECT_CONTEXT_NAME = "inVlangProject";
 
@@ -25,6 +27,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<Contex
 	}
 
 	const ctx = new Context(context, createCommands(), fetchWorkspace());
+	setGlobalState(context.globalState);
+
+	WelcomePanel.activate(ctx);
 
 	const api = await activateServer(ctx).catch((err) => {
 		if (!(err instanceof AnalyzerNotInstalledError)) {
@@ -102,5 +107,6 @@ function createCommands(): Record<string, CommandFactory> {
 		showReferences: {enabled: commands.showReferences},
 		viewStubTree: {enabled: commands.viewStubTree},
 		uploadToPlayground: {enabled: commands.uploadToPlayground},
+		showWelcome: {enabled: WelcomePanel.showWelcome, disabled: WelcomePanel.showWelcome},
 	}
 }
