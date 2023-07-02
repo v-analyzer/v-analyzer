@@ -1,14 +1,15 @@
 module main
 
+import os
+import cli
+import time
+import term
+import config
+import loglib
 import server
 import jsonrpc
 import streams
 import analyzer
-import cli
-import os
-import loglib
-import time
-import config
 import lsp.log
 
 // version is the current version of the analyzer.
@@ -25,6 +26,12 @@ fn run(cmd cli.Command) ! {
 	stdio := cmd.flags.get_bool('stdio') or { true }
 	socket := cmd.flags.get_bool('socket') or { false }
 	port := cmd.flags.get_int('port') or { default_tcp_port }
+	use_stdout_for_logs := cmd.flags.get_bool('log-to-stdout') or { false }
+
+	if !socket && use_stdout_for_logs {
+		errorln('Cannot use ${term.bold('--log-to-stdout')} flag without ${term.bold('--socket')} flag')
+		return
+	}
 
 	mut stream := if socket {
 		streams.new_socket_stream_server(port, true) or {
@@ -38,9 +45,9 @@ fn run(cmd cli.Command) ! {
 		return
 	}
 
-	setup_logger(stdio && !socket)
+	setup_logger(!use_stdout_for_logs)
 
-	mut ls := server.new(analyzer.new())
+	mut ls := server.LanguageServer.new(analyzer.IndexingManager.new())
 	mut jrpc_server := &jsonrpc.Server{
 		stream: stream
 		interceptors: [
@@ -137,6 +144,11 @@ fn main() {
 			flag: .bool
 			name: 'socket'
 			description: 'Use TCP connection for communication.'
+		},
+		cli.Flag{
+			flag: .bool
+			name: 'log-to-stdout'
+			description: 'Use stdout for logs, can be used only with --socket flag (Only for debug purposes).'
 		},
 		cli.Flag{
 			flag: .int

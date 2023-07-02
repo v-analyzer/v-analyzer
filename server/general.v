@@ -103,23 +103,22 @@ pub fn (mut ls LanguageServer) initialized(mut wr ResponseWriter) {
 
 	if need_index_stdlib {
 		if vmodules_root := ls.vmodules_root() {
-			ls.analyzer_instance.indexer.add_indexing_root(vmodules_root, .modules, ls.cache_dir)
+			ls.indexing_mng.indexer.add_indexing_root(vmodules_root, .modules, ls.cache_dir)
 		}
 		if vlib_root := ls.vlib_root() {
-			ls.analyzer_instance.indexer.add_indexing_root(vlib_root, .standard_library,
-				ls.cache_dir)
+			ls.indexing_mng.indexer.add_indexing_root(vlib_root, .standard_library, ls.cache_dir)
 		}
 	}
 
 	if stubs_root := ls.stubs_root() {
-		ls.analyzer_instance.indexer.add_indexing_root(stubs_root, .stubs, ls.cache_dir)
+		ls.indexing_mng.indexer.add_indexing_root(stubs_root, .stubs, ls.cache_dir)
 	}
 
-	ls.analyzer_instance.indexer.add_indexing_root(ls.root_uri.path(), .workspace, ls.cache_dir)
+	ls.indexing_mng.indexer.add_indexing_root(ls.root_uri.path(), .workspace, ls.cache_dir)
 
-	status := ls.analyzer_instance.indexer.index(fn [mut work, mut ls] (root index.IndexingRoot, i int) {
-		percentage := (i * 70) / ls.analyzer_instance.indexer.count_roots()
-		work.progress('${i}/${ls.analyzer_instance.indexer.count_roots()} (${root.kind.readable_name()})',
+	status := ls.indexing_mng.indexer.index(fn [mut work, mut ls] (root index.IndexingRoot, i int) {
+		percentage := (i * 70) / ls.indexing_mng.indexer.count_roots()
+		work.progress('${i}/${ls.indexing_mng.indexer.count_roots()} (${root.kind.readable_name()})',
 			u32(percentage))
 		ls.client.log_message('Indexing ${root.root}', .info)
 	})
@@ -128,22 +127,22 @@ pub fn (mut ls LanguageServer) initialized(mut wr ResponseWriter) {
 
 	if status == .needs_ensure_indexed {
 		work.progress('Start ensure indexing', 71)
-		ls.analyzer_instance.indexer.ensure_indexed()
+		ls.indexing_mng.indexer.ensure_indexed()
 		work.progress('Finish ensure indexing', 95)
 	}
 
 	// Used in tests to avoid indexing the standard library
 	need_save_index := 'no-index-save' !in ls.initialization_options
 
-	ls.analyzer_instance.indexer.set_no_save(!need_save_index)
+	ls.indexing_mng.indexer.set_no_save(!need_save_index)
 
-	ls.analyzer_instance.indexer.save_indexes() or {
+	ls.indexing_mng.indexer.save_indexes() or {
 		loglib.with_fields({
 			'err': err.str()
 		}).error('Failed to save index')
 	}
 
-	ls.analyzer_instance.setup_stub_indexes()
+	ls.indexing_mng.setup_stub_indexes()
 
 	work.end('Indexing finished')
 	ls.client.send_server_status(health: 'ok', quiescent: true)
@@ -396,10 +395,6 @@ pub fn (mut ls LanguageServer) shutdown() {
 // exit stops the process
 [noreturn]
 pub fn (mut ls LanguageServer) exit() {
-	// saves the log into the disk
-	// rw.server.dispatch_event(log.close_event, '') or {}
-	// ls.typing_ch.close()
-
 	// move exit to shutdown for now
 	// == .shutdown => 0
 	// != .shutdown => 1
@@ -414,7 +409,8 @@ fn (mut ls LanguageServer) print_info(process_id int, client_info lsp.ClientInfo
 		'Unknown'
 	}
 
-	ls.client.log_message('v-analyzer version: 0.0.1, OS: ${os.user_os()} x${arch}', .info)
+	ls.client.log_message('v-analyzer version: 0.0.1-beta.1, OS: ${os.user_os()} x${arch}',
+		.info)
 	ls.client.log_message('v-analyzer executable path: ${os.executable()}', .info)
 	ls.client.log_message('v-analyzer build with V ${@VHASH}', .info)
 	ls.client.log_message('v-analyzer build at ${time.now().format_ss()}', .info)

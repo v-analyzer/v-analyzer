@@ -32,8 +32,8 @@ mut:
 }
 
 pub fn new_fixture() &Fixture {
-	analyzer_instance := analyzer.new()
-	mut ls := server.new(analyzer_instance)
+	indexing_mng := analyzer.IndexingManager.new()
+	mut ls := server.LanguageServer.new(indexing_mng)
 
 	stream := &client.TestStream{}
 	mut jsonprc_server := &jsonrpc.Server{

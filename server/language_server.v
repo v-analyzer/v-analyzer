@@ -20,14 +20,16 @@ pub enum ServerStatus {
 
 pub struct LanguageServer {
 pub mut:
-	status       ServerStatus = .off
-	root_uri     lsp.DocumentUri
-	capabilities lsp.ServerCapabilities
-
+	// status is the current status of the server.
+	status ServerStatus = .off
+	// root_uri is the URI of the workspace root.
+	root_uri lsp.DocumentUri
+	// client is a wrapper over `jsonrpc.ResponseWriter` that
+	// can be used to send notifications and responses to the client.
 	client &protocol.Client
 	// client_pid is the process ID of this server.
 	client_pid int
-	writer     &ResponseWriter = &ResponseWriter(unsafe { nil })
+	writer     &ResponseWriter
 	// opened_files describes all open files in the editor.
 	//
 	// When a file is opened, the `did_open` method is called,
@@ -36,17 +38,20 @@ pub mut:
 	// When the file is closed, the `did_close` method is called,
 	// which removes the file from `opened_files`.
 	opened_files map[lsp.DocumentUri]analyzer.OpenedFile
-
+	// vmodules_root is the path to the directory with vmodules.
 	vmodules_root string
-	vroot         string
-	cache_dir     string
+	// vroot is the path to the directory with the V compiler.
+	vroot string
+	// cache_dir is the path to the directory with the cache.
+	cache_dir string
 	// stubs_version incremented on each change in stubs
 	//
 	// See also `LanguageServer.setup_stubs()`
 	stubs_version int = 1
-
+	// initialization_options is a list of custom initialization options.
+	// Used to pass custom options in tests.
 	initialization_options []string
-
+	// cfg describes the editor configuration from `config.toml`.
 	cfg config.EditorConfig
 	// bg is a background thread that is designed to perform long-running operations,
 	// such as file analyze with third-party tools.
@@ -60,14 +65,17 @@ pub mut:
 	// that are available in the editor.
 	// Use `LanguageServer.register_compiler_quick_fix()` to register a new quick fix.
 	compiler_quick_fixes map[string]intentions.CompilerQuickFix
-
-	progress          &progress.Tracker
-	analyzer_instance analyzer.Analyzer
+	// progress is used to report progress to the client.
+	// For now it is used only to report progress of indexing.
+	progress &progress.Tracker
+	// indexing_mng is used to manage indexing.
+	indexing_mng analyzer.IndexingManager
 }
 
-pub fn new(analyzer_instance analyzer.Analyzer) &LanguageServer {
+pub fn LanguageServer.new(indexing analyzer.IndexingManager) &LanguageServer {
 	return &LanguageServer{
-		analyzer_instance: analyzer_instance
+		indexing_mng: indexing
+		writer: unsafe { nil } // will be initialized in `initialize`
 		client: unsafe { nil } // will be initialized in `initialize`
 		progress: unsafe { nil } // will be initialized in `initialize`
 	}

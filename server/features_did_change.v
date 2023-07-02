@@ -23,7 +23,7 @@ pub fn (mut ls LanguageServer) did_change(params lsp.DidChangeTextDocumentParams
 		psi_file: file.psi_file
 	}
 
-	ls.analyzer_instance.indexer.mark_as_dirty(uri.path(), new_content) or {
+	ls.indexing_mng.indexer.mark_as_dirty(uri.path(), new_content) or {
 		loglib.with_fields({
 			'uri':    uri.str()
 			'params': params.str()
@@ -33,7 +33,7 @@ pub fn (mut ls LanguageServer) did_change(params lsp.DidChangeTextDocumentParams
 	}
 
 	watch := time.new_stopwatch(auto_start: true)
-	ls.analyzer_instance.update_stub_indexes([file.psi_file])
+	ls.indexing_mng.update_stub_indexes([file.psi_file])
 
 	type_cache.clear()
 	resolve_cache.clear()

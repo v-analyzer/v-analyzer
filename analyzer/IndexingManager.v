@@ -2,31 +2,31 @@ module analyzer
 
 import analyzer.psi
 
-pub struct Analyzer {
+pub struct IndexingManager {
 pub mut:
 	indexer    &Indexer
 	stub_index psi.StubIndex
 }
 
-pub fn new() &Analyzer {
+pub fn IndexingManager.new() &IndexingManager {
 	indexer := new_indexer()
-	return &Analyzer{
+	return &IndexingManager{
 		indexer: indexer
 	}
 }
 
-pub fn (mut a Analyzer) setup_stub_indexes() {
+pub fn (mut a IndexingManager) setup_stub_indexes() {
 	mut sinks := a.all_sinks()
 	a.stub_index = psi.new_stubs_index(sinks)
 	stubs_index = a.stub_index
 }
 
-pub fn (mut a Analyzer) update_stub_indexes_from_sinks(changed_sinks []psi.StubIndexSink) {
+pub fn (mut a IndexingManager) update_stub_indexes_from_sinks(changed_sinks []psi.StubIndexSink) {
 	all_sinks := a.all_sinks()
 	stubs_index.update_stubs_index(changed_sinks, all_sinks)
 }
 
-pub fn (mut a Analyzer) update_stub_indexes(changed_files []&psi.PsiFile) {
+pub fn (mut a IndexingManager) update_stub_indexes(changed_files []&psi.PsiFile) {
 	all_sinks := a.all_sinks()
 	mut changed_sinks := []psi.StubIndexSink{cap: changed_files.len}
 
@@ -40,7 +40,7 @@ pub fn (mut a Analyzer) update_stub_indexes(changed_files []&psi.PsiFile) {
 	stubs_index.update_stubs_index(changed_sinks, all_sinks)
 }
 
-fn (mut a Analyzer) all_sinks() []psi.StubIndexSink {
+fn (mut a IndexingManager) all_sinks() []psi.StubIndexSink {
 	mut sinks := []psi.StubIndexSink{cap: a.indexer.roots.len * 30}
 	for root in a.indexer.roots {
 		sinks << root.index.per_file.get_sinks()

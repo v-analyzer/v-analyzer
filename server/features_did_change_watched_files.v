@@ -26,14 +26,14 @@ pub fn (mut ls LanguageServer) did_change_watched_files(params lsp.DidChangeWatc
 				if is_rename {
 					prev_change := changes[i + 1] or { continue }
 					prev_uri := prev_change.uri.normalize()
-					if file_index := ls.analyzer_instance.indexer.rename_file(prev_uri.path(),
+					if file_index := ls.indexing_mng.indexer.rename_file(prev_uri.path(),
 						change_uri.path())
 					{
 						if isnil(file_index.sink) {
 							continue
 						}
 
-						ls.analyzer_instance.update_stub_indexes_from_sinks([*file_index.sink])
+						ls.indexing_mng.update_stub_indexes_from_sinks([*file_index.sink])
 
 						loglib.with_fields({
 							'old': prev_uri.path()
@@ -41,12 +41,12 @@ pub fn (mut ls LanguageServer) did_change_watched_files(params lsp.DidChangeWatc
 						}).info('Renamed file')
 					}
 				} else {
-					if file_index := ls.analyzer_instance.indexer.add_file(change_uri.path()) {
+					if file_index := ls.indexing_mng.indexer.add_file(change_uri.path()) {
 						if isnil(file_index.sink) {
 							continue
 						}
 
-						ls.analyzer_instance.update_stub_indexes_from_sinks([*file_index.sink])
+						ls.indexing_mng.update_stub_indexes_from_sinks([*file_index.sink])
 
 						loglib.with_fields({
 							'file': change_uri.path()
@@ -58,12 +58,12 @@ pub fn (mut ls LanguageServer) did_change_watched_files(params lsp.DidChangeWatc
 				if is_rename {
 					continue
 				}
-				if file_index := ls.analyzer_instance.indexer.remove_file(change_uri.path()) {
+				if file_index := ls.indexing_mng.indexer.remove_file(change_uri.path()) {
 					if isnil(file_index.sink) {
 						continue
 					}
 
-					ls.analyzer_instance.update_stub_indexes_from_sinks([*file_index.sink])
+					ls.indexing_mng.update_stub_indexes_from_sinks([*file_index.sink])
 
 					loglib.with_fields({
 						'file': change_uri.path()
