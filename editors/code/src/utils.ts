@@ -15,20 +15,28 @@ export function getVExecCommand(): string {
  */
 export function getWorkspaceConfig(): vscode.WorkspaceConfiguration {
 	const currentWorkspaceFolder = getWorkspaceFolder();
-	return vscode.workspace.getConfiguration('v-analyzer', currentWorkspaceFolder.uri);
+	const uri = currentWorkspaceFolder ? currentWorkspaceFolder.uri : null;
+	return vscode.workspace.getConfiguration('v-analyzer', uri);
 }
 
-/** Get workspace of current document.
+/**
+ * Get the workspace of a current document.
  * @param uri The URI of document
  */
 export function getWorkspaceFolder(uri?: vscode.Uri): vscode.WorkspaceFolder {
 	if (uri) {
 		return vscode.workspace.getWorkspaceFolder(uri);
-	} else if (vscode.window.activeTextEditor && vscode.window.activeTextEditor.document) {
-		return vscode.workspace.getWorkspaceFolder(vscode.window.activeTextEditor.document.uri);
-	} else {
+	}
+
+	if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
 		return vscode.workspace.workspaceFolders[0];
 	}
+
+	if (vscode.window.activeTextEditor && vscode.window.activeTextEditor.document) {
+		return vscode.workspace.getWorkspaceFolder(vscode.window.activeTextEditor.document.uri);
+	}
+
+	return null
 }
 
 /**

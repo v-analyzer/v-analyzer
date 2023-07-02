@@ -215,7 +215,6 @@ export class Context {
 	private async disposeClient() {
 		this.clientSubscriptions?.forEach((disposable) => disposable.dispose());
 		this.clientSubscriptions = [];
-		log.debug('client stop before')
 		try {
 			await this._client?.dispose();
 		} catch (e) {
@@ -223,7 +222,6 @@ export class Context {
 			// when restarting analyzer, ignore for now
 			// log.error('client stop error', e)
 		}
-		log.debug('client dispose after')
 		this._serverPath = undefined;
 		this._client = undefined;
 	}
