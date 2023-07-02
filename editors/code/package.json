@@ -194,6 +194,11 @@
 				"command": "v-analyzer.viewStubTree",
 				"title": "View Stub Tree",
 				"category": "v-analyzer"
+			},
+			{
+				"command": "v-analyzer.uploadToPlayground",
+				"title": "Upload to V Playground",
+				"category": "v-analyzer"
 			}
 		],
 		"menus": {
@@ -220,6 +225,10 @@
 				},
 				{
 					"command": "v-analyzer.restartServer",
+					"when": "inVlangProject"
+				},
+				{
+					"command": "v-analyzer.uploadToPlayground",
 					"when": "inVlangProject"
 				}
 			]
@@ -268,6 +277,7 @@
 	],
 	"main": "./out/extension.js",
 	"dependencies": {
+		"axios": "^1.4.0",
 		"cross-env": "^7.0.3",
 		"esbuild": "^0.15.7",
 		"vscode-languageclient": "^8.1.0"

@@ -7,6 +7,9 @@ import {Command, ContextInit} from "./ctx";
 import {LanguageClient} from "vscode-languageclient/node";
 import {spawnSync} from "child_process";
 import {isVlangDocument, isVlangEditor, sleep} from "./utils";
+import {log} from "./log";
+import axios from "axios";
+import FormData from "form-data";
 
 /**
  * Run current directory.
@@ -167,4 +170,48 @@ export function viewStubTree(ctx: ContextInit): Command {
 			preserveFocus: true,
 		}));
 	};
+}
+
+export function uploadToPlayground(
+	_: ContextInit
+): Command {
+	return async () => {
+		const editor = vscode.window.activeTextEditor;
+		if (!editor) {
+			vscode.window.showInformationMessage('No editor is active.');
+			return;
+		}
+
+		log.info('Uploading to playground...');
+
+		const selection = editor.selection;
+		const code = selection.isEmpty ? editor.document.getText() : editor.document.getText(selection);
+
+		const form = new FormData();
+		form.append('code', code);
+
+		const response = await axios.post('https://play.vosca.dev/share', form)
+
+		const json = await response.data;
+		const hash = json['hash'];
+		const error = json['error'];
+
+		if (error) {
+			vscode.window.showErrorMessage(`V Playground: ${error}`);
+			return;
+		}
+
+		const url = `https://vosca.dev/p/${hash}`;
+
+		const open = await vscode.window.showInformationMessage(
+			'Successfully uploaded to V playground. Open in browser?',
+			'Open',
+			'Copy URL'
+		);
+		if (open === 'Open') {
+			vscode.env.openExternal(vscode.Uri.parse(url));
+		} else if (open === 'Copy URL') {
+			vscode.env.clipboard.writeText(url);
+		}
+	}
 }

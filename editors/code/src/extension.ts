@@ -101,5 +101,6 @@ function createCommands(): Record<string, CommandFactory> {
 		serverVersion: {enabled: commands.serverVersion},
 		showReferences: {enabled: commands.showReferences},
 		viewStubTree: {enabled: commands.viewStubTree},
+		uploadToPlayground: {enabled: commands.uploadToPlayground},
 	}
 }
