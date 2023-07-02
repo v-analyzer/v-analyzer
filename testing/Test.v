@@ -163,9 +163,11 @@ pub fn (mut t Test) assert_no_super_with_name(items []lsp.Location, name string)
 }
 
 pub fn (mut t Test) assert_uri(left lsp.DocumentUri, right lsp.DocumentUri) ! {
-	if left.compare(right) != 0 {
-		t.fail('expected ${left}, but got ${right}')
-		return error('expected ${left}, but got ${right}')
+	left_normalized := left.normalize()
+	right_normalized := right.normalize()
+	if left_normalized.compare(right_normalized) != 0 {
+		t.fail('expected ${left_normalized}, but got ${right_normalized}')
+		return error('expected ${left_normalized}, but got ${right_normalized}')
 	}
 }
 

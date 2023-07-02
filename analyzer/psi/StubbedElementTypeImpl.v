@@ -400,7 +400,7 @@ pub fn (_ &StubbedElementType) get_receiver_type(psi PsiNamedElement) string {
 	return text
 }
 
-pub fn (s &StubbedElementType) create_stub(psi PsiElement, parent_stub &StubElement, module_fqn string) ?&StubBase {
+pub fn (s &StubbedElementType) create_stub(psi PsiElement, parent_stub &StubBase, module_fqn string) ?&StubBase {
 	if psi is FunctionOrMethodDeclaration {
 		text_range := psi.text_range()
 		identifier_text_range := psi.identifier_text_range()

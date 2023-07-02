@@ -252,7 +252,7 @@ pub fn (mut t Fixture) close_file(path string) {
 }
 
 pub fn (mut t Fixture) current_file_uri() lsp.DocumentUri {
-	return 'file://${t.current_file.path}'
+	return lsp.document_uri_from_path(t.current_file.path)
 }
 
 pub fn (mut t Fixture) text_at_range(range lsp.Range) string {

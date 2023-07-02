@@ -9,10 +9,13 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: ubuntu-20.04
           - os: macos-latest
+          - os: ubuntu-20.04
+            cc: -cc tcc
+          - os: windows-latest
+            cc: -cc gcc
 
-    name: Analyzer tests on ${{ matrix.os }}
+    name: Analyzer tests on ${{ matrix.os }} with ${{ matrix.cc }}
     runs-on: ${{ matrix.os }}
     continue-on-error: true
 
@@ -22,6 +25,12 @@ jobs:
         uses: vlang/setup-v@v1.3
         with:
           check-latest: true
+
+      - name: Set up MinGW
+        uses: egor-tensin/setup-mingw@v2
+        if: matrix.cc == '-cc gcc'
+        with:
+          platform: x64
 
       - name: Checkout v-analyzer
         uses: actions/checkout@v3
@@ -36,9 +45,9 @@ jobs:
       - name: Run tests
         run: |
           cd v-analyzer/tests
-          v run .
+          v ${{ matrix.cc }} run .
 
       - name: Run other V tests
         run: |
           cd v-analyzer
-          v test .
+          v ${{ matrix.cc }} test .

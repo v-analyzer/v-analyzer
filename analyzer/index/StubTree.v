@@ -66,13 +66,15 @@ pub fn build_stub_tree(file &psi.PsiFile, indexing_root string) &StubTree {
 	}
 }
 
-pub fn build_stub_tree_for_node(node psi.PsiElement, parent psi.StubBase, module_fqn string, build_for_all_children bool) {
+pub fn build_stub_tree_for_node(node psi.PsiElement, parent &psi.StubBase, module_fqn string, build_for_all_children bool) {
 	element_type := psi.StubbedElementType{}
 
-	if node is psi.StubBasedPsiElement || psi.node_is_type(node) || build_for_all_children {
-		if stub := element_type.create_stub(node as psi.PsiElement, parent, module_fqn) {
+	node_copy := node
+
+	if node_copy is psi.StubBasedPsiElement || psi.node_is_type(node) || build_for_all_children {
+		if stub := element_type.create_stub(node, parent, module_fqn) {
 			is_qualified_type := node is psi.QualifiedType
-			for child in (node as psi.PsiElement).children() {
+			for child in node.children() {
 				build_stub_tree_for_node(child, stub, module_fqn, build_for_all_children
 					|| is_qualified_type)
 			}
