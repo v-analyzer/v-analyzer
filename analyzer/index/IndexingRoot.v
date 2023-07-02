@@ -26,6 +26,15 @@ pub enum IndexingRootKind as u8 {
 	workspace
 }
 
+pub fn (k IndexingRootKind) readable_name() string {
+	return match k {
+		.standard_library { 'Standard Library' }
+		.modules { 'Modules' }
+		.stubs { 'Stubs' }
+		.workspace { 'Workspace' }
+	}
+}
+
 // IndexingRoot encapsulates the logic of indexing/reindexing a particular root of the file system.
 //
 // Separation into separate roots is necessary in order to process the standard library and user code separately.

@@ -96,7 +96,7 @@ pub fn (mut ls LanguageServer) initialized(mut wr ResponseWriter) {
 	loglib.info('-------- New session -------- ')
 	ls.client.send_server_status(health: 'ok')
 
-	mut work := ls.progress.start('Indexing', 'Indexing roots...', '')
+	mut work := ls.progress.start('Indexing:', 'roots...', '')
 
 	// Used in tests to avoid indexing the standard library
 	need_index_stdlib := 'no-stdlib' !in ls.initialization_options
@@ -119,18 +119,18 @@ pub fn (mut ls LanguageServer) initialized(mut wr ResponseWriter) {
 
 	status := ls.analyzer_instance.indexer.index(fn [mut work, mut ls] (root index.IndexingRoot, i int) {
 		percentage := (i * 70) / ls.analyzer_instance.indexer.count_roots()
-		work.progress('Indexing ${root.root}', u32(percentage))
+		work.progress('${i}/${ls.analyzer_instance.indexer.count_roots()} (${root.kind.readable_name()})',
+			u32(percentage))
 		ls.client.log_message('Indexing ${root.root}', .info)
 	})
 
 	work.progress('Finish roots indexing', 70)
-	work.progress('Start ensure indexing', 71)
 
 	if status == .needs_ensure_indexed {
+		work.progress('Start ensure indexing', 71)
 		ls.analyzer_instance.indexer.ensure_indexed()
+		work.progress('Finish ensure indexing', 95)
 	}
-
-	work.progress('Finish ensure indexing', 95)
 
 	// Used in tests to avoid indexing the standard library
 	need_save_index := 'no-index-save' !in ls.initialization_options

@@ -16,7 +16,7 @@ pub fn new_client(mut wr jsonrpc.ResponseWriter) &Client {
 }
 
 pub fn (mut c Client) work_done_progress_create(params lsp.WorkDoneProgressCreateParams) {
-	c.wr.write_notify('window/workDoneProgress/create', params)
+	c.wr.write_request('window/workDoneProgress/create', params)
 }
 
 pub fn (mut c Client) progress(params lsp.ProgressParams) {
