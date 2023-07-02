@@ -41,7 +41,7 @@ pub fn (mut ls LanguageServer) hover(params lsp.HoverParams) ?lsp.Hover {
 		}
 	}
 
-	$if debug {
+	$if show_ast_on_hover ? {
 		// Show AST tree for debugging purposes.
 		if grand := element.parent_nth(2) {
 			parent := element.parent()?

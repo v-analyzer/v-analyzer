@@ -1,12 +1,12 @@
 // This script is used to build the v-analyzer binary.
 //
 // Usage:
-//  v build.vsh [debug|release]
+//  v build.vsh [debug|dev|release]
 //
 // By default, used debug mode.
 import os
-import term
 import cli
+import term
 
 pub const (
 	code_path          = './cmd/v-analyzer'
@@ -23,6 +23,20 @@ pub const (
 	}
 )
 
+enum ReleaseMode {
+	release
+	debug
+	dev
+}
+
+fn (m ReleaseMode) cmd() fn () os.Result {
+	return match m {
+		.release { release }
+		.debug { debug }
+		.dev { dev }
+	}
+}
+
 fn errorln(msg string) {
 	eprintln('${term.red('[ERROR]')} ${msg}')
 }
@@ -34,6 +48,13 @@ fn errorln(msg string) {
 fn debug() os.Result {
 	libbacktrace := $if windows { '' } $else { '-d use_libbacktrace' }
 	return os.execute('${base_build_command} ${compiler_flag} -g ${libbacktrace}')
+}
+
+// dev builds the v-analyzer binary in development mode.
+// In this mode, additional development features are enabled.
+fn dev() os.Result {
+	libbacktrace := $if windows { '' } $else { '-d use_libbacktrace' }
+	return os.execute('${base_build_command} ${compiler_flag} -d show_ast_on_hover -g ${libbacktrace}')
 }
 
 // release builds the v-analyzer binary in release mode.
@@ -50,20 +71,20 @@ fn prepare_output_dir() {
 	os.mkdir('./bin') or { errorln('Failed to create output directory: ${err}') }
 }
 
-fn build(explicit_debug bool, release_mode bool) {
+fn build(mode ReleaseMode, explicit_debug bool) {
 	println('Building v-analyzer...')
 
 	prepare_output_dir()
 	println('${term.green('✓')} Prepared output directory')
 
-	cmd := if release_mode { release } else { debug }
-	cmd_name := if release_mode { 'release' } else { 'debug' }
+	cmd := mode.cmd()
+	cmd_name := mode.str()
 	println('Building v-analyzer in ${term.bold(cmd_name)} mode...')
-	if release_mode {
+	if mode == .release {
 		println('This may take a while...')
 	}
 
-	if !explicit_debug && !release_mode {
+	if !explicit_debug && mode == .debug {
 		println('To build in ${term.bold('release')} mode, run ${term.bold('v build.vsh release')}')
 		println('Release mode is recommended for production use. It is about 30-40% faster than debug mode.')
 	}
@@ -85,7 +106,7 @@ mut cmd := cli.Command{
 	description: 'Builds the v-analyzer binary.'
 	posix_mode: true
 	execute: fn (_ cli.Command) ! {
-		build(false, false)
+		build(.debug, false)
 	}
 }
 
@@ -93,7 +114,15 @@ cmd.add_command(cli.Command{
 	name: 'debug'
 	description: 'Builds the v-analyzer binary in debug mode.'
 	execute: fn (_ cli.Command) ! {
-		build(true, false)
+		build(.debug, true)
+	}
+})
+
+cmd.add_command(cli.Command{
+	name: 'dev'
+	description: 'Builds the v-analyzer binary in development mode.'
+	execute: fn (_ cli.Command) ! {
+		build(.dev, false)
 	}
 })
 
@@ -101,7 +130,7 @@ cmd.add_command(cli.Command{
 	name: 'release'
 	description: 'Builds the v-analyzer binary in release mode.'
 	execute: fn (_ cli.Command) ! {
-		build(false, true)
+		build(.release, false)
 	}
 })
 
