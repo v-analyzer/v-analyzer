@@ -83,7 +83,7 @@ body:
     attributes:
       label: v-analyzer Version
       description: |
-        `v-analyzer --version` or in Command Palette: `v-analyzer: Show v-analyzer version`
+        `v-analyzer --version` or in Command Palette: `v-analyzer: Show v-analyzer server version`
     validations:
       required: true
 

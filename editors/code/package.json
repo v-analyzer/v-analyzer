@@ -170,7 +170,7 @@
 			},
 			{
 				"command": "v-analyzer.serverVersion",
-				"title": "Show v-analyzer version",
+				"title": "Show v-analyzer server version",
 				"category": "v-analyzer"
 			},
 			{
