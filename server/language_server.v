@@ -331,14 +331,12 @@ pub fn (mut ls LanguageServer) handle_jsonrpc(request &jsonrpc.Request, mut rw j
 			}
 			'$/cancelRequest' {
 				loglib.info('got $/cancelRequest request')
-				return jsonrpc.response_error(error: jsonrpc.method_not_found, data: request.method).err()
 			}
 			else {
 				loglib.with_fields({
 					'method': request.method
 					'params': request.params
 				}).info('unhandled method call')
-				return jsonrpc.response_error(error: jsonrpc.method_not_found, data: request.method).err()
 			}
 		}
 	} else {
