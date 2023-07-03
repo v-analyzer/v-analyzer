@@ -1,5 +1,7 @@
 module testing
 
+import os
+import lsp
 import time
 import term
 import loglib
@@ -209,6 +211,45 @@ pub fn (mut t Tester) type_test(name string, filepath string) {
 				}
 			}
 		}
+	}
+}
+
+pub fn (mut t Tester) documentation_test(name string, filepath string) {
+	mut test := &Test{
+		name: name
+	}
+	t.tests << test
+
+	test.func = fn [filepath] (mut test Test, mut fixture Fixture) ! {
+		fixture.configure_by_file(filepath) or {
+			return test.fail('Cannot configure fixture: ${err}')
+		}
+
+		hover := fixture.documentation_at_cursor() or {
+			return test.fail('Cannot get documentation at cursor')
+		}
+
+		if hover.contents !is lsp.MarkupContent {
+			return test.fail('Documentation is not a MarkupContent')
+		}
+
+		markup := hover.contents as lsp.MarkupContent
+
+		if markup.kind != lsp.markup_kind_markdown {
+			return test.fail('Documentation is not a Markdown')
+		}
+
+		markdown_filepath := filepath + '.md'
+		markdown := os.read_file('testdata/${markdown_filepath}') or {
+			return test.fail('Cannot read expected .md file: ${err}')
+		}
+
+		// if true {
+		// 	os.write_file('testdata/${markdown_filepath}', markup.value) or {}
+		// 	return
+		// }
+
+		test.assert_eq(markup.value.trim_right('\n'), markdown.trim_right('\n'))!
 	}
 }
 

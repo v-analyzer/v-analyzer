@@ -91,6 +91,7 @@ pub const (
 )
 
 pub struct MarkupContent {
+pub:
 	kind string
 	// MarkupKind
 	value string

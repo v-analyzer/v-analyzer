@@ -18,7 +18,7 @@ fn definitions() testing.Tester {
 
 		first := locations.first()
 		t.assert_uri(first.target_uri, fixture.current_file_uri())!
-		t.assert_definition_name(first, 'name')
+		t.assert_definition_name(first, 'name')!
 	})
 
 	t.test('variable definition from outer scope', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
@@ -36,7 +36,7 @@ fn definitions() testing.Tester {
 
 		first := locations.first()
 		t.assert_uri(first.target_uri, fixture.current_file_uri())!
-		t.assert_definition_name(first, 'name')
+		t.assert_definition_name(first, 'name')!
 	})
 
 	t.test('variable definition from outer scope after inner scope', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
@@ -67,7 +67,7 @@ fn definitions() testing.Tester {
 
 		first := locations.first()
 		t.assert_uri(first.target_uri, fixture.current_file_uri())!
-		t.assert_definition_name(first, 'index')
+		t.assert_definition_name(first, 'index')!
 	})
 
 	t.test('variable definition from for in loop', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
@@ -84,7 +84,7 @@ fn definitions() testing.Tester {
 
 		first := locations.first()
 		t.assert_uri(first.target_uri, fixture.current_file_uri())!
-		t.assert_definition_name(first, 'index')
+		t.assert_definition_name(first, 'index')!
 	})
 
 	t.test('variable definition from if unwrapping', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
@@ -101,7 +101,7 @@ fn definitions() testing.Tester {
 
 		first := locations.first()
 		t.assert_uri(first.target_uri, fixture.current_file_uri())!
-		t.assert_definition_name(first, 'value')
+		t.assert_definition_name(first, 'value')!
 	})
 
 	// TODO: This probably should be prohibited
@@ -121,7 +121,7 @@ fn definitions() testing.Tester {
 
 		first := locations.first()
 		t.assert_uri(first.target_uri, fixture.current_file_uri())!
-		t.assert_definition_name(first, 'value')
+		t.assert_definition_name(first, 'value')!
 	})
 
 	t.test('variable definition from if unwrapping from outside', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
@@ -155,7 +155,7 @@ fn definitions() testing.Tester {
 		t.assert_has_definition(locations)!
 		first := locations.first()
 		t.assert_uri(first.target_uri, fixture.current_file_uri())!
-		t.assert_definition_name(first, 'name')
+		t.assert_definition_name(first, 'name')!
 	})
 
 	t.test('method definition', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
@@ -180,7 +180,7 @@ fn definitions() testing.Tester {
 		t.assert_has_definition(locations)!
 		first := locations.first()
 		t.assert_uri(first.target_uri, fixture.current_file_uri())!
-		t.assert_definition_name(first, 'get_name')
+		t.assert_definition_name(first, 'get_name')!
 	})
 
 	t.test('top level variable', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
@@ -194,7 +194,7 @@ fn definitions() testing.Tester {
 
 		first := locations.first()
 		t.assert_uri(first.target_uri, fixture.current_file_uri())!
-		t.assert_definition_name(first, 'name')
+		t.assert_definition_name(first, 'name')!
 	})
 
 	t.test('top level variable from outer scope', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
@@ -210,7 +210,7 @@ fn definitions() testing.Tester {
 
 		first := locations.first()
 		t.assert_uri(first.target_uri, fixture.current_file_uri())!
-		t.assert_definition_name(first, 'name')
+		t.assert_definition_name(first, 'name')!
 	})
 
 	t.slow_test('shell script implicit os module', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
@@ -249,7 +249,7 @@ fn definitions() testing.Tester {
 
 		first := locations.first()
 		t.assert_uri(first.target_uri, fixture.current_file_uri())!
-		t.assert_definition_name(first, 'some_fn')
+		t.assert_definition_name(first, 'some_fn')!
 	})
 
 	t.slow_test('shell script local constant', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
@@ -264,7 +264,7 @@ fn definitions() testing.Tester {
 
 		first := locations.first()
 		t.assert_uri(first.target_uri, fixture.current_file_uri())!
-		t.assert_definition_name(first, 'some_constant')
+		t.assert_definition_name(first, 'some_constant')!
 	})
 
 	t.test('static methods', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
@@ -285,7 +285,7 @@ fn definitions() testing.Tester {
 
 		first := locations.first()
 		t.assert_uri(first.target_uri, fixture.current_file_uri())!
-		t.assert_definition_name(first, 'static_method')
+		t.assert_definition_name(first, 'static_method')!
 	})
 
 	t.test('enum inside special flag field method call', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
@@ -309,7 +309,7 @@ fn definitions() testing.Tester {
 
 		first := locations.first()
 		t.assert_uri(first.target_uri, fixture.current_file_uri())!
-		t.assert_definition_name(first, 'red')
+		t.assert_definition_name(first, 'red')!
 	})
 
 	t.test('enum fields or', fn (mut t testing.Test, mut fixture testing.Fixture) ! {
@@ -332,7 +332,7 @@ fn definitions() testing.Tester {
 
 		first := locations.first()
 		t.assert_uri(first.target_uri, fixture.current_file_uri())!
-		t.assert_definition_name(first, 'red')
+		t.assert_definition_name(first, 'red')!
 	})
 
 	t.test('implicit str method', fn (mut t testing.Test, mut fixture testing.Fixture) ! {

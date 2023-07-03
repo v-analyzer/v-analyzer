@@ -18,6 +18,7 @@ fn main() {
 	testers << supers()
 	testers << completion()
 	testers << types()
+	testers << documentation()
 
 	run_only := ''
 

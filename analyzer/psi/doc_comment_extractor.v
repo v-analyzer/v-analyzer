@@ -27,7 +27,6 @@ pub fn extract_doc_comment(el PsiElement) string {
 	lines := comments.map(it.get_text()
 		.trim_string_left('//')
 		.trim_string_left(' ')
-		.trim_string_left(' ')
 		.trim_right(' \t'))
 
 	mut res := strings.new_builder(lines.len * 40)
@@ -38,7 +37,7 @@ pub fn extract_doc_comment(el PsiElement) string {
 		line := raw_line.trim_right(' ')
 
 		// when `--------` line
-		if line.replace('-', '').len == 0 {
+		if line.replace('-', '').len == 0 && line.len != 0 {
 			res.write_string('\n\n')
 			continue
 		}
@@ -57,7 +56,7 @@ pub fn extract_doc_comment(el PsiElement) string {
 
 		without_example_label := line.trim_string_left('Example:').trim_space()
 		if is_example && without_example_label.len != 0 {
-			res.write_string('Example:\n')
+			res.write_string('\nExample:\n')
 			res.write_string('```\n')
 			res.write_string(without_example_label)
 			res.write_string('\n')

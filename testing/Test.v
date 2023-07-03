@@ -32,35 +32,34 @@ pub fn (mut t Test) run(mut fixture Fixture) {
 	t.print()
 }
 
-pub fn (mut t Test) fail(msg string) {
+pub fn (mut t Test) fail(msg string) ! {
 	t.state = .failed
 	t.message = msg
+	return error(msg)
 }
 
-pub fn (mut t Test) assert_eq[T](left T, right T) {
+pub fn (mut t Test) assert_eq[T](left T, right T) ! {
 	if left != right {
-		t.fail('expected ${left}, but got ${right}')
+		t.fail('expected ${left}, but got ${right}')!
 	}
 }
 
-pub fn (mut t Test) assert_definition_name(location lsp.LocationLink, name string) {
+pub fn (mut t Test) assert_definition_name(location lsp.LocationLink, name string) ! {
 	link_text := t.fixture.text_at_range(location.target_selection_range)
 	if link_text != name {
-		t.fail('expected definition "${name}", but got "${link_text}"')
+		t.fail('expected definition "${name}", but got "${link_text}"')!
 	}
 }
 
 pub fn (mut t Test) assert_no_definition(locations []lsp.LocationLink) ! {
 	if locations.len != 0 {
-		t.fail('expected no definition, but got ${locations.len}')
-		return error('expected no definition, but got ${locations.len}')
+		t.fail('expected no definition, but got ${locations.len}')!
 	}
 }
 
 pub fn (mut t Test) assert_has_definition(locations []lsp.LocationLink) ! {
 	if locations.len == 0 {
-		t.fail('no definition found')
-		return error('no definition found')
+		t.fail('no definition found')!
 	}
 }
 
@@ -71,14 +70,12 @@ pub fn (mut t Test) assert_has_completion_with_label(items []lsp.CompletionItem,
 		}
 	}
 
-	t.fail('expected completion "${name}" not found')
-	return error('expected completion "${name}" not found')
+	t.fail('expected completion "${name}" not found')!
 }
 
 pub fn (mut t Test) assert_has_only_completion_with_labels(items []lsp.CompletionItem, names ...string) ! {
 	if items.len != names.len {
-		t.fail('expected ${names.len} completions, but got ${items.len}')
-		return error('expected ${names.len} completions, but got ${items.len}')
+		t.fail('expected ${names.len} completions, but got ${items.len}')!
 	}
 
 	for name in names {
@@ -88,8 +85,7 @@ pub fn (mut t Test) assert_has_only_completion_with_labels(items []lsp.Completio
 
 pub fn (mut t Test) assert_has_completion_with_insert_text(items []lsp.CompletionItem, name string) ! {
 	if items.len == 0 {
-		t.fail('no completions found')
-		return error('no completions found')
+		t.fail('no completions found')!
 	}
 
 	for item in items {
@@ -98,15 +94,13 @@ pub fn (mut t Test) assert_has_completion_with_insert_text(items []lsp.Completio
 		}
 	}
 
-	t.fail('expected completion "${name}" not found')
-	return error('expected completion "${name}" not found')
+	t.fail('expected completion "${name}" not found')!
 }
 
 pub fn (mut t Test) assert_no_completion_with_insert_text(items []lsp.CompletionItem, name string) ! {
 	for item in items {
 		if item.insert_text == name {
-			t.fail('unexpected completion "${name}" found')
-			return error('unexpected completion "${name}" found')
+			t.fail('unexpected completion "${name}" found')!
 		}
 	}
 }
@@ -114,8 +108,7 @@ pub fn (mut t Test) assert_no_completion_with_insert_text(items []lsp.Completion
 pub fn (mut t Test) assert_no_completion_with_label(items []lsp.CompletionItem, name string) ! {
 	for item in items {
 		if item.label == name {
-			t.fail('unexpected completion "${name}" found')
-			return error('unexpected completion "${name}" found')
+			t.fail('unexpected completion "${name}" found')!
 		}
 	}
 }
@@ -128,15 +121,14 @@ pub fn (mut t Test) assert_has_implementation_with_name(items []lsp.Location, na
 		}
 	}
 
-	t.fail('expected implementation "${name}" not found')
+	t.fail('expected implementation "${name}" not found')!
 }
 
 pub fn (mut t Test) assert_no_implementation_with_name(items []lsp.Location, name string) ! {
 	for item in items {
 		link_text := t.fixture.text_at_range(item.range)
 		if link_text == name {
-			t.fail('unexpected implementation "${name}" found')
-			return error('unexpected implementation "${name}" found')
+			t.fail('unexpected implementation "${name}" found')!
 		}
 	}
 }
@@ -149,15 +141,14 @@ pub fn (mut t Test) assert_has_super_with_name(items []lsp.Location, name string
 		}
 	}
 
-	t.fail('expected super "${name}" not found')
+	t.fail('expected super "${name}" not found')!
 }
 
 pub fn (mut t Test) assert_no_super_with_name(items []lsp.Location, name string) ! {
 	for item in items {
 		link_text := t.fixture.text_at_range(item.range)
 		if link_text == name {
-			t.fail('unexpected super "${name}" found')
-			return error('unexpected super "${name}" found')
+			t.fail('unexpected super "${name}" found')!
 		}
 	}
 }
@@ -166,32 +157,27 @@ pub fn (mut t Test) assert_uri(left lsp.DocumentUri, right lsp.DocumentUri) ! {
 	left_normalized := left.normalize()
 	right_normalized := right.normalize()
 	if left_normalized.compare(right_normalized) != 0 {
-		t.fail('expected ${left_normalized}, but got ${right_normalized}')
-		return error('expected ${left_normalized}, but got ${right_normalized}')
+		t.fail('expected ${left_normalized}, but got ${right_normalized}')!
 	}
 }
 
 pub fn (mut t Test) assert_uri_from_stdlib(left lsp.DocumentUri, filename string) ! {
 	if !left.contains('vlib') {
-		t.fail('expected ${left} to be inside "vlib"')
-		return error('expected ${left} to be inside "vlib"')
+		t.fail('expected ${left} to be inside "vlib"')!
 	}
 
 	if !left.ends_with(filename) {
-		t.fail('expected ${left} to end with ${filename} but got ${left}')
-		return error('expected ${left} to end with ${filename} but got ${left}')
+		t.fail('expected ${left} to end with ${filename} but got ${left}')!
 	}
 }
 
 pub fn (mut t Test) assert_uri_from_stubs(left lsp.DocumentUri, filename string) ! {
 	if !left.contains('stubs') {
-		t.fail('expected ${left} to be inside "stubs"')
-		return error('expected ${left} to be inside "stubs"')
+		t.fail('expected ${left} to be inside "stubs"')!
 	}
 
 	if !left.ends_with(filename) {
-		t.fail('expected ${left} to end with ${filename} but got ${left}')
-		return error('expected ${left} to end with ${filename} but got ${left}')
+		t.fail('expected ${left} to end with ${filename} but got ${left}')!
 	}
 }
 

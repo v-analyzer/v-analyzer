@@ -87,10 +87,12 @@ pub fn (mut t Fixture) initialized() ! {
 pub fn (mut t Fixture) configure_by_file(path string) ! {
 	rel_path := 'testdata/${path}'
 	content := os.read_file(rel_path)!
+	prepared_text := content + '\n\n' // add extra lines to make sure the caret is not at the end of the file
+	prepared_content := prepared_text.replace('/*caret*/', '')
 	abs_path := os.join_path(testing.temp_path, path)
 	dir_path := os.dir(abs_path)
 	os.mkdir_all(dir_path)!
-	os.write_file(abs_path, content)!
+	os.write_file(abs_path, prepared_content)!
 
 	if t.current_file.path == abs_path {
 		t.close_file(t.current_file.path)
@@ -98,8 +100,8 @@ pub fn (mut t Fixture) configure_by_file(path string) ! {
 
 	t.current_file = TestFile{
 		path: abs_path
-		content: content.split_into_lines()
-		caret: t.caret_pos(content)
+		content: prepared_content.split_into_lines()
+		caret: t.caret_pos(prepared_text)
 	}
 
 	t.send_open_current_file_request()!
@@ -240,6 +242,21 @@ pub fn (mut t Fixture) supers_at_cursor() []lsp.Location {
 
 pub fn (mut t Fixture) supers(pos lsp.Position) []lsp.Location {
 	return t.implementation(pos)
+}
+
+pub fn (mut t Fixture) documentation_at_cursor() ?lsp.Hover {
+	return t.documentation(t.current_caret_pos())
+}
+
+pub fn (mut t Fixture) documentation(pos lsp.Position) ?lsp.Hover {
+	hover := t.test_client.send[lsp.HoverParams, lsp.Hover]('textDocument/hover', lsp.HoverParams{
+		text_document: lsp.TextDocumentIdentifier{
+			uri: lsp.document_uri_from_path(t.current_file.path)
+		}
+		position: pos
+	}) or { return none }
+
+	return hover
 }
 
 pub fn (mut t Fixture) close_file(path string) {

@@ -226,8 +226,7 @@ fn completion() testing.Tester {
 
 		items := fixture.complete_at_cursor()
 		if items.len == 0 {
-			t.fail('no completion variants')
-			return
+			return t.fail('no completion variants')
 		}
 
 		t.assert_has_completion_with_label(items, 'module main')!
