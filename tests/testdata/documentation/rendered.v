@@ -33,5 +33,5 @@ module documentation
 // ```
 //
 // Example: println('inline example')
-fn foo() { // caret
+fn f/*caret*/oo() {
 }
