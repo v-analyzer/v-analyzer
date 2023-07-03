@@ -36,7 +36,23 @@ v -e "$(curl -fsSL https://raw.githubusercontent.com/v-analyzer/v-analyzer/maste
 curl 'https://raw.githubusercontent.com/v-analyzer/v-analyzer/master/install.vsh' | %{ v -e $_ }
 ```
 
+## Pre-built binaries
+
+You can download pre-built binaries from the
+[release page](https://github.com/v-analyzer/v-analyzer/releases).
+Currently, we provide binaries for Linux (x64), macOS (x64 and ARM), and Windows (x64).
+
 ## Building from source
+
+> **Note**
+> If you're using Windows, then you need GCC for any build, as TCC doesn't work
+> due to some issues.
+
+Update V to the latest version:
+
+```bash
+v up
+```
 
 Install dependencies:
 
@@ -76,6 +92,19 @@ Or, you can specify the path to the binary in your VS Code settings:
 
 > **Note**
 > Restart VS Code after changing the settings or PATH.
+
+### Config
+
+v-analyzer is configured using global or local config.
+The global config is located in `~/.config/v-analyzer/config.toml`, changing it will affect all
+projects.
+
+A local config can be created with the `v-analyzer init` command at the root of the project.
+Once created, it will be in `./.v-analyzer/config.toml`.
+Each setting in the config has a detailed description.
+
+Pay attention to the `custom_vroot` setting, if v-analyzer cannot find where V was installed, then
+you will need to specify the path to it manually in this field.
 
 ## Updating
 
