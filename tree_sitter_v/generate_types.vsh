@@ -47,19 +47,19 @@ fn write_const_enum_array(mut wr strings.Builder, var_name string, enum_type_nam
 	wr.write_u8(`\n`)
 }
 
-struct NodeType {
-	name     string     [json: 'type']
+struct TSNodeType {
+	name     string       [json: 'type']
 	named    bool
-	subtypes []NodeType
+	subtypes []TSNodeType
 }
 
-fn (typ NodeType) is_anon() bool {
+fn (typ TSNodeType) is_anon() bool {
 	return !typ.named || typ.name.len == 0 || typ.name[0] == `_`
 }
 
 cur_dir := dir(@FILE)
 node_types_json := read_file(join_path(cur_dir, 'src', 'node-types.json'))!
-node_types := json.decode([]NodeType, node_types_json)!
+node_types := json.decode([]TSNodeType, node_types_json)!
 node_type_enum_name := 'NodeType'
 super_type_enum_name := 'SuperType'
 

@@ -281,13 +281,13 @@ fn (mut ls LanguageServer) setup_toolchain() {
 
 		if toolchain_candidates.len > 1 {
 			ls.client.log_message('To set other toolchain, use `custom_vroot` in local or global config.
-Global config path: ${config.analyzer_configs_path}',
+Global config path: ${config.analyzer_configs_path}/${config.analyzer_config_name}',
 				.info)
 		}
 	} else {
 		ls.client.log_message("No toolchain candidates found, some of the features won't work properly.
 Please, set `custom_vroot` in local or global config.
-Global config path: ${config.analyzer_configs_path}",
+Global config path: ${config.analyzer_configs_path}/${config.analyzer_config_name}",
 			.error)
 		loglib.error("No toolchain candidates found, some of the features won't work properly.
 Please, set `custom_vroot` in local or global config.")
