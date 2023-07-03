@@ -182,8 +182,8 @@ function joinPath(uri: vscode.Uri, ...pathFragment: string[]): vscode.Uri {
 function showGoWelcomePage() {
 	// Update this list of versions when there is a new version where we want to
 	// show the welcome page on update.
-	const showVersions: string[] = ['0.0.1'];
-	let vExtensionVersion = '0.0.1';
+	const showVersions: string[] = ['0.0.2'];
+	let vExtensionVersion = '0.0.2';
 	let vExtensionVersionKey = 'v-analyzer.extensionVersion111';
 
 	const savedVExtensionVersion = getFromGlobalState(vExtensionVersionKey, '0.0.0');
