@@ -268,6 +268,20 @@ export class Context {
 	}
 
 	setServerStatus(status: ra.ServerStatusParams | { health: "stopped" }) {
+		if (status.health === "error" && status.message) {
+			const msg = status.message ?? "v-analyzer server error";
+			const openConfig = "Open Config";
+			vscode.window
+				.showErrorMessage(msg, openConfig)
+				.then((selected) => {
+					if (selected === openConfig) {
+						vscode.commands.executeCommand(
+							"v-analyzer.openGlobalConfig"
+						);
+					}
+				})
+		}
+
 		let icon = "";
 		const statusBar = this.statusBar;
 		statusBar.show();
@@ -298,7 +312,7 @@ export class Context {
 				}
 				statusBar.color = new vscode.ThemeColor("statusBarItem.errorForeground");
 				statusBar.backgroundColor = new vscode.ThemeColor("statusBarItem.errorBackground");
-				statusBar.command = "v-analyzer.openLogs";
+				statusBar.command = "v-analyzer.openGlobalConfig";
 				icon = "$(error) ";
 				break;
 			case "stopped":

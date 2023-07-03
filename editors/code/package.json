@@ -38,7 +38,9 @@
 		"postpackage": "node ./scripts/minify_json.js --restore",
 		"testgrammar": "vscode-tmgrammar-test -s source.v -g syntaxes/v.tmLanguage.json -t \"syntaxes/tests/*.v\""
 	},
-	"extensionPack": ["ms-vscode.cpptools"],
+	"extensionPack": [
+		"ms-vscode.cpptools"
+	],
 	"contributes": {
 		"languages": [
 			{
@@ -205,6 +207,12 @@
 				"command": "v-analyzer.showWelcome",
 				"title": "Show Welcome",
 				"description": "Open the welcome page for the v-analyzer extension.",
+				"category": "v-analyzer"
+			},
+			{
+				"command": "v-analyzer.openGlobalConfig",
+				"title": "Open Global Config",
+				"description": "Open the global config file for the v-analyzer server.",
 				"category": "v-analyzer"
 			}
 		],

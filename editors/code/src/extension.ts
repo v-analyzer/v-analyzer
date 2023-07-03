@@ -108,5 +108,6 @@ function createCommands(): Record<string, CommandFactory> {
 		viewStubTree: {enabled: commands.viewStubTree},
 		uploadToPlayground: {enabled: commands.uploadToPlayground},
 		showWelcome: {enabled: WelcomePanel.showWelcome, disabled: WelcomePanel.showWelcome},
+		openGlobalConfig: {enabled: commands.openGlobalConfig, disabled: commands.openGlobalConfig},
 	}
 }

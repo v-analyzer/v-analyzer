@@ -145,7 +145,14 @@ pub fn (mut ls LanguageServer) initialized(mut wr ResponseWriter) {
 	ls.indexing_mng.setup_stub_indexes()
 
 	work.end('Indexing finished')
-	ls.client.send_server_status(health: 'ok', quiescent: true)
+
+	if _ := ls.vlib_root() {
+		ls.client.send_server_status(health: 'ok', quiescent: true)
+	} else {
+		msg := 'Cannot find V standard library!
+Please, set `custom_vroot` in local or global config.'
+		ls.client.send_server_status(health: 'error', message: msg, quiescent: true)
+	}
 }
 
 fn (mut ls LanguageServer) setup() {

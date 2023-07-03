@@ -43,7 +43,7 @@ pub const (
 
 pub const default = '# Specifies the path to the V installation directory with `v` executable.
 # If not set, the plugin will try to find it on its own.
-# Basically, you don\'t need to set it.
+# Set it if you get errors like "Cannot find V standard library!".
 #custom_vroot = "~/v"
 
 # Specifies the path where to store the cache.

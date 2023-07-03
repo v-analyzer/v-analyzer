@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import * as path from "path";
 import * as lc from "vscode-languageclient";
 import * as ra from "./lsp_ext";
+import * as os from "os";
 import {runVCommand, runVCommandCallback} from './exec';
 import {Command, ContextInit} from "./ctx";
 import {LanguageClient} from "vscode-languageclient/node";
@@ -213,5 +214,18 @@ export function uploadToPlayground(
 		} else if (open === 'Copy URL') {
 			vscode.env.clipboard.writeText(url);
 		}
+	}
+}
+
+export function openGlobalConfig(
+	_: ContextInit
+): Command {
+	return async () => {
+		const configPath = "~/.config/v-analyzer/config.toml";
+		const home = os.homedir();
+		const configPathWithHome = configPath.replace("~", home);
+		const uri = vscode.Uri.file(configPathWithHome);
+		const doc = await vscode.workspace.openTextDocument(uri);
+		await vscode.window.showTextDocument(doc);
 	}
 }
