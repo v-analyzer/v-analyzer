@@ -11,6 +11,10 @@ support for Visual Studio Code.
 It is recommended over and replaces
 [V extension](https://marketplace.visualstudio.com/items?itemName=vlanguage.vscode-vlang).
 
+For most of its functionality, the extension uses
+[`v-analyzer`](https://github.com/v-analyzer/v-analyzer),
+which we will refer to as the server to avoid confusion.
+
 ## Features
 
 - syntax highlighting
@@ -23,27 +27,72 @@ It is recommended over and replaces
 - formatting
 - signature help
 
-## Usage
+## Getting started
 
-1. Install Visual Studio Code >= `1.66.0`.
-2. Open the command palette with `Ctrl+Shift+P` or `Cmd+Shift+P`
-3. Select `Install Extensions` and choose `v-analyzer`.
-4. Open a `.v` file and start coding!
+Welcome! 👋🏻
 
-## Manual installation
+Let's get started setting up **v-analyzer** in VS Code!
 
-1. Open the command palette with `Ctrl+Shift+P` or `Cmd+Shift+P`
-2. Type `Install from VSIX...` and hit enter
-3. Select pre-built VSIX file from this folder or build it yourself
-4. Open a `.v` file and start coding!
+1. First of all, make sure you have the latest version of V installed.
+   If you are unsure, run `v up` to update.
 
-## Setup
+2. Now let's install VS Code **v-analyzer** extension:
 
-The first time you open the VS Code with this extension, it will try to find the
-v-analyzer binary in the PATH, if it does not find it, it will prompt you to install it.
-You can install this way or manually clone the
+	1. Open the command palette with `Ctrl+Shift+P` or `Cmd+Shift+P`
+	2. Select `Install Extensions` and choose `v-analyzer`.
+
+   You can also install the extension manually:
+
+	1. Select `Install from VSIX...`
+	2. Choose pre-built VSIX file from this folder or build it yourself
+
+   After installation, restart VS Code.
+
+3. Open any project that contains files with `.v` extension.
+   The extension should automatically activate.
+   Upon activation, the extension will try to find `v-analyzer` server, which is the heart
+   of the extension and provides all the smart features.
+
+4. Since `v-analyzer` server is not installed
+   (unless you installed it in advance and added it to PATH, in which case you can skip
+   this step), the extension will prompt you to install it.
+   Click `Install` and wait for the installation to complete.
+
+5. After installing `v-analyzer` server, the extension will prompt you to restart the
+   `v-analyzer` server.
+   Click `Yes` and wait for the restart to complete.
+
+6. When `v-analyzer` server is successfully restarted,
+   it will start to analyze your project as well as the V standard library.
+
+7. Note that if `v-analyzer` server cannot find where the V standard library is stored,
+   an error will be shown.
+
+   In this case, follow the instructions in the error and specify the path to the V source
+   code folder in the `custom_vroot` field.
+
+   > **Note**
+   > You need to specify the folder where all the V sources are stored
+   > (e.g. `C:\v\` or `/home/user/v/` and not the folder with the standard library
+   > (e.g. `C:\v\vlib` or `/home/user/v/vlib`)!
+   > After making changes, restart `v-analyzer` using the `v-analyzer: Restart server`
+   > command in the command palette.
+
+8. If the server was able to find all the necessary things, then after a while the
+   indexing will end, and you will be able to use all the features of `v-analyzer`.
+
+   > **Note**
+   > Indexing can take up to 30 seconds on weak machines, but this is only
+   > done on the first run; then the indexes will be loaded from the cache.
+
+You are ready to code in V! 🎉
+
+## Manual Setup
+
+You can install ``v-analyzer`` server manually:
+Clone the
 [`v-analyzer`](https://github.com/v-analyzer/v-analyzer)
-repository and specify the path to the compiled binary.
+repository, build it and specify the path to the compiled binary.
 
 ```json
 {
@@ -51,7 +100,9 @@ repository and specify the path to the compiled binary.
 }
 ```
 
-v-analyzer uses `v` to analyze code.
+## Auto save
+
+`v-analyzer` uses `v` compiler to analyze code.
 It calls it every time a file is saved, so you can set up auto-save to get real-time
 feedback.
 
