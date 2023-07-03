@@ -113,6 +113,42 @@ feedback.
 }
 ```
 
+## Semantic tokens
+
+With highlighting based on TextMate grammar, v-analyzer provides semantic
+highlighting, which allows you to highlight fields, variables, parameters and other
+elements as different entities.
+
+To enable semantic highlighting, make sure the `editor.semanticHighlighting.enabled`
+setting is set to `true` in the VS Code settings.
+
+In the settings, you can also specify colors for each entity type:
+
+```json
+{
+	"editor.semanticTokenColorCustomizations": {
+		"[Theme Name]": {
+			"rules": {
+				"namespace": "#AFBF7E",
+				"parameter": "#B189F5",
+				"decorator": "#DEBC7E",
+				"typeParameter": "#B189F5",
+				"enumMember": "#72CFD6",
+				"*.global": "#A9B7C6",
+				"function": "#FFC66D",
+				"*.mutable": {
+					"underline": true
+				}
+			}
+		}
+	}
+}
+```
+
+See
+[all available entity types](https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#semanticTokenTypes)
+in the LSP specification.
+
 ## Building from source
 
 ```bash
