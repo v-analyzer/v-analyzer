@@ -92,7 +92,7 @@ fn update(nightly bool) ! {
 	}
 	asset_version := asset.tag_name
 
-	if cur_version.trim_string_left('v') == asset.tag_name.trim_string_left('v') {
+	if cur_version.trim_string_left('v') == asset_version.trim_string_left('v') {
 		println('You already have the latest version of ${term.bold('v-analyzer')}: ${cur_version}')
 		return
 	}
