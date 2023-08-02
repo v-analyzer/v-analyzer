@@ -31,10 +31,20 @@ v -e "$(curl -fsSL https://raw.githubusercontent.com/v-analyzer/v-analyzer/maste
 ```
 
 ### Windows
+The install.vsh file is downloaded to the current directory and stored there temporarily.  
+So make sure that there is no file with this name or that it is safe when it is overwritten or deleted.
+#### Powershell
 
 ```
-curl 'https://raw.githubusercontent.com/v-analyzer/v-analyzer/master/install.vsh' | %{ v -e $_ }
+curl -o install.vsh https://raw.githubusercontent.com/v-analyzer/v-analyzer/master/install.vsh; v run install.vsh; del install.vsh
 ```
+
+#### Command shell
+
+```
+curl -o install.vsh https://raw.githubusercontent.com/v-analyzer/v-analyzer/master/install.vsh && v run install.vsh && del install.vsh
+```
+
 
 ## Pre-built binaries
 
