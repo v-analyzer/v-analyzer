@@ -12,6 +12,7 @@ const PREC = {
   resolve: 1,
   composite_literal: -1,
   empty_array: -2,
+  strictly_expression_list: -3,
 };
 
 const multiplicative_operators = ['*', '/', '%', '<<', '>>', '>>>', '&', '&^'];
@@ -455,7 +456,7 @@ module.exports = grammar({
       $.map_init_expression,
     ),
 
-    strictly_expression_list: ($) => prec(PREC.resolve, seq(
+    strictly_expression_list: ($) => prec(PREC.strictly_expression_list, seq(
       choice($._expression, $.mutable_expression), ',', comma_sep1(choice($._expression, $.mutable_expression)),
     )),
 
