@@ -27,8 +27,8 @@ pub:
 
 [json_as_number]
 pub enum CompletionTriggerKind {
-	invoked = 1
-	trigger_character = 2
+	invoked                            = 1
+	trigger_character                  = 2
 	trigger_for_incomplete_completions = 3
 }
 
@@ -47,7 +47,7 @@ pub:
 [json_as_number]
 pub enum InsertTextFormat {
 	plain_text = 1
-	snippet = 2
+	snippet    = 2
 }
 
 pub struct CompletionItemLabelDetails {
@@ -56,7 +56,6 @@ pub:
 	// {@link CompletionItem.label label}, without any spacing. Should be
 	// used for function signatures or type annotations.
 	detail string [omitempty]
-
 	// An optional string which is rendered less prominently after
 	// {@link CompletionItemLabelDetails.detail}. Should be used for fully qualified
 	// names or file path.
@@ -126,36 +125,36 @@ pub mut:
 
 [json_as_number]
 pub enum InsertTextMode {
-	as_is = 1
+	as_is              = 1
 	adjust_indentation = 2
 }
 
 [json_as_number]
 pub enum CompletionItemKind {
-	text = 1
-	method = 2
-	function = 3
-	constructor = 4
-	field = 5
-	variable = 6
-	class = 7
-	interface_ = 8
-	module_ = 9
-	property = 10
-	unit = 11
-	value = 12
-	enum_ = 13
-	keyword = 14
-	snippet = 15
-	color = 16
-	file = 17
-	reference = 18
-	folder = 19
-	enum_member = 20
-	constant = 21
-	struct_ = 22
-	event = 23
-	operator = 24
+	text           = 1
+	method         = 2
+	function       = 3
+	constructor    = 4
+	field          = 5
+	variable       = 6
+	class          = 7
+	interface_     = 8
+	module_        = 9
+	property       = 10
+	unit           = 11
+	value          = 12
+	enum_          = 13
+	keyword        = 14
+	snippet        = 15
+	color          = 16
+	file           = 17
+	reference      = 18
+	folder         = 19
+	enum_member    = 20
+	constant       = 21
+	struct_        = 22
+	event          = 23
+	operator       = 24
 	type_parameter = 25
 }
 

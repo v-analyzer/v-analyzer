@@ -77,9 +77,9 @@ pub struct WillSaveTextDocumentParams {
 
 [json_as_number]
 pub enum TextDocumentSaveReason {
-	manual = 1
+	manual      = 1
 	after_delay = 2
-	focus_out = 3
+	focus_out   = 3
 }
 
 // ‘textDocument/willSaveWaitUntil’
