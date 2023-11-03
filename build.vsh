@@ -93,7 +93,7 @@ fn build(mode ReleaseMode, explicit_debug bool) {
 	if res.exit_code != 0 {
 		errorln('Failed to build v-analyzer')
 		eprintln(res.output)
-		return
+		exit(1)
 	}
 
 	println('${term.green('✓')} Successfully built v-analyzer!')
