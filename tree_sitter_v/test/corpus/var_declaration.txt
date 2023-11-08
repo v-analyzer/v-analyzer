@@ -17,7 +17,7 @@ foo := bar
 ================================================================================
 Several var declarations
 ================================================================================
-foo, goo := bar, zoo
+foo, goo, poo := bar, far, tar
 --------------------------------------------------------------------------------
 
 (source_file
@@ -27,8 +27,12 @@ foo, goo := bar, zoo
         (reference_expression
           (identifier))
         (reference_expression
+          (identifier))
+        (reference_expression
           (identifier)))
       (expression_list
+        (reference_expression
+          (identifier))
         (reference_expression
           (identifier))
         (reference_expression
