@@ -26,16 +26,13 @@ jobs:
         with:
           check-latest: true
 
-      - name: Set up MinGW
-        uses: egor-tensin/setup-mingw@v2
-        if: matrix.cc == '-cc gcc'
-        with:
-          platform: x64
-
       - name: Checkout v-analyzer
         uses: actions/checkout@v3
         with:
           path: v-analyzer
+
+      - name: Check GCC version
+        run: gcc --version
 
       - name: Install dependencies
         run: |
