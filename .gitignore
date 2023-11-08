@@ -22,3 +22,11 @@ build
 
 # vweb and database
 *.db
+
+# generated executables on unix:
+install
+cmd/v-analyzer/v-analyzer
+
+# generated executables on windows:
+install.exe
+cmd/v-analyzer/v-analyzer.exe

@@ -41,7 +41,7 @@ pub mut:
 }
 
 pub fn from_toml(root string, path string, content string) !EditorConfig {
-	mut config := EditorConfig{
+	mut econfig := EditorConfig{
 		root: root
 		path: path
 	}
@@ -50,17 +50,17 @@ pub fn from_toml(root string, path string, content string) !EditorConfig {
 
 	custom_vroot_value := res.value('custom_vroot')
 	if custom_vroot_value is string {
-		config.custom_vroot = custom_vroot_value
+		econfig.custom_vroot = custom_vroot_value
 	}
 
 	custom_cache_dir := res.value('custom_cache_dir')
 	if custom_cache_dir is string {
-		config.custom_cache_dir = custom_cache_dir
+		econfig.custom_cache_dir = custom_cache_dir
 	}
 
 	enable_semantic_tokens := res.value('enable_semantic_tokens')
 	if enable_semantic_tokens is string {
-		config.enable_semantic_tokens = match enable_semantic_tokens {
+		econfig.enable_semantic_tokens = match enable_semantic_tokens {
 			'full' { SemanticTokensMode.full }
 			'syntax' { SemanticTokensMode.syntax }
 			'none' { SemanticTokensMode.none_ }
@@ -70,49 +70,49 @@ pub fn from_toml(root string, path string, content string) !EditorConfig {
 
 	inlay_hints_table := res.value('inlay_hints')
 	enable_value := inlay_hints_table.value('enable')
-	config.inlay_hints.enable = if enable_value is toml.Null {
+	econfig.inlay_hints.enable = if enable_value is toml.Null {
 		true // default to true
 	} else {
 		enable_value.bool()
 	}
 
 	enable_range_hints_value := inlay_hints_table.value('enable_range_hints')
-	config.inlay_hints.enable_range_hints = if enable_range_hints_value is toml.Null {
+	econfig.inlay_hints.enable_range_hints = if enable_range_hints_value is toml.Null {
 		true // default to true
 	} else {
 		enable_range_hints_value.bool()
 	}
 
 	enable_type_hints_value := inlay_hints_table.value('enable_type_hints')
-	config.inlay_hints.enable_type_hints = if enable_type_hints_value is toml.Null {
+	econfig.inlay_hints.enable_type_hints = if enable_type_hints_value is toml.Null {
 		true // default to true
 	} else {
 		enable_type_hints_value.bool()
 	}
 
 	enable_implicit_err_hints := inlay_hints_table.value('enable_implicit_err_hints')
-	config.inlay_hints.enable_implicit_err_hints = if enable_implicit_err_hints is toml.Null {
+	econfig.inlay_hints.enable_implicit_err_hints = if enable_implicit_err_hints is toml.Null {
 		true // default to true
 	} else {
 		enable_implicit_err_hints.bool()
 	}
 
 	enable_parameter_name_hints := inlay_hints_table.value('enable_parameter_name_hints')
-	config.inlay_hints.enable_parameter_name_hints = if enable_parameter_name_hints is toml.Null {
+	econfig.inlay_hints.enable_parameter_name_hints = if enable_parameter_name_hints is toml.Null {
 		true // default to true
 	} else {
 		enable_parameter_name_hints.bool()
 	}
 
 	enable_constant_type_hints := inlay_hints_table.value('enable_constant_type_hints')
-	config.inlay_hints.enable_constant_type_hints = if enable_constant_type_hints is toml.Null {
+	econfig.inlay_hints.enable_constant_type_hints = if enable_constant_type_hints is toml.Null {
 		true // default to true
 	} else {
 		enable_constant_type_hints.bool()
 	}
 
 	enable_enum_field_value_hints := inlay_hints_table.value('enable_enum_field_value_hints')
-	config.inlay_hints.enable_enum_field_value_hints = if enable_enum_field_value_hints is toml.Null {
+	econfig.inlay_hints.enable_enum_field_value_hints = if enable_enum_field_value_hints is toml.Null {
 		true // default to true
 	} else {
 		enable_enum_field_value_hints.bool()
@@ -120,41 +120,41 @@ pub fn from_toml(root string, path string, content string) !EditorConfig {
 
 	code_lens_table := res.value('code_lens')
 	enable_lens_value := code_lens_table.value('enable')
-	config.code_lens.enable = if enable_lens_value is toml.Null {
+	econfig.code_lens.enable = if enable_lens_value is toml.Null {
 		true // default to true
 	} else {
 		enable_lens_value.bool()
 	}
 
 	enable_run_lens := code_lens_table.value('enable_run_lens')
-	config.code_lens.enable_run_lens = if enable_run_lens is toml.Null {
+	econfig.code_lens.enable_run_lens = if enable_run_lens is toml.Null {
 		true // default to true
 	} else {
 		enable_run_lens.bool()
 	}
 
 	enable_inheritors_lens := code_lens_table.value('enable_inheritors_lens')
-	config.code_lens.enable_inheritors_lens = if enable_inheritors_lens is toml.Null {
+	econfig.code_lens.enable_inheritors_lens = if enable_inheritors_lens is toml.Null {
 		true // default to true
 	} else {
 		enable_inheritors_lens.bool()
 	}
 
 	enable_super_interfaces_lens := code_lens_table.value('enable_super_interfaces_lens')
-	config.code_lens.enable_super_interfaces_lens = if enable_super_interfaces_lens is toml.Null {
+	econfig.code_lens.enable_super_interfaces_lens = if enable_super_interfaces_lens is toml.Null {
 		true // default to true
 	} else {
 		enable_super_interfaces_lens.bool()
 	}
 
 	enable_run_tests_lens := code_lens_table.value('enable_run_tests_lens')
-	config.code_lens.enable_run_tests_lens = if enable_run_tests_lens is toml.Null {
+	econfig.code_lens.enable_run_tests_lens = if enable_run_tests_lens is toml.Null {
 		true // default to true
 	} else {
 		enable_run_tests_lens.bool()
 	}
 
-	return config
+	return econfig
 }
 
 pub fn (e &EditorConfig) path() string {
