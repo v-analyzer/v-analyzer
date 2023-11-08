@@ -85,7 +85,7 @@ pub mut:
 	documentation string
 	// A string that should be used when filtering a set of
 	// completion items. When `falsy` the label is used.
-	filter_text string [json: 'filterText']
+	filter_text string [json: 'filterText'; omitempty]
 	// A string that should be inserted into a document when selecting
 	// this completion. When omitted the label is used as the insert text
 	// for this item.
@@ -97,7 +97,7 @@ pub mut:
 	// `console` is provided it will only insert `sole`. Therefore it is
 	// recommended to use `textEdit` instead since it avoids additional client
 	// side interpretation.
-	insert_text string [json: 'insertText']
+	insert_text string [json: 'insertText'; omitempty]
 	// The format of the insert text. The format applies to both the
 	// `insertText` property and the `newText` property of a provided
 	// `textEdit`. If omitted defaults to `InsertTextFormat.PlainText`.
@@ -111,7 +111,7 @@ pub mut:
 	//
 	// @since 3.16.0
 	// @since 3.17.0 - support for `textDocument.completion.insertTextMode`
-	insert_text_mode InsertTextMode [json: 'insertTextMode']
+	insert_text_mode InsertTextMode [json: 'insertTextMode'; omitempty]
 	// A string that should be used when comparing this item
 	// with other items. When omitted the label is used
 	// as the sort text for this item.
