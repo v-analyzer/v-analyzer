@@ -47,7 +47,16 @@ jobs:
         with:
           path: v-analyzer
 
+      # Note: cross compile until we have an available arm64 runner
+      - name: Compile (cross compile arm64)
+        if: matrix.target == 'darwin-arm64'
+        run: |
+          cd v-analyzer
+          v install
+          v -d cross_compile_macos_arm64 build.vsh release
+      
       - name: Compile
+        if: matrix.target != 'darwin-arm64'
         run: |
           cd v-analyzer
           v install

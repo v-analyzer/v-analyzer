@@ -18,6 +18,8 @@ pub const (
 	base_build_command = '${@VEXE} ${code_path} -o ${bin_path}'
 	compiler_flag      = $if windows {
 		'-cc gcc' // TCC cannot build tree-sitter on Windows
+	} $else $if cross_compile_macos_arm64 ? {
+		'-cc clang -cflags "-target arm64-apple-darwin"'
 	} $else {
 		''
 	}
