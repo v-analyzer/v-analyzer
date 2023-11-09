@@ -23,7 +23,7 @@ jobs:
           - os: macos-latest
             target: darwin-x86_64
             cc: clang
-          - os: macos-arm64
+          - os: macos-latest
             target: darwin-arm64
             cc: clang
 
