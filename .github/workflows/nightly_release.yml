@@ -21,10 +21,10 @@ jobs:
             target: linux-x86_64
             cc: gcc
           - os: macos-latest
-            target: darwin-x86_64
+            arch: x64
             cc: clang
           - os: macos-latest
-            target: darwin-arm64
+            arch: arm64
             cc: clang
 
     name: Build binary artifact for ${{ matrix.target }}
