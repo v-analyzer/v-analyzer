@@ -101,21 +101,21 @@ enum StringTokenType {
     DOUBLE_QUOTE_OPENING = STRING_OPENING + DOUBLE_QUOTE // 6 + 13 = 19
 };
 
-bool is_type_single_quote(uint8_t type) {
+static bool is_type_single_quote(uint8_t type) {
     uint8_t orig_type = type - SINGLE_QUOTE;
     return orig_type >= C_STRING_OPENING && orig_type <= STRING_OPENING;
 }
 
-bool is_type_double_quote(uint8_t type) {
+static bool is_type_double_quote(uint8_t type) {
     uint8_t orig_type = type - DOUBLE_QUOTE;
     return orig_type >= C_STRING_OPENING && orig_type <= STRING_OPENING;
 }
 
-bool is_type_string(uint8_t type) {
+static bool is_type_string(uint8_t type) {
     return is_type_single_quote(type) || is_type_double_quote(type);
 }
 
-uint8_t get_final_string_type(uint8_t type) {
+static uint8_t get_final_string_type(uint8_t type) {
     if (is_type_single_quote(type)) {
         return type - SINGLE_QUOTE;
     } else if (is_type_double_quote(type)) {
@@ -125,7 +125,7 @@ uint8_t get_final_string_type(uint8_t type) {
     }
 }
 
-char expected_end_char(uint8_t type) {
+static char expected_end_char(uint8_t type) {
     if (is_type_single_quote(type)) {
         return '\'';
     } else if (is_type_double_quote(type)) {
@@ -150,32 +150,32 @@ Stack *new_stack() {
     return stack;
 }
 
-void stack_push(Stack *stack, uint8_t content) {
+static void stack_push(Stack *stack, uint8_t content) {
     if (stack->len >= TREE_SITTER_SERIALIZATION_BUFFER_SIZE) return;
     stack->contents[stack->len++] = content;
 }
 
-uint8_t stack_top(Stack *stack) {
+static uint8_t stack_top(Stack *stack) {
     if (stack->len == 0) return NONE;
     return stack->contents[stack->len - 1];
 }
 
-uint8_t stack_pop(Stack *stack) {
+static uint8_t stack_pop(Stack *stack) {
     if (stack->len == 0) return NONE;
     return stack->contents[--stack->len];
 }
 
-bool stack_empty(Stack *stack) {
+static bool stack_empty(Stack *stack) {
     return stack->len == 0;
 }
 
-unsigned stack_serialize(Stack *stack, char *buffer) {
+static unsigned stack_serialize(Stack *stack, char *buffer) {
     unsigned len = stack->len;
     memcpy(buffer, stack->contents, len);
     return len;
 }
 
-void stack_deserialize(Stack *stack, const char *buffer, unsigned len) {
+static void stack_deserialize(Stack *stack, const char *buffer, unsigned len) {
     if (len == 0) {
         stack->len = 0;
         return;
@@ -201,7 +201,7 @@ static void mark_end(TSLexer *lexer) {
     lexer->mark_end(lexer);
 }
 
-bool is_end_line(int32_t c) {
+static bool is_end_line(int32_t c) {
     return c == '\r' || c == '\n' || c == '\t';
 }
 
@@ -210,11 +210,11 @@ typedef struct {
     Stack *tokens;
 } Scanner;
 
-void push_type(Scanner *scanner, uint8_t token_type) {
+static void push_type(Scanner *scanner, uint8_t token_type) {
     stack_push(scanner->tokens, token_type);
 }
 
-bool scan_interpolation_opening(Scanner *scanner, TSLexer *lexer) {
+static bool scan_interpolation_opening(Scanner *scanner, TSLexer *lexer) {
     advance(lexer);
     if (lexer->lookahead != '{') {
         return false;
@@ -228,7 +228,7 @@ bool scan_interpolation_opening(Scanner *scanner, TSLexer *lexer) {
     return true;
 }
 
-bool scan_interpolation_closing(Scanner *scanner, TSLexer *lexer) {
+static bool scan_interpolation_closing(Scanner *scanner, TSLexer *lexer) {
     uint8_t got_top = stack_pop(scanner->tokens);
     if (got_top != BRACED_INTERPOLATION_OPENING) {
         return false;
@@ -239,7 +239,7 @@ bool scan_interpolation_closing(Scanner *scanner, TSLexer *lexer) {
     return true;
 }
 
-bool scan_automatic_separator(Scanner *scanner, TSLexer *lexer) {
+static bool scan_automatic_separator(Scanner *scanner, TSLexer *lexer) {
     bool is_newline = false;
     bool has_whitespace = false;
     int tab_count = 0;
@@ -309,7 +309,7 @@ bool scan_automatic_separator(Scanner *scanner, TSLexer *lexer) {
     return false;
 }
 
-bool scan_string_opening(Scanner *scanner, TSLexer *lexer, bool is_quote, bool is_c, bool is_raw) {
+static bool scan_string_opening(Scanner *scanner, TSLexer *lexer, bool is_quote, bool is_c, bool is_raw) {
     if (is_raw && lexer->lookahead == 'r') {
         lexer->result_symbol = RAW_STRING_OPENING;
         advance(lexer);
@@ -332,7 +332,7 @@ bool scan_string_opening(Scanner *scanner, TSLexer *lexer, bool is_quote, bool i
     return false;
 }
 
-bool scan_string_content(Scanner *scanner, TSLexer *lexer) {
+static bool scan_string_content(Scanner *scanner, TSLexer *lexer) {
     uint8_t got_top = stack_top(scanner->tokens);
     if (stack_empty(scanner->tokens) || !is_type_string(got_top)) {
         return false;
@@ -382,7 +382,7 @@ bool scan_string_content(Scanner *scanner, TSLexer *lexer) {
     return has_content;
 }
 
-bool scan_comment(Scanner *scanner, TSLexer *lexer) {
+static bool scan_comment(Scanner *scanner, TSLexer *lexer) {
     advance(lexer);
     if (lexer->lookahead != '/' && lexer->lookahead != '*') {
         return false;
