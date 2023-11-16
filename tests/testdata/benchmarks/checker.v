@@ -34,7 +34,7 @@ pub const (
 	vroot_is_deprecated_message = '@VROOT is deprecated, use @VMODROOT or @VEXEROOT instead'
 )
 
-[heap; minify]
+@[heap; minify]
 pub struct Checker {
 	pref &pref.Preferences = unsafe { nil } // Preferences shared from V struct
 pub mut:
@@ -1753,7 +1753,7 @@ fn (mut c Checker) enum_decl(mut node ast.EnumDecl) {
 	}
 }
 
-[inline]
+@[inline]
 fn (mut c Checker) check_loop_label(label string, pos token.Pos) {
 	if label.len == 0 {
 		// ignore
@@ -3751,7 +3751,7 @@ fn (c &Checker) has_return(stmts []ast.Stmt) ?bool {
 	return none
 }
 
-[inline]
+@[inline]
 pub fn (mut c Checker) is_comptime_var(node ast.Expr) bool {
 	return node is ast.Ident
 		&& (node as ast.Ident).info is ast.IdentVar && (node as ast.Ident).kind == .variable && ((node as ast.Ident).obj as ast.Var).ct_type_var != .no_comptime

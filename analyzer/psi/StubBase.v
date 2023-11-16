@@ -6,7 +6,7 @@ pub type StubId = int
 
 const non_stubbed_element = StubId(-1)
 
-[params]
+@[params]
 pub struct StubData {
 pub:
 	text       string
@@ -15,7 +15,7 @@ pub:
 	additional string
 }
 
-[heap]
+@[heap]
 pub struct StubBase {
 	StubData
 pub:

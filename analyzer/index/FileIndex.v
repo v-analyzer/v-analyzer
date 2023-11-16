@@ -5,7 +5,7 @@ import analyzer.psi
 // FileIndex describes the cache of a single file.
 // By splitting the cache into files, we can index files in parallel
 // without the need for synchronization.
-[heap]
+@[heap]
 pub struct FileIndex {
 pub mut:
 	kind IndexingRootKind // root where the file is located

@@ -23,7 +23,7 @@ module attributes
 // [deprecated: 'use foo() instead: boo() has some issues']
 // fn boo() {}
 // ```
-[attribute]
+@[attribute]
 pub struct Deprecated {
 	name            string   = 'deprecated'
 	with_arg        bool     = true

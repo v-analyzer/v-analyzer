@@ -92,7 +92,7 @@ struct NodeInfo {
 	parent &psi.StubBase
 }
 
-[direct_array_access]
+@[direct_array_access]
 pub fn build_stub_tree_iterative(file &psi.PsiFile, mut nodes []NodeInfo) &StubTree {
 	root := file.root()
 	stub_root := psi.new_root_stub(file.path())

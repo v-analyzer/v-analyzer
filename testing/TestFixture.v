@@ -19,7 +19,7 @@ pub fn (t TestFile) uri() lsp.DocumentUri {
 	return lsp.document_uri_from_path(t.path)
 }
 
-[heap; noinit]
+@[heap; noinit]
 pub struct Fixture {
 mut:
 	ls           &server.LanguageServer

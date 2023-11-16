@@ -49,7 +49,7 @@ pub:
 	resolve_support bool [json: 'resolveSupport']
 }
 
-[json_as_number]
+@[json_as_number]
 pub enum InlayHintKind {
 	type_
 	parameter

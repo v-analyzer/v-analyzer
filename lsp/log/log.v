@@ -16,7 +16,7 @@ pub mut:
 	file_path string
 }
 
-[json_as_number]
+@[json_as_number]
 pub enum TransportKind {
 	send
 	receive
@@ -29,7 +29,7 @@ struct Payload {
 	params string [raw]
 }
 
-[json_as_number]
+@[json_as_number]
 pub enum LogKind {
 	send_notification
 	recv_notification
@@ -110,7 +110,7 @@ pub fn (mut l LogRecorder) disable() {
 
 // write writes the log item into the log file or in the
 // buffer if the file is not opened yet.
-[manualfree]
+@[manualfree]
 fn (mut l LogRecorder) log(item LogItem) {
 	if !l.enabled {
 		return

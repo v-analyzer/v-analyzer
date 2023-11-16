@@ -30,7 +30,7 @@ module attributes
 // //   "color": "green"
 // // }
 // ```
-[attribute]
+@[attribute]
 pub struct JsonAsNumber {
 	name            string = 'json_as_number'
 	with_arg        bool

@@ -46,7 +46,7 @@ pub fn (mut t Tracker) start(title string, message string, token lsp.ProgressTok
 	return wd
 }
 
-[heap]
+@[heap]
 pub struct WorkDone {
 pub mut:
 	token  lsp.ProgressToken

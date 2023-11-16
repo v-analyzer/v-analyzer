@@ -3,7 +3,7 @@ module protocol
 import jsonrpc
 import lsp
 
-[heap]
+@[heap]
 pub struct Client {
 mut:
 	wr jsonrpc.ResponseWriter

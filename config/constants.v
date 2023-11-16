@@ -64,7 +64,7 @@ pub const default = '# Specifies the path to the V installation directory with `
 enable_semantic_tokens = "full"
 
 # Specifies inlay hints to show.
-[inlay_hints]
+@[inlay_hints]
 # Specifies whenever to enable inlay hints or not.
 # By default, they are enabled.
 enable = true
@@ -129,7 +129,7 @@ enable_constant_type_hints = true
 enable_enum_field_value_hints = true
 
 # Specifies code lenses to show.
-[code_lens]
+@[code_lens]
 # Specifies whenever to enable code lenses or not.
 # By default, they are enabled.
 enable = true

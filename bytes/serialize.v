@@ -31,7 +31,7 @@ pub fn (mut s Serializer) write_i64(data i64) {
 	}
 }
 
-[inline]
+@[inline]
 pub fn (mut s Serializer) write_u8(data u8) {
 	s.data << data
 }

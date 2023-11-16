@@ -1,6 +1,6 @@
 module lsp
 
-[json_as_number]
+@[json_as_number]
 pub enum DiagnosticTag {
 	// Unused or unnecessary code.
 	//
@@ -42,7 +42,7 @@ pub mut:
 	data string [raw]
 }
 
-[json_as_number]
+@[json_as_number]
 pub enum DiagnosticSeverity {
 	error       = 1
 	warning

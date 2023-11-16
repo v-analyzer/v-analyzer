@@ -5,7 +5,7 @@ pub struct SignatureHelpOptions {
 	retrigger_characters []string [json: retriggerCharacters]
 }
 
-[json_as_number]
+@[json_as_number]
 pub enum SignatureHelpTriggerKind {
 	invoked           = 1
 	trigger_character = 2

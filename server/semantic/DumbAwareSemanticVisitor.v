@@ -39,7 +39,7 @@ pub fn (v DumbAwareSemanticVisitor) accept(root psi.PsiElement) []SemanticToken 
 	return result
 }
 
-[inline]
+@[inline]
 fn (_ DumbAwareSemanticVisitor) highlight_node(node psi.AstNode, root psi.PsiElement, mut result []SemanticToken) {
 	if node.type_name == .enum_field_definition {
 		if first_child := node.first_child() {

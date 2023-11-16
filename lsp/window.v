@@ -8,7 +8,7 @@ pub struct ShowMessageParams {
 	message string
 }
 
-[json_as_number]
+@[json_as_number]
 pub enum MessageType {
 	error   = 1
 	warning = 2

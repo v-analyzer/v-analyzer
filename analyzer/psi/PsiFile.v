@@ -8,7 +8,7 @@ import tree_sitter_v as v
 import analyzer.parser
 import v_tree_sitter.tree_sitter
 
-[heap]
+@[heap]
 pub struct PsiFile {
 pub:
 	path      string
@@ -41,22 +41,22 @@ pub fn new_stub_psi_file(path string, stub_list &StubList) &PsiFile {
 	}
 }
 
-[inline]
+@[inline]
 pub fn (p &PsiFile) is_stub_based() bool {
 	return isnil(p.tree)
 }
 
-[inline]
+@[inline]
 pub fn (p &PsiFile) is_test_file() bool {
 	return p.path.ends_with('_test.v')
 }
 
-[inline]
+@[inline]
 pub fn (p &PsiFile) is_shell_script() bool {
 	return p.path.ends_with('.vsh')
 }
 
-[inline]
+@[inline]
 pub fn (p &PsiFile) index_sink() ?StubIndexSink {
 	return stubs_index.get_sink_for_file(p.path)
 }
@@ -77,17 +77,17 @@ pub fn (mut p PsiFile) reparse(new_code string) {
 	}).info('Reparsed file')
 }
 
-[inline]
+@[inline]
 pub fn (p &PsiFile) path() string {
 	return p.path
 }
 
-[inline]
+@[inline]
 pub fn (p &PsiFile) uri() string {
 	return lsp.document_uri_from_path(p.path)
 }
 
-[inline]
+@[inline]
 pub fn (p &PsiFile) text() string {
 	return p.source_text
 }
@@ -106,12 +106,12 @@ pub fn (p &PsiFile) root() PsiElement {
 	return p.root
 }
 
-[inline]
+@[inline]
 pub fn (p &PsiFile) find_element_at(offset u32) ?PsiElement {
 	return p.root.find_element_at(offset)
 }
 
-[inline]
+@[inline]
 pub fn (p &PsiFile) find_element_at_pos(pos Position) ?PsiElement {
 	offset := utils.compute_offset(p.source_text, pos.line, pos.character)
 	return p.root.find_element_at(u32(offset))
@@ -131,7 +131,7 @@ pub fn (p &PsiFile) find_reference_at(offset u32) ?ReferenceExpressionBase {
 	return none
 }
 
-[inline]
+@[inline]
 pub fn (p &PsiFile) module_fqn() string {
 	return stubs_index.get_module_qualified_name(p.path)
 }

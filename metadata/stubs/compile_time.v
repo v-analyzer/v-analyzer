@@ -113,7 +113,7 @@ pub fn $env(name string) string
 //   $compile_error('Windows is not supported')
 // }
 // ```
-[noreturn]
+@[noreturn]
 pub fn $compile_error(msg string)
 
 // $compile_warn causes a compile warning with the passed message.

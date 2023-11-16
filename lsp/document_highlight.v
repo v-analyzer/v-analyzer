@@ -8,7 +8,7 @@ pub struct DocumentHighlight {
 	kind  DocumentHighlightKind
 }
 
-[json_as_number]
+@[json_as_number]
 pub enum DocumentHighlightKind {
 	text  = 1
 	read  = 2
