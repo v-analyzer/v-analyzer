@@ -16,13 +16,6 @@ pub const (
 		''
 	}
 	base_build_command = '${@VEXE} ${code_path} -o ${bin_path}'
-	compiler_flag      = $if windows {
-		'-cc gcc' // TCC cannot build tree-sitter on Windows
-	} $else $if cross_compile_macos_arm64 ? {
-		'-cc clang -cflags "-target arm64-apple-darwin"'
-	} $else {
-		''
-	}
 )
 
 enum ReleaseMode {
@@ -31,11 +24,13 @@ enum ReleaseMode {
 	dev
 }
 
-fn (m ReleaseMode) cmd() fn () os.Result {
-	return match m {
-		.release { release }
-		.debug { debug }
-		.dev { dev }
+fn (m ReleaseMode) cc_flags() string {
+	$if windows {
+		return '-cc gcc' // TCC cannot build tree-sitter on Windows
+	} $else $if cross_compile_macos_arm64 ? {
+		return '-cc clang -cflags "-target arm64-apple-darwin"'
+	} $else {
+		return if m == .release { '-cc gcc' } else { '' }
 	}
 }
 
@@ -43,27 +38,13 @@ fn errorln(msg string) {
 	eprintln('${term.red('[ERROR]')} ${msg}')
 }
 
-// debug builds the v-analyzer binary in debug mode.
-// This is the default mode.
-// Thanks to -d use_libbacktrace, the binary will print beautiful stack traces,
-// which is very useful for debugging.
-fn debug() os.Result {
+fn (m ReleaseMode) compile() os.Result {
 	libbacktrace := $if windows { '' } $else { '-d use_libbacktrace' }
-	return os.execute('${base_build_command} ${compiler_flag} -g ${libbacktrace}')
-}
-
-// dev builds the v-analyzer binary in development mode.
-// In this mode, additional development features are enabled.
-fn dev() os.Result {
-	libbacktrace := $if windows { '' } $else { '-d use_libbacktrace' }
-	return os.execute('${base_build_command} ${compiler_flag} -d show_ast_on_hover -g ${libbacktrace}')
-}
-
-// release builds the v-analyzer binary in release mode.
-// This is the recommended mode for production use.
-// It is about 30-40% faster than debug mode.
-fn release() os.Result {
-	return os.execute('${base_build_command} ${compiler_flag} -w -cflags "-O3 -DNDEBUG" -prod')
+	return match m {
+		.release { os.execute('${base_build_command} ${m.cc_flags()} -w -cflags "-O3 -DNDEBUG" -prod') }
+		.debug { os.execute('${base_build_command} ${m.cc_flags()} -w -cflags "-O3 -DNDEBUG" -prod') }
+		.dev { os.execute('${base_build_command} ${m.cc_flags()} -d show_ast_on_hover -g ${libbacktrace}') }
+	}
 }
 
 fn prepare_output_dir() {
@@ -79,9 +60,7 @@ fn build(mode ReleaseMode, explicit_debug bool) {
 	prepare_output_dir()
 	println('${term.green('✓')} Prepared output directory')
 
-	cmd := mode.cmd()
-	cmd_name := mode.str()
-	println('Building v-analyzer in ${term.bold(cmd_name)} mode...')
+	println('Building v-analyzer in ${term.bold(mode.str())} mode...')
 	if mode == .release {
 		println('This may take a while...')
 	}
@@ -91,7 +70,7 @@ fn build(mode ReleaseMode, explicit_debug bool) {
 		println('Release mode is recommended for production use. It is about 30-40% faster than debug mode.')
 	}
 
-	res := cmd()
+	res := mode.compile()
 	if res.exit_code != 0 {
 		errorln('Failed to build v-analyzer')
 		eprintln(res.output)
@@ -112,6 +91,10 @@ mut cmd := cli.Command{
 	}
 }
 
+// debug builds the v-analyzer binary in debug mode.
+// This is the default mode.
+// Thanks to -d use_libbacktrace, the binary will print beautiful stack traces,
+// which is very useful for debugging.
 cmd.add_command(cli.Command{
 	name: 'debug'
 	description: 'Builds the v-analyzer binary in debug mode.'
@@ -120,6 +103,8 @@ cmd.add_command(cli.Command{
 	}
 })
 
+// dev builds the v-analyzer binary in development mode.
+// In this mode, additional development features are enabled.
 cmd.add_command(cli.Command{
 	name: 'dev'
 	description: 'Builds the v-analyzer binary in development mode.'
@@ -128,6 +113,9 @@ cmd.add_command(cli.Command{
 	}
 })
 
+// release builds the v-analyzer binary in release mode.
+// This is the recommended mode for production use.
+// It is about 30-40% faster than debug mode.
 cmd.add_command(cli.Command{
 	name: 'release'
 	description: 'Builds the v-analyzer binary in release mode.'
