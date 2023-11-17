@@ -38,7 +38,7 @@ fn errorln(msg string) {
 fn (m ReleaseMode) compile() os.Result {
 	libbacktrace := $if windows { '' } $else { '-d use_libbacktrace' }
 	return match m {
-		.release { os.execute('${base_build_command} ${compiler_flag} -w -cflags -prod') }
+		.release { os.execute('${base_build_command} ${compiler_flag} -w -prod') }
 		.debug { os.execute('${base_build_command} ${compiler_flag} -g ${libbacktrace}') }
 		.dev { os.execute('${base_build_command} ${compiler_flag} -d show_ast_on_hover -g ${libbacktrace}') }
 	}
