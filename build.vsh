@@ -1,3 +1,5 @@
+#!/usr/bin/env -S v
+
 // This script is used to build the v-analyzer binary.
 //
 // Usage:

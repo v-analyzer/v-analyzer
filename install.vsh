@@ -1,3 +1,5 @@
+#!/usr/bin/env -S v
+
 // This script is used to install and update v-analyzer.
 import os
 import json
