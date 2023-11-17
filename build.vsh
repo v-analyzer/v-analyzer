@@ -31,30 +31,17 @@ enum ReleaseMode {
 	dev
 }
 
-fn (m ReleaseMode) cmd() fn () os.Result {
-	return match m {
-		.release { release }
-		.debug { debug }
-		.dev { dev }
-	}
-}
-
 fn errorln(msg string) {
 	eprintln('${term.red('[ERROR]')} ${msg}')
 }
 
-fn debug() os.Result {
+fn (m ReleaseMode) compile() os.Result {
 	libbacktrace := $if windows { '' } $else { '-d use_libbacktrace' }
-	return os.execute('${base_build_command} ${compiler_flag} -g ${libbacktrace}')
-}
-
-fn dev() os.Result {
-	libbacktrace := $if windows { '' } $else { '-d use_libbacktrace' }
-	return os.execute('${base_build_command} ${compiler_flag} -d show_ast_on_hover -g ${libbacktrace}')
-}
-
-fn release() os.Result {
-	return os.execute('${base_build_command} ${compiler_flag} -w -cflags -prod')
+	return match m {
+		.release { os.execute('${base_build_command} ${compiler_flag} -w -cflags -prod') }
+		.debug { os.execute('${base_build_command} ${compiler_flag} -g ${libbacktrace}') }
+		.dev { os.execute('${base_build_command} ${compiler_flag} -d show_ast_on_hover -g ${libbacktrace}') }
+	}
 }
 
 fn prepare_output_dir() {
@@ -80,8 +67,7 @@ fn build(mode ReleaseMode, explicit_debug bool) {
 		println('Release mode is recommended for production use. It is about 30-40% faster than debug mode.')
 	}
 
-	cmd := mode.cmd()
-	res := cmd()
+	res := mode.compile()
 	if res.exit_code != 0 {
 		errorln('Failed to build v-analyzer')
 		eprintln(res.output)
