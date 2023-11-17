@@ -70,7 +70,6 @@ fn build(mode ReleaseMode, explicit_debug bool) {
 	prepare_output_dir()
 	println('${term.green('✓')} Prepared output directory')
 
-	cmd := mode.cmd()
 	println('Building v-analyzer in ${term.bold(mode.str())} mode...')
 	if mode == .release {
 		println('This may take a while...')
@@ -81,6 +80,7 @@ fn build(mode ReleaseMode, explicit_debug bool) {
 		println('Release mode is recommended for production use. It is about 30-40% faster than debug mode.')
 	}
 
+	cmd := mode.cmd()
 	res := cmd()
 	if res.exit_code != 0 {
 		errorln('Failed to build v-analyzer')
