@@ -54,7 +54,7 @@ fn dev() os.Result {
 }
 
 fn release() os.Result {
-	return os.execute('${base_build_command} ${compiler_flag} -w -cflags "-O3 -DNDEBUG" -prod')
+	return os.execute('${base_build_command} ${compiler_flag} -w -cflags -prod')
 }
 
 fn prepare_output_dir() {
