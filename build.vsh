@@ -71,8 +71,7 @@ fn build(mode ReleaseMode, explicit_debug bool) {
 	println('${term.green('✓')} Prepared output directory')
 
 	cmd := mode.cmd()
-	cmd_name := mode.str()
-	println('Building v-analyzer in ${term.bold(cmd_name)} mode...')
+	println('Building v-analyzer in ${term.bold(mode.str())} mode...')
 	if mode == .release {
 		println('This may take a while...')
 	}
