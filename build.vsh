@@ -18,13 +18,6 @@ pub const (
 		''
 	}
 	base_build_command = '${@VEXE} ${code_path} -o ${bin_path}'
-	compiler_flag      = $if windows {
-		'-cc gcc' // TCC cannot build tree-sitter on Windows
-	} $else $if cross_compile_macos_arm64 ? {
-		'-cc clang -cflags "-target arm64-apple-darwin"'
-	} $else {
-		''
-	}
 )
 
 enum ReleaseMode {
@@ -37,12 +30,22 @@ fn errorln(msg string) {
 	eprintln('${term.red('[ERROR]')} ${msg}')
 }
 
+fn (m ReleaseMode) cc_flags() string {
+	$if windows {
+		return '-cc gcc' // TCC cannot build tree-sitter on Windows
+	} $else $if cross_compile_macos_arm64 ? {
+		return '-cc clang -cflags "-target arm64-apple-darwin"'
+	} $else {
+		return if m == .release { '-cc gcc' } else { '' }
+	}
+}
+
 fn (m ReleaseMode) compile() os.Result {
 	libbacktrace := $if windows { '' } $else { '-d use_libbacktrace' }
 	return match m {
-		.release { os.execute('${base_build_command} ${compiler_flag} -w -prod') }
-		.debug { os.execute('${base_build_command} ${compiler_flag} -g ${libbacktrace}') }
-		.dev { os.execute('${base_build_command} ${compiler_flag} -d show_ast_on_hover -g ${libbacktrace}') }
+		.release { os.execute('${base_build_command} ${m.cc_flags()} -w -prod') }
+		.debug { os.execute('${base_build_command} ${m.cc_flags()} -g ${libbacktrace}') }
+		.dev { os.execute('${base_build_command} ${m.cc_flags()} -d show_ast_on_hover -g ${libbacktrace}') }
 	}
 }
 
