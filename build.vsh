@@ -12,11 +12,7 @@ import term
 
 pub const (
 	code_path          = './cmd/v-analyzer'
-	bin_path           = './bin/v-analyzer' + $if windows {
-		'.exe'
-	} $else {
-		''
-	}
+	bin_path           = './bin/v-analyzer' + $if windows { '.exe' } $else { '' }
 	base_build_command = '${@VEXE} ${code_path} -o ${bin_path}'
 )
 
