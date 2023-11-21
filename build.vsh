@@ -9,8 +9,10 @@
 import os
 import cli
 import term
+import v.vmod
 
 pub const (
+	version            = vmod.decode(@VMOD_FILE) or { panic(err) }.version
 	code_path          = './cmd/v-analyzer'
 	bin_path           = './bin/v-analyzer' + $if windows { '.exe' } $else { '' }
 	base_build_command = '${@VEXE} ${code_path} -o ${bin_path}'
@@ -81,7 +83,7 @@ fn build(mode ReleaseMode, explicit_debug bool) {
 
 mut cmd := cli.Command{
 	name: 'v-analyzer-builder'
-	version: '0.0.1-beta.1'
+	version: version
 	description: 'Builds the v-analyzer binary.'
 	posix_mode: true
 	execute: fn (_ cli.Command) ! {

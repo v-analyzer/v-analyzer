@@ -8,8 +8,10 @@ import time
 import szip
 import cli
 import net.http
+import v.vmod
 
 pub const (
+	version                     = vmod.decode(@VMOD_FILE) or { panic(err) }.version
 	analyzer_sources_path       = norm_expand_tilde_to_home('~/.config/v-analyzer/sources')
 	analyzer_bin_path           = norm_expand_tilde_to_home('~/.config/v-analyzer/bin')
 	analyzer_bin_path_with_name = norm_expand_tilde_to_home('~/.config/v-analyzer/bin/v-analyzer')
@@ -467,7 +469,7 @@ pub fn warnln(msg string) {
 
 mut cmd := cli.Command{
 	name: 'v-analyzer-installer-updated'
-	version: '0.0.1-beta.1'
+	version: version
 	description: 'Install and update v-analyzer'
 	posix_mode: true
 	execute: fn (cmd cli.Command) ! {
