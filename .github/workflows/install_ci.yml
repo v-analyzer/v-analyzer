@@ -29,7 +29,7 @@ jobs:
       - name: Install via command (Linux and macOS)
         if: matrix.os != 'windows-latest'
         run: |
-          url="https://raw.githubusercontent.com/$GITHUB_REPOSITORY/$GITHUB_REF_NAME/install.vsh"
+          url="https://raw.githubusercontent.com/$GITHUB_ACTOR/$GITHUB_HEAD_REF/install.vsh"
           echo "$url"
           v -e "$(curl -fsSL $url)"
 
@@ -37,7 +37,7 @@ jobs:
         if: matrix.os == 'windows-latest'
         shell: msys2 {0}
         run: |
-          url="https://raw.githubusercontent.com/$GITHUB_REPOSITORY/$GITHUB_REF_NAME/install.vsh"
+          url="https://raw.githubusercontent.com/$GITHUB_ACTOR/$GITHUB_HEAD_REF/install.vsh"
           echo "$url"
           v -e "$(curl $url)"
 
