@@ -5,10 +5,10 @@ import tree_sitter_v as v
 pub struct PsiElementImpl {
 pub:
 	node            AstNode // base node from Tree Sitter
-	containing_file &PsiFile
+	containing_file &PsiFile = unsafe { nil }
 	// stubs related
 	stub_id    StubId = non_stubbed_element
-	stubs_list &StubList
+	stubs_list &StubList = unsafe { nil }
 }
 
 pub fn new_psi_node(containing_file &PsiFile, node AstNode) PsiElementImpl {

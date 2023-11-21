@@ -25,7 +25,7 @@ pub:
 	parent_id             StubId
 	stub_type             StubType
 pub mut:
-	stub_list &StubList
+	stub_list &StubList = unsafe { nil }
 	id        StubId
 }
 
