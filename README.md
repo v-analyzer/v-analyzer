@@ -27,7 +27,7 @@ v-analyzer provides the following features:
 ### Linux and macOS
 
 ```
-v -e "$(curl -fsSL https://raw.githubusercontent.com/v-analyzer/v-analyzer/master/install.vsh)"
+v -e "$(curl -fsSL https://raw.githubusercontent.com/v-analyzer/v-analyzer/main/install.vsh)"
 ```
 
 ### Windows
@@ -36,13 +36,13 @@ So make sure that there is no file with this name or that it is safe when it is 
 #### Powershell
 
 ```
-curl -o install.vsh https://raw.githubusercontent.com/v-analyzer/v-analyzer/master/install.vsh; v run install.vsh; del install.vsh
+curl -o install.vsh https://raw.githubusercontent.com/v-analyzer/v-analyzer/main/install.vsh; v run install.vsh; del install.vsh
 ```
 
 #### Command shell
 
 ```
-curl -o install.vsh https://raw.githubusercontent.com/v-analyzer/v-analyzer/master/install.vsh && v run install.vsh && del install.vsh
+curl -o install.vsh https://raw.githubusercontent.com/v-analyzer/v-analyzer/main/install.vsh && v run install.vsh && del install.vsh
 ```
 
 
@@ -161,7 +161,7 @@ See also extension page in
 
 This project is under the **MIT License**.
 See the
-[LICENSE](https://github.com/vlang-association/v-analyzer/blob/master/LICENSE)
+[LICENSE](https://github.com/vlang-association/v-analyzer/blob/main/LICENSE)
 file for the full license text.
 
 [AssociationOfficialBadge]: https://vosca.dev/badge.svg
