@@ -13,7 +13,7 @@ module attributes
 // struct User {
 // 	 first_name string [json: 'FirstName']
 // }
-[attribute]
+@[attribute]
 pub struct Json {
 	name            string = 'json'
 	with_arg        bool   = true

@@ -1,6 +1,6 @@
 module lsp
 
-[json_as_number]
+@[json_as_number]
 pub enum DiagnosticTag {
 	// Unused or unnecessary code.
 	//
@@ -23,26 +23,26 @@ pub mut:
 	// The diagnostic's code, which might appear in the user interface.
 	code string
 	// An optional property to describe the error code.
-	code_description string [json: 'codeDescription']
+	code_description string @[json: 'codeDescription']
 	// A human-readable string describing the source of this
 	// diagnostic, e.g. 'typescript' or 'super lint'.
 	source string
 	// The diagnostic's message.
 	message string
 	// Additional metadata about the diagnostic.
-	tags []DiagnosticTag [json: 'tags']
+	tags []DiagnosticTag @[json: 'tags']
 	// An array of related diagnostic information, e.g. when symbol-names within
 	// a scope collide all definitions can be marked via this property.
-	related_information []DiagnosticRelatedInformation [json: 'relatedInformation']
+	related_information []DiagnosticRelatedInformation @[json: 'relatedInformation']
 	// A data entry field that is preserved between a
 	// `textDocument/publishDiagnostics` notification and
 	// `textDocument/codeAction` request.
 	//
 	// @since 3.16.0
-	data string [raw]
+	data string @[raw]
 }
 
-[json_as_number]
+@[json_as_number]
 pub enum DiagnosticSeverity {
 	error       = 1
 	warning

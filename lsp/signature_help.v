@@ -1,11 +1,11 @@
 module lsp
 
 pub struct SignatureHelpOptions {
-	trigger_characters   []string [json: triggerCharacters]
-	retrigger_characters []string [json: retriggerCharacters]
+	trigger_characters   []string @[json: triggerCharacters]
+	retrigger_characters []string @[json: retriggerCharacters]
 }
 
-[json_as_number]
+@[json_as_number]
 pub enum SignatureHelpTriggerKind {
 	invoked           = 1
 	trigger_character = 2
@@ -19,24 +19,24 @@ pub:
 	// TODO: utilize struct embedding feature
 	// for all structs that use TextDocumentPositionParams
 	// embed: TextDocumentPositionParams
-	text_document TextDocumentIdentifier [json: textDocument]
+	text_document TextDocumentIdentifier @[json: textDocument]
 	position      Position
 	context       SignatureHelpContext
 }
 
 pub struct SignatureHelpContext {
 pub:
-	trigger_kind          SignatureHelpTriggerKind [json: triggerKind]
-	trigger_character     string                   [json: triggerCharacter]
-	is_retrigger          bool                     [json: isRetrigger]
-	active_signature_help SignatureHelp            [json: activeSignatureHelp]
+	trigger_kind          SignatureHelpTriggerKind @[json: triggerKind]
+	trigger_character     string                   @[json: triggerCharacter]
+	is_retrigger          bool                     @[json: isRetrigger]
+	active_signature_help SignatureHelp            @[json: activeSignatureHelp]
 }
 
 pub struct SignatureHelp {
 pub:
 	signatures []SignatureInformation
 pub mut:
-	active_parameter int [json: activeParameter]
+	active_parameter int @[json: activeParameter]
 }
 
 pub struct SignatureInformation {
@@ -51,6 +51,6 @@ pub struct ParameterInformation {
 }
 
 pub struct SignatureHelpRegistrationOptions {
-	document_selector  []DocumentFilter [json: documentSelector]
-	trigger_characters []string         [json: triggerCharacters]
+	document_selector  []DocumentFilter @[json: documentSelector]
+	trigger_characters []string         @[json: triggerCharacters]
 }

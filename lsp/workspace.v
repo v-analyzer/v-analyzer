@@ -22,7 +22,7 @@ pub type ChangeAnnotationIdentifier = string
 pub struct WorkspaceEdit {
 pub:
 	// Holds changes to existing resources.
-	changes map[string][]TextEdit [json: 'changes'; omitempty]
+	changes map[string][]TextEdit @[json: 'changes'; omitempty]
 	// Depending on the client capability `workspace.workspaceEdit.resourceOperations` document changes
 	// are either an array of `TextDocumentEdit`s to express changes to n different text documents
 	// where each text document edit addresses a specific version of a text document. Or it can contain
@@ -33,26 +33,26 @@ pub:
 	//
 	// If a client neither supports `documentChanges` nor `workspace.workspaceEdit.resourceOperations` then
 	// only plain `TextEdit`s using the `changes` property are supported.
-	document_changes []TextDocumentEdit [json: 'documentChanges'; omitempty]
+	document_changes []TextDocumentEdit @[json: 'documentChanges'; omitempty]
 	// A map of change annotations that can be referenced in `AnnotatedTextEdit`s or create, rename and
 	// delete file / folder operations.
 	//
 	// Whether clients honor this property depends on the client capability `workspace.changeAnnotationSupport`.
 	//
 	// @since 3.16.0
-	change_annotations map[string]ChangeAnnotation [json: 'changeAnnotations'; omitempty]
+	change_annotations map[string]ChangeAnnotation @[json: 'changeAnnotations'; omitempty]
 }
 
 pub struct ChangeAnnotation { // line 6831
 	// A human-readable string describing the actual change. The string
 	// is rendered prominent in the user interface.
-	label string [omitempty]
+	label string @[omitempty]
 	// A flag which indicates that user confirmation is needed
 	// before applying the change.
-	needs_confirmation bool [json: 'needsConfirmation'; omitempty]
+	needs_confirmation bool @[json: 'needsConfirmation'; omitempty]
 	// A human-readable string which is rendered less prominent in
 	// the user interface.
-	description string [omitempty]
+	description string @[omitempty]
 }
 
 pub struct WorkspaceSymbol {
@@ -67,16 +67,16 @@ pub mut:
 	// user interface purposes (e.g. to render a qualifier in the user interface
 	// if necessary). It can't be used to re-infer a hierarchy for the document
 	// symbols.
-	container_name string [json: 'containerName'; omitempty]
+	container_name string @[json: 'containerName'; omitempty]
 	// The location of this symbol. Whether a server is allowed to
 	// return a location without a range depends on the client
 	// capability `workspace.symbol.resolveSupport`.
 	//
 	// See also `SymbolInformation.location`.
-	location Location [omitempty]
+	location Location @[omitempty]
 	// A data entry field that is preserved on a workspace symbol between a
 	// workspace symbol request and a workspace symbol resolve request.
-	data string [raw]
+	data string @[raw]
 }
 
 pub struct DidChangeWorkspaceFoldersParams {
@@ -91,7 +91,7 @@ pub struct WorkspaceFoldersChangeEvent {
 // method: ‘workspace/didChangeConfiguration’,
 // notification
 pub struct DidChangeConfigurationParams {
-	settings string [raw]
+	settings string @[raw]
 }
 
 // method: ‘workspace/configuration’
@@ -101,7 +101,7 @@ pub struct ConfigurationParams {
 }
 
 pub struct ConfigurationItem {
-	scope_uri DocumentUri [json: scopeUri]
+	scope_uri DocumentUri @[json: scopeUri]
 	section   string
 }
 
@@ -115,10 +115,10 @@ pub:
 pub struct FileEvent {
 pub:
 	uri DocumentUri
-	typ FileChangeType [json: 'type']
+	typ FileChangeType @[json: 'type']
 }
 
-[json_as_number]
+@[json_as_number]
 pub enum FileChangeType {
 	created = 1
 	changed = 2
@@ -138,11 +138,11 @@ pub struct DidChangeWatchedFilesRegistrationOptions {
 // - `[]` to declare a range of characters to match in a path segment (e.g., `example.[0-9]` to match on `example.0`, `example.1`, …)
 // - `[!...]` to negate a range of characters to match in a path segment (e.g., `example.[!0-9]` to match on `example.a`, `example.b`, but not `example.0`)
 pub struct FileSystemWatcher {
-	glob_pattern string [json: globPattern]
+	glob_pattern string @[json: globPattern]
 	kind         int
 }
 
-[json_as_number]
+@[json_as_number]
 pub enum WatchKind {
 	create = 1
 	change = 2
@@ -162,7 +162,7 @@ pub:
 	// The identifier of the actual command handler.
 	command string
 	// Arguments that the command should be invoked with.
-	arguments string [raw]
+	arguments string @[raw]
 }
 
 pub struct ExecuteCommandRegistrationOptions {
@@ -177,12 +177,12 @@ pub:
 	// An optional label of the workspace edit. This label is
 	// presented in the user interface for example on an undo
 	// stack to undo the workspace edit.
-	label string [omitempty]
+	label string @[omitempty]
 	// The edits to apply.
 	edit WorkspaceEdit
 }
 
 pub struct ApplyWorkspaceEditResponse {
 	applied        bool
-	failure_reason string [json: failureReason]
+	failure_reason string @[json: failureReason]
 }

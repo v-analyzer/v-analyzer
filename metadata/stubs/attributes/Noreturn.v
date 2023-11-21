@@ -27,7 +27,7 @@ module attributes
 //     }
 // }
 // ```
-[attribute]
+@[attribute]
 pub struct Noreturn {
 	name            string = 'noreturn'
 	with_arg        bool

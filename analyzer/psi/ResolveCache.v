@@ -1,4 +1,4 @@
-[translated]
+@[translated]
 module psi
 
 import sync
@@ -46,7 +46,7 @@ pub fn (mut t ResolveCache) clear() {
 	t.data = map[string]PsiElement{}
 }
 
-[inline]
+@[inline]
 fn (_ &ResolveCache) element_fingerprint(element PsiElement) string {
 	range := element.text_range()
 	return '${element.containing_file.path}:${element.node.type_name}:${range.line}:${range.column}:${range.end_column}:${range.end_line}'

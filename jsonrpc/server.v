@@ -11,7 +11,7 @@ import strings
 // Server represents a JSONRPC server that sends/receives data
 // from a stream (an io.ReaderWriter), inspects data with interceptors
 // and hands over the decoded request to a Handler.
-[heap]
+@[heap]
 pub struct Server {
 mut:
 	req_buf    strings.Builder = strings.new_builder(4096)
@@ -114,7 +114,7 @@ fn (mut s Server) internal_respond(mut base_rw ResponseWriter) ! {
 	}
 }
 
-[params]
+@[params]
 pub struct NewWriterConfig {
 	own_buffer bool
 }
@@ -178,7 +178,7 @@ mut:
 	mutex sync.Mutex
 	sb    strings.Builder
 pub mut:
-	req_id string = 'null' // raw JSON
+	req_id string  = 'null' // raw JSON
 	server &Server = unsafe { nil }
 	writer io.Writer
 }

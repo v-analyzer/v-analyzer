@@ -7,7 +7,7 @@ module attributes
 // will not automatically clear the memory allocated in that function.
 //
 // You will need to free any memory allocated in this function yourself.
-[attribute]
+@[attribute]
 pub struct Manualfree {
 	name            string = 'manualfree'
 	with_arg        bool

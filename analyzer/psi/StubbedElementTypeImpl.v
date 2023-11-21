@@ -598,13 +598,13 @@ pub fn (s &StubbedElementType) create_stub(psi PsiElement, parent_stub &StubBase
 	return none
 }
 
-[params]
+@[params]
 struct StubParams {
 	include_text bool
 	additional   string
 }
 
-[inline]
+@[inline]
 pub fn declaration_stub(psi PsiNamedElement, parent_stub &StubElement, stub_type StubType, params StubParams) ?&StubBase {
 	text_range := (psi as PsiElement).text_range()
 	identifier_text_range := psi.identifier_text_range()
@@ -615,12 +615,12 @@ pub fn declaration_stub(psi PsiNamedElement, parent_stub &StubElement, stub_type
 	)
 }
 
-[params]
+@[params]
 struct TestStubParams {
 	include_text bool = true
 }
 
-[inline]
+@[inline]
 pub fn text_based_stub(psi PsiElement, parent_stub &StubElement, stub_type StubType, params TestStubParams) ?&StubBase {
 	text_range := psi.text_range()
 	return new_stub_base(parent_stub, stub_type, '', text_range, text_range,
@@ -628,7 +628,7 @@ pub fn text_based_stub(psi PsiElement, parent_stub &StubElement, stub_type StubT
 	)
 }
 
-[inline]
+@[inline]
 pub fn node_is_type(psi PsiElement) bool {
 	return psi.node.type_name in [
 		.plain_type,

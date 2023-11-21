@@ -7,7 +7,7 @@ import math
 import time
 import loglib
 
-[params]
+@[params]
 pub struct SearchParams {
 	// include_declaration indicates whether to include the declaration
 	// of the symbol in the search results

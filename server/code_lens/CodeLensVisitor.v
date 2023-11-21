@@ -7,7 +7,7 @@ import server.tform
 import analyzer.psi
 import analyzer.psi.search
 
-[noinit]
+@[noinit]
 pub struct CodeLensVisitor {
 	cfg             config.CodeLensConfig
 	uri             lsp.DocumentUri
@@ -38,7 +38,7 @@ pub fn (mut v CodeLensVisitor) accept(root psi.PsiElement) {
 	}
 }
 
-[inline]
+@[inline]
 pub fn (mut v CodeLensVisitor) process_node(node psi.AstNode) {
 	if node.type_name == .function_declaration && v.cfg.enable_run_lens {
 		v.add_run_lens(node)

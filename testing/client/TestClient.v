@@ -24,8 +24,8 @@ pub fn new_test_client(handler jsonrpc.Handler, interceptors ...jsonrpc.Intercep
 // TestResponse is a version of jsonrpc.Response<T> that decodes
 // incoming JSON as raw JSON string.
 struct TestResponse {
-	raw_id     string [json: id; raw]
-	raw_result string [json: result; raw]
+	raw_id     string @[json: id; raw]
+	raw_result string @[json: result; raw]
 }
 
 // TestClient is a JSONRPC Client used for simulating communication between client and
@@ -36,7 +36,7 @@ mut:
 	id int
 pub mut:
 	server &jsonrpc.Server = unsafe { nil }
-	stream &TestStream = unsafe { nil }
+	stream &TestStream     = unsafe { nil }
 }
 
 // send sends a request and receives a decoded response result.

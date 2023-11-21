@@ -20,36 +20,36 @@ pub:
 	// *Note* that edits are expected to change the document so that the inlay
 	// hint (or its nearest variant) is now part of the document and the inlay
 	// hint itself is now obsolete.
-	text_edits []TextEdit [json: 'textEdits'; omitempty]
+	text_edits []TextEdit @[json: 'textEdits'; omitempty]
 	// The tooltip text when you hover over this item.
-	tooltip InlineHintTooltip [json: 'tooltip'; omitempty]
+	tooltip InlineHintTooltip @[json: 'tooltip'; omitempty]
 	// Render padding before the hint.
 	//
 	// Note: Padding should use the editor's background color, not the
 	// background color of the hint itself. That means padding can be used
 	// to visually align/separate an inlay hint.
-	padding_left bool [json: 'paddingLeft'; omitempty]
+	padding_left bool @[json: 'paddingLeft'; omitempty]
 	// Render padding after the hint.
 	//
 	// Note: Padding should use the editor's background color, not the
 	// background color of the hint itself. That means padding can be used
 	// to visually align/separate an inlay hint.
-	padding_right bool [json: 'paddingRight'; omitempty]
+	padding_right bool @[json: 'paddingRight'; omitempty]
 	// A data entry field that is preserved on an inlay hint between
 	// a `textDocument/inlayHint` and a `inlayHint/resolve` request.
-	data string [raw]
+	data string @[raw]
 }
 
 pub struct InlayHintClientCapabilities {
 pub:
 	// Whether inlay hints support dynamic registration.
-	dynamic_registration bool [json: 'dynamicRegistration']
+	dynamic_registration bool @[json: 'dynamicRegistration']
 	// Indicates which properties a client can resolve lazily on an inlay
 	// hint.
-	resolve_support bool [json: 'resolveSupport']
+	resolve_support bool @[json: 'resolveSupport']
 }
 
-[json_as_number]
+@[json_as_number]
 pub enum InlayHintKind {
 	type_
 	parameter
@@ -62,7 +62,7 @@ pub:
 	// The tooltip text when you hover over this label part. Depending on
 	// the client capability `inlayHint.resolveSupport` clients might resolve
 	// this property late using the resolve request.
-	tooltip MarkupContent [omitempty]
+	tooltip MarkupContent @[omitempty]
 	// An optional source code location that represents this
 	// label part.
 	//
@@ -74,12 +74,12 @@ pub:
 	//
 	// Depending on the client capability `inlayHint.resolveSupport` clients
 	// might resolve this property late using the resolve request.
-	location Location [omitempty]
+	location Location @[omitempty]
 	// An optional command for this label part.
 	//
 	// Depending on the client capability `inlayHint.resolveSupport` clients
 	// might resolve this property late using the resolve request.
-	command Command [omitempty]
+	command Command @[omitempty]
 }
 
 // A parameter literal used in inlay hint requests.
@@ -87,7 +87,7 @@ pub:
 // @since 3.17.0
 pub struct InlayHintOptions {
 pub:
-	resolve_provider bool [json: 'resolveProvider']
+	resolve_provider bool @[json: 'resolveProvider']
 }
 
 // A parameter literal used in inlay hint requests.
@@ -96,7 +96,7 @@ pub:
 pub struct InlayHintParams {
 pub:
 	// The text document.
-	text_document TextDocumentIdentifier [json: 'textDocument']
+	text_document TextDocumentIdentifier @[json: 'textDocument']
 	// The document range for which inlay hints should be computed.
 	range Range
 }

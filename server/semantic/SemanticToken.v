@@ -2,7 +2,7 @@ module semantic
 
 import analyzer.psi
 
-[json_as_number]
+@[json_as_number]
 enum SemanticTypes as u32 {
 	namespace
 	type_
@@ -37,7 +37,7 @@ pub struct SemanticToken {
 	mods  []string
 }
 
-[inline]
+@[inline]
 fn element_to_semantic(element psi.AstNode, typ SemanticTypes, modifiers ...string) SemanticToken {
 	start_point := element.start_point()
 	return SemanticToken{

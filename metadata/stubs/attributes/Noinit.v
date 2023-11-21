@@ -9,7 +9,7 @@ module attributes
 //
 // This attribute is useful when you need to make sure that the structure is always created
 // correctly and that all required fields are set.
-[attribute]
+@[attribute]
 pub struct Noinit {
 	name            string = 'noinit'
 	with_arg        bool

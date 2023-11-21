@@ -5,7 +5,7 @@ module attributes
 
 // Heap attribute mark struct as always heap-allocated,
 // so any struct creation will happen on the heap.
-[attribute]
+@[attribute]
 pub struct Heap {
 	name            string = 'heap'
 	with_arg        bool

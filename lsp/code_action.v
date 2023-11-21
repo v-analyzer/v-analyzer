@@ -12,7 +12,7 @@ pub type CodeActionKind = string
 pub struct CodeActionParams {
 pub:
 	// The document in which the command was invoked.
-	text_document TextDocumentIdentifier [json: 'textDocument']
+	text_document TextDocumentIdentifier @[json: 'textDocument']
 	// The range for which the command was invoked.
 	range Range
 	// Context carrying additional information.
@@ -59,7 +59,7 @@ pub:
 	// shown. So servers can omit computing them.
 	only []CodeActionKind
 	// The reason why code actions were requested
-	trigger_kind CodeActionTriggerKind [json: 'triggerKind']
+	trigger_kind CodeActionTriggerKind @[json: 'triggerKind']
 }
 
 pub struct CodeAction {
@@ -79,7 +79,7 @@ pub:
 	// most reasonable choice of actions to take.
 	//
 	// @since 3.15.0
-	is_preferred bool [json: 'isPreferred']
+	is_preferred bool @[json: 'isPreferred']
 	// The workspace edit this code action performs.
 	edit WorkspaceEdit
 	// A command this code action executes. If a code action
@@ -90,7 +90,7 @@ pub:
 	// a `textDocument/codeAction` and a `codeAction/resolve` request.
 	//
 	// @since 3.16.0
-	data string [raw]
+	data string @[raw]
 }
 
 pub struct CodeActionOptions {
@@ -99,5 +99,5 @@ pub:
 	//
 	// The list of kinds may be generic, such as `CodeActionKind.Refactor`,
 	// or the server may list out every specific kind they provide.
-	code_action_kinds []string [json: 'codeActionKinds']
+	code_action_kinds []string @[json: 'codeActionKinds']
 }

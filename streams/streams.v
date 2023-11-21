@@ -164,7 +164,7 @@ pub fn (mut stream SocketStream) write(buf []u8) !int {
 
 const newlines = [u8(`\r`), `\n`]
 
-[manualfree]
+@[manualfree]
 pub fn (mut stream SocketStream) read(mut buf []u8) !int {
 	mut conlen := 0
 	mut header_len := 0

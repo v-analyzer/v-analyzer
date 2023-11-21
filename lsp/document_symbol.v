@@ -4,10 +4,10 @@ module lsp
 // response: []DocumentSymbol | []SymbolInformation | none
 pub struct DocumentSymbolParams {
 pub:
-	text_document TextDocumentIdentifier [json: textDocument]
+	text_document TextDocumentIdentifier @[json: textDocument]
 }
 
-[json_as_number]
+@[json_as_number]
 pub enum SymbolKind {
 	file           = 1
 	module_        = 2
@@ -44,9 +44,9 @@ pub mut:
 	// white spaces.
 	name string
 	//  More detail for this symbol, e.g the signature of a function.
-	detail     string     [omitempty]
+	detail     string     @[omitempty]
 	kind       SymbolKind
-	deprecated bool       [omitempty]
+	deprecated bool       @[omitempty]
 	// The range enclosing this symbol not including leading/trailing whitespace
 	// but everything else like comments. This information is typically used to
 	// determine if the clients cursor is inside the symbol to reveal in the
@@ -54,7 +54,7 @@ pub mut:
 	range Range
 	// The range that should be selected and revealed when this symbol is being
 	// picked, e.g. the name of a function. Must be contained by the `range`.
-	selection_range Range [json: 'selectionRange'; omitempty]
+	selection_range Range @[json: 'selectionRange'; omitempty]
 	// Children of this symbol, e.g. properties of a class.
-	children []DocumentSymbol [omitempty]
+	children []DocumentSymbol @[omitempty]
 }

@@ -395,7 +395,7 @@ fn (mut ls LanguageServer) setup_stubs() {
 }
 
 // shutdown sets the state to shutdown but does not exit
-[noreturn]
+@[noreturn]
 pub fn (mut ls LanguageServer) shutdown() {
 	ls.bg.stop()
 	ls.status = .shutdown
@@ -403,7 +403,7 @@ pub fn (mut ls LanguageServer) shutdown() {
 }
 
 // exit stops the process
-[noreturn]
+@[noreturn]
 pub fn (mut ls LanguageServer) exit() {
 	// move exit to shutdown for now
 	// == .shutdown => 0

@@ -83,7 +83,7 @@ fn (t &TextFormatter) colorize(entry &Entry, msg string, fun fn (msg string) str
 	return fun(msg)
 }
 
-[inline]
+@[inline]
 fn (_ &TextFormatter) level_color(level LogLevel) fn (msg string) string {
 	return match level {
 		.panic { term.red }

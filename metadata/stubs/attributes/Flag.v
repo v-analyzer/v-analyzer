@@ -37,7 +37,7 @@ module attributes
 //   assert p1.all(.read | .write) // test if *all* of the flags is set
 // }
 // ```
-[attribute]
+@[attribute]
 pub struct Flag {
 	name            string = 'flag'
 	with_arg        bool
