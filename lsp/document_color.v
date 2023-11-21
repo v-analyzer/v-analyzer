@@ -3,7 +3,7 @@ module lsp
 // method: ‘textDocument/documentColor’
 // response: []ColorInformation
 pub struct DocumentColorParams {
-	text_document TextDocumentIdentifier [json: textDocument]
+	text_document TextDocumentIdentifier @[json: textDocument]
 }
 
 pub struct ColorInformation {

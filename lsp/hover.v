@@ -1,8 +1,8 @@
 module lsp
 
 pub struct HoverSettings {
-	dynamic_registration bool     [json: dynamicRegistration]
-	content_format       []string [json: contentFormat]
+	dynamic_registration bool     @[json: dynamicRegistration]
+	content_format       []string @[json: contentFormat]
 }
 
 // method: ‘textDocument/hover’
@@ -10,7 +10,7 @@ pub struct HoverSettings {
 // request: TextDocumentPositionParams
 pub struct HoverParams {
 pub:
-	text_document TextDocumentIdentifier [json: textDocument]
+	text_document TextDocumentIdentifier @[json: textDocument]
 	position      Position
 }
 

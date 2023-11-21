@@ -53,9 +53,9 @@ pub const null = Null{}
 pub struct Request {
 pub mut:
 	jsonrpc string = jsonrpc.version
-	id      string [raw]
+	id      string @[raw]
 	method  string
-	params  string [raw]
+	params  string @[raw]
 }
 
 // json returns the JSON string form of the Request.
@@ -191,14 +191,14 @@ pub fn (e ResponseError) err() IError {
 	return IError(e)
 }
 
-[params]
+@[params]
 pub struct ResponseErrorGeneratorParams {
-	error IError [required]
+	error IError @[required]
 	data  string
 }
 
 // response_error creates a ResponseError from the given IError.
-[inline]
+@[inline]
 pub fn response_error(params ResponseErrorGeneratorParams) ResponseError {
 	return ResponseError{
 		code: params.error.code()

@@ -19,7 +19,7 @@ pub fn (r Range) is_empty() bool {
 pub struct TextEdit {
 pub:
 	range    Range
-	new_text string [json: 'newText']
+	new_text string @[json: 'newText']
 }
 
 pub struct TextDocumentIdentifier {
@@ -28,14 +28,14 @@ pub:
 }
 
 pub struct TextDocumentEdit {
-	text_document VersionedTextDocumentIdentifier [json: textDocument]
+	text_document VersionedTextDocumentIdentifier @[json: textDocument]
 	edits         []TextEdit
 }
 
 pub struct TextDocumentItem {
 pub:
 	uri         DocumentUri
-	language_id string      [json: languageId]
+	language_id string      @[json: languageId]
 	version     int
 	text        string
 }
@@ -58,18 +58,18 @@ pub:
 	//
 	// Used as the underlined span for mouse interaction. Defaults to the word
 	// range at the mouse position.
-	origin_selection_range Range [json: 'originSelectionRange']
+	origin_selection_range Range @[json: 'originSelectionRange']
 	// The target resource identifier of this link.
-	target_uri DocumentUri [json: 'targetUri']
+	target_uri DocumentUri @[json: 'targetUri']
 	// The full target range of this link. If the target for example is a symbol
 	// then target range is the range enclosing this symbol not including
 	// leading/trailing whitespace but everything else like comments. This
 	// information is typically used to highlight the range in the editor.
-	target_range Range [json: 'targetRange']
+	target_range Range @[json: 'targetRange']
 	// The range that should be selected and revealed when this link is being
 	// followed, e.g the name of a function. Must be contained by the
 	// `targetRange`. See also `DocumentSymbol#range`
-	target_selection_range Range [json: 'targetSelectionRange']
+	target_selection_range Range @[json: 'targetSelectionRange']
 }
 
 // pub struct TextDocumentContentChangeEvent {
@@ -78,7 +78,7 @@ pub:
 // }
 pub struct TextDocumentPositionParams {
 pub:
-	text_document TextDocumentIdentifier [json: textDocument]
+	text_document TextDocumentIdentifier @[json: textDocument]
 	position      Position
 }
 

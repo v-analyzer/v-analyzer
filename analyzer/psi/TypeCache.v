@@ -1,4 +1,4 @@
-[translated]
+@[translated]
 module psi
 
 import analyzer.psi.types
@@ -47,7 +47,7 @@ pub fn (mut t TypeCache) clear() {
 	t.data = map[string]types.Type{}
 }
 
-[inline]
+@[inline]
 fn (_ &TypeCache) element_fingerprint(element PsiElement) string {
 	range := element.text_range()
 	return '${element.containing_file.path}:${element.node.type_name}:${range.line}:${range.column}:${range.end_column}:${range.end_line}'

@@ -36,7 +36,7 @@ pub fn (v ResolveSemanticVisitor) accept(root psi.PsiElement) []SemanticToken {
 	return result
 }
 
-[inline]
+@[inline]
 fn (_ ResolveSemanticVisitor) highlight_node(node psi.PsiElement, root psi.PsiElement, mut result []SemanticToken) {
 	if node is psi.VarDefinition {
 		if node.is_mutable() {

@@ -162,7 +162,7 @@ pub fn document_uri_from_path(path string) DocumentUri {
 
 pub struct NotificationMessage {
 	method string
-	params string [raw]
+	params string @[raw]
 }
 
 // // method: $/cancelRequest
@@ -184,5 +184,5 @@ pub struct DocumentFilter {
 }
 
 pub struct TextDocumentRegistrationOptions {
-	document_selector []DocumentFilter [json: documentSelector]
+	document_selector []DocumentFilter @[json: documentSelector]
 }

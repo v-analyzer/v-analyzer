@@ -4,29 +4,29 @@ pub struct TextDocumentSyncOptions {
 pub:
 	// Open and close notifications are sent to the server. If omitted open
 	// close notifications should not be sent.
-	open_close bool [json: 'openClose']
+	open_close bool @[json: 'openClose']
 	// Change notifications are sent to the server. See
 	// TextDocumentSyncKind.None, TextDocumentSyncKind.Full and
 	// TextDocumentSyncKind.Incremental. If omitted it defaults to
 	// TextDocumentSyncKind.None.
-	change TextDocumentSyncKind [omitempty] = TextDocumentSyncKind.full
+	change TextDocumentSyncKind = TextDocumentSyncKind.full @[omitempty]
 	// If present will save notifications are sent to the server. If omitted
 	// the notification should not be sent.
-	will_save bool [json: 'willSave']
+	will_save bool @[json: 'willSave']
 	// If present save notifications are sent to the server. If omitted the
 	// notification should not be sent.
 	save SaveOptions
 }
 
 pub struct SaveOptions {
-	include_text bool [json: 'includeText']
+	include_text bool @[json: 'includeText']
 }
 
 // method: ‘textDocument/didOpen’
 // notification
 pub struct DidOpenTextDocumentParams {
 pub:
-	text_document TextDocumentItem [json: textDocument]
+	text_document TextDocumentItem @[json: textDocument]
 }
 
 // method: ‘textDocument/didChange’
@@ -36,7 +36,7 @@ pub:
 	// The document that did change. The version number points
 	// to the version after all provided content changes have
 	// been applied.
-	text_document VersionedTextDocumentIdentifier [json: textDocument]
+	text_document VersionedTextDocumentIdentifier @[json: textDocument]
 	// The actual content changes. The content changes describe single state
 	// changes to the document. So if there are two content changes c1 (at
 	// array index 0) and c2 (at array index 1) for a document in state S then
@@ -50,7 +50,7 @@ pub:
 	//   receive them.
 	// - apply the `TextDocumentContentChangeEvent`s in a single notification
 	//   in the order you receive them.
-	content_changes []TextDocumentContentChangeEvent [json: contentChanges]
+	content_changes []TextDocumentContentChangeEvent @[json: contentChanges]
 }
 
 pub struct TextDocumentContentChangeEvent {
@@ -64,18 +64,18 @@ pub:
 }
 
 pub struct TextDocumentChangeRegistrationOptions {
-	document_selector []DocumentFilter [json: documentSelector]
-	sync_kind         int              [json: syncKind]
+	document_selector []DocumentFilter @[json: documentSelector]
+	sync_kind         int              @[json: syncKind]
 }
 
 // method: ‘textDocument/willSave’
 // notification
 pub struct WillSaveTextDocumentParams {
-	text_document TextDocumentIdentifier [json: textDocument]
+	text_document TextDocumentIdentifier @[json: textDocument]
 	reason        TextDocumentSaveReason
 }
 
-[json_as_number]
+@[json_as_number]
 pub enum TextDocumentSaveReason {
 	manual      = 1
 	after_delay = 2
@@ -89,7 +89,7 @@ pub enum TextDocumentSaveReason {
 // notification
 pub struct DidSaveTextDocumentParams {
 pub:
-	text_document TextDocumentIdentifier [json: textDocument]
+	text_document TextDocumentIdentifier @[json: textDocument]
 	text          string
 }
 
@@ -97,5 +97,5 @@ pub:
 // notification
 pub struct DidCloseTextDocumentParams {
 pub:
-	text_document TextDocumentIdentifier [json: textDocument]
+	text_document TextDocumentIdentifier @[json: textDocument]
 }

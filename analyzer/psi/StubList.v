@@ -3,7 +3,7 @@ module psi
 // StubList describes a way to store all stubs in a specific file.
 // Storing stubs as a table is more efficient than storing them as a tree, and
 // also makes it easier to serialize stubs to a file.
-[heap]
+@[heap]
 pub struct StubList {
 pub mut:
 	// module_fqn is the fully qualified name of the module from the root, eg `foo.bar` or `foo.bar.baz`,

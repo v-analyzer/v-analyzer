@@ -1,6 +1,6 @@
 module psi
 
-[heap]
+@[heap]
 pub struct GenericParameter {
 	PsiElementImpl
 }

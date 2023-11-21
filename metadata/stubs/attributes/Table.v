@@ -5,7 +5,7 @@ module attributes
 
 // Table attribute sets a custom table name (case-sensitive).
 // By default ORM uses default struct name.
-[attribute]
+@[attribute]
 pub struct Table {
 	name            string = 'table'
 	with_arg        bool   = true

@@ -48,7 +48,7 @@ pub fn (mut s Deserializer) read_i64() i64 {
 	return res
 }
 
-[inline]
+@[inline]
 pub fn (mut s Deserializer) read_u8() u8 {
 	index := s.index
 	s.index++

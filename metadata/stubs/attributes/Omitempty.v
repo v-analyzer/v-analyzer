@@ -5,7 +5,7 @@ module attributes
 
 // Omitempty attribute marks field as omitempty.
 // When field is omitempty, it will be omitted when marshaling to JSON if its value is empty.
-[attribute]
+@[attribute]
 pub struct Omitempty {
 	name            string = 'omitempty'
 	with_arg        bool

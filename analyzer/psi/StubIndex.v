@@ -1,4 +1,4 @@
-[translated]
+@[translated]
 module psi
 
 import time
