@@ -17,11 +17,11 @@ pub mut:
 	file_last_modified i64
 	// stub_list is a list of all stubs in the file.
 	// Storing stubs as a table makes it easy and compact to save them to disk and load them back.
-	stub_list &psi.StubList
+	stub_list &psi.StubList = unsafe { nil }
 	// sink describes the indexed stubs of the current file.
 	// So, for example, by the '.functions' key, you can get the stubs of all functions defined inside the current file.
 	// See also 'StubIndexKey'.
-	sink &psi.StubIndexSink
+	sink &psi.StubIndexSink = unsafe { nil }
 }
 
 pub fn (f &FileIndex) path() string {

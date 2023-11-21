@@ -7,7 +7,7 @@ import os
 // ParseResult represents the result of a parsing operation.
 pub struct ParseResult {
 pub:
-	tree        &tree_sitter.Tree[v.NodeType] // Resulting tree or nil if the source could not be parsed.
+	tree        &tree_sitter.Tree[v.NodeType] = unsafe { nil } // Resulting tree or nil if the source could not be parsed.
 	source_text string // Source code.
 pub mut:
 	path string // Path of the file that was parsed.

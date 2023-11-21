@@ -4,7 +4,7 @@ module psi
 pub struct StubIndexSink {
 pub mut:
 	stub_id          StubId
-	stub_list        &StubList // List of stubs in the current file for which the index is being built.
+	stub_list        &StubList = unsafe { nil } // List of stubs in the current file for which the index is being built.
 	imported_modules []string
 	kind             StubIndexLocationKind
 	data             map[int]map[string][]StubId
