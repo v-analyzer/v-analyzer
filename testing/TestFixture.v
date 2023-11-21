@@ -23,8 +23,8 @@ pub fn (t TestFile) uri() lsp.DocumentUri {
 pub struct Fixture {
 mut:
 	ls           &server.LanguageServer = unsafe { nil }
-	stream       &client.TestStream = unsafe { nil }
-	server       &jsonrpc.Server = unsafe { nil }
+	stream       &client.TestStream     = unsafe { nil }
+	server       &jsonrpc.Server        = unsafe { nil }
 	test_client  client.TestClient
 	current_file TestFile
 

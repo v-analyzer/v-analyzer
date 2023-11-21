@@ -178,7 +178,7 @@ mut:
 	mutex sync.Mutex
 	sb    strings.Builder
 pub mut:
-	req_id string = 'null' // raw JSON
+	req_id string  = 'null' // raw JSON
 	server &Server = unsafe { nil }
 	writer io.Writer
 }

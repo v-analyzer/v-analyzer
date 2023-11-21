@@ -7,7 +7,7 @@ pub:
 	node            AstNode // base node from Tree Sitter
 	containing_file &PsiFile = unsafe { nil }
 	// stubs related
-	stub_id    StubId = non_stubbed_element
+	stub_id    StubId    = non_stubbed_element
 	stubs_list &StubList = unsafe { nil }
 }
 

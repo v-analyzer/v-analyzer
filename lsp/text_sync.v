@@ -58,7 +58,7 @@ pub:
 	// The range of the document that changed.
 	range Range
 	// The optional length of the range that got replaced.
-	range_length int [deprecated: 'use range instead'; json: 'rangeLength']
+	range_length int @[deprecated: 'use range instead'; json: 'rangeLength']
 	// The new text for the provided range or the entire document.
 	text string
 }
