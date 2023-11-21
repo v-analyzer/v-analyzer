@@ -14,6 +14,9 @@ import server.protocol
 import server.semantic
 import server.progress
 import server.intentions
+import v.vmod
+
+const manifest = vmod.decode(@VMOD_FILE) or { panic(err) }
 
 // initialize sends the server capabilities to the client
 pub fn (mut ls LanguageServer) initialize(params lsp.InitializeParams, mut wr ResponseWriter) lsp.InitializeResult {
@@ -86,8 +89,8 @@ pub fn (mut ls LanguageServer) initialize(params lsp.InitializeParams, mut wr Re
 			}
 		}
 		server_info: lsp.ServerInfo{
-			name: 'v-analyzer'
-			version: '0.0.1-beta.1'
+			name: server.manifest.name
+			version: server.manifest.version
 		}
 	}
 }
@@ -416,7 +419,7 @@ fn (mut ls LanguageServer) print_info(process_id int, client_info lsp.ClientInfo
 		'Unknown'
 	}
 
-	ls.client.log_message('v-analyzer version: 0.0.1-beta.1, OS: ${os.user_os()} x${arch}',
+	ls.client.log_message('v-analyzer version: ${server.manifest.version}, OS: ${os.user_os()} x${arch}',
 		.info)
 	ls.client.log_message('v-analyzer executable path: ${os.executable()}', .info)
 	ls.client.log_message('v-analyzer build with V ${@VHASH}', .info)
