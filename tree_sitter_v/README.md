@@ -24,7 +24,6 @@ and after that in 2023 it was heavily modified by the
 
 ## License
 
-This project is under the **MIT License**.
-See the
-[LICENSE](https://github.com/vlang-association/v-analyzer/tree_sitter_v/blob/master/LICENSE)
+This project is under the **MIT License**. See the
+[LICENSE](https://github.com/v-analyzer/v-analyzer/blob/main/LICENSE)
 file for the full license text.

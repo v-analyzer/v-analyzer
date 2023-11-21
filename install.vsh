@@ -285,7 +285,7 @@ fn install_from_sources(no_interaction bool) ! {
 			warnln('${term.bold('v-analyzer')} is not installed!')
 			println('')
 			println('${term.bold('[NOTE]')} If you want to build it from sources manually, run the following commands:')
-			println('git clone https://github.com/vlang-association/v-analyzer.git')
+			println('git clone https://github.com/v-analyzer/v-analyzer.git')
 			println('cd v-analyzer')
 			println('v build.vsh')
 			println(term.gray('# Optionally you can move the binary to the standard location:'))
