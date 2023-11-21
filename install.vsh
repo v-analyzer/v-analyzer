@@ -11,7 +11,7 @@ import net.http
 import v.vmod
 
 pub const (
-	raw_manifest                = http.get('https://github.com/v-analyzer/v-analyzer/raw/main/v.mod') or {
+	raw_manifest                = http.get('https://raw.githubusercontent.com/v-analyzer/v-analyzer/main/v.mod') or {
 		panic(err)
 	}
 	version                     = vmod.decode(raw_manifest.body) or { panic(err) }.version
