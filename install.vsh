@@ -11,7 +11,10 @@ import net.http
 import v.vmod
 
 pub const (
-	version                     = vmod.decode(@VMOD_FILE) or { panic(err) }.version
+	raw_manifest                = http.get('https://github.com/v-analyzer/v-analyzer/raw/main/v.mod') or {
+		panic(err)
+	}
+	version                     = vmod.decode(raw_manifest.body) or { panic(err) }.version
 	analyzer_sources_path       = norm_expand_tilde_to_home('~/.config/v-analyzer/sources')
 	analyzer_bin_path           = norm_expand_tilde_to_home('~/.config/v-analyzer/bin')
 	analyzer_bin_path_with_name = norm_expand_tilde_to_home('~/.config/v-analyzer/bin/v-analyzer')
@@ -253,13 +256,13 @@ fn update_from_sources(update bool, nightly bool) ! {
 			return
 		}
 
-		version := if nightly {
+		update_version := if nightly {
 			'nightly (${hash})'
 		} else {
 			hash
 		}
 
-		println('${term.green('✓')} ${term.bold('v-analyzer')} successfully updated to ${version}')
+		println('${term.green('✓')} ${term.bold('v-analyzer')} successfully updated to ${update_version}')
 	}
 
 	println('Path to the ${term.bold('binary')}: ${analyzer_bin_path_with_name}')
