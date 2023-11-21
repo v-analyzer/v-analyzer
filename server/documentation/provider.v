@@ -119,7 +119,7 @@ fn (mut p Provider) import_spec_documentation(element psi.ImportSpec) ? {
 		mut content := os.read_file(readme_path) or { return }
 		mut lines := content.split_into_lines()
 		if lines.len > 0 && lines.first().contains('Description') {
-			lines = lines[1..]
+			lines = lines[1..].clone()
 			content = lines.join('\n')
 		}
 		content = content.replace('# ', '### ')

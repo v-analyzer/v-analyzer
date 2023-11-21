@@ -67,11 +67,11 @@ pub fn module_qualified_name(file &PsiFile, indexing_root string) string {
 	}
 
 	if module_names.first() == 'builtin' {
-		module_names = module_names[1..]
+		module_names = module_names[1..].clone()
 	}
 
 	if module_names.len != 0 && module_names.last() == module_name {
-		module_names = module_names[..module_names.len - 1]
+		module_names = module_names[..module_names.len - 1].clone()
 	}
 
 	qualifier := module_names.join('.')

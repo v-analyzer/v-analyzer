@@ -179,7 +179,7 @@ mut:
 	sb    strings.Builder
 pub mut:
 	req_id string = 'null' // raw JSON
-	server &Server
+	server &Server = unsafe { nil }
 	writer io.Writer
 }
 

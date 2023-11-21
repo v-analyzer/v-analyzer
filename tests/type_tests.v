@@ -3,7 +3,7 @@ module main
 import testing
 
 fn types() testing.Tester {
-	mut t := testing.with_name('tyoes')
+	mut t := testing.with_name('types')
 
 	t.type_test('literals', 'types/literals.v')
 	t.type_test('parameters types', 'types/parameters.v')

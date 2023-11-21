@@ -19,12 +19,12 @@ pub fn (t TestFile) uri() lsp.DocumentUri {
 	return lsp.document_uri_from_path(t.path)
 }
 
-[heap; noinit]
+@[heap; noinit]
 pub struct Fixture {
 mut:
-	ls           &server.LanguageServer
-	stream       &client.TestStream
-	server       &jsonrpc.Server
+	ls           &server.LanguageServer = unsafe { nil }
+	stream       &client.TestStream = unsafe { nil }
+	server       &jsonrpc.Server = unsafe { nil }
 	test_client  client.TestClient
 	current_file TestFile
 

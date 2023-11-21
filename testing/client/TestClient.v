@@ -35,8 +35,8 @@ pub struct TestClient {
 mut:
 	id int
 pub mut:
-	server &jsonrpc.Server
-	stream &TestStream
+	server &jsonrpc.Server = unsafe { nil }
+	stream &TestStream = unsafe { nil }
 }
 
 // send sends a request and receives a decoded response result.

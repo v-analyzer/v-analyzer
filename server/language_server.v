@@ -26,10 +26,10 @@ pub mut:
 	root_uri lsp.DocumentUri
 	// client is a wrapper over `jsonrpc.ResponseWriter` that
 	// can be used to send notifications and responses to the client.
-	client &protocol.Client
+	client &protocol.Client = unsafe { nil }
 	// client_pid is the process ID of this server.
 	client_pid int
-	writer     &ResponseWriter
+	writer     &ResponseWriter = unsafe { nil }
 	// opened_files describes all open files in the editor.
 	//
 	// When a file is opened, the `did_open` method is called,
@@ -67,7 +67,7 @@ pub mut:
 	compiler_quick_fixes map[string]intentions.CompilerQuickFix
 	// progress is used to report progress to the client.
 	// For now it is used only to report progress of indexing.
-	progress &progress.Tracker
+	progress &progress.Tracker = unsafe { nil }
 	// indexing_mng is used to manage indexing.
 	indexing_mng analyzer.IndexingManager
 }

@@ -6,7 +6,7 @@ import server.protocol
 pub struct Tracker {
 pub mut:
 	support_work_done_progress bool
-	client                     &protocol.Client
+	client                     &protocol.Client = unsafe { nil }
 }
 
 pub fn new_tracker(mut client protocol.Client) &Tracker {

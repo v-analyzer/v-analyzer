@@ -17,7 +17,7 @@ pub struct Test {
 mut:
 	fixture     &Fixture = unsafe { nil }
 	name        string
-	func        TestFunc
+	func        TestFunc = unsafe { nil }
 	state       TestState
 	message     string
 	with_stdlib bool

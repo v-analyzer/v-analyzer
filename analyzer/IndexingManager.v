@@ -4,7 +4,7 @@ import analyzer.psi
 
 pub struct IndexingManager {
 pub mut:
-	indexer    &Indexer
+	indexer    &Indexer = unsafe { nil }
 	stub_index psi.StubIndex
 }
 
