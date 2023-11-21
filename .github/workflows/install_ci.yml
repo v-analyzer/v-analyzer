@@ -28,14 +28,12 @@ jobs:
 
       - name: Install via command (Linux and macOS)
         if: matrix.os != 'windows-latest'
-        run: |
-          v -e "$(curl https://raw.githubusercontent.com/v-analyzer/v-analyzer/main/install.vsh -fsSL)"
+        run: v -e "$(curl https://raw.githubusercontent.com/v-analyzer/v-analyzer/main/install.vsh -fsSL)"
 
       - name: Install via command (Windows)
         if: matrix.os == 'windows-latest'
         shell: msys2 {0}
-        run: |
-          v -e "$(curl https://raw.githubusercontent.com/v-analyzer/v-analyzer/main/install.vsh)"
+        run: v -e "$(curl https://raw.githubusercontent.com/v-analyzer/v-analyzer/main/install.vsh)"
 
       - name: Check if the build is successful
         run: |

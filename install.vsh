@@ -472,7 +472,7 @@ mut cmd := cli.Command{
 	description: 'Install and update v-analyzer'
 	posix_mode: true
 	execute: fn (cmd cli.Command) ! {
-		no_interaction := cmd.flags.get_bool('no-interaction') or { false }
+		no_interaction := cmd.flags.get_bool('no-interaction') or { os.getenv('GITHUB_JOB') != '' }
 		install(no_interaction)!
 	}
 	flags: [
