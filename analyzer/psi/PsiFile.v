@@ -12,7 +12,7 @@ import v_tree_sitter.tree_sitter
 pub struct PsiFile {
 pub:
 	path      string
-	stub_list &StubList
+	stub_list &StubList = unsafe { nil }
 pub mut:
 	tree        &tree_sitter.Tree[v.NodeType] = unsafe { nil }
 	source_text string
