@@ -104,7 +104,7 @@ pub mut:
 	//
 	// Please note that the insertTextFormat doesn't apply to
 	// `additionalTextEdits`.
-	insert_text_format InsertTextFormat @[json: 'insertTextFormat'] = .plain_text
+	insert_text_format InsertTextFormat = .plain_text @[json: 'insertTextFormat']
 	// How whitespace and indentation is handled during completion
 	// item insertion. If not provided the client's default value depends on
 	// the `textDocument.completion.insertTextMode` client capability.
