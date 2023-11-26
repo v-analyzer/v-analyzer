@@ -15,3 +15,4 @@ bin/
 
 target/
 Cargo.lock
+yarn.lock

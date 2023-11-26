@@ -3488,7 +3488,7 @@
             "named": true
           },
           {
-            "type": "type_only_parameter_list",
+            "type": "type_parameter_list",
             "named": true
           }
         ]
@@ -4016,7 +4016,7 @@
     }
   },
   {
-    "type": "type_only_parameter_declaration",
+    "type": "type_parameter_declaration",
     "named": true,
     "fields": {
       "type": {
@@ -4052,7 +4052,7 @@
     }
   },
   {
-    "type": "type_only_parameter_list",
+    "type": "type_parameter_list",
     "named": true,
     "fields": {},
     "children": {
@@ -4060,7 +4060,7 @@
       "required": false,
       "types": [
         {
-          "type": "type_only_parameter_declaration",
+          "type": "type_parameter_declaration",
           "named": true
         }
       ]
@@ -4490,6 +4490,10 @@
   },
   {
     "type": "@",
+    "named": false
+  },
+  {
+    "type": "@[",
     "named": false
   },
   {

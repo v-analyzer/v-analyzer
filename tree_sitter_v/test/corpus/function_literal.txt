@@ -285,19 +285,19 @@ fn test_with_value() {
       (plain_type
         (function_type
           (signature
-            (type_only_parameter_list
-              (type_only_parameter_declaration
+            (type_parameter_list
+              (type_parameter_declaration
                 (plain_type
                   (type_reference_expression
                     (identifier))))
-              (type_only_parameter_declaration
+              (type_parameter_declaration
                 (plain_type
                   (qualified_type
                     (reference_expression
                       (identifier))
                     (type_reference_expression
                       (identifier)))))
-              (type_only_parameter_declaration
+              (type_parameter_declaration
                 (mutability_modifiers)
                 (plain_type
                   (qualified_type
@@ -310,19 +310,19 @@ fn test_with_value() {
       (plain_type
         (function_type
           (signature
-            (type_only_parameter_list
-              (type_only_parameter_declaration
+            (type_parameter_list
+              (type_parameter_declaration
                 (plain_type
                   (type_reference_expression
                     (identifier))))
-              (type_only_parameter_declaration
+              (type_parameter_declaration
                 (plain_type
                   (qualified_type
                     (reference_expression
                       (identifier))
                     (type_reference_expression
                       (identifier)))))
-              (type_only_parameter_declaration
+              (type_parameter_declaration
                 (mutability_modifiers)
                 (plain_type
                   (qualified_type
@@ -330,7 +330,7 @@ fn test_with_value() {
                       (identifier))
                     (type_reference_expression
                       (identifier)))))
-              (type_only_parameter_declaration
+              (type_parameter_declaration
                 (plain_type
                   (type_reference_expression
                     (identifier))))))))

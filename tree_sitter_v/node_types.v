@@ -165,8 +165,8 @@ pub enum NodeType {
 	type_declaration
 	type_initializer
 	type_initializer_body
-	type_only_parameter_declaration
-	type_only_parameter_list
+	type_parameter_declaration
+	type_parameter_list
 	type_parameters
 	type_reference_expression
 	unary_expression
@@ -286,7 +286,7 @@ const declaration_node_types = [
 	.struct_declaration,
 	.struct_field_declaration,
 	.type_declaration,
-	.type_only_parameter_declaration,
+	.type_parameter_declaration,
 	.var_declaration,
 ]
 
@@ -479,8 +479,8 @@ const node_type_name_to_enum = {
 	'type_declaration':                 NodeType.type_declaration
 	'type_initializer':                 NodeType.type_initializer
 	'type_initializer_body':            NodeType.type_initializer_body
-	'type_only_parameter_declaration':  NodeType.type_only_parameter_declaration
-	'type_only_parameter_list':         NodeType.type_only_parameter_list
+	'type_parameter_declaration':       NodeType.type_parameter_declaration
+	'type_parameter_list':              NodeType.type_parameter_list
 	'type_parameters':                  NodeType.type_parameters
 	'type_reference_expression':        NodeType.type_reference_expression
 	'unary_expression':                 NodeType.unary_expression
