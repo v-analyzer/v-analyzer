@@ -23,21 +23,54 @@
 		"v language",
 		"vlang"
 	],
-	"categories": [
-		"Programming Languages"
-	],
 	"scripts": {
 		"compile": "node ./scripts/build.js",
-		"compile-dev": "node ./scripts/build.js --watch",
+		"compile-dev": "node ./scripts/build.js --dev",
+		"compile-watch": "node ./scripts/build.js --watch",
 		"test": "npm run testgrammar",
 		"lint": "eslint .",
 		"lintmd": "markdownlint *.md -i CHANGELOG.md",
-		"vscode:prepublish": "node ./scripts/minify_json.js && cross-env NODE_ENV=production node ./scripts/build.js",
+		"vscode:prepublish": "node ./scripts/minify_json.js && npm run compile",
 		"watch": "tsc -watch -p ./",
-		"package": "vsce package",
+		"package": "npx vsce package",
 		"postpackage": "node ./scripts/minify_json.js --restore",
-		"testgrammar": "vscode-tmgrammar-test -s source.v -g syntaxes/v.tmLanguage.json -t \"syntaxes/tests/*.v\""
+		"testgrammar": "vscode-tmgrammar-test -g syntaxes/v.tmLanguage.json \"syntaxes/tests/*.v\"",
+		"format": "prettier --write \"scripts/**/*.js\" \"src/**/*.ts\""
 	},
+	"main": "dist/extension.js",
+	"dependencies": {
+		"axios": "^1.6.2",
+		"semver": "^7.5.4",
+		"vscode-languageclient": "^9.0.1"
+	},
+	"devDependencies": {
+		"@types/node": "^20.10.0",
+		"@types/semver": "^7.5.6",
+		"@types/vscode": "~1.66.0",
+		"@typescript-eslint/eslint-plugin": "^6.12.0",
+		"@typescript-eslint/parser": "^6.12.0",
+		"@vscode/vsce": "^2.22.0",
+		"esbuild": "^0.19.7",
+		"eslint": "^8.54.0",
+		"markdownlint-cli": "^0.37.0",
+		"prettier": "^3.1.0",
+		"typescript": "^5.3.2",
+		"vscode-tmgrammar-test": "^0.1.2"
+	},
+	"activationEvents": [
+		"workspaceContains:**/*.v",
+		"workspaceContains:**/*.vv",
+		"workspaceContains:**/*.vsh",
+		"workspaceContains:**/v.mod",
+		"onCommand:v.runWorkspace",
+		"onCommand:v.runFile",
+		"onCommand:v.runTests",
+		"onCommand:v.version",
+		"onCommand:v.serverVersion"
+	],
+	"categories": [
+		"Programming Languages"
+	],
 	"extensionPack": [
 		"ms-vscode.cpptools"
 	],
@@ -53,7 +86,7 @@
 					".vsh",
 					".vv"
 				],
-				"configuration": "language-configuration.json"
+				"configuration": "languages/v-language-configuration.json"
 			},
 			{
 				"id": "v.mod",
@@ -62,7 +95,7 @@
 				"extensions": [
 					".mod"
 				],
-				"configuration": "vmod-language-configuration.json"
+				"configuration": "languages/vmod-language-configuration.json"
 			},
 			{
 				"id": "stree",
@@ -276,38 +309,5 @@
 				}
 			}
 		]
-	},
-	"activationEvents": [
-		"onLanguage:v",
-		"workspaceContains:**/*.v",
-		"workspaceContains:**/v.mod",
-		"onCommand:v.runWorkspace",
-		"onCommand:v.runFile",
-		"onCommand:v.runTests",
-		"onCommand:v.version",
-		"onCommand:v.serverVersion",
-		"onCommand:v-analyzer.restartServer",
-		"onCommand:v-analyzer.startServer",
-		"onCommand:v-analyzer.stopServer"
-	],
-	"main": "./out/extension.js",
-	"dependencies": {
-		"axios": "^1.4.0",
-		"cross-env": "^7.0.3",
-		"esbuild": "^0.15.7",
-		"vscode-languageclient": "^8.1.0",
-		"semver": "7.3.4"
-	},
-	"devDependencies": {
-		"@types/node": "12",
-		"@types/vscode": "~1.66.0",
-		"@types/semver": "7.3.4",
-		"@typescript-eslint/eslint-plugin": "^4.33",
-		"@typescript-eslint/parser": "^4.33",
-		"eslint": "^7.32",
-		"markdownlint-cli": "^0.31.1",
-		"typescript": "^4.6.4",
-		"vsce": "^2.7.0",
-		"vscode-tmgrammar-test": "~0.0.11"
 	}
 }

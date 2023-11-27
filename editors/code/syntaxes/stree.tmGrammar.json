@@ -1,11 +1,16 @@
 {
     "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
-
     "scopeName": "source.stree",
     "patterns": [
-        { "include": "#node_type" },
-        { "include": "#node_range_index" },
-        { "include": "#token_text" }
+        {
+            "include": "#node_type"
+        },
+        {
+            "include": "#node_range_index"
+        },
+        {
+            "include": "#token_text"
+        }
     ],
     "repository": {
         "node_type": {
@@ -14,9 +19,9 @@
                 "1": {
                     "name": "entity.name.function"
                 },
-				"2": {
-					"name": "keyword"
-				}
+                "2": {
+                    "name": "keyword"
+                }
             }
         },
         "node_range_index": {
@@ -28,5 +33,7 @@
             "name": "string"
         }
     },
-    "fileTypes": ["stree"]
+    "fileTypes": [
+        "stree"
+    ]
 }

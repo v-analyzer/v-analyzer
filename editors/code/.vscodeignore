@@ -1,13 +1,16 @@
 .vscode/**
 .vscode-test/**
+docs/
 node_modules/
+scripts/
 src/
 images/
+**/tests/
 
 **/tslint.json
+**/*.map
+**/*.tmp.json
+.eslintignore
 .gitignore
-.v
-.go
 tsconfig.json
 package-lock.json
-scripts/

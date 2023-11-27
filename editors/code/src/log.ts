@@ -1,5 +1,5 @@
 import vscode from "vscode";
-import {inspect} from "util";
+import { inspect } from "util";
 
 export const log = new (class {
 	private enabled = true;

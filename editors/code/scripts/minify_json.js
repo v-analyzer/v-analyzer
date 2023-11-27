@@ -1,22 +1,22 @@
 #!/usr/bin/env node
 // @ts-check
-'use strict';
+"use strict";
 
-const { exec } = require('child_process');
-const { writeFileSync, copyFileSync, renameSync, existsSync } = require('fs');
-const { resolve } = require('path');
+const { exec } = require("child_process");
+const { writeFileSync, copyFileSync, renameSync, existsSync } = require("fs");
+const { resolve } = require("path");
 
 const jsonFiles = [
-	'../syntaxes/v.tmLanguage.json',
-	'../syntaxes/v.mod.tmLanguage.json',
-	'../language-configuration.json',
-	'../vmod-language-configuration.json',
+	"../syntaxes/v.tmLanguage.json",
+	"../syntaxes/v.mod.tmLanguage.json",
+	"../languages/v-language-configuration.json",
+	"../languages/vmod-language-configuration.json",
 ];
 
-const shouldRestore = process.argv.includes('--restore');
+const shouldRestore = process.argv.includes("--restore");
 jsonFiles.forEach((jsonFile) => {
 	const absolutePath = resolve(__dirname, jsonFile);
-	const tmpFile = resolve(__dirname, jsonFile.replace('.json', '.tmp.json'));
+	const tmpFile = resolve(__dirname, jsonFile.replace(".json", ".tmp.json"));
 	if (shouldRestore) {
 		renameSync(tmpFile, absolutePath);
 	} else {

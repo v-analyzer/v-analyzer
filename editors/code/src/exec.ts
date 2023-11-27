@@ -1,21 +1,21 @@
-import {Terminal, window} from 'vscode';
-import {getVExecCommand} from './utils';
-import cp, {exec, ExecException} from 'child_process';
+import { Terminal, window } from "vscode";
+import { getVExecCommand } from "./utils";
+import cp, { exec, ExecException } from "child_process";
 
 type ExecCallback = (error: ExecException | null, stdout: string, stderr: string) => void;
 
-let runTerminal: Terminal = null;
+let runTerminal: Terminal = null!;
 
 function outputTerminal(): Terminal {
 	if (!runTerminal) {
-		runTerminal = window.createTerminal('V');
+		runTerminal = window.createTerminal("V");
 	}
 	return runTerminal;
 }
 
 function buildCommand(args: string[]): string {
 	const vexe = getVExecCommand();
-	return `${vexe} ${args.join(' ')}`;
+	return `${vexe} ${args.join(" ")}`;
 }
 
 /**
