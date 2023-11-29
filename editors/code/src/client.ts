@@ -1,5 +1,5 @@
 import * as lc from "vscode-languageclient/node";
-import vscode, {window, workspace} from "vscode";
+import vscode, { window, workspace } from "vscode";
 
 let crashCount = 0;
 
@@ -8,9 +8,9 @@ export async function createClient(
 	serverOptions: lc.ServerOptions,
 ): Promise<lc.LanguageClient> {
 	const clientOptions: lc.LanguageClientOptions = {
-		documentSelector: [{scheme: 'file', language: 'v'}],
+		documentSelector: [{ scheme: "file", language: "v" }],
 		synchronize: {
-			fileEvents: workspace.createFileSystemWatcher('**/*.v')
+			fileEvents: workspace.createFileSystemWatcher("**/*.v"),
 		},
 		outputChannel: outputChannel,
 		errorHandler: {
@@ -18,43 +18,43 @@ export async function createClient(
 				// taken from: https://github.com/golang/vscode-go/blob/HEAD/src/goLanguageServer.ts#L533-L539
 				if (count < 5) {
 					return {
-						message: '', // suppresses error popups
-						action: lc.ErrorAction.Continue
+						message: "", // suppresses error popups
+						action: lc.ErrorAction.Continue,
 					};
 				}
 				void window.showErrorMessage(
-					`v-analyzer: Error communicating with the language server: ${error}: ${error}.`
+					`v-analyzer: Error communicating with the language server: ${error}: ${error}.`,
 				);
 
 				return {
-					action: lc.ErrorAction.Shutdown
+					action: lc.ErrorAction.Shutdown,
 				};
 			},
 			closed: () => {
 				crashCount++;
 				if (crashCount < 5) {
 					return {
-						message: '', // suppresses error popups
-						action: lc.CloseAction.Restart
+						message: "", // suppresses error popups
+						action: lc.CloseAction.Restart,
 					};
 				}
 				return {
-					action: lc.CloseAction.DoNotRestart
+					action: lc.CloseAction.DoNotRestart,
 				};
 			},
 		},
 		markdown: {
 			isTrusted: true,
-			supportHtml: true
-		}
+			supportHtml: true,
+		},
 	};
 
 	const client = new lc.LanguageClient(
-		'v-analyzer',
-		'V Language Server',
+		"v-analyzer",
+		"V Language Server",
 		serverOptions,
 		clientOptions,
-		true
+		true,
 	);
 
 	client.registerFeature(new ExperimentalFeatures());
@@ -63,8 +63,14 @@ export async function createClient(
 }
 
 class ExperimentalFeatures implements lc.StaticFeature {
+	fillInitializeParams?: (params: lc.InitializeParams) => void;
+	preInitialize?: (
+		capabilities: lc.ServerCapabilities<any>,
+		documentSelector: lc.DocumentSelector,
+	) => void;
+	clear(): void {}
 	getState(): lc.FeatureState {
-		return {kind: "static"};
+		return { kind: "static" };
 	}
 
 	fillClientCapabilities(capabilities: lc.ClientCapabilities): void {
@@ -77,10 +83,8 @@ class ExperimentalFeatures implements lc.StaticFeature {
 
 	initialize(
 		_capabilities: lc.ServerCapabilities,
-		_documentSelector: lc.DocumentSelector | undefined
-	): void {
-	}
+		_documentSelector: lc.DocumentSelector | undefined,
+	): void {}
 
-	dispose(): void {
-	}
+	dispose(): void {}
 }

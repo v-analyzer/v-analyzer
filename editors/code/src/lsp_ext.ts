@@ -1,7 +1,7 @@
 import * as lc from "vscode-languageclient";
 
 export const serverStatus = new lc.NotificationType<ServerStatusParams>(
-	"experimental/serverStatus"
+	"experimental/serverStatus",
 );
 
 export type ServerStatusParams = {
@@ -11,5 +11,5 @@ export type ServerStatusParams = {
 };
 
 export const viewStubTree = new lc.RequestType<lc.TextDocumentIdentifier, string, void>(
-	"v-analyzer/viewStubTree"
+	"v-analyzer/viewStubTree",
 );

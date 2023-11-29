@@ -2,36 +2,38 @@ name: Test tree-sitter-v
 
 on:
   push:
+    branches:
+      - main
+    paths:
+      - 'tree_sitter_v/**'
   pull_request:
+    branches:
+      - main
+    paths:
+      - 'tree_sitter_v/**'
 
 jobs:
   test:
-    strategy:
-      matrix:
-        include:
-          - os: ubuntu-20.04
-          - os: macos-latest
-
-    name: Test tree-sitter on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
+    name: Test tree-sitter
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Install minimal stable Rust
-        uses: actions-rs/toolchain@v1
+      - name: Install Nodejs
+        uses: actions/setup-node@v4
         with:
-          profile: minimal
-          toolchain: stable
-
-      - name: Install Tree-sitter
-        run: |
-          cargo install tree-sitter-cli
+          node-version: 20
 
       - name: Checkout v-analyzer
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           path: v-analyzer
+
+      - name: Install dependencies
+        run: |
+          cd v-analyzer/tree_sitter_v
+          npm update
 
       - name: Run tests
         run: |
           cd v-analyzer/tree_sitter_v
-          tree-sitter test
+          npm run test

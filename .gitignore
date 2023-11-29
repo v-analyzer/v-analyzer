@@ -1,20 +1,26 @@
 # Binaries for programs and plugins
 main
-*.exe
-*.exe~
-*.so
-*.dylib
-*.dll
-*.log
+**/*.exe
+**/*.exp
+**/*.exe~
+**/*.so
+**/*.dylib
+**/*.dll
+**/*.log
+**/*.lib
+**/*.obj
 
 # Ignore binary output folders
-bin/
+bin
 build
+
+# Ignore cache folders
+cache
 
 # Ignore common editor/system specific metadata
 .DS_Store
-.idea/
-.vscode/
+.idea
+.vscode
 *.iml
 
 # ENV
@@ -26,7 +32,3 @@ build
 # generated executables on unix:
 install
 cmd/v-analyzer/v-analyzer
-
-# generated executables on windows:
-install.exe
-cmd/v-analyzer/v-analyzer.exe

@@ -1,4 +1,4 @@
-import * as vscode from 'vscode';
+import * as vscode from "vscode";
 
 /**
  * Get V executable command.
@@ -7,7 +7,7 @@ import * as vscode from 'vscode';
  */
 export function getVExecCommand(): string {
 	const config = getWorkspaceConfig();
-	return config.get('v.executablePath', 'v');
+	return config.get("v.executablePath", "v");
 }
 
 /**
@@ -16,7 +16,7 @@ export function getVExecCommand(): string {
 export function getWorkspaceConfig(): vscode.WorkspaceConfiguration {
 	const currentWorkspaceFolder = getWorkspaceFolder();
 	const uri = currentWorkspaceFolder ? currentWorkspaceFolder.uri : null;
-	return vscode.workspace.getConfiguration('v-analyzer', uri);
+	return vscode.workspace.getConfiguration("v-analyzer", uri);
 }
 
 /**
@@ -25,18 +25,23 @@ export function getWorkspaceConfig(): vscode.WorkspaceConfiguration {
  */
 export function getWorkspaceFolder(uri?: vscode.Uri): vscode.WorkspaceFolder {
 	if (uri) {
-		return vscode.workspace.getWorkspaceFolder(uri);
+		return vscode.workspace.getWorkspaceFolder(uri)!;
 	}
 
-	if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
+	if (
+		vscode.workspace.workspaceFolders &&
+		vscode.workspace.workspaceFolders.length > 0
+	) {
 		return vscode.workspace.workspaceFolders[0];
 	}
 
 	if (vscode.window.activeTextEditor && vscode.window.activeTextEditor.document) {
-		return vscode.workspace.getWorkspaceFolder(vscode.window.activeTextEditor.document.uri);
+		return vscode.workspace.getWorkspaceFolder(
+			vscode.window.activeTextEditor.document.uri,
+		)!;
 	}
 
-	return null
+	return null!;
 }
 
 /**
@@ -50,7 +55,9 @@ export function setContextValue(key: string, value: any): Thenable<void> {
 export type VlangDocument = vscode.TextDocument & { languageId: "v" };
 export type VlangEditor = vscode.TextEditor & { document: VlangDocument };
 
-export function isVlangDocument(document: vscode.TextDocument): document is VlangDocument {
+export function isVlangDocument(
+	document: vscode.TextDocument,
+): document is VlangDocument {
 	return document.languageId === "v" && document.uri.scheme === "file";
 }
 

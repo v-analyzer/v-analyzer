@@ -2,7 +2,9 @@
 .idea/
 *.code-workspace
 node_modules/
-out/
+dist/
 *.exe
 *.tmp.json
+*.vsix
 .DS_Store
+package-lock.json

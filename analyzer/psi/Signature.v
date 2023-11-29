@@ -11,8 +11,11 @@ pub fn (s &Signature) get_type() types.Type {
 }
 
 pub fn (n Signature) parameters() []PsiElement {
-	list := n.find_child_by_type_or_stub(.parameter_list) or { return [] }
-	parameters := list.find_children_by_type_or_stub(.parameter_declaration)
+	mut parameters := []PsiElement{}
+	list := n.find_child_by_type_or_stub(.parameter_list) or { return parameters }
+	parameters << list.find_children_by_type_or_stub(.parameter_declaration)
+	list_type := n.find_child_by_type_or_stub(.type_parameter_list) or { return parameters }
+	parameters << list_type.find_children_by_type_or_stub(.type_parameter_declaration)
 	return parameters
 }
 

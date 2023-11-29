@@ -179,7 +179,7 @@ module.exports = grammar({
     ),
 
     const_declaration: ($) => seq(
-      field('attributes', optional($.attributes)),
+      optional(field('attributes', $.attributes)),
       optional($.visibility_modifiers),
       'const',
       choice(
@@ -195,7 +195,7 @@ module.exports = grammar({
     ),
 
     global_var_declaration: ($) => seq(
-      field('attributes', optional($.attributes)),
+      optional(field('attributes', $.attributes)),
       '__global',
       choice(
         $.global_var_definition,
@@ -217,7 +217,7 @@ module.exports = grammar({
       optional($.visibility_modifiers),
       'type',
       field('name', $.identifier),
-      field('generic_parameters', optional($.generic_parameters)),
+      optional(field('generic_parameters', $.generic_parameters)),
       '=',
       field('types', $._type_union_list),
     ),
@@ -226,26 +226,26 @@ module.exports = grammar({
     _type_union_list: ($) => seq($.plain_type, repeat(seq(optional(terminator), '|', $.plain_type))),
 
     function_declaration: ($) => prec.right(PREC.resolve, seq(
-      field('attributes', optional($.attributes)),
+      optional(field('attributes', $.attributes)),
       optional($.visibility_modifiers),
       'fn',
-      field('receiver', optional($.receiver)),
+      optional(field('receiver', $.receiver)),
       field('name', $._function_name),
-      field('generic_parameters', optional($.generic_parameters)),
+      optional(field('generic_parameters', $.generic_parameters)),
       field('signature', $.signature),
-      field('body', optional($.block)),
+      optional(field('body', $.block)),
     )),
 
     static_method_declaration: ($) => prec.right(PREC.resolve, seq(
-      field('attributes', optional($.attributes)),
+      optional(field('attributes', $.attributes)),
       optional($.visibility_modifiers),
       'fn',
       field('static_receiver', $.static_receiver),
       '.',
       field('name', $._function_name),
-      field('generic_parameters', optional($.generic_parameters)),
+      optional(field('generic_parameters', $.generic_parameters)),
       field('signature', $.signature),
-      field('body', optional($.block)),
+      optional(field('body', $.block)),
     )),
 
     static_receiver: ($) => $.reference_expression,
@@ -257,7 +257,7 @@ module.exports = grammar({
     receiver: ($) => prec(PREC.primary, seq(
       '(',
       seq(
-        field('mutability', optional($.mutability_modifiers)),
+        optional(field('mutability', $.mutability_modifiers)),
         field('name', $.identifier),
         field('type', alias($._plain_type_without_special, $.plain_type)),
       ),
@@ -267,25 +267,25 @@ module.exports = grammar({
     signature: ($) => prec.right(seq(
       field(
         'parameters',
-        choice($.parameter_list, $.type_only_parameter_list),
+        choice($.parameter_list, $.type_parameter_list),
       ),
-      field('result', optional($.plain_type)),
+      optional(field('result', $.plain_type)),
     )),
 
     parameter_list: ($) =>
       prec(PREC.resolve, seq('(', comma_sep($.parameter_declaration), ')')),
 
     parameter_declaration: ($) => seq(
-      field('mutability', optional($.mutability_modifiers)),
+      optional(field('mutability', $.mutability_modifiers)),
       field('name', $.identifier),
       optional(field('variadic', '...')),
       field('type', $.plain_type),
     ),
 
-    type_only_parameter_list: ($) =>
-      seq('(', comma_sep($.type_only_parameter_declaration), ')'),
+    type_parameter_list: ($) =>
+      seq('(', comma_sep($.type_parameter_declaration), ')'),
 
-    type_only_parameter_declaration: ($) => prec(PREC.primary, seq(
+    type_parameter_declaration: ($) => prec(PREC.primary, seq(
       optional($.mutability_modifiers),
       optional(field('variadic', '...')),
       field('type', $.plain_type),
@@ -304,11 +304,11 @@ module.exports = grammar({
 
 
     struct_declaration: ($) => seq(
-      field('attributes', optional($.attributes)),
+      optional(field('attributes', $.attributes)),
       optional($.visibility_modifiers),
       choice('struct', 'union'),
       field('name', $.identifier),
-      field('generic_parameters', optional($.generic_parameters)),
+      optional(field('generic_parameters', $.generic_parameters)),
       $._struct_body,
     ),
 
@@ -346,14 +346,14 @@ module.exports = grammar({
     _struct_field_definition: ($) => prec.right(PREC.type_initializer, seq(
       field('name', $.identifier),
       field('type', $.plain_type),
-      field('attributes', optional($.attribute)),
+      optional(field('attributes', $.attribute)),
       optional(seq('=', field('default_value', $._expression))),
     )),
 
     embedded_definition: ($) => choice($.type_reference_expression, $.qualified_type, $.generic_type),
 
     enum_declaration: ($) => seq(
-      field('attributes', optional($.attributes)),
+      optional(field('attributes', $.attributes)),
       optional($.visibility_modifiers),
       'enum',
       field('name', $.identifier),
@@ -372,16 +372,16 @@ module.exports = grammar({
     enum_field_definition: ($) => seq(
       field('name', $.identifier),
       optional(seq('=', field('value', $._expression))),
-      field('attributes', optional($.attribute)),
+      optional(field('attributes', $.attribute)),
     ),
 
 
     interface_declaration: ($) => seq(
-      field('attributes', optional($.attributes)),
+      optional(field('attributes', $.attributes)),
       optional($.visibility_modifiers),
       'interface',
       field('name', $.identifier),
-      field('generic_parameters', optional($.generic_parameters)),
+      optional(field('generic_parameters', $.generic_parameters)),
       $._interface_body,
     ),
 
@@ -399,9 +399,9 @@ module.exports = grammar({
 
     interface_method_definition: ($) => prec.right(seq(
       field('name', $.identifier),
-      field('generic_parameters', optional($.generic_parameters)),
+      optional(field('generic_parameters', $.generic_parameters)),
       field('signature', $.signature),
-      field('attributes', optional($.attribute)),
+      optional(field('attributes', $.attribute)),
     )),
 
     // ==================== EXPRESSIONS ====================
@@ -493,7 +493,7 @@ module.exports = grammar({
       ),
       seq(
         field('name', $._expression),
-        field('type_parameters', optional($.type_parameters)),
+        optional(field('type_parameters', $.type_parameters)),
         field('arguments', $.argument_list),
       ),
     )),
@@ -564,8 +564,8 @@ module.exports = grammar({
 
     function_literal: ($) => prec.right(seq(
       'fn',
-      field('capture_list', optional($.capture_list)),
-      field('generic_parameters', optional($.generic_parameters)),
+      optional(field('capture_list', $.capture_list)),
+      optional(field('generic_parameters', $.generic_parameters)),
       field('signature', $.signature),
       field('body', $.block),
     )),
@@ -792,7 +792,7 @@ module.exports = grammar({
 
     select_expression: ($) => seq(
       'select',
-      field('selected_variables', optional($.expression_list)),
+      optional(field('selected_variables', $.expression_list)),
       '{',
       repeat($.select_arm),
       optional($.select_else_arn_clause),
@@ -825,7 +825,7 @@ module.exports = grammar({
 
     lock_expression: ($) => seq(
       choice('lock', 'rlock'),
-      field('locked_variables', optional($.expression_list)),
+      optional(field('locked_variables', $.expression_list)),
       field('body', $.block),
     ),
 
@@ -980,7 +980,7 @@ module.exports = grammar({
       $.anon_struct_type,
     )),
 
-    anon_struct_type: ($) => seq('struct', '{', optional($._struct_fields), '}'),
+    anon_struct_type: ($) => seq('struct', $._struct_body),
 
     multi_return_type: ($) => seq('(', comma_sep1($.plain_type), optional(','), ')'),
 
@@ -1095,7 +1095,7 @@ module.exports = grammar({
     var_definition_list: ($) => comma_sep1($.var_definition),
 
     var_definition: ($) => prec(PREC.type_initializer, seq(
-      field('modifiers', optional('mut')),
+      optional(field('modifiers', 'mut')),
       field('name', $.identifier),
     )),
 
@@ -1154,11 +1154,11 @@ module.exports = grammar({
     )),
 
     for_clause: ($) => prec.left(seq(
-      field('initializer', optional($.simple_statement)),
+      optional(field('initializer', $.simple_statement)),
       ';',
-      field('condition', optional($._expression)),
+      optional(field('condition', $._expression)),
       ';',
-      field('update', optional($.simple_statement)),
+      optional(field('update', $.simple_statement)),
     )),
 
     _definite_range: ($) => prec(PREC.multiplicative, seq(
@@ -1168,9 +1168,9 @@ module.exports = grammar({
     )),
 
     range: ($) => prec(PREC.multiplicative, seq(
-      field('start', optional($._expression)),
+      optional(field('start', $._expression)),
       field('operator', '..'),
-      field('end', optional($._expression)),
+      optional(field('end', $._expression)),
     )),
 
     hash_statement: () => seq('#', token.immediate(repeat1(/[^\\\r\n]/))),
@@ -1184,7 +1184,7 @@ module.exports = grammar({
 
     attributes: ($) => repeat1(seq($.attribute, optional(terminator))),
 
-    attribute: ($) => seq('[', seq($.attribute_expression, repeat(seq(';', $.attribute_expression))), ']'),
+    attribute: ($) => seq(choice('[', '@['), seq($.attribute_expression, repeat(seq(';', $.attribute_expression))), ']'),
 
     attribute_expression: ($) => prec(PREC.attributes, choice(
       $.if_attribute,
@@ -1192,6 +1192,7 @@ module.exports = grammar({
     )),
 
     // [if some ?]
+    // @[if some ?]
     if_attribute: ($) => prec(PREC.attributes, seq('if', $.reference_expression, optional('?'))),
 
     _plain_attribute: ($) => choice(
@@ -1201,6 +1202,7 @@ module.exports = grammar({
     ),
 
     // ['/query']
+    // @['/query']
     literal_attribute: ($) => prec(PREC.attributes, $.literal),
 
     value_attribute: ($) => prec(PREC.attributes,
@@ -1209,6 +1211,8 @@ module.exports = grammar({
 
     // [key]
     // [key: value]
+    // @[key]
+    // @[key: value]
     key_value_attribute: ($) => prec(PREC.attributes, seq(
       $.value_attribute,
       ':',

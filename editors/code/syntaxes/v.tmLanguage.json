@@ -1,7 +1,11 @@
 {
 	"name": "V",
 	"scopeName": "source.v",
-	"fileTypes": [".v", ".vsh", ".vv"],
+	"fileTypes": [
+		".v",
+		".vsh",
+		".vv"
+	],
 	"patterns": [
 		{
 			"include": "#comments"
@@ -442,7 +446,7 @@
 					"name": "storage.modifier.$1.v"
 				},
 				"2": {
-					"name": "keyword.interface.v"
+					"name": "storage.type.interface.v"
 				},
 				"3": {
 					"patterns": [
@@ -450,7 +454,7 @@
 							"include": "#illegal-name"
 						},
 						{
-							"name": "entity.name.interface.v",
+							"name": "entity.name.type.v",
 							"match": "\\w+"
 						}
 					]
