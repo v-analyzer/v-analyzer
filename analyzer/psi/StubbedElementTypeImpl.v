@@ -73,6 +73,8 @@ pub fn node_type_to_stub_type(typ tree_sitter_v.NodeType) StubType {
 		.parameter_declaration { .parameter_declaration }
 		.struct_declaration { .struct_declaration }
 		.interface_declaration { .interface_declaration }
+		.interface_field_declaration { .interface_field_declaration }
+		.interface_field_scope { .interface_field_scope }
 		.interface_method_definition { .interface_method_declaration }
 		.struct_field_declaration { .struct_field_declaration }
 		.const_definition { .constant_declaration }
