@@ -238,6 +238,25 @@
 							"include": "$self"
 						}
 					]
+				},
+				{
+					"begin": "\\<",
+					"beginCaptures": {
+						"0": {
+							"name": "punctuation.definition.bracket.angle.begin.v"
+						}
+					},
+					"end": "\\>",
+					"endCaptures": {
+						"0": {
+							"name": "punctuation.definition.bracket.angle.end.v"
+						}
+					},
+					"patterns": [
+						{
+							"include": "$self"
+						}
+					]
 				}
 			]
 		},

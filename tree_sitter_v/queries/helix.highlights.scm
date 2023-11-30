@@ -190,6 +190,8 @@
  "}"
  "["
  "]"
+ "<"
+ ">"
 ] @punctuation.bracket
 
 (array_creation) @punctuation.bracket
