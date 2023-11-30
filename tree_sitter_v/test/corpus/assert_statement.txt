@@ -27,6 +27,11 @@ assert a > b
 Assert statement with message
 ================================================================================
 assert a > b, 'a should be greater than b'
+assert a > b, 'a' + 'should be greater than' + 'b'
+assert a > b, '${a} should be greater than ${b}'
+assert a > b, '${a} should' + 'be greater than ${b}'
+assert a > b, a.str()
+assert a > b, a.str() + b.str()
 --------------------------------------------------------------------------------
 
 (source_file
@@ -37,4 +42,95 @@ assert a > b, 'a should be greater than b'
       (reference_expression
         (identifier)))
     (literal
-      (interpreted_string_literal))))
+      (interpreted_string_literal)))
+  (assert_statement
+    (binary_expression
+      (reference_expression
+        (identifier))
+      (reference_expression
+        (identifier)))
+    (binary_expression
+      (binary_expression
+        (literal
+          (interpreted_string_literal))
+        (literal
+          (interpreted_string_literal)))
+      (literal
+        (interpreted_string_literal))))
+  (assert_statement
+    (binary_expression
+      (reference_expression
+        (identifier))
+      (reference_expression
+        (identifier)))
+    (literal
+      (interpreted_string_literal
+        (string_interpolation
+          (braced_interpolation_opening)
+          (interpolated_expression
+            (reference_expression
+              (identifier)))
+          (braced_interpolation_closing))
+        (string_interpolation
+          (braced_interpolation_opening)
+          (interpolated_expression
+            (reference_expression
+              (identifier)))
+          (braced_interpolation_closing)))))
+  (assert_statement
+    (binary_expression
+      (reference_expression
+        (identifier))
+      (reference_expression
+        (identifier)))
+    (binary_expression
+      (literal
+        (interpreted_string_literal
+          (string_interpolation
+            (braced_interpolation_opening)
+            (interpolated_expression
+              (reference_expression
+                (identifier)))
+            (braced_interpolation_closing))))
+      (literal
+        (interpreted_string_literal
+          (string_interpolation
+            (braced_interpolation_opening)
+            (interpolated_expression
+              (reference_expression
+                (identifier)))
+            (braced_interpolation_closing))))))
+  (assert_statement
+    (binary_expression
+      (reference_expression
+        (identifier))
+      (reference_expression
+        (identifier)))
+    (call_expression
+      (selector_expression
+        (reference_expression
+          (identifier))
+        (reference_expression
+          (identifier)))
+      (argument_list)))
+  (assert_statement
+    (binary_expression
+      (reference_expression
+        (identifier))
+      (reference_expression
+        (identifier)))
+    (binary_expression
+      (call_expression
+        (selector_expression
+          (reference_expression
+            (identifier))
+          (reference_expression
+            (identifier)))
+        (argument_list))
+      (call_expression
+        (selector_expression
+          (reference_expression
+            (identifier))
+          (reference_expression
+            (identifier)))
+        (argument_list)))))
