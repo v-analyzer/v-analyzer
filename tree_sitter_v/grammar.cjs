@@ -167,10 +167,12 @@ module.exports = grammar({
     import_alias: ($) => seq('as', $.import_name),
 
     // { foo, bar }
-    selective_import_list: ($) => seq('{', $._import_symbols_list, '}'),
-
-    // foo, bar
-    _import_symbols_list: ($) => seq(comma_or_semi_sep1($.reference_expression), optional(list_separator)),
+    selective_import_list: ($) => seq(
+      '{',
+      $.reference_expression,
+      repeat(seq(choice(',', terminator), optional($.reference_expression))),
+      '}'
+    ),
 
     // ==================== TOP LEVEL DECLARATIONS ====================
 
@@ -1236,10 +1238,6 @@ function comp_time(rule) {
 
 function comma_sep1(rules) {
   return seq(rules, repeat(seq(',', rules)));
-}
-
-function comma_or_semi_sep1(rules) {
-  return seq(rules, repeat(seq(choice(',', terminator), rules)));
 }
 
 function comma_sep(rule) {
