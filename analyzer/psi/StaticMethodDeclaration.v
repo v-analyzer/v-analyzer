@@ -86,6 +86,9 @@ pub fn (f StaticMethodDeclaration) owner() ?PsiElement {
 	receiver := f.receiver()?
 	typ := receiver.get_type()
 	unwrapped := types.unwrap_generic_instantiation_type(types.unwrap_pointer_type(typ))
+	if unwrapped is types.InterfaceType {
+		return *find_interface(unwrapped.qualified_name())?
+	}
 	if unwrapped is types.StructType {
 		return *find_struct(unwrapped.qualified_name())?
 	}

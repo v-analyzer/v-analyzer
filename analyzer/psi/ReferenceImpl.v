@@ -156,8 +156,7 @@ pub fn (r &SubResolver) process_type(typ types.Type, mut processor PsiScopeProce
 				}
 			}
 
-			embedded := struct_.embedded_definitions()
-			for def in embedded {
+			for def in struct_.embedded_definitions() {
 				if !processor.execute(def) {
 					return false
 				}
@@ -181,6 +180,12 @@ pub fn (r &SubResolver) process_type(typ types.Type, mut processor PsiScopeProce
 			}
 			if !r.process_elements(interface_.methods(), mut processor) {
 				return false
+			}
+
+			for def in interface_.embedded_definitions() {
+				if !processor.execute(def) {
+					return false
+				}
 			}
 		}
 
@@ -800,6 +805,17 @@ pub fn find_element(fqn string) ?PsiElement {
 	found := stubs_index.get_any_elements_by_name(fqn)
 	if found.len != 0 {
 		return found.first()
+	}
+	return none
+}
+
+pub fn find_interface(fqn string) ?&InterfaceDeclaration {
+	found := stubs_index.get_elements_by_name(.interfaces, fqn)
+	if found.len != 0 {
+		first := found.first()
+		if first is InterfaceDeclaration {
+			return first
+		}
 	}
 	return none
 }
