@@ -66,6 +66,8 @@ fn (_ ResolveSemanticVisitor) highlight_node(node psi.PsiElement, root psi.PsiEl
 		if res.name() != 'string' && res.module_name() != 'stubs.attributes' {
 			result << element_to_semantic(first_child, .struct_)
 		}
+	} else if res is psi.InterfaceDeclaration {
+		result << element_to_semantic(first_child, .interface_)
 	} else if res is psi.InterfaceFieldDeclaration {
 		result << element_to_semantic(first_child, .property)
 	} else if res is psi.StructFieldDeclaration {
@@ -102,6 +104,6 @@ fn (_ ResolveSemanticVisitor) highlight_node(node psi.PsiElement, root psi.PsiEl
 	} else if res is psi.GlobalVarDefinition {
 		result << element_to_semantic(first_child, .variable, 'global')
 	} else if res is psi.EmbeddedDefinition {
-		result << element_to_semantic(first_child, .struct_)
+		result << element_to_semantic(first_child, .type_)
 	}
 }
