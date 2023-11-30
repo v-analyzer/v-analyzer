@@ -249,7 +249,29 @@ fn (mut c ReferenceCompletionProcessor) execute(element psi.PsiElement) bool {
 		)
 	}
 
-	if element is psi.FieldDeclaration {
+	if element is psi.StructFieldDeclaration {
+		zero_value := lang.get_zero_value_for(element.get_type()).replace('}', '\\}')
+
+		insert_text := if c.ctx.inside_struct_init_with_keys {
+			element.name() + ': \${1:${zero_value}}'
+		} else {
+			element.name()
+		}
+
+		c.add_item(
+			label: element.name()
+			kind: .field
+			detail: element.get_type().readable_name()
+			label_details: lsp.CompletionItemLabelDetails{
+				description: element.get_type().readable_name()
+			}
+			documentation: element.doc_comment()
+			insert_text: insert_text
+			insert_text_format: .snippet
+		)
+	}
+
+	if element is psi.InterfaceFieldDeclaration {
 		zero_value := lang.get_zero_value_for(element.get_type()).replace('}', '\\}')
 
 		insert_text := if c.ctx.inside_struct_init_with_keys {

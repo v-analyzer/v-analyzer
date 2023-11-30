@@ -143,8 +143,9 @@ pub fn (r &ReferencesSearch) search_module_import(element psi.PsiNamedElement) [
 
 pub fn (r &ReferencesSearch) search_named_element(element psi.PsiNamedElement) []psi.PsiElement {
 	is_public := element.is_public()
-	is_field := element is psi.FieldDeclaration
-	if is_public || is_field {
+	is_struct_field := element is psi.StructFieldDeclaration
+	is_interface_field := element is psi.InterfaceFieldDeclaration
+	if is_public || is_struct_field || is_interface_field {
 		return r.search_public_named_element(element)
 	} else {
 		return r.search_private_named_element(element)

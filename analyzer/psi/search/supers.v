@@ -83,7 +83,23 @@ fn super_candidates_by_fields(fields []psi.PsiElement) []psi.PsiNamedElement {
 	mut candidates := []psi.PsiNamedElement{cap: 5}
 
 	for field in fields {
-		if field is psi.FieldDeclaration {
+		if field is psi.StructFieldDeclaration {
+			fingerprint := field.name()
+
+			// all fields with the same fingerprint can probably be part of interface that can be implemented by the struct
+			struct_fields := stubs_index.get_elements_from_by_name(.workspace, .interface_fields_fingerprint,
+				fingerprint)
+
+			for struct_field in struct_fields {
+				if struct_field is psi.StructFieldDeclaration {
+					owner := struct_field.owner() or { continue }
+					if owner is psi.PsiNamedElement {
+						candidates << owner
+					}
+				}
+			}
+		}
+		if field is psi.InterfaceFieldDeclaration {
 			fingerprint := field.name()
 
 			// all fields with the same fingerprint can probably be part of interface that can be implemented by the struct
@@ -91,7 +107,7 @@ fn super_candidates_by_fields(fields []psi.PsiElement) []psi.PsiNamedElement {
 				fingerprint)
 
 			for interface_field in interface_fields {
-				if interface_field is psi.FieldDeclaration {
+				if interface_field is psi.InterfaceFieldDeclaration {
 					owner := interface_field.owner() or { continue }
 					if owner is psi.PsiNamedElement {
 						candidates << owner

@@ -15,9 +15,11 @@ pub enum StubType as u8 {
 	parameter_declaration
 	struct_declaration
 	interface_declaration
+	interface_field_declaration
+	interface_field_scope
 	interface_method_declaration
 	enum_declaration
-	field_declaration
+	struct_field_declaration
 	struct_field_scope
 	enum_field_definition
 	constant_declaration
@@ -72,7 +74,7 @@ pub fn node_type_to_stub_type(typ tree_sitter_v.NodeType) StubType {
 		.struct_declaration { .struct_declaration }
 		.interface_declaration { .interface_declaration }
 		.interface_method_definition { .interface_method_declaration }
-		.struct_field_declaration { .field_declaration }
+		.struct_field_declaration { .struct_field_declaration }
 		.const_definition { .constant_declaration }
 		.type_declaration { .type_alias_declaration }
 		.enum_declaration { .enum_declaration }
@@ -166,6 +168,14 @@ pub fn (_ &StubbedElementType) index_stub(stub &StubBase, mut sink IndexSink) {
 		sink.occurrence(.interfaces, stub.name())
 	}
 
+	if stub.stub_type == .interface_field_declaration {
+		if parent := stub.parent_stub() {
+			if parent.stub_type() == .interface_declaration {
+				sink.occurrence(.interface_fields_fingerprint, stub.name)
+			}
+		}
+	}
+
 	if stub.stub_type == .interface_method_declaration {
 		sink.occurrence(.interface_methods_fingerprint, stub.additional)
 	}
@@ -186,12 +196,10 @@ pub fn (_ &StubbedElementType) index_stub(stub &StubBase, mut sink IndexSink) {
 		sink.occurrence(.global_variables, stub.name())
 	}
 
-	if stub.stub_type == .field_declaration {
+	if stub.stub_type == .struct_field_declaration {
 		if parent := stub.parent_stub() {
 			if parent.stub_type() == .struct_declaration {
 				sink.occurrence(.fields_fingerprint, stub.name)
-			} else if parent.stub_type() == .interface_declaration {
-				sink.occurrence(.interface_fields_fingerprint, stub.name)
 			}
 		}
 	}
@@ -251,6 +259,16 @@ pub fn (_ &StubbedElementType) create_psi(stub &StubBase) ?PsiElement {
 			PsiElementImpl: base_psi
 		}
 	}
+	if stub_type == .interface_field_declaration {
+		return InterfaceFieldDeclaration{
+			PsiElementImpl: base_psi
+		}
+	}
+	if stub_type == .interface_field_scope {
+		return InterfaceFieldScope{
+			PsiElementImpl: base_psi
+		}
+	}
 	if stub_type == .interface_method_declaration {
 		return InterfaceMethodDeclaration{
 			PsiElementImpl: base_psi
@@ -266,8 +284,8 @@ pub fn (_ &StubbedElementType) create_psi(stub &StubBase) ?PsiElement {
 			PsiElementImpl: base_psi
 		}
 	}
-	if stub_type == .field_declaration {
-		return FieldDeclaration{
+	if stub_type == .struct_field_declaration {
+		return StructFieldDeclaration{
 			PsiElementImpl: base_psi
 		}
 	}
@@ -510,8 +528,8 @@ pub fn (s &StubbedElementType) create_stub(psi PsiElement, parent_stub &StubBase
 		return declaration_stub(*psi, parent_stub, .enum_field_definition)
 	}
 
-	if psi is FieldDeclaration {
-		return declaration_stub(*psi, parent_stub, .field_declaration)
+	if psi is StructFieldDeclaration {
+		return declaration_stub(*psi, parent_stub, .struct_field_declaration)
 	}
 
 	if psi is ConstantDefinition {

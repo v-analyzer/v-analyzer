@@ -2041,15 +2041,15 @@
       "required": false,
       "types": [
         {
+          "type": "interface_field_declaration",
+          "named": true
+        },
+        {
+          "type": "interface_field_scope",
+          "named": true
+        },
+        {
           "type": "interface_method_definition",
-          "named": true
-        },
-        {
-          "type": "struct_field_declaration",
-          "named": true
-        },
-        {
-          "type": "struct_field_scope",
           "named": true
         },
         {
@@ -2058,6 +2058,47 @@
         }
       ]
     }
+  },
+  {
+    "type": "interface_field_declaration",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "type": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "plain_type",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "embedded_definition",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "interface_field_scope",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "interface_method_definition",

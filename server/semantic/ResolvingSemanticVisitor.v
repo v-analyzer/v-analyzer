@@ -66,10 +66,12 @@ fn (_ ResolveSemanticVisitor) highlight_node(node psi.PsiElement, root psi.PsiEl
 		if res.name() != 'string' && res.module_name() != 'stubs.attributes' {
 			result << element_to_semantic(first_child, .struct_)
 		}
+	} else if res is psi.InterfaceFieldDeclaration {
+		result << element_to_semantic(first_child, .property)
+	} else if res is psi.StructFieldDeclaration {
+		result << element_to_semantic(first_child, .property)
 	} else if res is psi.EnumDeclaration {
 		result << element_to_semantic(first_child, .enum_)
-	} else if res is psi.FieldDeclaration {
-		result << element_to_semantic(first_child, .property)
 	} else if res is psi.EnumFieldDeclaration {
 		result << element_to_semantic(first_child, .enum_member)
 	} else if res is psi.ParameterDeclaration {

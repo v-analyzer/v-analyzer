@@ -11,7 +11,7 @@ fn (g &GenericTypeInferer) infer_generic_call(arg_owner GenericArgumentsOwner, p
 }
 
 fn (g &GenericTypeInferer) infer_generic_fetch(resolved PsiElement, expr SelectorExpression, generic_type types.Type) types.Type {
-	if resolved !is FieldDeclaration {
+	if resolved !is StructFieldDeclaration || resolved !is InterfaceFieldDeclaration {
 		return generic_type
 	}
 

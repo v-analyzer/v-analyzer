@@ -64,6 +64,9 @@
 (type_declaration
  name: (identifier) @type)
 
+(interface_field_declaration
+ name: (identifier) @variable.other.member)
+
 (struct_field_declaration
  name: (identifier) @variable.other.member)
 

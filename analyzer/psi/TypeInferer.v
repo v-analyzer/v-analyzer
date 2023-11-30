@@ -302,7 +302,11 @@ pub fn (t &TypeInferer) infer_type_impl(elem ?PsiElement) types.Type {
 		return element.get_type()
 	}
 
-	if element is FieldDeclaration {
+	if element is StructFieldDeclaration {
+		return t.infer_from_plain_type(element)
+	}
+
+	if element is InterfaceFieldDeclaration {
 		return t.infer_from_plain_type(element)
 	}
 
@@ -915,7 +919,11 @@ pub fn (t &TypeInferer) infer_context_type(elem ?PsiElement) types.Type {
 		}
 	}
 
-	if parent is FieldDeclaration {
+	if parent is StructFieldDeclaration {
+		return parent.get_type()
+	}
+
+	if parent is InterfaceFieldDeclaration {
 		return parent.get_type()
 	}
 

@@ -89,6 +89,8 @@ pub enum NodeType {
 	inc_expression
 	index_expression
 	interface_declaration
+	interface_field_declaration
+	interface_field_scope
 	interface_method_definition
 	interpolated_expression
 	interpreted_string_literal
@@ -281,6 +283,7 @@ const declaration_node_types = [
 	.global_var_declaration,
 	.import_declaration,
 	.interface_declaration,
+	.interface_field_declaration,
 	.parameter_declaration,
 	.static_method_declaration,
 	.struct_declaration,
@@ -403,6 +406,8 @@ const node_type_name_to_enum = {
 	'inc_expression':                   NodeType.inc_expression
 	'index_expression':                 NodeType.index_expression
 	'interface_declaration':            NodeType.interface_declaration
+	'interface_field_declaration':      NodeType.interface_field_declaration
+	'interface_field_scope':            NodeType.interface_field_scope
 	'interface_method_definition':      NodeType.interface_method_definition
 	'interpolated_expression':          NodeType.interpolated_expression
 	'interpreted_string_literal':       NodeType.interpreted_string_literal

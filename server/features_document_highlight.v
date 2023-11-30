@@ -47,7 +47,8 @@ fn read_write_kind(element psi.PsiElement) lsp.DocumentHighlightKind {
 
 	if element is psi.VarDefinition || element is psi.ConstantDefinition
 		|| element is psi.ParameterDeclaration || element is psi.Receiver
-		|| element is psi.FieldDeclaration || element is psi.EnumFieldDeclaration {
+		|| element is psi.StructFieldDeclaration || element is psi.InterfaceFieldDeclaration
+		|| element is psi.EnumFieldDeclaration {
 		// for parameter/receiver not an actual write, but we want to highlight it
 		// with different color than read access.
 		return .write

@@ -17,7 +17,9 @@ fn (p &JsonAttributeCompletionProvider) is_available(ctx &completion.CompletionC
 
 fn (mut p JsonAttributeCompletionProvider) add_completion(ctx &completion.CompletionContext, mut result completion.CompletionResultSet) {
 	field_declaration := ctx.element.parent_of_type(.struct_field_declaration) or { return }
-	name := if field_declaration is psi.FieldDeclaration {
+	name := if field_declaration is psi.StructFieldDeclaration {
+		field_declaration.name()
+	} else if field_declaration is psi.InterfaceFieldDeclaration {
 		field_declaration.name()
 	} else {
 		return

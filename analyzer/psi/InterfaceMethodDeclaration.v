@@ -46,9 +46,9 @@ pub fn (m &InterfaceMethodDeclaration) owner() ?&InterfaceDeclaration {
 	return none
 }
 
-pub fn (m &InterfaceMethodDeclaration) scope() ?&StructFieldScope {
+pub fn (m &InterfaceMethodDeclaration) scope() ?&InterfaceFieldScope {
 	element := m.sibling_of_type_backward(.struct_field_scope)?
-	if element is StructFieldScope {
+	if element is InterfaceFieldScope {
 		return element
 	}
 	return none

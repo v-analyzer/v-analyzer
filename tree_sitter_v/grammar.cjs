@@ -400,13 +400,25 @@ module.exports = grammar({
       '{',
       repeat(
         choice(
-          seq($.struct_field_scope, optional(terminator)),
-          seq($.struct_field_declaration, optional(terminator)),
+          seq($.interface_field_scope, optional(terminator)),
+          seq($.interface_field_declaration, optional(terminator)),
           seq($.interface_method_definition, optional(terminator)),
         ),
       ),
       '}',
     ),
+
+    interface_field_scope: () => seq(
+      'mut',
+      ':',
+    ),
+
+    interface_field_declaration: ($) =>
+      choice(seq(
+        field('name', $.identifier),
+        field('type', $.plain_type)),
+        $.embedded_definition,
+      ),
 
     interface_method_definition: ($) => prec.right(seq(
       field('name', $.identifier),

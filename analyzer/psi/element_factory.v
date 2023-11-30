@@ -110,6 +110,18 @@ pub fn create_element(node AstNode, containing_file &PsiFile) PsiElement {
 		}
 	}
 
+	if node.type_name == .interface_field_declaration {
+		return InterfaceFieldDeclaration{
+			PsiElementImpl: base_node
+		}
+	}
+
+	if node.type_name == .interface_field_scope {
+		return InterfaceFieldScope{
+			PsiElementImpl: base_node
+		}
+	}
+
 	if node.type_name == .interface_method_definition {
 		return InterfaceMethodDeclaration{
 			PsiElementImpl: base_node
@@ -123,7 +135,7 @@ pub fn create_element(node AstNode, containing_file &PsiFile) PsiElement {
 	}
 
 	if node.type_name == .struct_field_declaration {
-		return FieldDeclaration{
+		return StructFieldDeclaration{
 			PsiElementImpl: base_node
 		}
 	}

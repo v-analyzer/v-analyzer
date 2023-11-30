@@ -71,8 +71,13 @@ pub fn (mut p Provider) documentation(element psi.PsiElement) ?string {
 		return p.sb.str()
 	}
 
-	if element is psi.FieldDeclaration {
-		p.field_documentation(element)?
+	if element is psi.StructFieldDeclaration {
+		p.struct_field_documentation(element)?
+		return p.sb.str()
+	}
+
+	if element is psi.InterfaceFieldDeclaration {
+		p.interface_field_documentation(element)?
 		return p.sb.str()
 	}
 
@@ -310,7 +315,7 @@ fn (mut p Provider) parameter_documentation(element psi.ParameterDeclaration) ? 
 	p.sb.write_string('```')
 }
 
-fn (mut p Provider) field_documentation(element psi.FieldDeclaration) ? {
+fn (mut p Provider) struct_field_documentation(element psi.StructFieldDeclaration) ? {
 	p.sb.write_string('```v\n')
 
 	is_mut, is_pub := element.is_mutable_public()
@@ -318,6 +323,31 @@ fn (mut p Provider) field_documentation(element psi.FieldDeclaration) ? {
 	if is_pub {
 		p.sb.write_string('pub ')
 	}
+	if is_mut {
+		p.sb.write_string('mut ')
+	}
+
+	if owner := element.owner() {
+		if owner is psi.PsiNamedElement {
+			p.sb.write_string(owner.name())
+			p.sb.write_string('.')
+		}
+	}
+
+	p.sb.write_string(element.name())
+	p.sb.write_string(' ')
+	p.sb.write_string(element.get_type().readable_name())
+	p.sb.write_string('\n')
+	p.sb.write_string('```')
+	p.write_separator()
+	p.sb.write_string(element.doc_comment())
+}
+
+fn (mut p Provider) interface_field_documentation(element psi.InterfaceFieldDeclaration) ? {
+	p.sb.write_string('```v\n')
+
+	is_mut := element.is_mutable()
+
 	if is_mut {
 		p.sb.write_string('mut ')
 	}

@@ -55,7 +55,10 @@ fn symbol_kind(element psi.PsiElement) ?lsp.SymbolKind {
 		psi.InterfaceMethodDeclaration {
 			return .method
 		}
-		psi.FieldDeclaration {
+		psi.InterfaceFieldDeclaration {
+			return .field
+		}
+		psi.StructFieldDeclaration {
 			return .field
 		}
 		psi.EnumDeclaration {
@@ -106,7 +109,10 @@ fn detail_presentation(element psi.PsiNamedElement) string {
 			return 'fn ' + signature.get_text()
 		}
 	}
-	if element is psi.FieldDeclaration {
+	if element is psi.StructFieldDeclaration {
+		return element.get_type().readable_name()
+	}
+	if element is psi.InterfaceFieldDeclaration {
 		return element.get_type().readable_name()
 	}
 	if element is psi.InterfaceMethodDeclaration {

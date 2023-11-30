@@ -1966,7 +1966,7 @@
                 "members": [
                   {
                     "type": "SYMBOL",
-                    "name": "struct_field_scope"
+                    "name": "interface_field_scope"
                   },
                   {
                     "type": "CHOICE",
@@ -2000,7 +2000,7 @@
                 "members": [
                   {
                     "type": "SYMBOL",
-                    "name": "struct_field_declaration"
+                    "name": "interface_field_declaration"
                   },
                   {
                     "type": "CHOICE",
@@ -2069,6 +2069,49 @@
         {
           "type": "STRING",
           "value": "}"
+        }
+      ]
+    },
+    "interface_field_scope": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "mut"
+        },
+        {
+          "type": "STRING",
+          "value": ":"
+        }
+      ]
+    },
+    "interface_field_declaration": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "name",
+              "content": {
+                "type": "SYMBOL",
+                "name": "identifier"
+              }
+            },
+            {
+              "type": "FIELD",
+              "name": "type",
+              "content": {
+                "type": "SYMBOL",
+                "name": "plain_type"
+              }
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "embedded_definition"
         }
       ]
     },

@@ -10,9 +10,12 @@ interface Foo {
 (source_file
   (interface_declaration
     (identifier)
-    (struct_field_declaration
-      (identifier)
-      (plain_type
+    (interface_field_declaration
+      (embedded_definition
+        (type_reference_expression
+          (identifier))))
+    (interface_field_declaration
+      (embedded_definition
         (type_reference_expression
           (identifier))))
     (interface_method_definition
@@ -36,9 +39,12 @@ pub interface Foo {
   (interface_declaration
     (visibility_modifiers)
     (identifier)
-    (struct_field_declaration
-      (identifier)
-      (plain_type
+    (interface_field_declaration
+      (embedded_definition
+        (type_reference_expression
+          (identifier))))
+    (interface_field_declaration
+      (embedded_definition
         (type_reference_expression
           (identifier))))
     (interface_method_definition
@@ -97,48 +103,16 @@ mut:
 (source_file
   (interface_declaration
     (identifier)
-    (struct_field_scope)
-    (struct_field_declaration
-      (identifier)
-      (plain_type
+    (interface_field_scope)
+    (interface_field_declaration
+      (embedded_definition
         (type_reference_expression
           (identifier))))
-    (struct_field_scope)
-    (interface_method_definition
-      (identifier)
-      (signature
-        (parameter_list)
-        (plain_type
-          (type_reference_expression
-            (identifier)))))))
-
-================================================================================
-Interface with field with default type and attribute
-================================================================================
-interface Foo {
-    name string [json: 'Name'] = ''
-    do() string
-}
---------------------------------------------------------------------------------
-
-(source_file
-  (interface_declaration
-    (identifier)
-    (struct_field_declaration
-      (identifier)
-      (plain_type
+    (interface_field_declaration
+      (embedded_definition
         (type_reference_expression
-          (identifier)))
-      (attribute
-        (attribute_expression
-          (key_value_attribute
-            (value_attribute
-              (reference_expression
-                (identifier)))
-            (literal
-              (interpreted_string_literal)))))
-      (literal
-        (interpreted_string_literal)))
+          (identifier))))
+    (interface_field_scope)
     (interface_method_definition
       (identifier)
       (signature
@@ -172,9 +146,12 @@ interface Foo {
             (reference_expression
               (identifier))))))
     (identifier)
-    (struct_field_declaration
-      (identifier)
-      (plain_type
+    (interface_field_declaration
+      (embedded_definition
+        (type_reference_expression
+          (identifier))))
+    (interface_field_declaration
+      (embedded_definition
         (type_reference_expression
           (identifier))))
     (interface_method_definition
@@ -212,9 +189,12 @@ interface Foo {
             (reference_expression
               (identifier))))))
     (identifier)
-    (struct_field_declaration
-      (identifier)
-      (plain_type
+    (interface_field_declaration
+      (embedded_definition
+        (type_reference_expression
+          (identifier))))
+    (interface_field_declaration
+      (embedded_definition
         (type_reference_expression
           (identifier))))
     (interface_method_definition
@@ -236,7 +216,7 @@ interface Foo {
 (source_file
   (interface_declaration
     (identifier)
-    (struct_field_declaration
+    (interface_field_declaration
       (embedded_definition
         (type_reference_expression
           (identifier))))))
@@ -253,11 +233,11 @@ interface Foo {
 (source_file
   (interface_declaration
     (identifier)
-    (struct_field_declaration
+    (interface_field_declaration
       (embedded_definition
         (type_reference_expression
           (identifier))))
-    (struct_field_declaration
+    (interface_field_declaration
       (embedded_definition
         (type_reference_expression
           (identifier))))))
@@ -277,9 +257,12 @@ interface Foo[T] {
     (generic_parameters
       (generic_parameter
         (identifier)))
-    (struct_field_declaration
-      (identifier)
-      (plain_type
+    (interface_field_declaration
+      (embedded_definition
+        (type_reference_expression
+          (identifier))))
+    (interface_field_declaration
+      (embedded_definition
         (type_reference_expression
           (identifier))))
     (interface_method_definition

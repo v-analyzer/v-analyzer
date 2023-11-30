@@ -87,8 +87,10 @@ pub fn (s &StubBase) element_type() v.NodeType {
 		.parameter_declaration { .parameter_declaration }
 		.struct_declaration { .struct_declaration }
 		.interface_declaration { .interface_declaration }
+		.interface_field_scope { .interface_field_declaration }
+		.interface_field_declaration { .interface_field_scope }
 		.interface_method_declaration { .interface_method_definition }
-		.field_declaration { .struct_field_declaration }
+		.struct_field_declaration { .struct_field_declaration }
 		.constant_declaration { .const_definition }
 		.type_alias_declaration { .type_declaration }
 		.enum_declaration { .enum_declaration }

@@ -21,20 +21,34 @@ fn is_implemented(iface_methods []psi.PsiElement, iface_fields []psi.PsiElement,
 		}
 	}
 
-	mut symbol_fields_set := map[string]psi.FieldDeclaration{}
+	mut symbol_fields_struct := map[string]psi.StructFieldDeclaration{}
+	mut symbol_fields_interface := map[string]psi.InterfaceFieldDeclaration{}
 	for symbol_field in symbol_fields {
-		if symbol_field is psi.FieldDeclaration {
-			symbol_fields_set[symbol_field.name()] = *symbol_field
+		if symbol_field is psi.StructFieldDeclaration {
+			symbol_fields_struct[symbol_field.name()] = *symbol_field
+		}
+		if symbol_field is psi.InterfaceFieldDeclaration {
+			symbol_fields_interface[symbol_field.name()] = *symbol_field
 		}
 	}
 
 	for iface_field in iface_fields {
-		if iface_field is psi.FieldDeclaration {
+		if iface_field is psi.StructFieldDeclaration {
 			if iface_field.is_embedded_definition() {
 				continue
 			}
 
-			if iface_field.name() !in symbol_fields_set {
+			if iface_field.name() !in symbol_fields_struct {
+				// if at least one field is not implemented, then the whole interface is not implemented
+				return false
+			}
+		}
+		if iface_field is psi.InterfaceFieldDeclaration {
+			if iface_field.is_embedded_definition() {
+				continue
+			}
+
+			if iface_field.name() !in symbol_fields_interface {
 				// if at least one field is not implemented, then the whole interface is not implemented
 				return false
 			}
@@ -51,9 +65,19 @@ fn is_implemented(iface_methods []psi.PsiElement, iface_fields []psi.PsiElement,
 	}
 
 	for iface_field in iface_fields {
-		if iface_field is psi.FieldDeclaration {
-			symbol_field := symbol_fields_set[iface_field.name()]
-			if !is_field_compatible(*iface_field, symbol_field) {
+		if iface_field is psi.StructFieldDeclaration {
+			symbol_field := symbol_fields_struct[iface_field.name()]
+			iface_type := iface_field.get_type()
+			symbol_type := symbol_field.get_type()
+			if iface_type.qualified_name() != symbol_type.qualified_name() {
+				return false
+			}
+		}
+		if iface_field is psi.InterfaceFieldDeclaration {
+			symbol_field := symbol_fields_interface[iface_field.name()]
+			iface_type := iface_field.get_type()
+			symbol_type := symbol_field.get_type()
+			if iface_type.qualified_name() != symbol_type.qualified_name() {
 				return false
 			}
 		}
@@ -97,11 +121,4 @@ fn is_method_compatible(iface_method psi.InterfaceMethodDeclaration, symbol_meth
 	}
 
 	return false
-}
-
-fn is_field_compatible(iface_field psi.FieldDeclaration, symbol_field psi.FieldDeclaration) bool {
-	iface_type := iface_field.get_type()
-	symbol_type := symbol_field.get_type()
-
-	return iface_type.qualified_name() == symbol_type.qualified_name()
 }

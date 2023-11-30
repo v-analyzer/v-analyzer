@@ -74,7 +74,48 @@ pub fn (s InterfaceDeclaration) visibility_modifiers() ?&VisibilityModifiers {
 }
 
 pub fn (s InterfaceDeclaration) fields() []PsiElement {
-	return s.find_children_by_type_or_stub(.struct_field_declaration)
+	own_fields := s.own_fields()
+
+	embedded_types := s.embedded_definitions()
+		.map(types.unwrap_alias_type(it.get_type()))
+		.filter(it is types.InterfaceType)
+
+	mut embedded_fields := []PsiElement{cap: embedded_types.len * 3}
+	for embedded_type in embedded_types {
+		embedded := find_interface(embedded_type.qualified_name()) or { continue }
+		embedded_fields << embedded.fields()
+	}
+
+	mut result := []PsiElement{cap: own_fields.len + embedded_fields.len}
+	result << own_fields
+	result << embedded_fields
+	return result
+}
+
+pub fn (s InterfaceDeclaration) own_fields() []PsiElement {
+	field_declarations := s.find_children_by_type_or_stub(.struct_field_declaration)
+	mut result := []PsiElement{cap: field_declarations.len}
+	for field_declaration in field_declarations {
+		if first_child := field_declaration.first_child_or_stub() {
+			if first_child.element_type() != .embedded_definition {
+				result << field_declaration
+			}
+		}
+	}
+	return result
+}
+
+pub fn (s InterfaceDeclaration) embedded_definitions() []&EmbeddedDefinition {
+	field_declarations := s.find_children_by_type_or_stub(.interface_field_declaration)
+	mut result := []&EmbeddedDefinition{cap: field_declarations.len}
+	for field_declaration in field_declarations {
+		if embedded_definition := field_declaration.find_child_by_type_or_stub(.embedded_definition) {
+			if embedded_definition is EmbeddedDefinition {
+				result << embedded_definition
+			}
+		}
+	}
+	return result
 }
 
 pub fn (s InterfaceDeclaration) methods() []PsiElement {
