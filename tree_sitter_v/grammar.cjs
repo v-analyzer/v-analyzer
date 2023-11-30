@@ -1081,7 +1081,7 @@ module.exports = grammar({
       alias($.strictly_expression_list, $.expression_list),
     ),
 
-    assert_statement: ($) => prec.right(seq('assert', $._expression, optional(seq(',', $.literal)))),
+    assert_statement: ($) => prec.left(seq('assert', $._expression, optional(seq(',', $._expression)))),
 
     append_statement: ($) => prec(PREC.unary, seq(
       field('left', $._expression),

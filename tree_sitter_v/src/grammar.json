@@ -7453,7 +7453,7 @@
       ]
     },
     "assert_statement": {
-      "type": "PREC_RIGHT",
+      "type": "PREC_LEFT",
       "value": 0,
       "content": {
         "type": "SEQ",
@@ -7478,7 +7478,7 @@
                   },
                   {
                     "type": "SYMBOL",
-                    "name": "literal"
+                    "name": "_expression"
                   }
                 ]
               },
