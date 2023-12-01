@@ -28,8 +28,10 @@
       "file-types": [
         "v",
         "vsh",
+        "vv",
         "v.mod"
-      ]
+      ],
+      "injection-regex": "^v|vsh|vv|v\\.mod$"
     }
   ]
 }
