@@ -20,8 +20,8 @@ if s.no_inner {
 }
 --------------------------------------------------------------------------------
 
-(ERROR
-  (expression_list
+(source_file
+  (ERROR
     (type_initializer
       (plain_type
         (qualified_type

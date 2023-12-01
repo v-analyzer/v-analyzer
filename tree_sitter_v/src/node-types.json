@@ -895,11 +895,6 @@
     }
   },
   {
-    "type": "comment",
-    "named": true,
-    "fields": {}
-  },
-  {
     "type": "compile_time_for_statement",
     "named": true,
     "fields": {
@@ -4539,6 +4534,10 @@
   {
     "type": "chan",
     "named": false
+  },
+  {
+    "type": "comment",
+    "named": true
   },
   {
     "type": "const",
