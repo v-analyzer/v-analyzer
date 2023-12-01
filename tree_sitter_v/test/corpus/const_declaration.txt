@@ -66,18 +66,17 @@ const (
         (int_literal)))))
 
 ================================================================================
-Multiline constant in one line with error
+Multiline constant in one line
 ================================================================================
 const ( name = 100 )
 --------------------------------------------------------------------------------
 
 (source_file
   (const_declaration
-    (ERROR
-      (const_definition
-        (identifier)
-        (literal
-          (int_literal))))))
+    (const_definition
+      (identifier)
+      (literal
+        (int_literal)))))
 
 ================================================================================
 Multiline constants

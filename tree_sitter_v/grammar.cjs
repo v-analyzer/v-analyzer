@@ -238,7 +238,7 @@ module.exports = grammar({
         "const",
         choice(
           $.const_definition,
-          seq("(", repeat(seq($.const_definition, semi)), ")"),
+          seq("(", repeat(seq($.const_definition, optional(semi))), ")"),
         ),
       ),
 
@@ -251,17 +251,15 @@ module.exports = grammar({
         "__global",
         choice(
           $.global_var_definition,
-          seq("(", repeat(seq($.global_var_definition, semi)), ")"),
+          seq("(", repeat(seq($.global_var_definition, optional(semi))), ")"),
         ),
       ),
 
     global_var_definition: ($) =>
       seq(
         field("name", $.identifier),
-        choice($.plain_type, $._global_var_value),
+        choice($.plain_type, seq("=", field("value", $._expression))),
       ),
-
-    _global_var_value: ($) => seq("=", field("value", $._expression)),
 
     type_declaration: ($) =>
       seq(
