@@ -62,6 +62,8 @@ fn (_ ResolveSemanticVisitor) highlight_node(node psi.PsiElement, root psi.PsiEl
 		result << element_to_semantic(first_child, .variable, ...mods)
 	} else if res is psi.ConstantDefinition {
 		result << element_to_semantic(first_child, .property)
+	} else if res is psi.InterfaceDeclaration {
+		result << element_to_semantic(first_child, .interface_)
 	} else if res is psi.StructDeclaration {
 		if res.name() != 'string' && res.module_name() != 'stubs.attributes' {
 			result << element_to_semantic(first_child, .struct_)
@@ -95,11 +97,17 @@ fn (_ ResolveSemanticVisitor) highlight_node(node psi.PsiElement, root psi.PsiEl
 		}
 	} else if res is psi.GenericParameter {
 		result << element_to_semantic(first_child, .type_parameter)
+	} else if res is psi.InterfaceMethodDeclaration {
+		result << element_to_semantic(first_child, .method)
+	} else if res is psi.StaticMethodDeclaration {
+		result << element_to_semantic(first_child, .method)
+	} else if res is psi.FunctionLiteral {
+		result << element_to_semantic(first_child, .function)
 	} else if res is psi.FunctionOrMethodDeclaration {
 		result << element_to_semantic(first_child, .function)
 	} else if res is psi.GlobalVarDefinition {
 		result << element_to_semantic(first_child, .variable, 'global')
 	} else if res is psi.EmbeddedDefinition {
-		result << element_to_semantic(first_child, .struct_)
+		result << element_to_semantic(first_child, .type_)
 	}
 }

@@ -100,31 +100,18 @@ fn (_ DumbAwareSemanticVisitor) highlight_node(node psi.AstNode, root psi.PsiEle
 			}
 		}
 	} else if node.type_name == .enum_declaration {
-		identifier := node.child_by_field_name('name') or { return }
-		result << element_to_semantic(identifier, .enum_)
+		if identifier := node.child_by_field_name('name') {
+			result << element_to_semantic(identifier, .enum_)
+		}
 	} else if node.type_name == .parameter_declaration || node.type_name == .receiver {
 		identifier := node.child_by_field_name('name') or { return }
-		is_mut := if _ := node.child_by_field_name('mutability') {
-			true
-		} else {
-			false
+		if _ := node.child_by_field_name('mutability') {
+			result << element_to_semantic(identifier, .parameter, 'mutable')
 		}
-
-		mut mods := []string{}
-		if is_mut {
-			mods << 'mutable'
-		}
-		result << element_to_semantic(identifier, .parameter, ...mods)
 	} else if node.type_name == .reference_expression {
 		def := psi.node_to_var_definition(node, root.containing_file, none)
-		if !isnil(def) {
-			mods := if def.is_mutable() {
-				['mutable']
-			} else {
-				[]string{}
-			}
-
-			result << element_to_semantic(node, .variable, ...mods)
+		if !isnil(def) && def.is_mutable() {
+			result << element_to_semantic(node, .variable, 'mutable')
 		}
 
 		first_char := node.first_char(root.containing_file.source_text)
