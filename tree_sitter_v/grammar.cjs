@@ -491,7 +491,6 @@ module.exports = grammar({
         $.spawn_expression,
         $.call_expression,
         $.function_literal,
-        $.empty_literal_value,
         $.reference_expression,
         $._max_group,
         $.array_creation,
@@ -786,7 +785,7 @@ module.exports = grammar({
         PREC.composite_literal,
         seq(
           "{",
-          repeat1(seq($.map_keyed_element, optional(list_separator))),
+          repeat(seq($.map_keyed_element, optional(list_separator))),
           "}",
         ),
       ),
@@ -1132,8 +1131,6 @@ module.exports = grammar({
 
     expression_without_blocks_list: ($) =>
       prec(PREC.resolve, comma_sep1($._expression_without_blocks)),
-
-    empty_literal_value: () => prec(PREC.composite_literal, seq("{", "}")),
 
     // ==================== TYPES ====================
 
