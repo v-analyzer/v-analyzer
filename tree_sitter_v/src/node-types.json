@@ -28,10 +28,6 @@
         "named": true
       },
       {
-        "type": "empty_array_creation",
-        "named": true
-      },
-      {
         "type": "enum_fetch",
         "named": true
       },
@@ -1166,11 +1162,6 @@
         }
       ]
     }
-  },
-  {
-    "type": "empty_array_creation",
-    "named": true,
-    "fields": {}
   },
   {
     "type": "enum_backed_type",
@@ -2551,10 +2542,6 @@
         },
         {
           "type": "dec_expression",
-          "named": true
-        },
-        {
-          "type": "empty_array_creation",
           "named": true
         },
         {

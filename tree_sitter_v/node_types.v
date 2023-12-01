@@ -51,7 +51,6 @@ pub enum NodeType {
 	element_list
 	else_branch
 	embedded_definition
-	empty_array_creation
 	enum_backed_type
 	enum_declaration
 	enum_fetch
@@ -193,7 +192,6 @@ const supertype__expression_nodes = merge(supertype__expression_with_blocks_node
 	.binary_expression,
 	.call_expression,
 	.dec_expression,
-	.empty_array_creation,
 	.enum_fetch,
 	.fixed_array_creation,
 	.function_literal,
@@ -363,7 +361,6 @@ const node_type_name_to_enum = {
 	'element_list':                     NodeType.element_list
 	'else_branch':                      NodeType.else_branch
 	'embedded_definition':              NodeType.embedded_definition
-	'empty_array_creation':             NodeType.empty_array_creation
 	'enum_backed_type':                 NodeType.enum_backed_type
 	'enum_declaration':                 NodeType.enum_declaration
 	'enum_fetch':                       NodeType.enum_fetch

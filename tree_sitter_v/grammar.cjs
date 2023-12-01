@@ -494,7 +494,6 @@ module.exports = grammar({
         $.reference_expression,
         $._max_group,
         $.array_creation,
-        $.empty_array_creation,
         $.fixed_array_creation,
         $.unary_expression,
         $.receive_expression,
@@ -795,14 +794,11 @@ module.exports = grammar({
 
     array_creation: ($) => prec.right(PREC.multiplicative, $._non_empty_array),
 
-    empty_array_creation: () =>
-      prec(PREC.empty_array, prec.dynamic(-1, seq("[", "]"))),
-
     fixed_array_creation: ($) =>
       prec.right(PREC.multiplicative, seq($._non_empty_array, "!")),
 
     _non_empty_array: ($) =>
-      seq("[", repeat1(seq($._expression, optional(","))), "]"),
+      seq("[", repeat(seq($._expression, optional(","))), "]"),
 
     selector_expression: ($) =>
       prec.dynamic(
