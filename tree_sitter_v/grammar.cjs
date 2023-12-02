@@ -131,7 +131,6 @@ module.exports = grammar({
   word: ($) => $.identifier,
 
   externals: ($) => [
-    $._automatic_separator,
     $._braced_interpolation_opening,
     $._interpolation_closing,
     $._c_string_opening,
@@ -139,7 +138,6 @@ module.exports = grammar({
     $._string_opening,
     $._string_content,
     $._string_closing,
-    $.error_sentinel,
   ],
 
   inline: ($) => [

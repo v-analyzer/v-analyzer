@@ -8431,10 +8431,6 @@
   "externals": [
     {
       "type": "SYMBOL",
-      "name": "_automatic_separator"
-    },
-    {
-      "type": "SYMBOL",
       "name": "_braced_interpolation_opening"
     },
     {
@@ -8460,10 +8456,6 @@
     {
       "type": "SYMBOL",
       "name": "_string_closing"
-    },
-    {
-      "type": "SYMBOL",
-      "name": "error_sentinel"
     }
   ],
   "inline": [
