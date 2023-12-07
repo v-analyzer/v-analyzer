@@ -142,6 +142,11 @@ folder.
 See also extension page in
 [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=VOSCA.vscode-v-analyzer).
 
+## NVIM LSP
+
+For Neovim users, v-analyzer is available via [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#v_analyzer).
+It is part of the mason registry and can be installated with `:LspInstall v_analyzer`.
+
 ## Authors
 
 - `jsonrpc`, `lsp`, `tree_sitter_v` modules written initially by
