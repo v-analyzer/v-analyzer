@@ -13,14 +13,14 @@ pub fn (mut ls LanguageServer) signature_help(params lsp.SignatureHelpParams) ?l
 		loglib.with_fields({
 			'offset': offset.str()
 		}).warn('Cannot find element')
-		return none
+		return lsp.SignatureHelp{}
 	}
 
 	call := element.parent_of_type_or_self(.call_expression) or {
 		loglib.with_fields({
 			'offset': offset.str()
 		}).warn('Cannot find call expression')
-		return none
+		return lsp.SignatureHelp{}
 	}
 
 	if call is psi.CallExpression {
@@ -28,7 +28,7 @@ pub fn (mut ls LanguageServer) signature_help(params lsp.SignatureHelpParams) ?l
 			loglib.with_fields({
 				'offset': offset.str()
 			}).warn('Cannot resolve call expression for signature help')
-			return none
+			return lsp.SignatureHelp{}
 		}
 
 		if resolved is psi.FunctionOrMethodDeclaration {
@@ -63,5 +63,5 @@ pub fn (mut ls LanguageServer) signature_help(params lsp.SignatureHelpParams) ?l
 		}
 	}
 
-	return none
+	return lsp.SignatureHelp{}
 }
