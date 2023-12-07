@@ -9,7 +9,7 @@
 [![Analyzer tests](https://github.com/v-analyzer/v-analyzer/actions/workflows/analyzer_tests.yml/badge.svg)](https://github.com/v-analyzer/v-analyzer/actions/workflows/analyzer_tests.yml)
 [![VS Code extension tests](https://github.com/v-analyzer/v-analyzer/actions/workflows/vscode_extension_tests.yml/badge.svg)](https://github.com/v-analyzer/v-analyzer/actions/workflows/vscode_extension_tests.yml)
 
-Bring IDE features for V programming languages in VS Code, Vim, and other editors.
+Bring IDE features for the V programming language to VS Code, Vim, and other editors.
 
 v-analyzer provides the following features:
 
@@ -139,8 +139,7 @@ v-analyzer up --nightly
 This repository also contains the source code for the VS Code extension in the
 [`editors/code`](https://github.com/v-analyzer/v-analyzer/tree/main/editors/code)
 folder.
-See also extension page in
-[VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=VOSCA.vscode-v-analyzer).
+It is also available via the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=VOSCA.vscode-v-analyzer).
 
 ## Authors
 
