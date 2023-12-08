@@ -4,23 +4,24 @@ import lsp
 import analyzer.psi
 import server.tform
 
-pub fn (mut ls LanguageServer) document_symbol(params lsp.DocumentSymbolParams) ![]lsp.DocumentSymbol {
+pub fn (mut ls LanguageServer) document_symbol(params lsp.DocumentSymbolParams) []lsp.DocumentSymbol {
 	uri := params.text_document.uri.normalize()
 	mut file_symbols := []lsp.DocumentSymbol{}
 
 	elements := stubs_index.get_all_elements_from_file(uri.path())
 	for element in elements {
-		file_symbols << document_symbol_presentation(element) or { continue }
+		file_symbols << document_symbol_presentation(element)
 	}
 
 	return file_symbols
 }
 
-fn document_symbol_presentation(element psi.PsiElement) ?lsp.DocumentSymbol {
+fn document_symbol_presentation(element psi.PsiElement) lsp.DocumentSymbol {
+	empty_doc_symbol := lsp.DocumentSymbol{}
 	full_text_range := element.text_range()
 	if element is psi.PsiNamedElement {
 		if element.name() == '' {
-			return none
+			return empty_doc_symbol
 		}
 
 		identifier_text_range := element.identifier_text_range()
@@ -28,14 +29,14 @@ fn document_symbol_presentation(element psi.PsiElement) ?lsp.DocumentSymbol {
 		return lsp.DocumentSymbol{
 			name: name_presentation(element)
 			detail: detail_presentation(element)
-			kind: symbol_kind(element as psi.PsiElement)?
+			kind: symbol_kind(element as psi.PsiElement) or { return empty_doc_symbol }
 			range: tform.text_range_to_lsp_range(full_text_range)
 			selection_range: tform.text_range_to_lsp_range(identifier_text_range)
 			children: children
 		}
 	}
 
-	return none
+	return empty_doc_symbol
 }
 
 fn symbol_kind(element psi.PsiElement) ?lsp.SymbolKind {
@@ -136,7 +137,7 @@ fn symbol_children(element psi.PsiNamedElement) []lsp.DocumentSymbol {
 
 	mut symbols := []lsp.DocumentSymbol{cap: children.len}
 	for child in children {
-		symbols << document_symbol_presentation(child) or { continue }
+		symbols << document_symbol_presentation(child)
 	}
 	return symbols
 }
