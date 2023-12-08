@@ -4,18 +4,16 @@ import lsp
 import server.semantic
 import time
 
-const (
-	max_line_for_resolve_semantic_tokens = 1000
-	max_line_for_any_semantic_tokens     = 10000
-)
+const max_line_for_resolve_semantic_tokens = 1000
+const max_line_for_any_semantic_tokens = 10000
 
-pub fn (mut ls LanguageServer) semantic_tokens(text_document lsp.TextDocumentIdentifier, range lsp.Range) ?lsp.SemanticTokens {
+pub fn (mut ls LanguageServer) semantic_tokens(text_document lsp.TextDocumentIdentifier, range lsp.Range) lsp.SemanticTokens {
 	if ls.cfg.enable_semantic_tokens == .none_ {
-		return none
+		return lsp.SemanticTokens{}
 	}
 
 	uri := text_document.uri.normalize()
-	file := ls.get_file(uri)?
+	file := ls.get_file(uri) or { return lsp.SemanticTokens{} }
 
 	lines := file.psi_file.source_text.count('\n')
 
