@@ -1,3 +1,10 @@
+/**
+ * @file V grammar for tree-sitter
+ */
+
+/// <reference types="tree-sitter-cli/dsl" />
+/// @ts-check
+
 const PREC = {
   attributes: 10,
   match_arm_type: 9,
@@ -597,8 +604,10 @@ module.exports = grammar({
       ];
 
       return choice(...table.map(([precedence, operator]) =>
+        // @ts-ignore
         prec.left(precedence, seq(
           field('left', $._expression),
+          // @ts-ignore
           field('operator', operator),
           field('right', $._expression),
         )),
@@ -914,7 +923,7 @@ module.exports = grammar({
     pseudo_compile_time_identifier: ($) =>
       seq('@', alias(/[A-Z][A-Z0-9_]+/, $.identifier)),
 
-    identifier: ($) => token(seq(
+    identifier: () => token(seq(
       optional('@'),
       optional('$'),
       optional('C.'),
