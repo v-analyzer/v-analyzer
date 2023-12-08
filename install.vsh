@@ -5,16 +5,14 @@ import os
 import json
 import term
 import time
-import szip
+import compress.szip
 import cli
 import net.http
 
-pub const (
-	installer_version           = '0.0.2'
-	analyzer_sources_path       = norm_expand_tilde_to_home('~/.config/v-analyzer/sources')
-	analyzer_bin_path           = norm_expand_tilde_to_home('~/.config/v-analyzer/bin')
-	analyzer_bin_path_with_name = norm_expand_tilde_to_home('~/.config/v-analyzer/bin/v-analyzer')
-)
+pub const installer_version = '0.0.2'
+pub const analyzer_sources_path = norm_expand_tilde_to_home('~/.config/v-analyzer/sources')
+pub const analyzer_bin_path = norm_expand_tilde_to_home('~/.config/v-analyzer/bin')
+pub const analyzer_bin_path_with_name = norm_expand_tilde_to_home('~/.config/v-analyzer/bin/v-analyzer')
 
 struct ReleaseAsset {
 	tag_name             string @[json: '-']
