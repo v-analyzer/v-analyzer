@@ -31,9 +31,11 @@ v -e "$(curl -fsSL https://raw.githubusercontent.com/v-analyzer/v-analyzer/main/
 ```
 
 ### Windows
+
 The install.vsh file is downloaded to the current directory and stored there temporarily.
 So make sure that there is no file with this name or that it is safe when it is
 overwritten or deleted.
+
 #### Powershell
 
 ```
@@ -45,7 +47,6 @@ curl -o install.vsh https://raw.githubusercontent.com/v-analyzer/v-analyzer/main
 ```
 curl -o install.vsh https://raw.githubusercontent.com/v-analyzer/v-analyzer/main/install.vsh && v run install.vsh && del install.vsh
 ```
-
 
 ## Pre-built binaries
 
@@ -171,5 +172,4 @@ See the
 file for the full license text.
 
 [AssociationOfficialBadge]: https://vosca.dev/badge.svg
-
 [AssociationUrl]: https://vosca.dev
