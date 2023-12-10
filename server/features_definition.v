@@ -5,17 +5,16 @@ import loglib
 import analyzer.psi
 import server.tform
 
-pub fn (mut ls LanguageServer) definition(params lsp.TextDocumentPositionParams) []lsp.LocationLink {
-	empty_location_link := []lsp.LocationLink{}
+pub fn (mut ls LanguageServer) definition(params lsp.TextDocumentPositionParams) ?[]lsp.LocationLink {
 	uri := params.text_document.uri.normalize()
-	file := ls.get_file(uri) or { return empty_location_link }
+	file := ls.get_file(uri)?
 
 	offset := file.find_offset(params.position)
 	element := file.psi_file.find_reference_at(offset) or {
 		loglib.with_fields({
 			'offset': offset.str()
 		}).warn('Cannot find reference')
-		return empty_location_link
+		return none
 	}
 
 	resolved := element.resolve() or {
@@ -23,12 +22,10 @@ pub fn (mut ls LanguageServer) definition(params lsp.TextDocumentPositionParams)
 			'caller': @METHOD
 			'name':   element.name()
 		}).warn('Cannot resolve reference')
-		return empty_location_link
+		return none
 	}
 
-	data := new_resolve_result(resolved.containing_file(), resolved) or {
-		return empty_location_link
-	}
+	data := new_resolve_result(resolved.containing_file(), resolved) or { return [] }
 	return [
 		data.to_location_link(element.text_range()),
 	]

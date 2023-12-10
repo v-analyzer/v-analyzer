@@ -4,24 +4,23 @@ import lsp
 import analyzer.psi
 import loglib
 
-pub fn (mut ls LanguageServer) signature_help(params lsp.SignatureHelpParams) lsp.SignatureHelp {
-	mut help := lsp.SignatureHelp{}
+pub fn (mut ls LanguageServer) signature_help(params lsp.SignatureHelpParams) ?lsp.SignatureHelp {
 	uri := params.text_document.uri.normalize()
-	file := ls.get_file(uri) or { return help }
+	file := ls.get_file(uri)?
 
 	offset := file.find_offset(params.position)
 	element := file.psi_file.find_element_at(offset) or {
 		loglib.with_fields({
 			'offset': offset.str()
 		}).warn('Cannot find element')
-		return help
+		return none
 	}
 
 	call := element.parent_of_type_or_self(.call_expression) or {
 		loglib.with_fields({
 			'offset': offset.str()
 		}).warn('Cannot find call expression')
-		return help
+		return none
 	}
 
 	if call is psi.CallExpression {
@@ -29,7 +28,7 @@ pub fn (mut ls LanguageServer) signature_help(params lsp.SignatureHelpParams) ls
 			loglib.with_fields({
 				'offset': offset.str()
 			}).warn('Cannot resolve call expression for signature help')
-			return help
+			return none
 		}
 
 		if resolved is psi.FunctionOrMethodDeclaration {
@@ -37,12 +36,12 @@ pub fn (mut ls LanguageServer) signature_help(params lsp.SignatureHelpParams) ls
 			active_parameter := call.parameter_index_on_offset(offset)
 
 			if ctx.is_retrigger {
-				help = ctx.active_signature_help
+				mut help := ctx.active_signature_help
 				help.active_parameter = active_parameter
 				return help
 			}
 
-			signature := resolved.signature() or { return help }
+			signature := resolved.signature()?
 			parameters := signature.parameters()
 
 			mut param_infos := []lsp.ParameterInformation{}
@@ -64,5 +63,5 @@ pub fn (mut ls LanguageServer) signature_help(params lsp.SignatureHelpParams) ls
 		}
 	}
 
-	return help
+	return none
 }

@@ -198,7 +198,7 @@ pub fn (mut ls LanguageServer) handle_jsonrpc(request &jsonrpc.Request, mut rw j
 				params := json.decode(lsp.DocumentSymbolParams, request.params) or {
 					return w.wrap_error(err)
 				}
-				w.write(ls.document_symbol(params))
+				w.write(ls.document_symbol(params) or { return w.wrap_error(err) })
 			}
 			'workspace/symbol' {
 				params := json.decode(lsp.WorkspaceSymbolParams, request.params) or {
@@ -210,7 +210,7 @@ pub fn (mut ls LanguageServer) handle_jsonrpc(request &jsonrpc.Request, mut rw j
 				params := json.decode(lsp.SignatureHelpParams, request.params) or {
 					return w.wrap_error(err)
 				}
-				w.write(ls.signature_help(params))
+				w.write(ls.signature_help(params) or { return w.wrap_error(err) })
 			}
 			'textDocument/completion' {
 				params := json.decode(lsp.CompletionParams, request.params) or {
@@ -222,7 +222,11 @@ pub fn (mut ls LanguageServer) handle_jsonrpc(request &jsonrpc.Request, mut rw j
 				params := json.decode(lsp.HoverParams, request.params) or {
 					return w.wrap_error(err)
 				}
-				w.write(ls.hover(params))
+				hover_data := ls.hover(params) or {
+					w.write_empty()
+					return
+				}
+				w.write(hover_data)
 			}
 			'textDocument/foldingRange' {
 				params := json.decode(lsp.FoldingRangeParams, request.params) or {
@@ -234,13 +238,13 @@ pub fn (mut ls LanguageServer) handle_jsonrpc(request &jsonrpc.Request, mut rw j
 				params := json.decode(lsp.TextDocumentPositionParams, request.params) or {
 					return w.wrap_error(err)
 				}
-				w.write(ls.definition(params))
+				w.write(ls.definition(params) or { return w.wrap_error(err) })
 			}
 			'textDocument/typeDefinition' {
 				params := json.decode(lsp.TextDocumentPositionParams, request.params) or {
 					return w.wrap_error(err)
 				}
-				w.write(ls.type_definition(params))
+				w.write(ls.type_definition(params) or { return w.wrap_error(err) })
 			}
 			'textDocument/references' {
 				params := json.decode(lsp.ReferenceParams, request.params) or {
@@ -252,7 +256,7 @@ pub fn (mut ls LanguageServer) handle_jsonrpc(request &jsonrpc.Request, mut rw j
 				params := json.decode(lsp.TextDocumentPositionParams, request.params) or {
 					return w.wrap_error(err)
 				}
-				w.write(ls.implementation(params))
+				w.write(ls.implementation(params) or { return w.wrap_error(err) })
 			}
 			'workspace/didChangeWatchedFiles' {
 				params := json.decode(lsp.DidChangeWatchedFilesParams, request.params) or {
@@ -270,7 +274,7 @@ pub fn (mut ls LanguageServer) handle_jsonrpc(request &jsonrpc.Request, mut rw j
 				params := json.decode(lsp.InlayHintParams, request.params) or {
 					return w.wrap_error(err)
 				}
-				w.write(ls.inlay_hints(params))
+				w.write(ls.inlay_hints(params) or { return w.wrap_error(err) })
 			}
 			'textDocument/prepareRename' {
 				params := json.decode(lsp.PrepareRenameParams, request.params) or {
@@ -289,13 +293,17 @@ pub fn (mut ls LanguageServer) handle_jsonrpc(request &jsonrpc.Request, mut rw j
 				params := json.decode(lsp.SemanticTokensParams, request.params) or {
 					return w.wrap_error(err)
 				}
-				w.write(ls.semantic_tokens(params.text_document, lsp.Range{}))
+				w.write(ls.semantic_tokens(params.text_document, lsp.Range{}) or {
+					return w.wrap_error(err)
+				})
 			}
 			'textDocument/semanticTokens/range' {
 				params := json.decode(lsp.SemanticTokensRangeParams, request.params) or {
 					return w.wrap_error(err)
 				}
-				w.write(ls.semantic_tokens(params.text_document, params.range))
+				w.write(ls.semantic_tokens(params.text_document, params.range) or {
+					return w.wrap_error(err)
+				})
 			}
 			'textDocument/documentHighlight' {
 				params := json.decode(lsp.TextDocumentPositionParams, request.params) or {
