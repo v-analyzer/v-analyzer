@@ -383,14 +383,16 @@ module.exports = grammar({
         $._struct_body,
       ),
 
-    _struct_body: ($) => seq("{", optional($._struct_fields), "}"),
-
-    _struct_fields: ($) =>
-      repeat1(
-        choice(
-          seq($.struct_field_scope, optional(terminator)),
-          seq($.struct_field_declaration, optional(terminator)),
+    _struct_body: ($) =>
+      seq(
+        "{",
+        repeat(
+          choice(
+            seq($.struct_field_scope, optional(terminator)),
+            seq($.struct_field_declaration, optional(terminator)),
+          ),
         ),
+        "}",
       ),
 
     // pub:
