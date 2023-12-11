@@ -5,7 +5,6 @@ import os
 import v_tree_sitter.tree_sitter
 
 #flag -I @VMODROOT/src
-#flag @VMODROOT/src/scanner.o
 #flag @VMODROOT/src/parser.o
 
 #include "@VMODROOT/bindings/v/bindings.h"
