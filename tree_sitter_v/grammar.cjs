@@ -128,21 +128,9 @@ module.exports = grammar({
 
   word: ($) => $.identifier,
 
-  externals: ($) => [
-    $._braced_interpolation_opening,
-    $._interpolation_closing,
-    $._c_string_opening,
-    $._raw_string_opening,
-    $._string_opening,
-    $._string_content,
-    $._string_closing,
-  ],
+  externals: (_) => [],
 
-  inline: ($) => [
-    $._string_literal,
-    $._top_level_declaration,
-    $._non_empty_array,
-  ],
+  inline: ($) => [$._top_level_declaration, $._non_empty_array],
 
   supertypes: ($) => [
     $._expression,
@@ -340,7 +328,10 @@ module.exports = grammar({
       ),
 
     parameter_list: ($) =>
-      prec(PREC.resolve, seq("(", comma_sep($.parameter_declaration), ")")),
+      prec(
+        PREC.resolve,
+        seq("(", optional(comma_sep1($.parameter_declaration)), ")"),
+      ),
 
     parameter_declaration: ($) =>
       seq(
@@ -351,7 +342,7 @@ module.exports = grammar({
       ),
 
     type_parameter_list: ($) =>
-      seq("(", comma_sep($.type_parameter_declaration), ")"),
+      seq("(", optional(comma_sep1($.type_parameter_declaration)), ")"),
 
     type_parameter_declaration: ($) =>
       prec(
@@ -671,7 +662,12 @@ module.exports = grammar({
         ),
       ),
 
-    capture_list: ($) => seq("[", comma_sep($.capture), optional(","), "]"),
+    capture_list: ($) =>
+      seq(
+        "[",
+        optional(seq($.capture, repeat(seq(",", optional($.capture))))),
+        "]",
+      ),
 
     capture: ($) =>
       seq(optional($.mutability_modifiers), $.reference_expression),
@@ -1057,24 +1053,56 @@ module.exports = grammar({
         $.interpreted_string_literal,
       ),
 
-    c_string_literal: ($) => interpolated_quoted_string($, $._c_string_opening),
+    c_string_literal: ($) => seq("c", $.interpreted_string_literal),
 
-    raw_string_literal: ($) => quoted_string($, $._raw_string_opening),
+    raw_string_literal: ($) =>
+      choice(
+        seq("r", $.__single_quote, /[^']+/, $.__single_quote),
+        seq("r", $.__double_quote, /[^"]+/, $.__double_quote),
+      ),
 
     interpreted_string_literal: ($) =>
-      interpolated_quoted_string($, $._string_opening),
+      choice(
+        $._interpreted_string_double_quote,
+        $._interpreted_string_single_quote,
+      ),
+
+    _interpreted_string_double_quote: ($) =>
+      seq(
+        $.__double_quote,
+        repeat(
+          choice(
+            /[^"\\${]+/,
+            /\\\$\{[^"]+/,
+            $.string_interpolation,
+            alias($._escape_sequence_double_quote, $.escape_sequence),
+          ),
+        ),
+        $.__double_quote,
+      ),
+    _interpreted_string_single_quote: ($) =>
+      seq(
+        $.__single_quote,
+        repeat(
+          choice(
+            /[^'\\${]+/,
+            /\\\$\{[^']+/,
+            $.string_interpolation,
+            alias($._escape_sequence_single_quote, $.escape_sequence),
+          ),
+        ),
+        $.__single_quote,
+      ),
+    _escape_sequence_double_quote: ($) => escape_sequence($.__double_quote),
+    _escape_sequence_single_quote: ($) => escape_sequence($.__single_quote),
 
     string_interpolation: ($) =>
       seq(
         $.braced_interpolation_opening,
-        $.interpolated_expression,
+        alias($._expression, $.interpolated_expression),
         optional($.format_specifier),
         $.braced_interpolation_closing,
       ),
-
-    braced_interpolation_opening: ($) => $._braced_interpolation_opening,
-    interpolated_expression: ($) => $._expression,
-    braced_interpolation_closing: ($) => $._interpolation_closing,
 
     format_specifier: ($) =>
       seq(
@@ -1089,6 +1117,9 @@ module.exports = grammar({
           ),
         ),
       ),
+
+    braced_interpolation_opening: ($) => $.__dolcbr,
+    braced_interpolation_closing: ($) => $.__rcbr,
 
     pseudo_compile_time_identifier: ($) =>
       seq("@", alias(/[A-Z][A-Z0-9_]+/, $.identifier)),
@@ -1417,7 +1448,7 @@ module.exports = grammar({
 
     attribute: ($) =>
       seq(
-        choice("[", "@["),
+        choice("@[", "["),
         seq($.attribute_expression, repeat(seq(";", $.attribute_expression))),
         "]",
       ),
@@ -1462,35 +1493,44 @@ module.exports = grammar({
           field("value", choice($.literal, $.identifier)),
         ),
       ),
+
+    // ==========================================================
+
+    __dolcbr: (_) => "${",
+    __rcbr: (_) => "}",
+
+    __single_quote: (_) => "'",
+    __double_quote: (_) => '"',
   },
 });
 
+/**
+ * @param {RuleOrLiteral} rule
+ */
 function comp_time(rule) {
   return seq("$", rule);
 }
 
+/**
+ * @param {RuleOrLiteral} rules
+ */
 function comma_sep1(rules) {
   return seq(rules, repeat(seq(",", rules)));
 }
 
-function comma_sep(rule) {
-  return optional(comma_sep1(rule));
-}
-
-function interpolated_quoted_string($, opening) {
-  return quoted_string(
-    $,
-    opening,
-    $.escape_sequence,
-    $.string_interpolation,
-    token.immediate("$"),
-  );
-}
-
-function quoted_string($, opening, ...rules) {
+/**
+ * @param {RuleOrLiteral} $
+ */
+function escape_sequence($) {
   return seq(
-    prec.right(PREC.attributes, opening),
-    repeat(choice($._string_content, ...rules)),
-    $._string_closing,
+    "\\",
+    choice(
+      /u[a-fA-F\d]{4}/,
+      /U[a-fA-F\d]{8}/,
+      /x[a-fA-F\d]{2}/,
+      /\d{3}/,
+      /[abfrntv\\$]/,
+      $,
+    ),
   );
 }

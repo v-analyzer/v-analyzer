@@ -21,19 +21,15 @@ if s.no_inner {
 --------------------------------------------------------------------------------
 
 (source_file
-  (ERROR
-    (type_initializer
-      (plain_type
-        (qualified_type
-          (reference_expression
-            (identifier))
-          (type_reference_expression
-            (identifier))))
-      (type_initializer_body
-        (short_element_list
-          (element
-            (reference_expression
-              (identifier)))
-          (element
+  (simple_statement
+    (if_expression
+      (selector_expression
+        (reference_expression
+          (identifier))
+        (reference_expression
+          (identifier)))
+      (block
+        (return_statement
+          (expression_list
             (literal
               (interpreted_string_literal))))))))

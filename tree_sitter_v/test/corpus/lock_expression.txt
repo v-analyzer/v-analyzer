@@ -51,10 +51,9 @@ rlock a, b.name, c.other.foo {
             (identifier))
           (reference_expression
             (identifier)))
+        (ERROR)
         (selector_expression
-          (selector_expression
-            (reference_expression
-              (identifier))
+          (enum_fetch
             (reference_expression
               (identifier)))
           (reference_expression

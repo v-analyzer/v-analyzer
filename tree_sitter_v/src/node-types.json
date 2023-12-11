@@ -781,15 +781,11 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": true,
-      "required": false,
+      "multiple": false,
+      "required": true,
       "types": [
         {
-          "type": "escape_sequence",
-          "named": true
-        },
-        {
-          "type": "string_interpolation",
+          "type": "interpreted_string_literal",
           "named": true
         }
       ]
@@ -1290,6 +1286,11 @@
         ]
       }
     }
+  },
+  {
+    "type": "escape_sequence",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "expression_list",
@@ -2098,21 +2099,6 @@
           }
         ]
       }
-    }
-  },
-  {
-    "type": "interpolated_expression",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "_expression",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -4496,6 +4482,10 @@
     "named": false
   },
   {
+    "type": "\\",
+    "named": false
+  },
+  {
     "type": "]",
     "named": false
   },
@@ -4532,6 +4522,10 @@
     "named": false
   },
   {
+    "type": "c",
+    "named": false
+  },
+  {
     "type": "chan",
     "named": false
   },
@@ -4558,10 +4552,6 @@
   {
     "type": "enum",
     "named": false
-  },
-  {
-    "type": "escape_sequence",
-    "named": true
   },
   {
     "type": "false",
@@ -4653,6 +4643,10 @@
   },
   {
     "type": "pub",
+    "named": false
+  },
+  {
+    "type": "r",
     "named": false
   },
   {

@@ -305,7 +305,8 @@ c'Hello, World!'
 (source_file
   (simple_statement
     (literal
-      (c_string_literal))))
+      (c_string_literal
+        (interpreted_string_literal)))))
 
 ================================================================================
 Raw string literal
@@ -338,7 +339,8 @@ String literal with escape sequences
 (source_file
   (simple_statement
     (literal
-      (interpreted_string_literal))))
+      (interpreted_string_literal
+        (escape_sequence)))))
 
 ================================================================================
 String literal with interpolation after \n
@@ -350,6 +352,8 @@ String literal with interpolation after \n
   (simple_statement
     (literal
       (interpreted_string_literal
+        (escape_sequence)
+        (escape_sequence)
         (string_interpolation
           (braced_interpolation_opening)
           (interpolated_expression

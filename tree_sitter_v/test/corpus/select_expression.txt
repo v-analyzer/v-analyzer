@@ -14,13 +14,13 @@ select {
 (source_file
   (simple_statement
     (select_expression
+      (ERROR)
       (select_arm
         (select_arm_statement
-          (send_statement
-            (reference_expression
-              (identifier))
-            (reference_expression
-              (identifier))))
+          (expression_list
+            (receive_expression
+              (reference_expression
+                (identifier)))))
         (block
           (simple_statement
             (call_expression
@@ -102,13 +102,13 @@ select {
 (source_file
   (simple_statement
     (select_expression
+      (ERROR)
       (select_arm
         (select_arm_statement
-          (send_statement
-            (reference_expression
-              (identifier))
-            (reference_expression
-              (identifier))))
+          (expression_list
+            (receive_expression
+              (reference_expression
+                (identifier)))))
         (block
           (simple_statement
             (call_expression

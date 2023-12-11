@@ -57,6 +57,7 @@ pub enum NodeType {
 	enum_declaration
 	enum_fetch
 	enum_field_definition
+	escape_sequence
 	expression_list
 	field_name
 	fixed_array_creation
@@ -89,7 +90,6 @@ pub enum NodeType {
 	index_expression
 	interface_declaration
 	interface_method_definition
-	interpolated_expression
 	interpreted_string_literal
 	is_expression
 	key_value_attribute
@@ -177,7 +177,6 @@ pub enum NodeType {
 	visibility_modifiers
 	wrong_pointer_type
 	comment
-	escape_sequence
 	false_
 	float_literal
 	identifier
@@ -371,6 +370,7 @@ const node_type_name_to_enum = {
 	'enum_declaration':                 NodeType.enum_declaration
 	'enum_fetch':                       NodeType.enum_fetch
 	'enum_field_definition':            NodeType.enum_field_definition
+	'escape_sequence':                  NodeType.escape_sequence
 	'expression_list':                  NodeType.expression_list
 	'field_name':                       NodeType.field_name
 	'fixed_array_creation':             NodeType.fixed_array_creation
@@ -403,7 +403,6 @@ const node_type_name_to_enum = {
 	'index_expression':                 NodeType.index_expression
 	'interface_declaration':            NodeType.interface_declaration
 	'interface_method_definition':      NodeType.interface_method_definition
-	'interpolated_expression':          NodeType.interpolated_expression
 	'interpreted_string_literal':       NodeType.interpreted_string_literal
 	'is_expression':                    NodeType.is_expression
 	'key_value_attribute':              NodeType.key_value_attribute
@@ -491,7 +490,6 @@ const node_type_name_to_enum = {
 	'visibility_modifiers':             NodeType.visibility_modifiers
 	'wrong_pointer_type':               NodeType.wrong_pointer_type
 	'comment':                          NodeType.comment
-	'escape_sequence':                  NodeType.escape_sequence
 	'false':                            NodeType.false_
 	'float_literal':                    NodeType.float_literal
 	'identifier':                       NodeType.identifier
