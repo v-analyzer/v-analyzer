@@ -1260,21 +1260,6 @@ module.exports = grammar({
 
     // ==================== STATEMENTS ====================
 
-    _statement_list: ($) =>
-      choice(
-        seq(
-          $._statement,
-          repeat(seq(terminator, $._statement)),
-          optional(
-            seq(
-              terminator,
-              optional(alias($.empty_labeled_statement, $.labeled_statement)),
-            ),
-          ),
-        ),
-        alias($.empty_labeled_statement, $.labeled_statement),
-      ),
-
     _statement: ($) =>
       choice(
         $.simple_statement,
@@ -1347,7 +1332,7 @@ module.exports = grammar({
         field("right", $.expression_list),
       ),
 
-    block: ($) => seq("{", optional($._statement_list), "}"),
+    block: ($) => seq("{", repeat($._statement), "}"),
 
     defer_statement: ($) => seq("defer", $.block),
 
