@@ -498,7 +498,6 @@ module.exports = grammar({
         $.not_in_expression,
         $.index_expression,
         $.slice_expression,
-        // $.type_cast_expression,
         $.as_type_cast_expression,
         $.selector_expression,
         $.enum_fetch,
@@ -713,14 +712,6 @@ module.exports = grammar({
     },
 
     as_type_cast_expression: ($) => seq($._expression, "as", $.plain_type),
-
-    type_cast_expression: ($) =>
-      seq(
-        field("type", $.plain_type),
-        "(",
-        field("operand", $._expression),
-        ")",
-      ),
 
     compile_time_selector_expression: ($) =>
       comp_time(
