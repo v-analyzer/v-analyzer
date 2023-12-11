@@ -65,4 +65,4 @@ foo({})
         (identifier))
       (argument_list
         (argument
-          (empty_literal_value))))))
+          (map_init_expression))))))
