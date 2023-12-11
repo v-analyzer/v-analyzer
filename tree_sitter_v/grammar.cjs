@@ -721,11 +721,6 @@ module.exports = grammar({
         ")",
       ),
 
-    compile_time_selector_expression: ($) =>
-      comp_time(
-        seq("(", choice($.reference_expression, $.selector_expression), ")"),
-      ),
-
     or_block: ($) => seq("or", field("block", $.block)),
 
     _max_group: ($) =>
@@ -804,11 +799,16 @@ module.exports = grammar({
               "field",
               choice(
                 $.reference_expression,
-                $.compile_time_selector_expression,
+                $._compile_time_selector_expression,
               ),
             ),
           ),
         ),
+      ),
+
+    _compile_time_selector_expression: ($) =>
+      comp_time(
+        seq("(", choice($.reference_expression, $.selector_expression), ")"),
       ),
 
     index_expression: ($) =>

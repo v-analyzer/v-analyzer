@@ -10,16 +10,14 @@ name.$(some.other)
     (selector_expression
       (reference_expression
         (identifier))
-      (compile_time_selector_expression
-        (reference_expression
-          (identifier)))))
+      (reference_expression
+        (identifier))))
   (simple_statement
     (selector_expression
       (reference_expression
         (identifier))
-      (compile_time_selector_expression
-        (selector_expression
-          (reference_expression
-            (identifier))
-          (reference_expression
-            (identifier)))))))
+      (selector_expression
+        (reference_expression
+          (identifier))
+        (reference_expression
+          (identifier))))))

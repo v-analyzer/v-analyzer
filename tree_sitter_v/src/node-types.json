@@ -953,25 +953,6 @@
     }
   },
   {
-    "type": "compile_time_selector_expression",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "reference_expression",
-          "named": true
-        },
-        {
-          "type": "selector_expression",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "const_declaration",
     "named": true,
     "fields": {
@@ -3349,15 +3330,27 @@
     "named": true,
     "fields": {
       "field": {
-        "multiple": false,
+        "multiple": true,
         "required": true,
         "types": [
           {
-            "type": "compile_time_selector_expression",
-            "named": true
+            "type": "$",
+            "named": false
+          },
+          {
+            "type": "(",
+            "named": false
+          },
+          {
+            "type": ")",
+            "named": false
           },
           {
             "type": "reference_expression",
+            "named": true
+          },
+          {
+            "type": "selector_expression",
             "named": true
           }
         ]
