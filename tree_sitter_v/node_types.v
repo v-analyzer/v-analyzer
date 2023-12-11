@@ -231,6 +231,7 @@ const supertype__statement_nodes = [
 	NodeType.append_statement,
 	.asm_statement,
 	.assert_statement,
+	.assignment_statement,
 	.block,
 	.break_statement,
 	.compile_time_for_statement,

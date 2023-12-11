@@ -5,15 +5,14 @@ cache = <-cache_chan
 --------------------------------------------------------------------------------
 
 (source_file
-  (simple_statement
-    (assignment_statement
-      (expression_list
+  (assignment_statement
+    (expression_list
+      (reference_expression
+        (identifier)))
+    (expression_list
+      (receive_expression
         (reference_expression
-          (identifier)))
-      (expression_list
-        (receive_expression
-          (reference_expression
-            (identifier)))))))
+          (identifier))))))
 
 ================================================================================
 Receive expression with propagation
@@ -22,16 +21,15 @@ cache = <-cache_chan!
 --------------------------------------------------------------------------------
 
 (source_file
-  (simple_statement
-    (assignment_statement
-      (expression_list
-        (reference_expression
-          (identifier)))
-      (expression_list
-        (receive_expression
-          (result_propagation_expression
-            (reference_expression
-              (identifier))))))))
+  (assignment_statement
+    (expression_list
+      (reference_expression
+        (identifier)))
+    (expression_list
+      (receive_expression
+        (result_propagation_expression
+          (reference_expression
+            (identifier)))))))
 
 ================================================================================
 Receive expression with or block
@@ -40,19 +38,18 @@ cache = <-cache_chan or { return }
 --------------------------------------------------------------------------------
 
 (source_file
-  (simple_statement
-    (assignment_statement
-      (expression_list
-        (reference_expression
-          (identifier)))
-      (expression_list
-        (or_block_expression
-          (receive_expression
-            (reference_expression
-              (identifier)))
-          (or_block
-            (block
-              (return_statement))))))))
+  (assignment_statement
+    (expression_list
+      (reference_expression
+        (identifier)))
+    (expression_list
+      (or_block_expression
+        (receive_expression
+          (reference_expression
+            (identifier)))
+        (or_block
+          (block
+            (return_statement)))))))
 
 ================================================================================
 Send statement

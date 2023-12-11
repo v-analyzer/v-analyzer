@@ -7430,6 +7430,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "assignment_statement"
+        },
+        {
+          "type": "SYMBOL",
           "name": "continue_statement"
         },
         {
@@ -7492,10 +7496,6 @@
         {
           "type": "SYMBOL",
           "name": "_expression"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "assignment_statement"
         },
         {
           "type": "ALIAS",

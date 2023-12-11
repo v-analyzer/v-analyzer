@@ -1279,6 +1279,7 @@ module.exports = grammar({
       choice(
         $.simple_statement,
         $.assert_statement,
+        $.assignment_statement,
         $.continue_statement,
         $.break_statement,
         $.return_statement,
@@ -1298,7 +1299,6 @@ module.exports = grammar({
       choice(
         $.var_declaration,
         $._expression,
-        $.assignment_statement,
         alias($.strictly_expression_list, $.expression_list),
       ),
 

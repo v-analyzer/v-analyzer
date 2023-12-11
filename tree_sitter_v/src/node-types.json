@@ -180,6 +180,10 @@
         "named": true
       },
       {
+        "type": "assignment_statement",
+        "named": true
+      },
+      {
         "type": "block",
         "named": true
       },
@@ -3463,10 +3467,6 @@
       "types": [
         {
           "type": "_expression",
-          "named": true
-        },
-        {
-          "type": "assignment_statement",
           "named": true
         },
         {
