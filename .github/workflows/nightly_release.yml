@@ -35,6 +35,9 @@ jobs:
       CC: ${{ matrix.cc }}
 
     steps:
+      - uses: msys2/setup-msys2@v2
+        if: runner.os == 'Windows'
+
       - name: Install V
         id: install-v
         uses: vlang/setup-v@v1.3
@@ -42,7 +45,7 @@ jobs:
           check-latest: true
 
       - name: Checkout v-analyzer
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
         with:
           path: v-analyzer
 
@@ -62,13 +65,15 @@ jobs:
           v build.vsh release
 
       - name: Create ZIP archive
-        if: runner.os != 'Windows'
+        if: matrix.os != 'windows-latest'
         run: |
           zip -j9 v-analyzer-${{ matrix.target }} ./v-analyzer/bin/v-analyzer
 
       - name: Create ZIP archive
-        if: runner.os == 'Windows'
-        run: Compress-Archive ".\v-analyzer\bin\v-analyzer.exe" v-analyzer-${{ matrix.target }}.zip
+        if: matrix.os == 'windows-latest'
+        shell: msys2 {0}
+        run: |
+          powershell Compress-Archive ".\v-analyzer\bin\v-analyzer.exe" v-analyzer-${{ matrix.target }}.zip
         # Note: the powershell Compress-Archive line is from:
         # https://superuser.com/a/1336434/194881
         # It is needed, because `zip` is not installed by default :-|
