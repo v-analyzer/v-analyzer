@@ -18,8 +18,8 @@ jobs:
           - os: windows-latest
             target: windows-x86_64
             bin_ext: .exe
-            cc: msvc
-          - os: ubuntu-20.04
+            cc: gcc
+          - os: ubuntu-latest
             target: linux-x86_64
             cc: gcc
           - os: macos-latest
@@ -28,16 +28,15 @@ jobs:
           - os: macos-latest
             target: darwin-arm64
             cc: clang
+            vflags: -d cross_compile_macos_arm64
 
     name: Build binary artifact for ${{ matrix.target }}
     runs-on: ${{ matrix.os }}
     env:
       CC: ${{ matrix.cc }}
+      VFLAGS: ${{ matrix.vflags }}
 
     steps:
-      - uses: msys2/setup-msys2@v2
-        if: runner.os == 'Windows'
-
       - name: Install V
         id: install-v
         uses: vlang/setup-v@v1.3
@@ -45,72 +44,38 @@ jobs:
           check-latest: true
 
       - name: Checkout v-analyzer
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           path: v-analyzer
 
-      # Note: cross compile until we have an available arm64 runner
-      - name: Compile (cross compile arm64)
-        if: matrix.target == 'darwin-arm64'
-        run: |
-          cd v-analyzer
-          v install
-          v -d cross_compile_macos_arm64 build.vsh release
-
       - name: Compile
-        if: matrix.target != 'darwin-arm64'
         run: |
           cd v-analyzer
           v install
-          v build.vsh release
-
-      - name: Create ZIP archive
-        if: matrix.os != 'windows-latest'
-        run: |
-          zip -j9 v-analyzer-${{ matrix.target }} ./v-analyzer/bin/v-analyzer
-
-      - name: Create ZIP archive
-        if: matrix.os == 'windows-latest'
-        shell: msys2 {0}
-        run: |
-          powershell Compress-Archive ".\v-analyzer\bin\v-analyzer.exe" v-analyzer-${{ matrix.target }}.zip
-        # Note: the powershell Compress-Archive line is from:
-        # https://superuser.com/a/1336434/194881
-        # It is needed, because `zip` is not installed by default :-|
+          v run build.vsh release
 
       - name: Create artifact
-        uses: actions/upload-artifact@v3.1.2
+        uses: actions/upload-artifact@v3
         with:
-          name: v-analyzer-${{ matrix.target }}.zip
-          path: ./v-analyzer-${{ matrix.target }}.zip
+          name: v-analyzer-${{ matrix.target }}
+          path: ./v-analyzer/bin/v-analyzer${{ matrix.bin_ext }}
 
   nightly-release:
     name: Create Nightly GitHub Release
     if: github.event.repository.full_name == 'v-analyzer/v-analyzer'
     needs: dist
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - name: Fetch linux-x86_64
-        uses: actions/download-artifact@v1
-        with:
-          name: v-analyzer-linux-x86_64.zip
-          path: ./
-      - name: Fetch darwin-x86_64
-        uses: actions/download-artifact@v1
-        with:
-          name: v-analyzer-darwin-x86_64.zip
-          path: ./
-      - name: Fetch darwin-arm64
-        uses: actions/download-artifact@v1
-        with:
-          name: v-analyzer-darwin-arm64.zip
-          path: ./
-      - name: Fetch windows-x86_64
-        uses: actions/download-artifact@v1
-        with:
-          name: v-analyzer-windows-x86_64.zip
-          path: ./
+      - uses: actions/download-artifact@v3
+
+      - name: 'Create zip'
+        shell: bash
+        run: |
+          for name in $(ls -d v-analyzer-*); do
+            7z a -y -tzip -mx=9 -mtc=off -sdel -aoa $name $name/.
+            rm -rf $name
+          done
+
       - uses: marvinpinto/action-automatic-releases@latest
         name: Create Release and Upload Assets
         id: create_release
@@ -120,7 +85,4 @@ jobs:
           prerelease: true
           title: nightly release
           files: |
-            v-analyzer-linux-x86_64.zip
-            v-analyzer-darwin-x86_64.zip
-            v-analyzer-darwin-arm64.zip
-            v-analyzer-windows-x86_64.zip
+            *.zip
