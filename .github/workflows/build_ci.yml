@@ -29,7 +29,7 @@ jobs:
           check-latest: true
 
       - name: Checkout v-analyzer
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           path: v-analyzer
 
