@@ -5,10 +5,9 @@ import server.documentation
 import loglib
 import server.tform
 
-pub fn (mut ls LanguageServer) hover(params lsp.HoverParams) lsp.Hover {
-	empty_hover := lsp.Hover{}
+pub fn (mut ls LanguageServer) hover(params lsp.HoverParams) ?lsp.Hover {
 	uri := params.text_document.uri.normalize()
-	file := ls.get_file(uri) or { return empty_hover }
+	file := ls.get_file(uri)?
 
 	loglib.with_fields({
 		'position': params.position.str()
@@ -20,7 +19,7 @@ pub fn (mut ls LanguageServer) hover(params lsp.HoverParams) lsp.Hover {
 		loglib.with_fields({
 			'offset': offset.str()
 		}).warn('Cannot find element')
-		return empty_hover
+		return none
 	}
 
 	if element.element_type() == .unknown {
@@ -34,7 +33,7 @@ pub fn (mut ls LanguageServer) hover(params lsp.HoverParams) lsp.Hover {
 	}
 
 	mut provider := documentation.Provider{}
-	doc_element := provider.find_documentation_element(element) or { return empty_hover }
+	doc_element := provider.find_documentation_element(element)?
 	if content := provider.documentation(doc_element) {
 		return lsp.Hover{
 			contents: lsp.hover_markdown_string(content)
@@ -63,5 +62,5 @@ pub fn (mut ls LanguageServer) hover(params lsp.HoverParams) lsp.Hover {
 		}
 	}
 
-	return empty_hover
+	return none
 }

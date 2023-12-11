@@ -3,14 +3,13 @@ module server
 import lsp
 import server.hints
 
-pub fn (mut ls LanguageServer) inlay_hints(params lsp.InlayHintParams) []lsp.InlayHint {
-	empty_hint := []lsp.InlayHint{}
+pub fn (mut ls LanguageServer) inlay_hints(params lsp.InlayHintParams) ?[]lsp.InlayHint {
 	if !ls.cfg.inlay_hints.enable {
-		return empty_hint
+		return none
 	}
 
 	uri := params.text_document.uri.normalize()
-	file := ls.get_file(uri) or { return empty_hint }
+	file := ls.get_file(uri)?
 
 	mut visitor := hints.InlayHintsVisitor{
 		cfg: ls.cfg.inlay_hints
