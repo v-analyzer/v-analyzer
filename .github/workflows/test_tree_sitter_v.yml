@@ -2,13 +2,9 @@ name: Test tree-sitter-v
 
 on:
   push:
-    branches:
-      - main
     paths:
       - 'tree_sitter_v/**'
   pull_request:
-    branches:
-      - main
     paths:
       - 'tree_sitter_v/**'
 

@@ -18,10 +18,10 @@ jobs:
             cc: -cc tcc
           - os: windows-latest
             cc: -cc gcc
+      fail-fast: false
 
     name: Analyzer tests on ${{ matrix.os }} with ${{ matrix.cc }}
     runs-on: ${{ matrix.os }}
-    continue-on-error: true
 
     steps:
       - name: Install V
@@ -31,7 +31,7 @@ jobs:
           check-latest: true
 
       - name: Checkout v-analyzer
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           path: v-analyzer
 
