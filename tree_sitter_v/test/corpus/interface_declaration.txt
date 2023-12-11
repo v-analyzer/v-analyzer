@@ -116,7 +116,7 @@ mut:
 Interface with field with default type and attribute
 ================================================================================
 interface Foo {
-    name string [json: 'Name'] = ''
+    name string = '' [json: 'Name']
     do() string
 }
 --------------------------------------------------------------------------------
@@ -129,6 +129,8 @@ interface Foo {
       (plain_type
         (type_reference_expression
           (identifier)))
+      (literal
+        (interpreted_string_literal))
       (attribute
         (attribute_expression
           (key_value_attribute
@@ -136,9 +138,7 @@ interface Foo {
               (reference_expression
                 (identifier)))
             (literal
-              (interpreted_string_literal)))))
-      (literal
-        (interpreted_string_literal)))
+              (interpreted_string_literal))))))
     (interface_method_definition
       (identifier)
       (signature

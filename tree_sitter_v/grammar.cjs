@@ -409,8 +409,8 @@ module.exports = grammar({
         seq(
           field("name", $.identifier),
           field("type", $.plain_type),
-          optional(field("attributes", $.attribute)),
           optional(seq("=", field("default_value", $._expression))),
+          optional(field("attributes", $.attribute)),
         ),
       ),
 
