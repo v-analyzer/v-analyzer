@@ -2205,10 +2205,6 @@
         },
         {
           "type": "SYMBOL",
-          "name": "empty_literal_value"
-        },
-        {
-          "type": "SYMBOL",
           "name": "reference_expression"
         },
         {
@@ -3826,7 +3822,7 @@
             "value": "{"
           },
           {
-            "type": "REPEAT1",
+            "type": "REPEAT",
             "content": {
               "type": "SEQ",
               "members": [
@@ -6844,23 +6840,6 @@
                 }
               ]
             }
-          }
-        ]
-      }
-    },
-    "empty_literal_value": {
-      "type": "PREC",
-      "value": -1,
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "STRING",
-            "value": "{"
-          },
-          {
-            "type": "STRING",
-            "value": "}"
           }
         ]
       }
