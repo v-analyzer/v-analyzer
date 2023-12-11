@@ -74,7 +74,6 @@ struct TSLexer {
 #endif
 
 enum TokenType {
-    AUTOMATIC_SEPARATOR,
     BRACED_INTERPOLATION_OPENING,
     INTERPOLATION_CLOSING,
     C_STRING_OPENING, // = 3
@@ -82,8 +81,6 @@ enum TokenType {
     STRING_OPENING, // = 5
     STRING_CONTENT,
     STRING_CLOSING,
-    COMMENT,
-    ERROR_SENTINEL,
     NONE
 };
 
@@ -239,76 +236,6 @@ static bool scan_interpolation_closing(Scanner *scanner, TSLexer *lexer) {
     return true;
 }
 
-static bool scan_automatic_separator(Scanner *scanner, TSLexer *lexer) {
-    bool is_newline = false;
-    bool has_whitespace = false;
-    int tab_count = 0;
-
-    while (is_end_line(lexer->lookahead)) {
-        if (!has_whitespace) {
-            has_whitespace = true;
-        }
-
-        if (lexer->lookahead == '\r') {
-            advance(lexer);
-            mark_end(lexer);
-        }
-
-        if (!is_newline && lexer->lookahead == '\n') {
-            is_newline = true;
-        } else if (lexer->lookahead == '\t') {
-            tab_count++;
-        }
-
-        advance(lexer);
-        mark_end(lexer);
-    }
-
-    // true if tab count is 1 or below, false if above 1
-    bool needs_to_be_separated = tab_count <= 1;
-
-    // for multi-level blocks. not a good code. should be improved later.
-    if (has_whitespace) {
-        char got_char = lexer->lookahead;
-        switch (got_char) {
-            case '|':
-            case '&':
-                advance(lexer);
-                if (lexer->lookahead == got_char || !isalpha(lexer->lookahead)) {
-                    needs_to_be_separated = false;
-                } else {
-                    needs_to_be_separated = true;
-                }
-                break;
-            case '*':
-            case '_':
-            case '\'':
-            case '"':
-                needs_to_be_separated = true;
-                break;
-            case '/':
-                advance(lexer);
-                if (lexer->lookahead == got_char || lexer->lookahead == '*') {
-                    needs_to_be_separated = true;
-                } else {
-                    needs_to_be_separated = false;
-                }
-            default:
-                if (isalpha(lexer->lookahead)) {
-                    needs_to_be_separated = true;
-                }
-                break;
-        }
-    }
-
-    if (is_newline && needs_to_be_separated) {
-        lexer->result_symbol = AUTOMATIC_SEPARATOR;
-        return true;
-    }
-
-    return false;
-}
-
 static bool scan_string_opening(Scanner *scanner, TSLexer *lexer, bool is_quote, bool is_c, bool is_raw) {
     if (is_raw && lexer->lookahead == 'r') {
         lexer->result_symbol = RAW_STRING_OPENING;
@@ -380,61 +307,6 @@ static bool scan_string_content(Scanner *scanner, TSLexer *lexer) {
     }
 
     return has_content;
-}
-
-static bool scan_comment(Scanner *scanner, TSLexer *lexer) {
-    advance(lexer);
-    if (lexer->lookahead != '/' && lexer->lookahead != '*') {
-        return false;
-    }
-
-    bool is_multiline = lexer->lookahead == '*';
-    int nested_multiline_count = 0;
-    advance(lexer);
-
-    while (true) {
-        mark_end(lexer);
-        if (is_multiline) {
-            if (lexer->lookahead == '/') {
-                // Handles the "nested" comments (e.g. /* /* comment */ */)
-                advance(lexer);
-                if (lexer->lookahead == '*') {
-                    advance(lexer);
-                    mark_end(lexer);
-                    nested_multiline_count++;
-                }
-
-                continue;
-            } else if (lexer->lookahead == '*') {
-                advance(lexer);
-                if (lexer->lookahead == '/') {
-                    advance(lexer);
-                    mark_end(lexer);
-                    if (nested_multiline_count == 0) {
-                        break;
-                    }
-
-                    nested_multiline_count--;
-                }
-
-                // do mark_end first before advancing
-                continue;
-            }
-        }
-
-        if (!is_multiline && (lexer->lookahead == '\r' || lexer->lookahead == '\n')) {
-            break;
-        }
-
-        if (lexer->lookahead == '\0') {
-            break;
-        }
-
-        advance(lexer);
-    }
-
-    lexer->result_symbol = COMMENT;
-    return true;
 }
 
 // Next functions used by Tree-sitter
@@ -515,20 +387,12 @@ bool tree_sitter_v_external_scanner_scan(void *payload, TSLexer *lexer, const bo
     bool is_stack_empty = stack_empty(scanner->tokens);
     uint8_t top = stack_top(scanner->tokens);
 
-    if (is_end_line(lexer->lookahead) && valid_symbols[AUTOMATIC_SEPARATOR] && is_stack_empty) {
-        return scan_automatic_separator(scanner, lexer);
-    }
-
     if (is_stack_empty || top == BRACED_INTERPOLATION_OPENING) {
         // a string might follow after some whitespace, so we can't lookahead
         // until we get rid of it
         while (iswspace(lexer->lookahead)) {
             skip(lexer);
         }
-    }
-
-    if (!is_type_string(top) && lexer->lookahead == '/' && valid_symbols[COMMENT]) {
-        return scan_comment(scanner, lexer);
     }
 
     bool expect_c_string = valid_symbols[C_STRING_OPENING];
@@ -541,17 +405,6 @@ bool tree_sitter_v_external_scanner_scan(void *payload, TSLexer *lexer, const bo
 
     int stack_about_string = top == BRACED_INTERPOLATION_OPENING ||
                              is_stack_empty;
-
-    if (valid_symbols[ERROR_SENTINEL] && (lexer->lookahead == '\'' || lexer->lookahead == '"' || is_type_string(top))) {
-        stack_pop(scanner->tokens);
-        return scan_string_opening(
-                scanner,
-                lexer,
-                expect_string_quote,
-                expect_c_string,
-                expect_raw_string
-        );
-    }
 
     if (stack_about_string && expect_string_start) {
         return scan_string_opening(

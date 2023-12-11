@@ -39,7 +39,6 @@ pub enum NodeType {
 	capture
 	capture_list
 	channel_type
-	comment
 	compile_time_for_statement
 	compile_time_if_expression
 	compile_time_selector_expression
@@ -177,6 +176,7 @@ pub enum NodeType {
 	var_definition_list
 	visibility_modifiers
 	wrong_pointer_type
+	comment
 	escape_sequence
 	false_
 	float_literal
@@ -353,7 +353,6 @@ const node_type_name_to_enum = {
 	'capture':                          NodeType.capture
 	'capture_list':                     NodeType.capture_list
 	'channel_type':                     NodeType.channel_type
-	'comment':                          NodeType.comment
 	'compile_time_for_statement':       NodeType.compile_time_for_statement
 	'compile_time_if_expression':       NodeType.compile_time_if_expression
 	'compile_time_selector_expression': NodeType.compile_time_selector_expression
@@ -491,6 +490,7 @@ const node_type_name_to_enum = {
 	'var_definition_list':              NodeType.var_definition_list
 	'visibility_modifiers':             NodeType.visibility_modifiers
 	'wrong_pointer_type':               NodeType.wrong_pointer_type
+	'comment':                          NodeType.comment
 	'escape_sequence':                  NodeType.escape_sequence
 	'false':                            NodeType.false_
 	'float_literal':                    NodeType.float_literal

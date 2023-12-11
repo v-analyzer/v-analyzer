@@ -129,7 +129,6 @@ module.exports = grammar({
   word: ($) => $.identifier,
 
   externals: ($) => [
-    $._automatic_separator,
     $._braced_interpolation_opening,
     $._interpolation_closing,
     $._c_string_opening,
@@ -137,8 +136,6 @@ module.exports = grammar({
     $._string_opening,
     $._string_content,
     $._string_closing,
-    $._comment,
-    $.error_sentinel,
   ],
 
   inline: ($) => [
@@ -181,7 +178,15 @@ module.exports = grammar({
       ),
 
     // http://stackoverflow.com/questions/13014947/regex-to-match-a-c-style-multiline-comment/36328890#36328890
-    comment: ($) => $._comment,
+    comment: (_) =>
+      token(
+        prec.left(
+          choice(
+            seq("//", /[^\n\r]*/),
+            seq("/*", /([^*]*\*+(?:[^/*][^*]*\*+)*)*/, "/"),
+          ),
+        ),
+      ),
 
     module_clause: ($) => seq(optional($.attributes), "module", $.identifier),
 
