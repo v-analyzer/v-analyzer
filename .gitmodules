@@ -1,0 +1,4 @@
+[submodule "v-tree-sitter"]
+	path = v-tree-sitter
+	url = https://github.com/v-analyzer/v-tree-sitter.git
+	branch = main
