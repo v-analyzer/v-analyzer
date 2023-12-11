@@ -18,7 +18,6 @@ const PREC = {
   or: 1,
   resolve: 1,
   composite_literal: -1,
-  empty_array: -2,
   strictly_expression_list: -3,
 };
 
@@ -144,7 +143,7 @@ module.exports = grammar({
   inline: ($) => [
     $._string_literal,
     $._top_level_declaration,
-    $._non_empty_array,
+    $._array,
   ],
 
   supertypes: ($) => [
@@ -490,7 +489,6 @@ module.exports = grammar({
         $.reference_expression,
         $._max_group,
         $.array_creation,
-        $.empty_array_creation,
         $.fixed_array_creation,
         $.unary_expression,
         $.receive_expression,
@@ -789,16 +787,13 @@ module.exports = grammar({
     map_keyed_element: ($) =>
       seq(field("key", $._expression), ":", field("value", $._expression)),
 
-    array_creation: ($) => prec.right(PREC.multiplicative, $._non_empty_array),
-
-    empty_array_creation: () =>
-      prec(PREC.empty_array, prec.dynamic(-1, seq("[", "]"))),
+    array_creation: ($) => prec.right(PREC.multiplicative, $._array),
 
     fixed_array_creation: ($) =>
-      prec.right(PREC.multiplicative, seq($._non_empty_array, "!")),
+      prec.right(PREC.multiplicative, seq($._array, "!")),
 
-    _non_empty_array: ($) =>
-      seq("[", repeat1(seq($._expression, optional(","))), "]"),
+    _array: ($) =>
+      seq("[", repeat(seq($._expression, optional(","))), "]"),
 
     selector_expression: ($) =>
       prec.dynamic(

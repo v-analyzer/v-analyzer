@@ -78,7 +78,7 @@ Empty array creation
 
 (source_file
   (simple_statement
-    (empty_array_creation)))
+    (array_creation)))
 
 ================================================================================
 Fixed array creation

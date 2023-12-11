@@ -28,10 +28,6 @@
         "named": true
       },
       {
-        "type": "empty_array_creation",
-        "named": true
-      },
-      {
         "type": "empty_literal_value",
         "named": true
       },
@@ -1175,11 +1171,6 @@
         }
       ]
     }
-  },
-  {
-    "type": "empty_array_creation",
-    "named": true,
-    "fields": {}
   },
   {
     "type": "empty_literal_value",
@@ -2565,10 +2556,6 @@
         },
         {
           "type": "dec_expression",
-          "named": true
-        },
-        {
-          "type": "empty_array_creation",
           "named": true
         },
         {
