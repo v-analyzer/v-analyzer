@@ -2221,10 +2221,6 @@
         },
         {
           "type": "SYMBOL",
-          "name": "empty_array_creation"
-        },
-        {
-          "type": "SYMBOL",
           "name": "fixed_array_creation"
         },
         {
@@ -2344,7 +2340,7 @@
     },
     "strictly_expression_list": {
       "type": "PREC",
-      "value": -3,
+      "value": -2,
       "content": {
         "type": "SEQ",
         "members": [
@@ -3921,28 +3917,7 @@
       "value": 5,
       "content": {
         "type": "SYMBOL",
-        "name": "_non_empty_array"
-      }
-    },
-    "empty_array_creation": {
-      "type": "PREC",
-      "value": -2,
-      "content": {
-        "type": "PREC_DYNAMIC",
-        "value": -1,
-        "content": {
-          "type": "SEQ",
-          "members": [
-            {
-              "type": "STRING",
-              "value": "["
-            },
-            {
-              "type": "STRING",
-              "value": "]"
-            }
-          ]
-        }
+        "name": "_array"
       }
     },
     "fixed_array_creation": {
@@ -3953,7 +3928,7 @@
         "members": [
           {
             "type": "SYMBOL",
-            "name": "_non_empty_array"
+            "name": "_array"
           },
           {
             "type": "STRING",
@@ -3962,7 +3937,7 @@
         ]
       }
     },
-    "_non_empty_array": {
+    "_array": {
       "type": "SEQ",
       "members": [
         {
@@ -3970,7 +3945,7 @@
           "value": "["
         },
         {
-          "type": "REPEAT1",
+          "type": "REPEAT",
           "content": {
             "type": "SEQ",
             "members": [
@@ -8593,8 +8568,7 @@
   "precedences": [],
   "externals": [],
   "inline": [
-    "_top_level_declaration",
-    "_non_empty_array"
+    "_top_level_declaration"
   ],
   "supertypes": [
     "_expression",
