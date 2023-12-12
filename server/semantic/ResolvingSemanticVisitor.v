@@ -62,6 +62,8 @@ fn (_ ResolveSemanticVisitor) highlight_node(node psi.PsiElement, root psi.PsiEl
 		result << element_to_semantic(first_child, .variable, ...mods)
 	} else if res is psi.ConstantDefinition {
 		result << element_to_semantic(first_child, .property)
+	} else if res is psi.InterfaceDeclaration {
+		result << element_to_semantic(first_child, .interface_)
 	} else if res is psi.StructDeclaration {
 		if res.name() != 'string' && res.module_name() != 'stubs.attributes' {
 			result << element_to_semantic(first_child, .struct_)
