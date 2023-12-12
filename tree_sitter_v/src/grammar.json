@@ -108,8 +108,42 @@
       ]
     },
     "comment": {
-      "type": "SYMBOL",
-      "name": "_comment"
+      "type": "TOKEN",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "//"
+              },
+              {
+                "type": "PATTERN",
+                "value": "[^\\n\\r]*"
+              }
+            ]
+          },
+          {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "/*"
+              },
+              {
+                "type": "PATTERN",
+                "value": "([^*]*\\*+(?:[^/*][^*]*\\*+)*)*"
+              },
+              {
+                "type": "STRING",
+                "value": "/"
+              }
+            ]
+          }
+        ]
+      }
     },
     "module_clause": {
       "type": "SEQ",
@@ -8340,10 +8374,6 @@
   "externals": [
     {
       "type": "SYMBOL",
-      "name": "_automatic_separator"
-    },
-    {
-      "type": "SYMBOL",
       "name": "_braced_interpolation_opening"
     },
     {
@@ -8369,14 +8399,6 @@
     {
       "type": "SYMBOL",
       "name": "_string_closing"
-    },
-    {
-      "type": "SYMBOL",
-      "name": "_comment"
-    },
-    {
-      "type": "SYMBOL",
-      "name": "error_sentinel"
     }
   ],
   "inline": [

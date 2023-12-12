@@ -43,19 +43,5 @@ module foo
 
 (source_file
   (comment)
-  (simple_statement
-    (binary_expression
-      (binary_expression
-        (unary_expression
-          (reference_expression
-            (MISSING identifier)))
-        (comment)
-        (comment)
-        (unary_expression
-          (reference_expression
-            (MISSING identifier))))
-      (reference_expression
-        (identifier))))
-  (simple_statement
-    (reference_expression
-      (identifier))))
+  (module_clause
+    (identifier)))
