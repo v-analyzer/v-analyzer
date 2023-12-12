@@ -74,22 +74,18 @@ pub fn (s StructDeclaration) visibility_modifiers() ?&VisibilityModifiers {
 }
 
 pub fn (s StructDeclaration) fields() []PsiElement {
-	own_fields := s.own_fields()
+	mut fields := s.own_fields()
 
-	embedded_struct_types := s.embedded_definitions()
+	embedded_types := s.embedded_definitions()
 		.map(types.unwrap_alias_type(it.get_type()))
 		.filter(it is types.StructType)
 
-	mut embedded_struct_fields := []PsiElement{cap: embedded_struct_types.len * 3}
-	for struct_type in embedded_struct_types {
+	for struct_type in embedded_types {
 		struct_ := find_struct(struct_type.qualified_name()) or { continue }
-		embedded_struct_fields << struct_.fields()
+		fields << struct_.fields()
 	}
 
-	mut result := []PsiElement{cap: own_fields.len + embedded_struct_fields.len}
-	result << own_fields
-	result << embedded_struct_fields
-	return result
+	return fields
 }
 
 pub fn (s StructDeclaration) own_fields() []PsiElement {

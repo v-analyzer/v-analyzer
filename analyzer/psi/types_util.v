@@ -38,6 +38,15 @@ pub fn methods_list(typ types.Type) []PsiElement {
 		result << own_methods_list(unwrapped)
 	}
 
+	if typ is types.InterfaceType {
+		if interface_ := find_interface(typ.qualified_name()) {
+			embedded_types := interface_.embedded_definitions().map(it.get_type())
+			for embedded_type in embedded_types {
+				result << methods_list(embedded_type)
+			}
+		}
+	}
+
 	if typ is types.StructType {
 		if struct_ := find_struct(typ.qualified_name()) {
 			embedded_types := struct_.embedded_definitions().map(it.get_type())
