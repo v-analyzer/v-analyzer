@@ -60,12 +60,17 @@ fn check_updates() ! {
 		return
 	}
 
-	if cur_version.trim_string_left('v') == asset.tag_name.trim_string_left('v') {
+	local_version := stable_version(cur_version)
+	asset_version := stable_version(asset.tag_name)
+	if local_version == asset_version {
 		println('You already have the latest version of ${term.bold('v-analyzer')}: ${cur_version}')
 		return
 	}
-
 	println('New version of ${term.bold('v-analyzer')} is available: ${term.bold(asset.tag_name)}')
+}
+
+fn stable_version(ver string) string {
+	return ver.split('.')#[..4].join('.')
 }
 
 fn update(nightly bool) ! {
