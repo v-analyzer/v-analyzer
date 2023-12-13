@@ -3,11 +3,14 @@ Line comment
 ================================================================================
 // Line comment
 // Line comment
+module foo
 --------------------------------------------------------------------------------
 
 (source_file
   (comment)
-  (comment))
+  (comment)
+  (module_clause
+    (identifier)))
 
 ================================================================================
 Multiline comment
@@ -16,10 +19,13 @@ Multiline comment
   Multiline comment
   Multiline comment
 */
+module foo
 --------------------------------------------------------------------------------
 
 (source_file
-  (comment))
+  (comment)
+  (module_clause
+    (identifier)))
 
 ================================================================================
 Multiline nested comment
@@ -27,8 +33,15 @@ Multiline nested comment
 /*
   Multiline comment
   /* Nested */
+  Multiline comment
+  */
+  */
+  /*******///*/
 */
+module foo
 --------------------------------------------------------------------------------
 
 (source_file
-  (comment))
+  (comment)
+  (module_clause
+    (identifier)))

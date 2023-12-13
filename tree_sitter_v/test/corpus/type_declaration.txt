@@ -185,9 +185,5 @@ type Height =
         (identifier)))
     (plain_type
       (type_reference_expression
-        (identifier)))
-    (plain_type
-      (type_reference_expression
-        (MISSING identifier))))
-  (comment
-    (MISSING _comment)))
+        (identifier))))
+  (ERROR))
