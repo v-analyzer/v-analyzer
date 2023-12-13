@@ -65,6 +65,22 @@ fn (mut r ReferenceCompletionProvider) process_fields(ctx &completion.Completion
 			typ.qualified_name()
 		}
 
+		if interface_ := psi.find_interface(qualified_name) {
+			for field in interface_.fields() {
+				if field is psi.FieldDeclaration {
+					if !field.is_public() && !lang.is_same_module(ctx.element, *field) {
+						continue
+					}
+
+					if field.name() in already_assigned {
+						continue
+					}
+
+					r.processor.execute(field)
+				}
+			}
+		}
+
 		if struct_ := psi.find_struct(qualified_name) {
 			for field in struct_.fields() {
 				if field is psi.FieldDeclaration {
