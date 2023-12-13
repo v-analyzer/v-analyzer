@@ -38,38 +38,38 @@ Let's get started setting up **v-analyzer** in VS Code!
 
 2. Now let's install VS Code **v-analyzer** extension:
 
-	1. Open the command palette with `Ctrl+Shift+P` or `Cmd+Shift+P`
-	2. Select `Install Extensions` and choose `v-analyzer`.
+    1. Open the command palette with `Ctrl+Shift+P` or `Cmd+Shift+P`
+    2. Select `Install Extensions` and choose `v-analyzer`.
 
    You can also install the extension manually:
 
-	1. Select `Install from VSIX...`
-	2. Choose pre-built VSIX file from this folder or build it yourself
+    1. Select `Install from VSIX...`
+    2. Choose pre-built VSIX file from this folder or build it yourself
 
    After installation, restart VS Code.
 
 3. Open any project that contains files with `.v` extension.
    The extension should automatically activate.
-   Upon activation, the extension will try to find `v-analyzer` server, which is the heart
-   of the extension and provides all the smart features.
+   Upon activation, the extension will try to find `v-analyzer` server, which
+   is the heart of the extension and provides all the smart features.
 
 4. Since `v-analyzer` server is not installed
-   (unless you installed it in advance and added it to PATH, in which case you can skip
-   this step), the extension will prompt you to install it.
+   (unless you installed it in advance and added it to PATH, in which case you
+   can skip this step), the extension will prompt you to install it.
    Click `Install` and wait for the installation to complete.
 
-5. After installing `v-analyzer` server, the extension will prompt you to restart the
-   `v-analyzer` server.
+5. After installing `v-analyzer` server, the extension will prompt you to
+   restart the `v-analyzer` server.
    Click `Yes` and wait for the restart to complete.
 
 6. When `v-analyzer` server is successfully restarted,
    it will start to analyze your project as well as the V standard library.
 
-7. Note that if `v-analyzer` server cannot find where the V standard library is stored,
-   an error will be shown.
+7. Note that if `v-analyzer` server cannot find where the V standard library
+   is stored, an error will be shown.
 
-   In this case, follow the instructions in the error and specify the path to the V source
-   code folder in the `custom_vroot` field.
+   In this case, follow the instructions in the error and specify the path to
+   the V source code folder in the `custom_vroot` field.
 
    > **Note**
    > You need to specify the folder where all the V sources are stored
@@ -96,7 +96,7 @@ repository, build it and specify the path to the compiled binary.
 
 ```json
 {
-	"v-analyzer.serverPath": "path/to/v-analyzer"
+    "v-analyzer.serverPath": "path/to/v-analyzer"
 }
 ```
 
@@ -108,8 +108,8 @@ feedback.
 
 ```json
 {
-	"files.autoSave": "afterDelay",
-	"files.autoSaveDelay": 300
+    "files.autoSave": "afterDelay",
+    "files.autoSaveDelay": 300
 }
 ```
 
@@ -126,22 +126,22 @@ In the settings, you can also specify colors for each entity type:
 
 ```json
 {
-	"editor.semanticTokenColorCustomizations": {
-		"[Theme Name]": {
-			"rules": {
-				"namespace": "#AFBF7E",
-				"parameter": "#B189F5",
-				"decorator": "#DEBC7E",
-				"typeParameter": "#B189F5",
-				"enumMember": "#72CFD6",
-				"*.global": "#A9B7C6",
-				"function": "#FFC66D",
-				"*.mutable": {
-					"underline": true
-				}
-			}
-		}
-	}
+    "editor.semanticTokenColorCustomizations": {
+        "[Theme Name]": {
+            "rules": {
+                "namespace": "#AFBF7E",
+                "parameter": "#B189F5",
+                "decorator": "#DEBC7E",
+                "typeParameter": "#B189F5",
+                "enumMember": "#72CFD6",
+                "*.global": "#A9B7C6",
+                "function": "#FFC66D",
+                "*.mutable": {
+                    "underline": true
+                }
+            }
+        }
+    }
 }
 ```
 
