@@ -155,8 +155,7 @@ pub fn (mut ls LanguageServer) handle_jsonrpc(request &jsonrpc.Request, mut rw j
 				ls.initialized(mut rw)
 			}
 			'exit' {
-				// ignore for the reasons stated in the above comment
-				// ls.exit()
+				ls.exit()
 			}
 			'textDocument/didOpen' {
 				params := json.decode(lsp.DidOpenTextDocumentParams, request.params) or {
