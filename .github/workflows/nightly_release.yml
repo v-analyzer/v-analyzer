@@ -19,7 +19,7 @@ jobs:
           - os: windows-latest
             target: windows-x86_64
             bin_ext: .exe
-            cc: gcc
+            cc: msvc
           - os: ubuntu-latest
             target: linux-x86_64
             cc: gcc
