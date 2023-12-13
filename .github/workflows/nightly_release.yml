@@ -1,6 +1,7 @@
 name: Build nightly release
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -86,4 +87,5 @@ jobs:
           automatic_release_tag: latest
           prerelease: true
           title: nightly release
-          files: *.zip
+          files: |
+            *.zip
