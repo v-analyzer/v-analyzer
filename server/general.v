@@ -5,7 +5,6 @@ import runtime
 import os
 import project
 import metadata
-import time
 import arrays
 import config
 import loglib
@@ -16,7 +15,9 @@ import server.progress
 import server.intentions
 import v.vmod
 
-const manifest = vmod.decode(@VMOD_FILE) or { panic(err) }
+pub const manifest = vmod.decode(@VMOD_FILE) or { panic(err) }
+pub const build_datetime = $env('BUILD_DATETIME')
+pub const build_commit = $env('BUILD_COMMIT')
 
 // initialize sends the server capabilities to the client
 pub fn (mut ls LanguageServer) initialize(params lsp.InitializeParams, mut wr ResponseWriter) lsp.InitializeResult {
@@ -408,7 +409,9 @@ pub fn (mut ls LanguageServer) exit() {
 	// move exit to shutdown for now
 	// == .shutdown => 0
 	// != .shutdown => 1
-	exit(int(ls.status != .shutdown))
+	ecode := int(ls.status != .shutdown)
+	loglib.info('v-analyzer exiting with ${ls.status}, exit code: ${ecode}')
+	exit(ecode)
 }
 
 fn (mut ls LanguageServer) print_info(process_id int, client_info lsp.ClientInfo) {
@@ -418,21 +421,21 @@ fn (mut ls LanguageServer) print_info(process_id int, client_info lsp.ClientInfo
 	} else {
 		'Unknown'
 	}
-
-	ls.client.log_message('v-analyzer version: ${server.manifest.version}, OS: ${os.user_os()} x${arch}',
+	ls.client.log_message('v-analyzer version: ${server.manifest.version}, commit: ${server.build_commit}, OS: ${os.user_os()} x${arch}',
 		.info)
 	ls.client.log_message('v-analyzer executable path: ${os.executable()}', .info)
 	ls.client.log_message('v-analyzer build with V ${@VHASH}', .info)
-	ls.client.log_message('v-analyzer build at ${time.now().format_ss()}', .info)
+	ls.client.log_message('v-analyzer build at ${server.build_datetime}', .info)
 	ls.client.log_message('Client / Editor: ${client_name} (PID: ${process_id})', .info)
 
 	loglib.with_fields({
-		'client_name': client_name
-		'process_id':  process_id.str()
-		'os':          os.user_os()
-		'arch':        'x${arch}'
-		'executable':  os.executable()
-		'build_with':  @VHASH
-		'build_at':    time.now().format_ss()
+		'client_name':  client_name
+		'process_id':   process_id.str()
+		'os':           os.user_os()
+		'arch':         'x${arch}'
+		'executable':   os.executable()
+		'build_with':   @VHASH
+		'build_at':     server.build_datetime
+		'build_commit': server.build_commit
 	}).info('v-analyzer started')
 }
