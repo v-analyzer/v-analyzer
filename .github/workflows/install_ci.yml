@@ -28,7 +28,7 @@ jobs:
         if: runner.os == 'Windows'
         run: curl -o install.vsh https://raw.githubusercontent.com/v-analyzer/v-analyzer/main/install.vsh; v run install.vsh; del install.vsh
 
-      - name: Install via webscript (Nix)
+      - name: Install via webscript (nix)
         if: runner.os != 'Windows'
         run: v -e "$(curl https://raw.githubusercontent.com/v-analyzer/v-analyzer/main/install.vsh -fsSL)"
 
