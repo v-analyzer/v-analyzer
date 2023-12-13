@@ -7,10 +7,9 @@ import loglib
 
 __global stubs_index = StubIndex{}
 
-const (
-	count_index_keys               = 15 // StubIndexKey
-	count_stub_index_location_keys = 5 // StubIndexLocationKind
-)
+const count_index_keys = 15 // StubIndexKey
+
+const count_stub_index_location_keys = 5 // StubIndexLocationKind
 
 // StubIndexLocationKind describes the type of index.
 // same as `IndexingRootKind`

@@ -116,7 +116,7 @@ fn install(no_interaction bool) ! {
 }
 
 fn install_from_binary(asset ReleaseAsset, update bool) ! {
-	println('> Download from url: $asset.browser_download_url ...')
+	println('> Download from url: ${asset.browser_download_url} ...')
 	print('Downloading ${term.bold('v-analyzer')} archive')
 	os.flush()
 

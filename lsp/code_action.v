@@ -31,16 +31,14 @@ pub enum CodeActionTriggerKind {
 }
 
 // type CodeActionKind string
-pub const (
-	empty                   = ''
-	quick_fix               = 'quickfix'
-	refactor                = 'refactor'
-	refactor_extract        = 'refactor.extract'
-	refactor_inline         = 'refactor.inline'
-	refactor_rewrite        = 'refactor.rewrite'
-	source                  = 'source'
-	source_organize_imports = 'source.organizeImports'
-)
+pub const empty = ''
+pub const quick_fix = 'quickfix'
+pub const refactor = 'refactor'
+pub const refactor_extract = 'refactor.extract'
+pub const refactor_inline = 'refactor.inline'
+pub const refactor_rewrite = 'refactor.rewrite'
+pub const source = 'source'
+pub const source_organize_imports = 'source.organizeImports'
 
 // Contains additional diagnostic information about the context in which
 // a code action is run.

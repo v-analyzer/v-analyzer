@@ -40,14 +40,12 @@ pub:
 	text_document TextDocumentIdentifier @[json: 'textDocument']
 }
 
-pub const (
-	// Folding range for a comment
-	folding_range_kind_comment = 'comment'
-	// Folding range for imports or includes
-	folding_range_kind_imports = 'imports'
-	// Folding range for a region (e.g. `#region`)
-	folding_range_kind_region  = 'region'
-)
+// Folding range for a comment
+pub const folding_range_kind_comment = 'comment'
+// Folding range for imports or includes
+pub const folding_range_kind_imports = 'imports'
+// Folding range for a region (e.g. `#region`)
+pub const folding_range_kind_region = 'region'
 
 // Represents a folding range. To be valid, start and end line must be bigger
 // than zero and smaller than the number of lines in the document. Clients

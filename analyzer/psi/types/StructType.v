@@ -1,14 +1,12 @@
 module types
 
-pub const (
-	string_type        = new_struct_type('string', 'builtin')
-	builtin_array_type = new_struct_type('array', 'builtin')
-	builtin_map_type   = new_struct_type('map', 'builtin')
-	array_init_type    = new_struct_type('ArrayInit', 'stubs')
-	chan_init_type     = new_struct_type('ChanInit', 'stubs')
-	flag_enum_type     = new_enum_type('FlagEnum', 'stubs')
-	any_type           = new_alias_type('Any', 'stubs', unknown_type)
-)
+pub const string_type = new_struct_type('string', 'builtin')
+pub const builtin_array_type = new_struct_type('array', 'builtin')
+pub const builtin_map_type = new_struct_type('map', 'builtin')
+pub const array_init_type = new_struct_type('ArrayInit', 'stubs')
+pub const chan_init_type = new_struct_type('ChanInit', 'stubs')
+pub const flag_enum_type = new_enum_type('FlagEnum', 'stubs')
+pub const any_type = new_alias_type('Any', 'stubs', unknown_type)
 
 pub struct StructType {
 	BaseNamedType

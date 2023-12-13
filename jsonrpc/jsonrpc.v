@@ -12,36 +12,35 @@ pub const version = '2.0'
 // see
 // - https://www.jsonrpc.org/specification#error_object
 // - http://xmlrpc-epi.sourceforge.net/specs/rfc.fault_codes.php
-pub const (
-	// Invalid JSON was received by the server.
-	// An error occurred on the server while parsing the JSON text.
-	parse_error            = error_with_code('Invalid JSON.', -32700)
-	// The JSON sent is not a valid Request object.
-	invalid_request        = error_with_code('Invalid request.', -32600)
-	// The method does not exist / is not available.
-	method_not_found       = error_with_code('Method not found.', -32601)
-	// Invalid method parameter(s).
-	invalid_params         = error_with_code('Invalid params', -32602)
-	// Internal JSON-RPC error.
-	internal_error         = error_with_code('Internal error.', -32693)
-	// Server errors.
-	server_error_start     = error_with_code('Error occurred when starting server.', -32099)
-	server_not_initialized = error_with_code('Server not initialized.', -32002)
-	unknown_error          = error_with_code('Unknown error.', -32001)
-	server_error_end       = error_with_code('Error occurred when stopping the server.',
-		-32000)
-	error_codes            = [
-		parse_error.code(),
-		invalid_request.code(),
-		method_not_found.code(),
-		invalid_params.code(),
-		internal_error.code(),
-		server_error_start.code(),
-		server_not_initialized.code(),
-		server_error_end.code(),
-		unknown_error.code(),
-	]
-)
+// Invalid JSON was received by the server.
+// An error occurred on the server while parsing the JSON text.
+pub const parse_error = error_with_code('Invalid JSON.', -32700)
+// The JSON sent is not a valid Request object.
+pub const invalid_request = error_with_code('Invalid request.', -32600)
+// The method does not exist / is not available.
+pub const method_not_found = error_with_code('Method not found.', -32601)
+// Invalid method parameter(s).
+pub const invalid_params = error_with_code('Invalid params', -32602)
+// Internal JSON-RPC error.
+pub const internal_error = error_with_code('Internal error.', -32693)
+// Server errors.
+pub const server_error_start = error_with_code('Error occurred when starting server.',
+	-32099)
+pub const server_not_initialized = error_with_code('Server not initialized.', -32002)
+pub const unknown_error = error_with_code('Unknown error.', -32001)
+pub const server_error_end = error_with_code('Error occurred when stopping the server.',
+	-32000)
+pub const error_codes = [
+	parse_error.code(),
+	invalid_request.code(),
+	method_not_found.code(),
+	invalid_params.code(),
+	internal_error.code(),
+	server_error_start.code(),
+	server_not_initialized.code(),
+	server_error_end.code(),
+	unknown_error.code(),
+]
 
 // Null represents the null value in JSON.
 pub struct Null {}

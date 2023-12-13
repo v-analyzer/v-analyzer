@@ -82,10 +82,8 @@ pub:
 	position      Position
 }
 
-pub const (
-	markup_kind_plaintext = 'plaintext'
-	markup_kind_markdown  = 'markdown'
-)
+pub const markup_kind_plaintext = 'plaintext'
+pub const markup_kind_markdown = 'markdown'
 
 pub struct MarkupContent {
 pub:
