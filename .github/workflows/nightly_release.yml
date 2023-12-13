@@ -72,6 +72,7 @@ jobs:
       - name: 'Create zip'
         shell: bash
         run: |
+          chmod 755 v-analyzer-*/*
           for name in $(ls -d v-analyzer-*); do
             7z a -y -tzip -mx=9 -mtc=off -sdel -aoa $name $name/.
             rm -rf $name
@@ -85,5 +86,4 @@ jobs:
           automatic_release_tag: latest
           prerelease: true
           title: nightly release
-          files: |
-            *.zip
+          files: *.zip

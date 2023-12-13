@@ -1,11 +1,9 @@
 #!/usr/bin/env -S v
 
 // This script is used to build the v-analyzer binary.
-//
 // Usage:
 //  v build.vsh [debug|dev|release]
-//
-// By default, used debug mode.
+// By default, just `v build.vsh` will use debug mode.
 import os
 import cli
 import term
@@ -36,13 +34,18 @@ fn (m ReleaseMode) cc_flags() string {
 	}
 }
 
-fn (m ReleaseMode) compile() os.Result {
+fn (m ReleaseMode) compile_cmd() string {
 	libbacktrace := $if windows { '' } $else { '-d use_libbacktrace' }
+	staticflags := $if linux { '-cflags -static' } $else { '' }
 	return match m {
-		.release { os.execute('${base_build_command} ${m.cc_flags()} -w -prod') }
-		.debug { os.execute('${base_build_command} ${m.cc_flags()} -g ${libbacktrace}') }
-		.dev { os.execute('${base_build_command} ${m.cc_flags()} -d show_ast_on_hover -g ${libbacktrace}') }
+		.release { '${base_build_command} ${m.cc_flags()} ${staticflags} -prod' }
+		.debug { '${base_build_command} ${m.cc_flags()} -g ${libbacktrace}' }
+		.dev { '${base_build_command} ${m.cc_flags()} -d show_ast_on_hover -g ${libbacktrace}' }
 	}
+}
+
+fn (m ReleaseMode) compile() os.Result {
+	return os.execute(m.compile_cmd())
 }
 
 fn prepare_output_dir() {
@@ -58,14 +61,14 @@ fn build(mode ReleaseMode, explicit_debug bool) {
 	prepare_output_dir()
 	println('${term.green('✓')} Prepared output directory')
 
-	println('Building v-analyzer in ${term.bold(mode.str())} mode...')
+	println('Building v-analyzer in ${term.bold(mode.str())} mode, using: ${mode.compile_cmd()}')
 	if mode == .release {
 		println('This may take a while...')
 	}
 
 	if !explicit_debug && mode == .debug {
 		println('To build in ${term.bold('release')} mode, run ${term.bold('v build.vsh release')}')
-		println('Release mode is recommended for production use. It is about 30-40% faster than debug mode.')
+		println('Release mode is recommended for production use. At runtime, it is about 30-40% faster than debug mode.')
 	}
 
 	res := mode.compile()
