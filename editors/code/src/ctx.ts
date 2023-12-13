@@ -193,7 +193,7 @@ export class Context {
 					: {
 							run,
 							debug: run,
-					  };
+						};
 
 			this._client = await createClient(this.outputChannel, serverOptions);
 
