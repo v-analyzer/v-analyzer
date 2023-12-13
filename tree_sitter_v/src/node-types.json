@@ -28,14 +28,6 @@
         "named": true
       },
       {
-        "type": "empty_array_creation",
-        "named": true
-      },
-      {
-        "type": "empty_literal_value",
-        "named": true
-      },
-      {
         "type": "enum_fetch",
         "named": true
       },
@@ -1175,16 +1167,6 @@
         }
       ]
     }
-  },
-  {
-    "type": "empty_array_creation",
-    "named": true,
-    "fields": {}
-  },
-  {
-    "type": "empty_literal_value",
-    "named": true,
-    "fields": {}
   },
   {
     "type": "enum_backed_type",
@@ -2372,7 +2354,7 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": true,
+      "required": false,
       "types": [
         {
           "type": "map_keyed_element",
@@ -2565,14 +2547,6 @@
         },
         {
           "type": "dec_expression",
-          "named": true
-        },
-        {
-          "type": "empty_array_creation",
-          "named": true
-        },
-        {
-          "type": "empty_literal_value",
           "named": true
         },
         {

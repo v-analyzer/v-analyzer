@@ -18,7 +18,6 @@ const PREC = {
   or: 1,
   resolve: 1,
   composite_literal: -1,
-  empty_array: -2,
   strictly_expression_list: -3,
 };
 
@@ -144,7 +143,7 @@ module.exports = grammar({
   inline: ($) => [
     $._string_literal,
     $._top_level_declaration,
-    $._non_empty_array,
+    $._array,
   ],
 
   supertypes: ($) => [
@@ -383,14 +382,16 @@ module.exports = grammar({
         $._struct_body,
       ),
 
-    _struct_body: ($) => seq("{", optional($._struct_fields), "}"),
-
-    _struct_fields: ($) =>
-      repeat1(
-        choice(
-          seq($.struct_field_scope, optional(terminator)),
-          seq($.struct_field_declaration, optional(terminator)),
+    _struct_body: ($) =>
+      seq(
+        "{",
+        repeat(
+          choice(
+            seq($.struct_field_scope, optional(terminator)),
+            seq($.struct_field_declaration, optional(terminator)),
+          ),
         ),
+        "}",
       ),
 
     // pub:
@@ -409,8 +410,8 @@ module.exports = grammar({
         seq(
           field("name", $.identifier),
           field("type", $.plain_type),
-          optional(field("attributes", $.attribute)),
           optional(seq("=", field("default_value", $._expression))),
+          optional(field("attributes", $.attribute)),
         ),
       ),
 
@@ -484,11 +485,9 @@ module.exports = grammar({
         $.spawn_expression,
         $.call_expression,
         $.function_literal,
-        $.empty_literal_value,
         $.reference_expression,
         $._max_group,
         $.array_creation,
-        $.empty_array_creation,
         $.fixed_array_creation,
         $.unary_expression,
         $.receive_expression,
@@ -499,7 +498,6 @@ module.exports = grammar({
         $.not_in_expression,
         $.index_expression,
         $.slice_expression,
-        // $.type_cast_expression,
         $.as_type_cast_expression,
         $.selector_expression,
         $.enum_fetch,
@@ -715,14 +713,6 @@ module.exports = grammar({
 
     as_type_cast_expression: ($) => seq($._expression, "as", $.plain_type),
 
-    type_cast_expression: ($) =>
-      seq(
-        field("type", $.plain_type),
-        "(",
-        field("operand", $._expression),
-        ")",
-      ),
-
     compile_time_selector_expression: ($) =>
       comp_time(
         seq("(", choice($.reference_expression, $.selector_expression), ")"),
@@ -779,7 +769,7 @@ module.exports = grammar({
         PREC.composite_literal,
         seq(
           "{",
-          repeat1(seq($.map_keyed_element, optional(list_separator))),
+          repeat(seq($.map_keyed_element, optional(list_separator))),
           "}",
         ),
       ),
@@ -787,16 +777,13 @@ module.exports = grammar({
     map_keyed_element: ($) =>
       seq(field("key", $._expression), ":", field("value", $._expression)),
 
-    array_creation: ($) => prec.right(PREC.multiplicative, $._non_empty_array),
-
-    empty_array_creation: () =>
-      prec(PREC.empty_array, prec.dynamic(-1, seq("[", "]"))),
+    array_creation: ($) => prec.right(PREC.multiplicative, $._array),
 
     fixed_array_creation: ($) =>
-      prec.right(PREC.multiplicative, seq($._non_empty_array, "!")),
+      prec.right(PREC.multiplicative, seq($._array, "!")),
 
-    _non_empty_array: ($) =>
-      seq("[", repeat1(seq($._expression, optional(","))), "]"),
+    _array: ($) =>
+      seq("[", repeat(seq($._expression, optional(","))), "]"),
 
     selector_expression: ($) =>
       prec.dynamic(
@@ -1125,8 +1112,6 @@ module.exports = grammar({
 
     expression_without_blocks_list: ($) =>
       prec(PREC.resolve, comma_sep1($._expression_without_blocks)),
-
-    empty_literal_value: () => prec(PREC.composite_literal, seq("{", "}")),
 
     // ==================== TYPES ====================
 

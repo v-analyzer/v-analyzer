@@ -447,8 +447,8 @@ Simple struct with fields with attributes and default values
 ================================================================================
 struct Foo {
     name  string [attr]
-    age   int    [attr] = 10
-    other f32    [attr; omitempty] = 3.14
+    age   int    = 10 [attr]
+    other f32    = 3.14 [attr; omitempty]
 }
 --------------------------------------------------------------------------------
 
@@ -470,18 +470,20 @@ struct Foo {
       (plain_type
         (type_reference_expression
           (identifier)))
+      (literal
+        (int_literal))
       (attribute
         (attribute_expression
           (value_attribute
             (reference_expression
-              (identifier)))))
-      (literal
-        (int_literal)))
+              (identifier))))))
     (struct_field_declaration
       (identifier)
       (plain_type
         (type_reference_expression
           (identifier)))
+      (literal
+        (float_literal))
       (attribute
         (attribute_expression
           (value_attribute
@@ -490,9 +492,7 @@ struct Foo {
         (attribute_expression
           (value_attribute
             (reference_expression
-              (identifier)))))
-      (literal
-        (float_literal)))))
+              (identifier))))))))
 
 ================================================================================
 Simple generic struct

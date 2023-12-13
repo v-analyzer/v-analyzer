@@ -519,7 +519,7 @@ Deep array initialization (TODO)
 (source_file
   (simple_statement
     (index_expression
-      (empty_array_creation)
+      (array_creation)
       (reference_expression
         (MISSING identifier))))
   (simple_statement
