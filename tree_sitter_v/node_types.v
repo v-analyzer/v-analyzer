@@ -31,8 +31,6 @@ pub enum NodeType {
 	attributes
 	binary_expression
 	block
-	braced_interpolation_closing
-	braced_interpolation_opening
 	break_statement
 	c_string_literal
 	call_expression
@@ -87,7 +85,7 @@ pub enum NodeType {
 	index_expression
 	interface_declaration
 	interface_method_definition
-	interpolated_expression
+	interpolation_closing
 	interpreted_string_literal
 	is_expression
 	key_value_attribute
@@ -180,6 +178,7 @@ pub enum NodeType {
 	float_literal
 	identifier
 	int_literal
+	interpolation_opening
 	nil_
 	none_
 	rune_literal
@@ -341,8 +340,6 @@ const node_type_name_to_enum = {
 	'attributes':                       NodeType.attributes
 	'binary_expression':                NodeType.binary_expression
 	'block':                            NodeType.block
-	'braced_interpolation_closing':     NodeType.braced_interpolation_closing
-	'braced_interpolation_opening':     NodeType.braced_interpolation_opening
 	'break_statement':                  NodeType.break_statement
 	'c_string_literal':                 NodeType.c_string_literal
 	'call_expression':                  NodeType.call_expression
@@ -397,7 +394,7 @@ const node_type_name_to_enum = {
 	'index_expression':                 NodeType.index_expression
 	'interface_declaration':            NodeType.interface_declaration
 	'interface_method_definition':      NodeType.interface_method_definition
-	'interpolated_expression':          NodeType.interpolated_expression
+	'interpolation_closing':            NodeType.interpolation_closing
 	'interpreted_string_literal':       NodeType.interpreted_string_literal
 	'is_expression':                    NodeType.is_expression
 	'key_value_attribute':              NodeType.key_value_attribute
@@ -490,6 +487,7 @@ const node_type_name_to_enum = {
 	'float_literal':                    NodeType.float_literal
 	'identifier':                       NodeType.identifier
 	'int_literal':                      NodeType.int_literal
+	'interpolation_opening':            NodeType.interpolation_opening
 	'nil':                              NodeType.nil_
 	'none':                             NodeType.none_
 	'rune_literal':                     NodeType.rune_literal

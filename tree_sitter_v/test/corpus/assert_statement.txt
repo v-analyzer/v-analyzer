@@ -66,17 +66,17 @@ assert a > b, a.str() + b.str()
     (literal
       (interpreted_string_literal
         (string_interpolation
-          (braced_interpolation_opening)
-          (interpolated_expression
+          (interpolation_opening)
+          (interpolation_expression
             (reference_expression
               (identifier)))
-          (braced_interpolation_closing))
+          (interpolation_closing))
         (string_interpolation
-          (braced_interpolation_opening)
-          (interpolated_expression
+          (interpolation_opening)
+          (interpolation_expression
             (reference_expression
               (identifier)))
-          (braced_interpolation_closing)))))
+          (interpolation_closing)))))
   (assert_statement
     (binary_expression
       (reference_expression
@@ -87,19 +87,19 @@ assert a > b, a.str() + b.str()
       (literal
         (interpreted_string_literal
           (string_interpolation
-            (braced_interpolation_opening)
-            (interpolated_expression
+            (interpolation_opening)
+            (interpolation_expression
               (reference_expression
                 (identifier)))
-            (braced_interpolation_closing))))
+            (interpolation_closing))))
       (literal
         (interpreted_string_literal
           (string_interpolation
-            (braced_interpolation_opening)
-            (interpolated_expression
+            (interpolation_opening)
+            (interpolation_expression
               (reference_expression
                 (identifier)))
-            (braced_interpolation_closing))))))
+            (interpolation_closing))))))
   (assert_statement
     (binary_expression
       (reference_expression

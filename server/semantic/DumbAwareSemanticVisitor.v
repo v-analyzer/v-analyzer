@@ -138,7 +138,7 @@ fn (_ DumbAwareSemanticVisitor) highlight_node(node psi.AstNode, root psi.PsiEle
 		if last_part := node.last_child() {
 			result << element_to_semantic(last_part, .namespace)
 		}
-	} else if node.type_name in [.braced_interpolation_opening, .braced_interpolation_closing] {
+	} else if node.type_name in [.interpolation_opening, .interpolation_closing] {
 		result << element_to_semantic(node, .keyword)
 	} else if node.type_name == .generic_parameter {
 		result << element_to_semantic(node, .type_parameter)
