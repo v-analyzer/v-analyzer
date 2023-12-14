@@ -74,7 +74,7 @@ jobs:
           echo "BODY=Generated on <samp>$now</samp> from commit ${{ github.sha }}." >> $GITHUB_ENV
           7z a -tzip ${{ env.ARTIFACT }}.zip ./v-analyzer/bin/v-analyzer${{ matrix.bin_ext }}
 
-      - name: Update Nightly Tag
+      - name: Update nightly tag
         uses: richardsimko/update-tag@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
