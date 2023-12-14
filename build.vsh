@@ -28,23 +28,30 @@ fn errorln(msg string) {
 	eprintln('${term.red('[ERROR]')} ${msg}')
 }
 
-fn (m ReleaseMode) cc_flags() string {
-	$if windows {
-		return '-cc gcc' // TCC cannot build tree-sitter on Windows
-	} $else $if cross_compile_macos_arm64 ? {
-		return '-cc clang -cflags "-target arm64-apple-darwin"'
-	} $else {
-		return if m == .release { '-cc gcc' } else { '' }
-	}
-}
-
 fn (m ReleaseMode) compile_cmd() string {
+	cc := if v := os.getenv_opt('CC') {
+		'-cc ${v}'
+	} else {
+		$if windows {
+			// TCC cannot build tree-sitter on Windows.
+			'-cc ' + if _ := os.find_abs_path_of_executable('gcc') { 'gcc' } else { 'msvc' }
+		} $else {
+			// Let `-prod` toggle the appropriate production compiler.
+			''
+		}
+	}
+	cflags := $if cross_compile_macos_arm64 ? {
+		'-cflags "-target arm64-apple-darwin"'
+	} $else $if linux {
+		'-cflags -static'
+	} $else {
+		''
+	}
 	libbacktrace := $if windows { '' } $else { '-d use_libbacktrace' }
-	staticflags := $if linux { '-cflags -static' } $else { '' }
 	return match m {
-		.release { '${base_build_command} ${m.cc_flags()} ${staticflags} -prod' }
-		.debug { '${base_build_command} ${m.cc_flags()} -g ${libbacktrace}' }
-		.dev { '${base_build_command} ${m.cc_flags()} -d show_ast_on_hover -g ${libbacktrace}' }
+		.release { '${base_build_command} ${cc} ${cflags} -prod' }
+		.debug { '${base_build_command} ${cc} ${cflags} -g ${libbacktrace}' }
+		.dev { '${base_build_command} ${cc} ${cflags} -d show_ast_on_hover -g ${libbacktrace}' }
 	}
 }
 
