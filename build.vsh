@@ -48,10 +48,11 @@ fn (m ReleaseMode) compile_cmd() string {
 		''
 	}
 	libbacktrace := $if windows { '' } $else { '-d use_libbacktrace' }
+	build_cmd := '${base_build_cmd} ${cc} ${cflags}'
 	return match m {
-		.release { '${base_build_cmd} ${cc} ${cflags} -prod' }
-		.debug { '${base_build_cmd} ${cc} ${cflags} -g ${libbacktrace}' }
-		.dev { '${base_build_cmd} ${cc} ${cflags} -d show_ast_on_hover -g ${libbacktrace}' }
+		.release { '${build_cmd} -prod' }
+		.debug { '${build_cmd} -g ${libbacktrace}' }
+		.dev { '${build_cmd} -d show_ast_on_hover -g ${libbacktrace}' }
 	}
 }
 
