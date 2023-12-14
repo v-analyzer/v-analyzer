@@ -44,7 +44,7 @@ fn new_ts_parser() &C.TSParser {
 
 @[inline]
 fn (mut p C.TSParser) parse(old_tree &TSTree, input C.TSInput) &TSTree {
-	return &TSTree( C.ts_parser_parse(p, voidptr(old_tree), input) )
+	return &TSTree(C.ts_parser_parse(p, voidptr(old_tree), input))
 }
 
 @[inline]
@@ -69,7 +69,8 @@ fn (mut p C.TSParser) parse_string_with_old_tree(content string, old_tree &TSTre
 
 @[inline]
 fn (mut p C.TSParser) parse_string_with_old_tree_and_len(content string, old_tree &TSTree, len u32) &TSTree {
-	return &TSTree(C.ts_parser_parse_string(p, voidptr(old_tree), &char(content.str), len))
+	return &TSTree(C.ts_parser_parse_string(p, voidptr(old_tree), &char(content.str),
+		len))
 }
 
 @[inline]

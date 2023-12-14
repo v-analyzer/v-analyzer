@@ -14,25 +14,21 @@ import v.errors
 import v.pkgconfig
 import v.checker.constants
 
-const (
-	int_min                  = int(0x80000000)
-	int_max                  = int(0x7FFFFFFF)
-	// prevent stack overflows by restricting too deep recursion:
-	expr_level_cutoff_limit  = 40
-	stmt_level_cutoff_limit  = 40
-	iface_level_cutoff_limit = 100
-)
+const int_min = int(0x80000000)
+const int_max = int(0x7FFFFFFF)
+// prevent stack overflows by restricting too deep recursion:
+const expr_level_cutoff_limit = 40
+const stmt_level_cutoff_limit = 40
+const iface_level_cutoff_limit = 100
 
-pub const (
-	array_builtin_methods       = ['filter', 'clone', 'repeat', 'reverse', 'map', 'slice', 'sort',
-		'contains', 'index', 'wait', 'any', 'all', 'first', 'last', 'pop', 'delete']
-	array_builtin_methods_chk   = token.new_keywords_matcher_from_array_trie(array_builtin_methods)
-	// TODO: remove `byte` from this list when it is no longer supported
-	reserved_type_names         = ['byte', 'bool', 'char', 'i8', 'i16', 'int', 'i64', 'u8', 'u16',
-		'u32', 'u64', 'f32', 'f64', 'map', 'string', 'rune', 'usize', 'isize', 'voidptr']
-	reserved_type_names_chk     = token.new_keywords_matcher_from_array_trie(reserved_type_names)
-	vroot_is_deprecated_message = '@VROOT is deprecated, use @VMODROOT or @VEXEROOT instead'
-)
+pub const array_builtin_methods = ['filter', 'clone', 'repeat', 'reverse', 'map', 'slice', 'sort',
+	'contains', 'index', 'wait', 'any', 'all', 'first', 'last', 'pop', 'delete']
+pub const array_builtin_methods_chk = token.new_keywords_matcher_from_array_trie(array_builtin_methods)
+// TODO: remove `byte` from this list when it is no longer supported
+pub const reserved_type_names = ['byte', 'bool', 'char', 'i8', 'i16', 'int', 'i64', 'u8', 'u16',
+	'u32', 'u64', 'f32', 'f64', 'map', 'string', 'rune', 'usize', 'isize', 'voidptr']
+pub const reserved_type_names_chk = token.new_keywords_matcher_from_array_trie(reserved_type_names)
+pub const vroot_is_deprecated_message = '@VROOT is deprecated, use @VMODROOT or @VEXEROOT instead'
 
 @[heap; minify]
 pub struct Checker {
