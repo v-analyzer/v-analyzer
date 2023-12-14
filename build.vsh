@@ -29,15 +29,13 @@ fn errorln(msg string) {
 
 fn (m ReleaseMode) compile_cmd() string {
 	base_build_cmd := '${@VEXE} ${code_path} -o ${bin_path} -no-parallel'
-	cc := if v := os.getenv_opt('CC') {
-		'-cc ${v}'
+	cc := '-cc ' + if v := os.getenv_opt('CC') {
+		v
 	} else {
 		$if windows {
-			// TCC cannot build tree-sitter on Windows.
-			'-cc ' + if _ := os.find_abs_path_of_executable('gcc') { 'gcc' } else { 'msvc' }
+			if _ := os.find_abs_path_of_executable('gcc') { 'gcc' } else { 'msvc' }
 		} $else {
-			// Let `-prod` toggle the appropriate production compiler.
-			''
+			if _ := os.find_abs_path_of_executable('clang') { 'clang' } else { 'gcc' }
 		}
 	}
 	cflags := $if cross_compile_macos_arm64 ? {
