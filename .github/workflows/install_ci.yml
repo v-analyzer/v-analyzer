@@ -2,17 +2,17 @@ name: Install CI
 
 on:
   push:
-    paths-ignore:
-      - '**/*.md'
+    paths:
+      - 'install.vsh'
   pull_request:
-    paths-ignore:
-      - '**/*.md'
+    paths:
+      - 'install.vsh'
 
 jobs:
   test:
     strategy:
       matrix:
-        os: [ubuntu-20.04, macos-latest, windows-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest]
       fail-fast: false
 
     name: Install v-analyzer on ${{ matrix.os }}
@@ -24,13 +24,10 @@ jobs:
         with:
           check-latest: true
 
-      - name: Install via webscript (Windows)
-        if: runner.os == 'Windows'
-        run: curl -o install.vsh https://raw.githubusercontent.com/v-analyzer/v-analyzer/main/install.vsh; v run install.vsh; del install.vsh
-
-      - name: Install via webscript (nix)
-        if: runner.os != 'Windows'
-        run: v -e "$(curl https://raw.githubusercontent.com/v-analyzer/v-analyzer/main/install.vsh -fsSL)"
+      - name: Install via webscript
+        run: |
+          curl -o install.vsh https://raw.githubusercontent.com/v-analyzer/v-analyzer/main/install.vsh
+          v run install.vsh
 
       - name: Check build success
         run: ~/.config/v-analyzer/bin/v-analyzer --version

@@ -3,9 +3,13 @@ name: Analyzer tests
 on:
   push:
     paths-ignore:
+      - '.github/**'
+      - 'editors/code/**'
       - '**/*.md'
   pull_request:
     paths-ignore:
+      - '.github/**'
+      - 'editors/code/**'
       - '**/*.md'
 
 jobs:
@@ -14,8 +18,9 @@ jobs:
       matrix:
         include:
           - os: macos-latest
-          - os: ubuntu-20.04
-            cc: -cc tcc
+            cc: -cc clang
+          - os: ubuntu-latest
+            cc: -cc gcc
           - os: windows-latest
             cc: -cc gcc
       fail-fast: false
@@ -34,14 +39,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: v-analyzer
-
-      - name: Check GCC version
-        run: gcc --version
-
-      - name: Install dependencies
-        run: |
-          cd v-analyzer
-          v install
+          submodules: true
 
       - name: Run tests
         run: |

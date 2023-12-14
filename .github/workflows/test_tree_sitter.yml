@@ -1,0 +1,39 @@
+name: Test v_tree_sitter
+
+on:
+  push:
+    paths:
+      - 'tree_sitter_v/**'
+      - 'v_tree_sitter/**'
+  pull_request:
+    paths:
+      - 'tree_sitter_v/**'
+      - 'v_tree_sitter/**'
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            cc: gcc
+          - os: ubuntu-latest
+            cc: gcc
+          - os: macos-latest
+            cc: clang
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Install V
+        uses: vlang/setup-v@v1.3
+        with:
+          check-latest: true
+
+      - uses: actions/checkout@v4
+        with:
+          path: v_tree_sitter
+          submodules: true
+
+      - name: Run tests
+        run: v -cc ${{ matrix.cc }} test v_tree_sitter

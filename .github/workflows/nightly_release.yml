@@ -6,8 +6,12 @@ on:
     branches:
       - main
     paths-ignore:
-      - '**/*.md'
       - '.github/**'
+      - '**/test/**'
+      - '**/tests/**'
+      - '**/*.md'
+      - '**/test_*.v'
+      - '**/*_test.v'
 
 permissions:
   contents: write
@@ -40,7 +44,6 @@ jobs:
 
     steps:
       - name: Install V
-        id: install-v
         uses: vlang/setup-v@v1.3
         with:
           check-latest: true
@@ -49,11 +52,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: v-analyzer
+          submodules: true
 
       - name: Compile
         run: |
           cd v-analyzer
-          v install
           v run build.vsh release
 
       - name: Create artifact
@@ -64,7 +67,6 @@ jobs:
 
   nightly-release:
     name: Create Nightly GitHub Release
-    if: github.event.repository.full_name == 'v-analyzer/v-analyzer'
     needs: dist
     runs-on: ubuntu-latest
     steps:
