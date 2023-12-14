@@ -6,12 +6,13 @@ on:
     branches:
       - main
     paths-ignore:
-      - '.github/**'
       - '**/test/**'
       - '**/tests/**'
-      - '**/*.md'
       - '**/test_*.v'
       - '**/*_test.v'
+      - '**/*.md'
+      - '.github/**'
+      - '!.github/nightly_release.yml'
 
 permissions:
   contents: write
@@ -41,6 +42,7 @@ jobs:
     env:
       CC: ${{ matrix.cc }}
       VFLAGS: ${{ matrix.vflags }}
+      ARTIFACT: v-analyzer-${{ matrix.target }}
 
     steps:
       - name: Install V
@@ -59,36 +61,32 @@ jobs:
           cd v-analyzer
           v run build.vsh release
 
-      - name: Create artifact
+      - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
-          name: v-analyzer-${{ matrix.target }}
+          name: ${{ env.ARTIFACT }}
           path: ./v-analyzer/bin/v-analyzer${{ matrix.bin_ext }}
 
-  nightly-release:
-    if: github.event.repository.full_name == 'v-analyzer/v-analyzer'
-    name: Create Nightly GitHub Release
-    needs: dist
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/download-artifact@v3
-
-      - name: 'Create zip'
+      - name: Prepare release
         shell: bash
         run: |
-          chmod 755 v-analyzer-*/*
-          for name in $(ls -d v-analyzer-*); do
-            7z a -y -tzip -mx=9 -mtc=off -sdel -aoa $name $name/.
-            rm -rf $name
-          done
+          now=$(date -u +'%Y-%m-%d %H:%M:%S UTC')
+          echo "BODY=Generated on <samp>$now</samp> from commit ${{ github.sha }}." >> $GITHUB_ENV
+          7z a -tzip ${{ env.ARTIFACT }}.zip ./v-analyzer/bin/v-analyzer${{ matrix.bin_ext }}
 
-      - uses: marvinpinto/action-automatic-releases@latest
-        name: Create Release and Upload Assets
-        id: create_release
+      - name: Update Nightly Tag
+        uses: richardsimko/update-tag@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          automatic_release_tag: latest
+          tag_name: nightly
+
+      - name: Release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: ${{ env.ARTIFACT }}.zip
+          tag: nightly
+          body: ${{ env.BODY }}
+          name: v-analyzer development build
           prerelease: true
-          title: nightly release
-          files: |
-            *.zip
+          allowUpdates: true
