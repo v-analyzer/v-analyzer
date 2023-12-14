@@ -10,13 +10,13 @@ import time
 import term
 import v.vmod
 
-pub const version = vmod.decode(@VMOD_FILE) or { panic(err) }.version
-pub const code_path = './cmd/v-analyzer'
-pub const bin_path = './bin/v-analyzer' + $if windows { '.exe' } $else { '' }
-pub const base_build_command = '${@VEXE} ${code_path} -o ${bin_path} -no-parallel'
+const version = vmod.decode(@VMOD_FILE) or { panic(err) }.version
+const code_path = './cmd/v-analyzer'
+const bin_path = './bin/v-analyzer' + $if windows { '.exe' } $else { '' }
+const base_build_command = '${@VEXE} ${code_path} -o ${bin_path} -no-parallel'
 
-pub const build_commit = os.execute('git rev-parse --short HEAD').output.trim_space()
-pub const build_datetime = time.now().format_ss()
+const build_commit = os.execute('git rev-parse --short HEAD').output.trim_space()
+const build_datetime = time.now().format_ss()
 
 enum ReleaseMode {
 	release
