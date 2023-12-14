@@ -744,16 +744,6 @@
     }
   },
   {
-    "type": "braced_interpolation_closing",
-    "named": true,
-    "fields": {}
-  },
-  {
-    "type": "braced_interpolation_opening",
-    "named": true,
-    "fields": {}
-  },
-  {
     "type": "break_statement",
     "named": true,
     "fields": {},
@@ -2083,19 +2073,9 @@
     }
   },
   {
-    "type": "interpolated_expression",
+    "type": "interpolation_closing",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "_expression",
-          "named": true
-        }
-      ]
-    }
+    "fields": {}
   },
   {
     "type": "interpreted_string_literal",
@@ -3722,19 +3702,19 @@
       "required": true,
       "types": [
         {
-          "type": "braced_interpolation_closing",
-          "named": true
-        },
-        {
-          "type": "braced_interpolation_opening",
-          "named": true
-        },
-        {
           "type": "format_specifier",
           "named": true
         },
         {
-          "type": "interpolated_expression",
+          "type": "interpolation_closing",
+          "named": true
+        },
+        {
+          "type": "interpolation_expression",
+          "named": true
+        },
+        {
+          "type": "interpolation_opening",
           "named": true
         }
       ]
@@ -4584,6 +4564,10 @@
   {
     "type": "interface",
     "named": false
+  },
+  {
+    "type": "interpolation_opening",
+    "named": true
   },
   {
     "type": "is",

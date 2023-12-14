@@ -1,4 +1,35 @@
 ================================================================================
+Empty string
+================================================================================
+''
+c''
+r''
+""
+c""
+r""
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (literal
+      (interpreted_string_literal)))
+  (simple_statement
+    (literal
+      (c_string_literal)))
+  (simple_statement
+    (literal
+      (raw_string_literal)))
+  (simple_statement
+    (literal
+      (interpreted_string_literal)))
+  (simple_statement
+    (literal
+      (c_string_literal)))
+  (simple_statement
+    (literal
+      (raw_string_literal))))
+
+================================================================================
 Simple string interpolation
 ================================================================================
 'Hello, ${name}!'
@@ -9,11 +40,11 @@ Simple string interpolation
     (literal
       (interpreted_string_literal
         (string_interpolation
-          (braced_interpolation_opening)
-          (interpolated_expression
+          (interpolation_opening)
+          (interpolation_expression
             (reference_expression
               (identifier)))
-          (braced_interpolation_closing))))))
+          (interpolation_closing))))))
 
 ================================================================================
 Several string interpolations
@@ -26,17 +57,17 @@ Several string interpolations
     (literal
       (interpreted_string_literal
         (string_interpolation
-          (braced_interpolation_opening)
-          (interpolated_expression
+          (interpolation_opening)
+          (interpolation_expression
             (reference_expression
               (identifier)))
-          (braced_interpolation_closing))
+          (interpolation_closing))
         (string_interpolation
-          (braced_interpolation_opening)
-          (interpolated_expression
+          (interpolation_opening)
+          (interpolation_expression
             (reference_expression
               (identifier)))
-          (braced_interpolation_closing))))))
+          (interpolation_closing))))))
 
 ================================================================================
 Simple escaped string interpolation
@@ -47,7 +78,8 @@ Simple escaped string interpolation
 (source_file
   (simple_statement
     (literal
-      (interpreted_string_literal))))
+      (interpreted_string_literal
+        (escape_sequence)))))
 
 ================================================================================
 String interpolation at start
@@ -60,11 +92,11 @@ String interpolation at start
     (literal
       (interpreted_string_literal
         (string_interpolation
-          (braced_interpolation_opening)
-          (interpolated_expression
+          (interpolation_opening)
+          (interpolation_expression
             (reference_expression
               (identifier)))
-          (braced_interpolation_closing))))))
+          (interpolation_closing))))))
 
 ================================================================================
 String interpolation at end
@@ -77,11 +109,11 @@ String interpolation at end
     (literal
       (interpreted_string_literal
         (string_interpolation
-          (braced_interpolation_opening)
-          (interpolated_expression
+          (interpolation_opening)
+          (interpolation_expression
             (reference_expression
               (identifier)))
-          (braced_interpolation_closing))))))
+          (interpolation_closing))))))
 
 ================================================================================
 String interpolation with complex expression
@@ -94,8 +126,8 @@ String interpolation with complex expression
     (literal
       (interpreted_string_literal
         (string_interpolation
-          (braced_interpolation_opening)
-          (interpolated_expression
+          (interpolation_opening)
+          (interpolation_expression
             (call_expression
               (selector_expression
                 (reference_expression
@@ -103,7 +135,7 @@ String interpolation with complex expression
                 (reference_expression
                   (identifier)))
               (argument_list)))
-          (braced_interpolation_closing))))))
+          (interpolation_closing))))))
 
 ================================================================================
 String interpolation with complex expressions and format specifiers
@@ -138,13 +170,13 @@ println('[${10.0000:+.2f}]')
           (literal
             (interpreted_string_literal
               (string_interpolation
-                (braced_interpolation_opening)
-                (interpolated_expression
+                (interpolation_opening)
+                (interpolation_expression
                   (reference_expression
                     (identifier)))
                 (format_specifier
                   (int_literal))
-                (braced_interpolation_closing))))))))
+                (interpolation_closing))))))))
   (simple_statement
     (call_expression
       (reference_expression
@@ -154,13 +186,13 @@ println('[${10.0000:+.2f}]')
           (literal
             (interpreted_string_literal
               (string_interpolation
-                (braced_interpolation_opening)
-                (interpolated_expression
+                (interpolation_opening)
+                (interpolation_expression
                   (reference_expression
                     (identifier)))
                 (format_specifier
                   (int_literal))
-                (braced_interpolation_closing))))))))
+                (interpolation_closing))))))))
   (simple_statement
     (call_expression
       (reference_expression
@@ -170,8 +202,8 @@ println('[${10.0000:+.2f}]')
           (literal
             (interpreted_string_literal
               (string_interpolation
-                (braced_interpolation_opening)
-                (interpolated_expression
+                (interpolation_opening)
+                (interpolation_expression
                   (call_expression
                     (reference_expression
                       (identifier))
@@ -181,7 +213,7 @@ println('[${10.0000:+.2f}]')
                           (identifier))))))
                 (format_specifier
                   (int_literal))
-                (braced_interpolation_closing))))))))
+                (interpolation_closing))))))))
   (simple_statement
     (call_expression
       (reference_expression
@@ -191,8 +223,8 @@ println('[${10.0000:+.2f}]')
           (literal
             (interpreted_string_literal
               (string_interpolation
-                (braced_interpolation_opening)
-                (interpolated_expression
+                (interpolation_opening)
+                (interpolation_expression
                   (call_expression
                     (reference_expression
                       (identifier))
@@ -202,7 +234,7 @@ println('[${10.0000:+.2f}]')
                           (identifier))))))
                 (format_specifier
                   (int_literal))
-                (braced_interpolation_closing))))))))
+                (interpolation_closing))))))))
   (simple_statement
     (call_expression
       (reference_expression
@@ -212,8 +244,8 @@ println('[${10.0000:+.2f}]')
           (literal
             (interpreted_string_literal
               (string_interpolation
-                (braced_interpolation_opening)
-                (interpolated_expression
+                (interpolation_opening)
+                (interpolation_expression
                   (call_expression
                     (reference_expression
                       (identifier))
@@ -222,7 +254,7 @@ println('[${10.0000:+.2f}]')
                         (reference_expression
                           (identifier))))))
                 (format_specifier)
-                (braced_interpolation_closing))))))))
+                (interpolation_closing))))))))
   (simple_statement
     (call_expression
       (reference_expression
@@ -232,8 +264,8 @@ println('[${10.0000:+.2f}]')
           (literal
             (interpreted_string_literal
               (string_interpolation
-                (braced_interpolation_opening)
-                (interpolated_expression
+                (interpolation_opening)
+                (interpolation_expression
                   (call_expression
                     (reference_expression
                       (identifier))
@@ -242,7 +274,7 @@ println('[${10.0000:+.2f}]')
                         (reference_expression
                           (identifier))))))
                 (format_specifier)
-                (braced_interpolation_closing))))))))
+                (interpolation_closing))))))))
   (simple_statement
     (call_expression
       (reference_expression
@@ -252,8 +284,8 @@ println('[${10.0000:+.2f}]')
           (literal
             (interpreted_string_literal
               (string_interpolation
-                (braced_interpolation_opening)
-                (interpolated_expression
+                (interpolation_opening)
+                (interpolation_expression
                   (call_expression
                     (reference_expression
                       (identifier))
@@ -262,7 +294,7 @@ println('[${10.0000:+.2f}]')
                         (reference_expression
                           (identifier))))))
                 (format_specifier)
-                (braced_interpolation_closing))))))))
+                (interpolation_closing))))))))
   (simple_statement
     (call_expression
       (reference_expression
@@ -272,13 +304,13 @@ println('[${10.0000:+.2f}]')
           (literal
             (interpreted_string_literal
               (string_interpolation
-                (braced_interpolation_opening)
-                (interpolated_expression
+                (interpolation_opening)
+                (interpolation_expression
                   (literal
                     (float_literal)))
                 (format_specifier
                   (int_literal))
-                (braced_interpolation_closing))))))))
+                (interpolation_closing))))))))
   (simple_statement
     (call_expression
       (reference_expression
@@ -288,13 +320,13 @@ println('[${10.0000:+.2f}]')
           (literal
             (interpreted_string_literal
               (string_interpolation
-                (braced_interpolation_opening)
-                (interpolated_expression
+                (interpolation_opening)
+                (interpolation_expression
                   (literal
                     (float_literal)))
                 (format_specifier
                   (int_literal))
-                (braced_interpolation_closing)))))))))
+                (interpolation_closing)))))))))
 
 ================================================================================
 C string literal
@@ -338,7 +370,8 @@ String literal with escape sequences
 (source_file
   (simple_statement
     (literal
-      (interpreted_string_literal))))
+      (interpreted_string_literal
+        (escape_sequence)))))
 
 ================================================================================
 String literal with interpolation after \n
@@ -350,12 +383,14 @@ String literal with interpolation after \n
   (simple_statement
     (literal
       (interpreted_string_literal
+        (escape_sequence)
+        (escape_sequence)
         (string_interpolation
-          (braced_interpolation_opening)
-          (interpolated_expression
+          (interpolation_opening)
+          (interpolation_expression
             (selector_expression
               (reference_expression
                 (identifier))
               (reference_expression
                 (identifier))))
-          (braced_interpolation_closing))))))
+          (interpolation_closing))))))
