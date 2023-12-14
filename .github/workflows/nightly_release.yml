@@ -66,6 +66,7 @@ jobs:
           path: ./v-analyzer/bin/v-analyzer${{ matrix.bin_ext }}
 
   nightly-release:
+    if: github.event.repository.full_name == 'v-analyzer/v-analyzer'
     name: Create Nightly GitHub Release
     needs: dist
     runs-on: ubuntu-latest
