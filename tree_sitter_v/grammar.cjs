@@ -1033,32 +1033,64 @@ module.exports = grammar({
       choice(
         seq(
           $.__c_single_quote,
-          repeat(choice(/[^'\\$]+/, $.escape_sequence, $.string_interpolation)),
+          repeat(
+            choice(
+              token.immediate(prec(1, /[^'\\$]+/)),
+              $.escape_sequence,
+              $.string_interpolation,
+            ),
+          ),
           $.__single_quote,
         ),
         seq(
           $.__c_double_quote,
-          repeat(choice(/[^"\\$]+/, $.escape_sequence, $.string_interpolation)),
+          repeat(
+            choice(
+              token.immediate(prec(1, /[^"\\$]+/)),
+              $.escape_sequence,
+              $.string_interpolation,
+            ),
+          ),
           $.__double_quote,
         ),
       ),
 
     raw_string_literal: ($) =>
       choice(
-        seq($.__r_single_quote, repeat(/[^'\\]+/), $.__single_quote),
-        seq($.__r_double_quote, repeat(/[^"\\]+/), $.__double_quote),
+        seq(
+          $.__r_single_quote,
+          repeat(token.immediate(prec(1, /[^'\\]+/))),
+          $.__single_quote,
+        ),
+        seq(
+          $.__r_double_quote,
+          repeat(token.immediate(prec(1, /[^"\\]+/))),
+          $.__double_quote,
+        ),
       ),
 
     interpreted_string_literal: ($) =>
       choice(
         seq(
           $.__single_quote,
-          repeat(choice(/[^'\\$]+/, $.escape_sequence, $.string_interpolation)),
+          repeat(
+            choice(
+              token.immediate(prec(1, /[^'\\$]+/)),
+              $.escape_sequence,
+              $.string_interpolation,
+            ),
+          ),
           $.__single_quote,
         ),
         seq(
           $.__double_quote,
-          repeat(choice(/[^"\\$]+/, $.escape_sequence, $.string_interpolation)),
+          repeat(
+            choice(
+              token.immediate(prec(1, /[^"\\$]+/)),
+              $.escape_sequence,
+              $.string_interpolation,
+            ),
+          ),
           $.__double_quote,
         ),
       ),
