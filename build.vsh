@@ -13,7 +13,6 @@ import v.vmod
 const version = vmod.decode(@VMOD_FILE) or { panic(err) }.version
 const code_path = './cmd/v-analyzer'
 const bin_path = './bin/v-analyzer' + $if windows { '.exe' } $else { '' }
-const base_build_command = '${@VEXE} ${code_path} -o ${bin_path} -no-parallel'
 
 const build_commit = os.execute('git rev-parse --short HEAD').output.trim_space()
 const build_datetime = time.now().format_ss()
@@ -29,6 +28,7 @@ fn errorln(msg string) {
 }
 
 fn (m ReleaseMode) compile_cmd() string {
+	base_build_cmd := '${@VEXE} ${code_path} -o ${bin_path} -no-parallel'
 	cc := if v := os.getenv_opt('CC') {
 		'-cc ${v}'
 	} else {
@@ -49,9 +49,9 @@ fn (m ReleaseMode) compile_cmd() string {
 	}
 	libbacktrace := $if windows { '' } $else { '-d use_libbacktrace' }
 	return match m {
-		.release { '${base_build_command} ${cc} ${cflags} -prod' }
-		.debug { '${base_build_command} ${cc} ${cflags} -g ${libbacktrace}' }
-		.dev { '${base_build_command} ${cc} ${cflags} -d show_ast_on_hover -g ${libbacktrace}' }
+		.release { '${base_build_cmd} ${cc} ${cflags} -prod' }
+		.debug { '${base_build_cmd} ${cc} ${cflags} -g ${libbacktrace}' }
+		.dev { '${base_build_cmd} ${cc} ${cflags} -d show_ast_on_hover -g ${libbacktrace}' }
 	}
 }
 
@@ -72,7 +72,8 @@ fn build(mode ReleaseMode, explicit_debug bool) {
 	prepare_output_dir()
 	println('${term.green('✓')} Prepared output directory')
 
-	println('Building v-analyzer in ${term.bold(mode.str())} mode, using: ${mode.compile_cmd()}')
+	cmd := mode.compile_cmd()
+	println('Building v-analyzer in ${term.bold(mode.str())} mode, using: ${cmd}')
 	if mode == .release {
 		println('This may take a while...')
 	}
@@ -82,10 +83,9 @@ fn build(mode ReleaseMode, explicit_debug bool) {
 		println('Release mode is recommended for production use. At runtime, it is about 30-40% faster than debug mode.')
 	}
 
-	res := mode.compile()
-	if res.exit_code != 0 {
+	os.execute_opt(cmd) or {
 		errorln('Failed to build v-analyzer')
-		eprintln(res.output)
+		eprintln(err)
 		exit(1)
 	}
 
