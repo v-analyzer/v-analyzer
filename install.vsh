@@ -9,10 +9,10 @@ import compress.szip
 import cli
 import net.http
 
-pub const installer_version = '0.0.2'
-pub const analyzer_sources_path = norm_expand_tilde_to_home('~/.config/v-analyzer/sources')
-pub const analyzer_bin_path = norm_expand_tilde_to_home('~/.config/v-analyzer/bin')
-pub const analyzer_bin_path_with_name = norm_expand_tilde_to_home('~/.config/v-analyzer/bin/v-analyzer')
+const installer_version = '0.0.2'
+const analyzer_sources_path = norm_expand_tilde_to_home('~/.config/v-analyzer/sources')
+const analyzer_bin_path = norm_expand_tilde_to_home('~/.config/v-analyzer/bin')
+const analyzer_bin_path_with_name = norm_expand_tilde_to_home('~/.config/v-analyzer/bin/v-analyzer')
 
 struct ReleaseAsset {
 	tag_name             string @[json: '-']

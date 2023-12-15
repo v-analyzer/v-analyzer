@@ -10,13 +10,12 @@ import time
 import term
 import v.vmod
 
-pub const version = vmod.decode(@VMOD_FILE) or { panic(err) }.version
-pub const code_path = './cmd/v-analyzer'
-pub const bin_path = './bin/v-analyzer' + $if windows { '.exe' } $else { '' }
-pub const base_build_command = '${@VEXE} ${code_path} -o ${bin_path} -no-parallel'
+const version = vmod.decode(@VMOD_FILE) or { panic(err) }.version
+const code_path = './cmd/v-analyzer'
+const bin_path = './bin/v-analyzer' + $if windows { '.exe' } $else { '' }
 
-pub const build_commit = os.execute('git rev-parse --short HEAD').output.trim_space()
-pub const build_datetime = time.now().format_ss()
+const build_commit = os.execute('git rev-parse --short HEAD').output.trim_space()
+const build_datetime = time.now().format_ss()
 
 enum ReleaseMode {
 	release
@@ -28,28 +27,33 @@ fn errorln(msg string) {
 	eprintln('${term.red('[ERROR]')} ${msg}')
 }
 
-fn (m ReleaseMode) cc_flags() string {
-	$if windows {
-		return '-cc gcc' // TCC cannot build tree-sitter on Windows
-	} $else $if cross_compile_macos_arm64 ? {
-		return '-cc clang -cflags "-target arm64-apple-darwin"'
-	} $else {
-		return if m == .release { '-cc gcc' } else { '' }
-	}
-}
-
 fn (m ReleaseMode) compile_cmd() string {
-	libbacktrace := $if windows { '' } $else { '-d use_libbacktrace' }
-	staticflags := $if linux { '-cflags -static' } $else { '' }
-	return match m {
-		.release { '${base_build_command} ${m.cc_flags()} ${staticflags} -prod' }
-		.debug { '${base_build_command} ${m.cc_flags()} -g ${libbacktrace}' }
-		.dev { '${base_build_command} ${m.cc_flags()} -d show_ast_on_hover -g ${libbacktrace}' }
+	base_build_cmd := '${@VEXE} ${code_path} -o ${bin_path} -no-parallel'
+	cc := if v := os.getenv_opt('CC') {
+		'-cc ${v}'
+	} else {
+		$if windows {
+			// TCC cannot build tree-sitter on Windows.
+			'-cc ' + if _ := os.find_abs_path_of_executable('gcc') { 'gcc' } else { 'msvc' }
+		} $else {
+			// Let `-prod` toggle the appropriate production compiler.
+			''
+		}
 	}
-}
-
-fn (m ReleaseMode) compile() os.Result {
-	return os.execute(m.compile_cmd())
+	cflags := $if cross_compile_macos_arm64 ? {
+		'-cflags "-target arm64-apple-darwin"'
+	} $else $if linux {
+		if m == .release { '-cflags -static' } else { '' }
+	} $else {
+		''
+	}
+	libbacktrace := $if windows { '' } $else { '-d use_libbacktrace' }
+	build_cmd := '${base_build_cmd} ${cc} ${cflags}'
+	return match m {
+		.release { '${build_cmd} -prod' }
+		.debug { '${build_cmd} -g ${libbacktrace}' }
+		.dev { '${build_cmd} -d show_ast_on_hover -g ${libbacktrace}' }
+	}
 }
 
 fn prepare_output_dir() {
@@ -65,7 +69,8 @@ fn build(mode ReleaseMode, explicit_debug bool) {
 	prepare_output_dir()
 	println('${term.green('✓')} Prepared output directory')
 
-	println('Building v-analyzer in ${term.bold(mode.str())} mode, using: ${mode.compile_cmd()}')
+	cmd := mode.compile_cmd()
+	println('Building v-analyzer in ${term.bold(mode.str())} mode, using: ${cmd}')
 	if mode == .release {
 		println('This may take a while...')
 	}
@@ -75,10 +80,9 @@ fn build(mode ReleaseMode, explicit_debug bool) {
 		println('Release mode is recommended for production use. At runtime, it is about 30-40% faster than debug mode.')
 	}
 
-	res := mode.compile()
-	if res.exit_code != 0 {
+	os.execute_opt(cmd) or {
 		errorln('Failed to build v-analyzer')
-		eprintln(res.output)
+		eprintln(err)
 		exit(1)
 	}
 
