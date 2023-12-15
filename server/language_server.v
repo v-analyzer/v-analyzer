@@ -142,218 +142,207 @@ pub fn (mut ls LanguageServer) handle_jsonrpc(request &jsonrpc.Request, mut rw j
 	// Notification has no ID attached so the server can detect
 	// if its a notification or a request payload by checking
 	// if the ID is empty.
-	if request.method == 'shutdown' {
+	match request.method {
 		// Note: LSP specification is unclear whether or not
 		// a shutdown request is allowed before server init
 		// but we'll just put it here since we want to formally
 		// shutdown the server after a certain timeout period.
-		ls.shutdown()
-	} else if ls.status == .initialized {
-		match request.method {
-			// not only requests but also notifications
-			'initialized' {
-				ls.initialized(mut rw)
-			}
-			'exit' {
-				ls.exit()
-			}
-			'textDocument/didOpen' {
-				params := json.decode(lsp.DidOpenTextDocumentParams, request.params) or {
-					return err
-				}
-				ls.did_open(params)
-			}
-			'textDocument/didSave' {
-				params := json.decode(lsp.DidSaveTextDocumentParams, request.params) or {
-					return err
-				}
-				ls.did_save(params)
-			}
-			'textDocument/didChange' {
-				params := json.decode(lsp.DidChangeTextDocumentParams, request.params) or {
-					return err
-				}
-				ls.did_change(params)
-			}
-			'textDocument/didClose' {
-				params := json.decode(lsp.DidCloseTextDocumentParams, request.params) or {
-					return err
-				}
-				ls.did_close(params)
-			}
-			'textDocument/willSave' {
-				// params := json.decode(lsp.WillSaveTextDocumentParams, request.params) or {
-				// 	return err
-				// }
-				// ls.will_save(params)
-			}
-			'textDocument/formatting' {
-				params := json.decode(lsp.DocumentFormattingParams, request.params) or {
-					return w.wrap_error(err)
-				}
-				w.write(ls.formatting(params) or { return w.wrap_error(err) })
-			}
-			'textDocument/documentSymbol' {
-				params := json.decode(lsp.DocumentSymbolParams, request.params) or {
-					return w.wrap_error(err)
-				}
-				w.write(ls.document_symbol(params) or { return w.wrap_error(err) })
-			}
-			'workspace/symbol' {
-				params := json.decode(lsp.WorkspaceSymbolParams, request.params) or {
-					return w.wrap_error(err)
-				}
-				w.write(ls.workspace_symbol(params) or { return w.wrap_error(err) })
-			}
-			'textDocument/signatureHelp' {
-				params := json.decode(lsp.SignatureHelpParams, request.params) or {
-					return w.wrap_error(err)
-				}
-				w.write(ls.signature_help(params) or { return w.wrap_error(err) })
-			}
-			'textDocument/completion' {
-				params := json.decode(lsp.CompletionParams, request.params) or {
-					return w.wrap_error(err)
-				}
-				w.write(ls.completion(params) or { return w.wrap_error(err) })
-			}
-			'textDocument/hover' {
-				params := json.decode(lsp.HoverParams, request.params) or {
-					return w.wrap_error(err)
-				}
-				hover_data := ls.hover(params) or {
-					w.write_empty()
-					return
-				}
-				w.write(hover_data)
-			}
-			'textDocument/foldingRange' {
-				params := json.decode(lsp.FoldingRangeParams, request.params) or {
-					return w.wrap_error(err)
-				}
-				w.write(ls.folding_range(params) or { return w.wrap_error(err) })
-			}
-			'textDocument/definition' {
-				params := json.decode(lsp.TextDocumentPositionParams, request.params) or {
-					return w.wrap_error(err)
-				}
-				w.write(ls.definition(params) or { return w.wrap_error(err) })
-			}
-			'textDocument/typeDefinition' {
-				params := json.decode(lsp.TextDocumentPositionParams, request.params) or {
-					return w.wrap_error(err)
-				}
-				w.write(ls.type_definition(params) or { return w.wrap_error(err) })
-			}
-			'textDocument/references' {
-				params := json.decode(lsp.ReferenceParams, request.params) or {
-					return w.wrap_error(err)
-				}
-				w.write(ls.references(params))
-			}
-			'textDocument/implementation' {
-				params := json.decode(lsp.TextDocumentPositionParams, request.params) or {
-					return w.wrap_error(err)
-				}
-				w.write(ls.implementation(params) or { return w.wrap_error(err) })
-			}
-			'workspace/didChangeWatchedFiles' {
-				params := json.decode(lsp.DidChangeWatchedFilesParams, request.params) or {
-					return err
-				}
-				ls.did_change_watched_files(params)
-			}
-			'textDocument/codeLens' {
-				params := json.decode(lsp.CodeLensParams, request.params) or {
-					return w.wrap_error(err)
-				}
-				w.write(ls.code_lens(params) or { return w.wrap_error(err) })
-			}
-			'textDocument/inlayHint' {
-				params := json.decode(lsp.InlayHintParams, request.params) or {
-					return w.wrap_error(err)
-				}
-				w.write(ls.inlay_hints(params) or { return w.wrap_error(err) })
-			}
-			'textDocument/prepareRename' {
-				params := json.decode(lsp.PrepareRenameParams, request.params) or {
-					return w.wrap_error(err)
-				}
-				w.write(ls.prepare_rename(params) or { return w.wrap_error(err) })
-			}
-			'textDocument/rename' {
-				params := json.decode(lsp.RenameParams, request.params) or {
-					return w.wrap_error(err)
-				}
-				w.write(ls.rename(params) or { return w.wrap_error(err) })
-			}
-			'textDocument/documentLink' {}
-			'textDocument/semanticTokens/full' {
-				params := json.decode(lsp.SemanticTokensParams, request.params) or {
-					return w.wrap_error(err)
-				}
-				w.write(ls.semantic_tokens(params.text_document, lsp.Range{}) or {
-					return w.wrap_error(err)
-				})
-			}
-			'textDocument/semanticTokens/range' {
-				params := json.decode(lsp.SemanticTokensRangeParams, request.params) or {
-					return w.wrap_error(err)
-				}
-				w.write(ls.semantic_tokens(params.text_document, params.range) or {
-					return w.wrap_error(err)
-				})
-			}
-			'textDocument/documentHighlight' {
-				params := json.decode(lsp.TextDocumentPositionParams, request.params) or {
-					return w.wrap_error(err)
-				}
-				w.write(ls.document_highlight(params) or { return w.wrap_error(err) })
-			}
-			'textDocument/codeAction' {
-				params := json.decode(lsp.CodeActionParams, request.params) or {
-					return w.wrap_error(err)
-				}
-				w.write(ls.code_actions(params) or { return w.wrap_error(err) })
-			}
-			'workspace/executeCommand' {
-				params := json.decode(lsp.ExecuteCommandParams, request.params) or {
-					return w.wrap_error(err)
-				}
-				ls.execute_command(params)
-			}
-			'v-analyzer/viewStubTree' {
-				params := json.decode(lsp.TextDocumentIdentifier, request.params) or {
-					return w.wrap_error(err)
-				}
-				w.write(ls.view_stub_tree(params) or { return w.wrap_error(err) })
-			}
-			'$/cancelRequest' {
-				loglib.info('got $/cancelRequest request')
-			}
-			else {
-				loglib.with_fields({
-					'method': request.method
-					'params': request.params
-				}).info('unhandled method call')
-			}
+		'shutdown' {
+			ls.shutdown()
+			return
 		}
-	} else {
-		match request.method {
-			'exit' {
-				ls.exit()
+		'exit' {
+			ls.exit()
+			return
+		}
+		else {}
+	}
+	if ls.status != .initialized {
+		if request.method == 'initialize' {
+			params := json.decode(lsp.InitializeParams, request.params) or { return err }
+			w.write(ls.initialize(params, mut rw))
+		} else if ls.status == .shutdown {
+			return jsonrpc.invalid_request
+		} else {
+			return jsonrpc.server_not_initialized
+		}
+
+		loglib.with_fields({
+			'method':   request.method
+			'duration': watch.elapsed().str()
+		}).log_one(.info, 'Request finished')
+		return
+	}
+	match request.method {
+		// not only requests but also notifications
+		'initialized' {
+			ls.initialized(mut rw)
+		}
+		'textDocument/didOpen' {
+			params := json.decode(lsp.DidOpenTextDocumentParams, request.params) or { return err }
+			ls.did_open(params)
+		}
+		'textDocument/didSave' {
+			params := json.decode(lsp.DidSaveTextDocumentParams, request.params) or { return err }
+			ls.did_save(params)
+		}
+		'textDocument/didChange' {
+			params := json.decode(lsp.DidChangeTextDocumentParams, request.params) or { return err }
+			ls.did_change(params)
+		}
+		'textDocument/didClose' {
+			params := json.decode(lsp.DidCloseTextDocumentParams, request.params) or { return err }
+			ls.did_close(params)
+		}
+		'textDocument/willSave' {
+			// params := json.decode(lsp.WillSaveTextDocumentParams, request.params) or {
+			// 	return err
+			// }
+			// ls.will_save(params)
+		}
+		'textDocument/formatting' {
+			params := json.decode(lsp.DocumentFormattingParams, request.params) or {
+				return w.wrap_error(err)
 			}
-			'initialize' {
-				params := json.decode(lsp.InitializeParams, request.params) or { return err }
-				w.write(ls.initialize(params, mut rw))
+			w.write(ls.formatting(params) or { return w.wrap_error(err) })
+		}
+		'textDocument/documentSymbol' {
+			params := json.decode(lsp.DocumentSymbolParams, request.params) or {
+				return w.wrap_error(err)
 			}
-			else {
-				if ls.status == .shutdown {
-					return jsonrpc.invalid_request
-				} else {
-					return jsonrpc.server_not_initialized
-				}
+			w.write(ls.document_symbol(params) or { return w.wrap_error(err) })
+		}
+		'workspace/symbol' {
+			params := json.decode(lsp.WorkspaceSymbolParams, request.params) or {
+				return w.wrap_error(err)
 			}
+			w.write(ls.workspace_symbol(params) or { return w.wrap_error(err) })
+		}
+		'textDocument/signatureHelp' {
+			params := json.decode(lsp.SignatureHelpParams, request.params) or {
+				return w.wrap_error(err)
+			}
+			w.write(ls.signature_help(params) or { return w.wrap_error(err) })
+		}
+		'textDocument/completion' {
+			params := json.decode(lsp.CompletionParams, request.params) or {
+				return w.wrap_error(err)
+			}
+			w.write(ls.completion(params) or { return w.wrap_error(err) })
+		}
+		'textDocument/hover' {
+			params := json.decode(lsp.HoverParams, request.params) or { return w.wrap_error(err) }
+			hover_data := ls.hover(params) or {
+				w.write_empty()
+				return
+			}
+			w.write(hover_data)
+		}
+		'textDocument/foldingRange' {
+			params := json.decode(lsp.FoldingRangeParams, request.params) or {
+				return w.wrap_error(err)
+			}
+			w.write(ls.folding_range(params) or { return w.wrap_error(err) })
+		}
+		'textDocument/definition' {
+			params := json.decode(lsp.TextDocumentPositionParams, request.params) or {
+				return w.wrap_error(err)
+			}
+			w.write(ls.definition(params) or { return w.wrap_error(err) })
+		}
+		'textDocument/typeDefinition' {
+			params := json.decode(lsp.TextDocumentPositionParams, request.params) or {
+				return w.wrap_error(err)
+			}
+			w.write(ls.type_definition(params) or { return w.wrap_error(err) })
+		}
+		'textDocument/references' {
+			params := json.decode(lsp.ReferenceParams, request.params) or {
+				return w.wrap_error(err)
+			}
+			w.write(ls.references(params))
+		}
+		'textDocument/implementation' {
+			params := json.decode(lsp.TextDocumentPositionParams, request.params) or {
+				return w.wrap_error(err)
+			}
+			w.write(ls.implementation(params) or { return w.wrap_error(err) })
+		}
+		'workspace/didChangeWatchedFiles' {
+			params := json.decode(lsp.DidChangeWatchedFilesParams, request.params) or { return err }
+			ls.did_change_watched_files(params)
+		}
+		'textDocument/codeLens' {
+			params := json.decode(lsp.CodeLensParams, request.params) or {
+				return w.wrap_error(err)
+			}
+			w.write(ls.code_lens(params) or { return w.wrap_error(err) })
+		}
+		'textDocument/inlayHint' {
+			params := json.decode(lsp.InlayHintParams, request.params) or {
+				return w.wrap_error(err)
+			}
+			w.write(ls.inlay_hints(params) or { return w.wrap_error(err) })
+		}
+		'textDocument/prepareRename' {
+			params := json.decode(lsp.PrepareRenameParams, request.params) or {
+				return w.wrap_error(err)
+			}
+			w.write(ls.prepare_rename(params) or { return w.wrap_error(err) })
+		}
+		'textDocument/rename' {
+			params := json.decode(lsp.RenameParams, request.params) or { return w.wrap_error(err) }
+			w.write(ls.rename(params) or { return w.wrap_error(err) })
+		}
+		'textDocument/documentLink' {}
+		'textDocument/semanticTokens/full' {
+			params := json.decode(lsp.SemanticTokensParams, request.params) or {
+				return w.wrap_error(err)
+			}
+			w.write(ls.semantic_tokens(params.text_document, lsp.Range{}) or {
+				return w.wrap_error(err)
+			})
+		}
+		'textDocument/semanticTokens/range' {
+			params := json.decode(lsp.SemanticTokensRangeParams, request.params) or {
+				return w.wrap_error(err)
+			}
+			w.write(ls.semantic_tokens(params.text_document, params.range) or {
+				return w.wrap_error(err)
+			})
+		}
+		'textDocument/documentHighlight' {
+			params := json.decode(lsp.TextDocumentPositionParams, request.params) or {
+				return w.wrap_error(err)
+			}
+			w.write(ls.document_highlight(params) or { return w.wrap_error(err) })
+		}
+		'textDocument/codeAction' {
+			params := json.decode(lsp.CodeActionParams, request.params) or {
+				return w.wrap_error(err)
+			}
+			w.write(ls.code_actions(params) or { return w.wrap_error(err) })
+		}
+		'workspace/executeCommand' {
+			params := json.decode(lsp.ExecuteCommandParams, request.params) or {
+				return w.wrap_error(err)
+			}
+			ls.execute_command(params)
+		}
+		'v-analyzer/viewStubTree' {
+			params := json.decode(lsp.TextDocumentIdentifier, request.params) or {
+				return w.wrap_error(err)
+			}
+			w.write(ls.view_stub_tree(params) or { return w.wrap_error(err) })
+		}
+		'$/cancelRequest' {
+			loglib.info('got $/cancelRequest request')
+		}
+		else {
+			loglib.with_fields({
+				'method': request.method
+				'params': request.params
+			}).info('unhandled method call')
 		}
 	}
 
