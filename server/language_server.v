@@ -157,6 +157,22 @@ pub fn (mut ls LanguageServer) handle_jsonrpc(request &jsonrpc.Request, mut rw j
 		}
 		else {}
 	}
+	if ls.status != .initialized {
+		if request.method == 'initialize' {
+			params := json.decode(lsp.InitializeParams, request.params) or { return err }
+			w.write(ls.initialize(params, mut rw))
+		} else if ls.status == .shutdown {
+			return jsonrpc.invalid_request
+		} else {
+			return jsonrpc.server_not_initialized
+		}
+
+		loglib.with_fields({
+			'method':   request.method
+			'duration': watch.elapsed().str()
+		}).log_one(.info, 'Request finished')
+		return
+	}
 	if ls.status == .initialized {
 		match request.method {
 			// not only requests but also notifications
@@ -342,20 +358,6 @@ pub fn (mut ls LanguageServer) handle_jsonrpc(request &jsonrpc.Request, mut rw j
 					'method': request.method
 					'params': request.params
 				}).info('unhandled method call')
-			}
-		}
-	} else {
-		match request.method {
-			'initialize' {
-				params := json.decode(lsp.InitializeParams, request.params) or { return err }
-				w.write(ls.initialize(params, mut rw))
-			}
-			else {
-				if ls.status == .shutdown {
-					return jsonrpc.invalid_request
-				} else {
-					return jsonrpc.server_not_initialized
-				}
 			}
 		}
 	}
