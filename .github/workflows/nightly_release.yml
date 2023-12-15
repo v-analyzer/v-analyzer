@@ -12,7 +12,7 @@ on:
       - '**/*_test.v'
       - '**/*.md'
       - '.github/**'
-      - '!.github/nightly_release.yml'
+      - '!.github/workflows/nightly_release.yml'
 
 permissions:
   contents: write
