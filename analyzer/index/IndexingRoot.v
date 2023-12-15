@@ -130,7 +130,7 @@ fn (mut _ IndexingRoot) need_index(path string) bool {
 		&& !path.contains('/builtin/wasm/') // TODO: index this folder too
 		&& !path.contains('/builtin/js/') // TODO: index this folder too
 		&& !path.contains('/builtin/linux_bare/') // TODO: index this folder too
-		&& !path.ends_with('.js.v')
+		&& !path.ends_with('.js.v') && !path.contains('/.git/') && !path.ends_with('_test.v')
 }
 
 pub fn (mut i IndexingRoot) index() BuiltIndexStatus {
