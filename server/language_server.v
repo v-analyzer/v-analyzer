@@ -142,20 +142,26 @@ pub fn (mut ls LanguageServer) handle_jsonrpc(request &jsonrpc.Request, mut rw j
 	// Notification has no ID attached so the server can detect
 	// if its a notification or a request payload by checking
 	// if the ID is empty.
-	if request.method == 'shutdown' {
+	match request.method {
 		// Note: LSP specification is unclear whether or not
 		// a shutdown request is allowed before server init
 		// but we'll just put it here since we want to formally
 		// shutdown the server after a certain timeout period.
-		ls.shutdown()
-	} else if ls.status == .initialized {
+		'shutdown' {
+			ls.shutdown()
+			return
+		}
+		'exit' {
+			ls.exit()
+			return
+		}
+		else {}
+	}
+	if ls.status == .initialized {
 		match request.method {
 			// not only requests but also notifications
 			'initialized' {
 				ls.initialized(mut rw)
-			}
-			'exit' {
-				ls.exit()
 			}
 			'textDocument/didOpen' {
 				params := json.decode(lsp.DidOpenTextDocumentParams, request.params) or {
@@ -340,9 +346,6 @@ pub fn (mut ls LanguageServer) handle_jsonrpc(request &jsonrpc.Request, mut rw j
 		}
 	} else {
 		match request.method {
-			'exit' {
-				ls.exit()
-			}
 			'initialize' {
 				params := json.decode(lsp.InitializeParams, request.params) or { return err }
 				w.write(ls.initialize(params, mut rw))
