@@ -30,6 +30,37 @@ r""
       (raw_string_literal))))
 
 ================================================================================
+Comments string
+================================================================================
+'//'
+'/**/'
+c'//'
+c'/**/'
+r'//'
+r'/**/'
+--------------------------------------------------------------------------------
+
+(source_file
+  (simple_statement
+    (literal
+      (interpreted_string_literal)))
+  (simple_statement
+    (literal
+      (interpreted_string_literal)))
+  (simple_statement
+    (literal
+      (c_string_literal)))
+  (simple_statement
+    (literal
+      (c_string_literal)))
+  (simple_statement
+    (literal
+      (raw_string_literal)))
+  (simple_statement
+    (literal
+      (raw_string_literal))))
+
+================================================================================
 Simple string interpolation
 ================================================================================
 'Hello, ${name}!'
