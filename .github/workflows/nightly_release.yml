@@ -32,6 +32,7 @@ jobs:
           - os: macos-latest
             target: darwin-arm64
             vflags: -d cross_compile_macos_arm64
+      fail-fast: false
 
     name: Build binary artifact for ${{ matrix.target }}
     runs-on: ${{ matrix.os }}
