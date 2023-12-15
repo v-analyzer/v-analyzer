@@ -56,10 +56,6 @@ fn (m ReleaseMode) compile_cmd() string {
 	}
 }
 
-fn (m ReleaseMode) compile() os.Result {
-	return os.execute(m.compile_cmd())
-}
-
 fn prepare_output_dir() {
 	if os.exists('./bin') {
 		return
