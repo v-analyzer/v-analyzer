@@ -142,10 +142,10 @@ This repository also contains the source code for the VS Code extension in the
 folder.
 It is also available via the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=VOSCA.vscode-v-analyzer).
 
-## NVIM LSP
+## NVIM LSP / Mason
 
 For Neovim users, v-analyzer is available via [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#v_analyzer).
-It is part of the mason registry and can be installated with `:LspInstall v_analyzer`.
+It is part of the mason registry and can be installated with `:LspInstall v_analyzer` for nvim-lspconfig or `:MasonInstall v_analyzer` for Mason.
 
 ## Authors
 
