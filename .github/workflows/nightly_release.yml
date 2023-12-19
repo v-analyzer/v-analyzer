@@ -55,7 +55,7 @@ jobs:
       - name: Compile
         run: |
           cd v-analyzer
-          v run build.vsh release
+          v run build.vsh debug
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
