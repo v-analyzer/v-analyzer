@@ -47,8 +47,11 @@ pub type int = int
 // Range: -9223372036854775808 through 9223372036854775807.
 pub type i64 = i64
 
-// isize is platform-dependent integer type.
+// isize is a signed integer type, whose size varies, and is 32bit on 32bit platforms, or 64bit on 64bit platforms.
 pub type isize = i64
+
+// usize is an unsigned integer type, whose size varies and is 32bit on 32bit platforms, or 64bit on 64bit platforms.
+pub type usize = u64
 
 // f32 is the set of all IEEE-754 32-bit floating-point numbers.
 pub type f32 = f32
@@ -56,27 +59,25 @@ pub type f32 = f32
 // f64 is the set of all IEEE-754 64-bit floating-point numbers.
 pub type f64 = f64
 
-// byte is an alias for u8 and is equivalent to u8 in all ways. It is
-// used, by convention, to distinguish byte values from 8-bit unsigned
-// integer values.
+// byte is an alias for u8 and is equivalent to u8 in all ways.
+// Do not use `byte` in new code, use `u8` instead.
 pub type byte = u8
 
-// rune is an alias for int and is equivalent to int in all ways. It is
-// used, by convention, to distinguish character values from integer values.
-pub type rune = int
+// rune is used, for representing individual Unicode codepoints. It is 32bit sized.
+pub type rune = u32
 
-// char is an alias for u8 and is equivalent to u8 in all ways.
-// Mostly used for [C interoperability](https://docs.vosca.dev/advanced-concepts/v-and-c.html).
+// char is similar to u8, it is mostly used for [C interoperability](https://docs.vosca.dev/advanced-concepts/v-and-c.html).
+// In C, the type `char` can be signed or unsigned, depending on platform.
 pub type char = u8
 
-// voidptr is an untyped pointer.
+// voidptr is an untyped pointer. You can pass any other type of pointer value, to a function that accepts a voidptr.
 // Mostly used for [C interoperability](https://docs.vosca.dev/advanced-concepts/v-and-c.html).
 pub type voidptr = voidptr
 
-// byteptr is a byte pointer.
+// byteptr is a pointer to bytes. Deprecated. Use `&u8` instead in new code.
 // Mostly used for [C interoperability](https://docs.vosca.dev/advanced-concepts/v-and-c.html).
 pub type byteptr = byteptr
 
-// charptr is a char pointer.
+// charptr is a pointer to chars.
 // Mostly used for [C interoperability](https://docs.vosca.dev/advanced-concepts/v-and-c.html).
 pub type charptr = charptr
