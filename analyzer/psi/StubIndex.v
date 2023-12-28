@@ -42,8 +42,8 @@ pub fn new_stubs_index(sinks []StubIndexSink) &StubIndex {
 	mut index := &StubIndex{
 		sinks: sinks
 		module_to_files: map[string][]StubIndexSink{}
-		all_elements_by_modules: [psi.count_stub_index_location_keys]map[string][]PsiElement{}
-		types_by_modules: [psi.count_stub_index_location_keys]map[string][]PsiElement{}
+		all_elements_by_modules: unsafe { [psi.count_stub_index_location_keys]map[string][]PsiElement{} }
+		types_by_modules: unsafe { [psi.count_stub_index_location_keys]map[string][]PsiElement{} }
 	}
 
 	for i in 0 .. psi.count_stub_index_location_keys {
@@ -62,7 +62,7 @@ pub fn new_stubs_index(sinks []StubIndexSink) &StubIndex {
 }
 
 pub fn (mut s StubIndex) sub_indexes_from_sink(sink StubIndexSink) {
-	s.module_to_files[sink.stub_list.module_fqn] << sink
+	unsafe { s.module_to_files[sink.stub_list.module_fqn] << sink }
 	s.file_to_module[sink.stub_list.path] = sink.stub_list.module_fqn
 }
 
@@ -104,7 +104,7 @@ pub fn (mut s StubIndex) update_index_from_sink(sink StubIndexSink) {
 				}
 			}
 
-			mut data_by_name := mp[name]
+			mut data_by_name := unsafe { mp[name] }
 			data_by_name.stubs << stubs_result
 			data_by_name.psis << psi_result
 			mp[name] = data_by_name
