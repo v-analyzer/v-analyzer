@@ -167,7 +167,7 @@ It is part of the mason registry and can be installated with `:LspInstall v_anal
 
 This project is under the **MIT License**.
 See the
-[LICENSE](https://github.com/vlang-association/v-analyzer/blob/main/LICENSE)
+[LICENSE](https://github.com/v-analyzer/v-analyzer/blob/main/LICENSE)
 file for the full license text.
 
 [AssociationOfficialBadge]: https://vosca.dev/badge.svg

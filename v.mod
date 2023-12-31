@@ -3,5 +3,6 @@ Module {
 	description: 'Language server implementation for V language'
 	version: '0.0.3-beta.1'
 	license: 'MIT'
+	author: 'V Open Source Community Association (VOSCA)'
 	dependencies: []
 }
